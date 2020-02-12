@@ -1,6 +1,6 @@
 #include <gtk/gtk.h>
 #include "bbapplication.h"
-
+#include "bbmainwindow.h"
 
 struct _BbApplication
 {
@@ -17,9 +17,9 @@ bb_application_open(GApplication *application, GFile **files, gint n_files, cons
 static void
 bb_application_activate(GApplication *application)
 {
-    GtkApplicationWindow *window;
+    BbMainWindow *window;
 
-    window = gtk_application_window_new(BB_APPLICATION(application));
+    window = bb_main_window_new(BB_APPLICATION(application));
     gtk_window_present(GTK_WINDOW(window));
 }
 
@@ -57,9 +57,9 @@ bb_application_open(GApplication *application, GFile **files, gint n_files, cons
 
     for (i = 0; i < n_files; i++)
     {
-        GtkApplicationWindow *window;
+        BbMainWindow *window;
 
-        window = gtk_application_window_new(BB_APPLICATION(application));
+        window = bb_main_window_new(BB_APPLICATION(application));
         gtk_window_present(GTK_WINDOW(window));
     }
 }
