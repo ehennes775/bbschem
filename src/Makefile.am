@@ -2,7 +2,8 @@ bin_PROGRAMS = \
 	bbtest
 
 bbtest_SOURCES = \
+    gui/bbapplication.c \
 	main.c
 
-bbtest_CFLAGS = $(AM_CFLAGS) $(GTK_CFLAGS)
-bbtest_LDADD = $(GTK_LIBS)
+bbtest_CFLAGS = $(AM_CFLAGS) $(DEPS_CFLAGS) $(GTK_CFLAGS)
+bbtest_LDADD = $(DEPS_LIBS) $(GTK_LIBS)
