@@ -20,6 +20,7 @@ bb_application_activate(GApplication *application)
     BbMainWindow *window;
 
     window = bb_main_window_new(BB_APPLICATION(application));
+    gtk_widget_show_all(GTK_WIDGET(window));
     gtk_window_present(GTK_WINDOW(window));
 }
 
@@ -60,10 +61,7 @@ bb_application_open(GApplication *application, GFile **files, gint n_files, cons
         BbMainWindow *window;
 
         window = bb_main_window_new(BB_APPLICATION(application));
+        gtk_widget_show_all(GTK_WIDGET(window));
         gtk_window_present(GTK_WINDOW(window));
     }
 }
-
-
-
-

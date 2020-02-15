@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<interface>
+    <object class="GtkImage" id="icon-tool-select">
+        <property name="resource">/com/github/ehennes775/bbsch/gui/img/SelectTool.svg</property>
+    </object>
+    <object class="GtkImage" id="icon-tool-arc">
+        <property name="resource">/com/github/ehennes775/bbsch/gui/img/ArcTool.svg</property>
+    </object>
+    <object class="GtkImage" id="icon-tool-box">
+        <property name="resource">/com/github/ehennes775/bbsch/gui/img/BoxTool.svg</property>
+    </object>
+    <object class="GtkImage" id="icon-tool-circle">
+        <property name="resource">/com/github/ehennes775/bbsch/gui/img/CircleTool.svg</property>
+    </object>
+    <object class="GtkImage" id="icon-tool-line">
+        <property name="resource">/com/github/ehennes775/bbsch/gui/img/LineTool.svg</property>
+    </object>
+    <object class="GtkImage" id="icon-tool-path">
+        <property name="resource">/com/github/ehennes775/bbsch/gui/img/PathTool.svg</property>
+    </object>
+    <object class="GtkImage" id="icon-tool-bus">
+        <property name="resource">/com/github/ehennes775/bbsch/gui/img/BusTool.svg</property>
+    </object>
+    <object class="GtkImage" id="icon-tool-net">
+        <property name="resource">/com/github/ehennes775/bbsch/gui/img/NetTool.svg</property>
+    </object>
+    <object class="GtkImage" id="icon-tool-pin">
+        <property name="resource">/com/github/ehennes775/bbsch/gui/img/PinTool.svg</property>
+    </object>
+    <object class="GtkImage" id="icon-tool-select-2">
+        <property name="resource">/com/github/ehennes775/bbsch/gui/img/Schematic.svg</property>
+    </object>
+    <object class="GtkImage" id="icon-tool-select-3">
+        <property name="resource">/com/github/ehennes775/bbsch/gui/img/Schematic.svg</property>
+    </object>
+    <object class="GtkImage" id="icon-tool-select-4">
+        <property name="resource">/com/github/ehennes775/bbsch/gui/img/Schematic.svg</property>
+    </object>
+    <object class="GtkImage" id="icon-tool-select-5">
+        <property name="resource">/com/github/ehennes775/bbsch/gui/img/Schematic.svg</property>
+    </object>
+    <object class="GtkImage" id="icon-tool-select-6">
+        <property name="resource">/com/github/ehennes775/bbsch/gui/img/Schematic.svg</property>
+    </object>
+    <object class="GtkImage" id="icon-tool-select-7">
+        <property name="resource">/com/github/ehennes775/bbsch/gui/img/Schematic.svg</property>
+    </object>
+    <object class="GtkImage" id="icon-tool-attribute">
+        <property name="resource">/com/github/ehennes775/bbsch/gui/img/AttributeTool.svg</property>
+    </object>
+    <object class="GtkImage" id="icon-tool-text">
+        <property name="resource">/com/github/ehennes775/bbsch/gui/img/TextTool.svg</property>
+    </object>
+    <object class="GtkImage" id="icon-project-switch">
+        <property name="resource">/com/github/ehennes775/bbsch/gui/img/OrangeFolder.svg</property>
+    </object>
+    <object class="GtkImage" id="icon-zoom-extents">
+        <property name="resource">/com/github/ehennes775/bbsch/gui/img/ZoomExtents.svg</property>
+    </object>
+    <object class="GtkImage" id="icon-zoom-in">
+        <property name="resource">/com/github/ehennes775/bbsch/gui/img/ZoomIn.svg</property>
+    </object>
+    <object class="GtkImage" id="icon-zoom-out">
+        <property name="resource">/com/github/ehennes775/bbsch/gui/img/ZoomOut.svg</property>
+    </object>
+    <object class="GtkImage" id="icon-tool-zoom">
+        <property name="resource">/com/github/ehennes775/bbsch/gui/img/ZoomTool.svg</property>
+    </object>
+    <template class="BbMainWindow" parent="GtkApplicationWindow">
+        <child>
+            <object class ="GtkBox" id="box">
+                <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
+                <child>
+                    <object class="GtkToolbar" id="toolbar">
+                        <child>
+                            <object class="GtkToggleToolButton" id="tool-select">
+                                <property name="label">Select</property>
+                                <property name="action-name">win.select-tool</property>
+                                <property name="action-target">'select'</property>
+                                <property name="icon-widget">icon-tool-select</property>
+                            </object>
+                        </child>
+                        <child>
+                            <object class="GtkToggleToolButton" id="tool-arc">
+                                <property name="label">Arc</property>
+                                <property name="action-name">win.select-tool</property>
+                                <property name="action-target">'arc'</property>
+                                <property name="icon-widget">icon-tool-arc</property>
+                            </object>
+                        </child>
+                        <child>
+                            <object class="GtkToggleToolButton" id="tool-box">
+                                <property name="label">Box</property>
+                                <property name="action-name">win.select-tool</property>
+                                <property name="action-target">'box'</property>
+                                <property name="icon-widget">icon-tool-box</property>
+                            </object>
+                        </child>
+                        <child>
+                            <object class="GtkToggleToolButton" id="tool-circle">
+                                <property name="label">Circle</property>
+                                <property name="action-name">win.select-tool</property>
+                                <property name="action-target">'circle'</property>
+                                <property name="icon-widget">icon-tool-circle</property>
+                            </object>
+                        </child>
+                        <child>
+                            <object class="GtkToggleToolButton" id="tool-line">
+                                <property name="label">Line</property>
+                                <property name="action-name">win.select-tool</property>
+                                <property name="action-target">'line'</property>
+                                <property name="icon-widget">icon-tool-line</property>
+                            </object>
+                        </child>
+                        <child>
+                            <object class="GtkToggleToolButton" id="tool-path">
+                                <property name="label">Path</property>
+                                <property name="action-name">win.select-tool</property>
+                                <property name="action-target">'path'</property>
+                                <property name="icon-widget">icon-tool-path</property>
+                            </object>
+                        </child>
+                        <child>
+                            <object class="GtkToggleToolButton" id="tool-bus">
+                                <property name="label">Bus</property>
+                                <property name="action-name">win.select-tool</property>
+                                <property name="action-target">'bus'</property>
+                                <property name="icon-widget">icon-tool-bus</property>
+                            </object>
+                        </child>
+                        <child>
+                            <object class="GtkToggleToolButton" id="tool-net">
+                                <property name="label">Net</property>
+                                <property name="action-name">win.select-tool</property>
+                                <property name="action-target">'net'</property>
+                                <property name="icon-widget">icon-tool-net</property>
+                            </object>
+                        </child>
+                        <child>
+                            <object class="GtkToggleToolButton" id="tool-pin">
+                                <property name="label">Pin</property>
+                                <property name="action-name">win.select-tool</property>
+                                <property name="action-target">'pin'</property>
+                                <property name="icon-widget">icon-tool-pin</property>
+                            </object>
+                        </child>
+                        <child>
+                            <object class="GtkToggleToolButton" id="tool-complex">
+                                <property name="label">Cpx</property>
+                                <property name="action-name">win.select-tool</property>
+                                <property name="action-target">'complex'</property>
+                            </object>
+                        </child>
+                        <child>
+                            <object class="GtkToggleToolButton" id="tool-attribute">
+                                <property name="label">Attr</property>
+                                <property name="action-name">win.select-tool</property>
+                                <property name="action-target">'attribute'</property>
+                                <property name="icon-widget">icon-tool-attribute</property>
+                            </object>
+                        </child>
+                        <child>
+                            <object class="GtkToggleToolButton" id="tool-text">
+                                <property name="label">Txt</property>
+                                <property name="action-name">win.select-tool</property>
+                                <property name="action-target">'text'</property>
+                                <property name="icon-widget">icon-tool-text</property>
+                            </object>
+                        </child>
+                        <child>
+                            <object class="GtkSeparatorToolItem" id="tool-separator-1">
+                            </object>
+                        </child>
+                        <child>
+                            <object class="GtkToolButton" id="zoom-in">
+                                <property name="label">Zoom In</property>
+                                <property name="icon-name">zoom-in</property>
+                                <property name="action-name">win.zoom-in</property>
+                                <property name="icon-widget">icon-zoom-in</property>
+                            </object>
+                        </child>
+                        <child>
+                            <object class="GtkToolButton" id="zoom-out">
+                                <property name="label">Zoom Out</property>
+                                <property name="icon-name">zoom-out</property>
+                                <property name="action-name">win.zoom-out</property>
+                                <property name="icon-widget">icon-zoom-out</property>
+                            </object>
+                        </child>
+                        <child>
+                            <object class="GtkToolButton" id="zoom-extents">
+                                <property name="label">Zoom Extents</property>
+                                <property name="icon-name">zoom-fit-best</property>
+                                <property name="action-name">win.zoom-extents</property>
+                                <property name="icon-widget">icon-zoom-extents</property>
+                            </object>
+                        </child>
+                        <child>
+                            <object class="GtkToggleToolButton" id="zoom-box">
+                                <property name="label">Zoom Extents</property>
+                                <property name="action-name">win.select-tool</property>
+                                <property name="action-target">'zoom'</property>
+                                <property name="icon-widget">icon-tool-zoom</property>
+                            </object>
+                        </child>
+                        <child>
+                            <object class="GtkToggleToolButton" id="view-reveal-2">
+                                <property name="label">RI</property>
+                                <property name="action-name">win.view-reveal</property>
+                            </object>
+                        </child>
+                    </object>
+                </child>
+                <child>
+                    <object class="GtkPaned" id="paned">
+                        <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>
+                        <child>
+                            <object class="GtkBox" id="switcher-box">
+                                <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
+                                <child>
+                                    <object class="GtkStackSwitcher" id="side-stack-switcher">
+                                        <property name="stack">stack-editors</property>
+                                    </object>
+                                </child>
+                                <child>
+                                    <object class="GtkStack" id="stack-editors">
+<!--
+                                        <child>
+                                            <object class="bbschLibraryWidget" id="library">
+                                                <property name="hexpand">true</property>
+                                                <property name="vexpand">true</property>
+                                            </object>
+                                            <packing>
+                                                <property name="name">library</property>
+                                                <property name="title">Library</property>
+                                            </packing>
+                                        </child>
+                                        <child>
+                                            <object class="bbschAttributeEditor" id="editor">
+                                                <property name="hexpand">true</property>
+                                                <property name="vexpand">true</property>
+                                            </object>
+                                            <packing>
+                                                <property name="name">editor</property>
+                                                <property name="title">Editor</property>
+                                            </packing>
+                                        </child>
+-->
+                                        <child>
+                                            <object class="GtkBox" id="property-editor">
+                                                <property name="hexpand">true</property>
+                                                <property name="margin">10</property>
+                                                <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
+                                                <property name="vexpand">true</property>
+                                            </object>
+                                            <packing>
+                                                <property name="name">property-editor</property>
+                                                <property name="title">Prop</property>
+                                            </packing>
+                                        </child>
+                                    </object>
+                                </child>
+                            </object>
+                            <packing>
+                                <property name="resize">false</property>
+                                <property name="shrink">false</property>
+                            </packing>
+                        </child>
+                        <child>
+                            <object class="GtkNotebook" id="notebook-document-window">
+                                <property name="hexpand">true</property>
+                                <property name="scrollable">true</property>
+                                <property name="vexpand">true</property>
+                            </object>
+                            <packing>
+                                <property name="resize">true</property>
+                                <property name="shrink">false</property>
+                            </packing>
+                        </child>
+                    </object>
+                </child>
+            </object>
+        </child>
+    </template>
+</interface>
