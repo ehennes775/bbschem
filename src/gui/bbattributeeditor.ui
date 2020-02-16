@@ -20,19 +20,20 @@
     </object>
 
     <template class="BbAttributeEditor" parent="GtkBox">
-        <property name="margin">12</property>
         <!--<property name="missing_text">missing</property>-->
         <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
         <child>
             <object class="GtkBox" id="box">
                 <property name="hexpand">true</property>
                 <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
-                <property name="spacing">12</property>
                 <property name="vexpand">true</property>
                 <child>
                     <object class="GtkScrolledWindow" id="tree-scrolled">
                         <property name="hexpand">true</property>
                         <property name="vexpand">true</property>
+                        <style>
+                            <class name="panelitem"/>
+                        </style>
                         <child>
                             <object class="GtkTreeView" id="tree">
                                 <property name="hexpand">true</property>
@@ -153,21 +154,29 @@
                     <object class="GtkButtonBox" id="action-bar">
                         <property name="hexpand">true</property>
                         <property name="layout-style">GTK_BUTTONBOX_START</property>
-                        <property name="spacing">6</property>
                         <property name="vexpand">false</property>
                         <child>
                             <object class="GtkButton" id="insert-button">
                                 <property name="label">Insert</property>
+                                <style>
+                                    <class name="panelitem"/>
+                                </style>
                             </object>
                         </child>
                         <child>
                             <object class="GtkButton" id="detach-button">
                                 <property name="label">Detach</property>
+                                <style>
+                                    <class name="panelitem"/>
+                                </style>
                             </object>
                         </child>
                         <child>
                             <object class="GtkButton" id="remove-button">
                                 <property name="label">Remove</property>
+                                <style>
+                                    <class name="panelitem"/>
+                                </style>
                             </object>
                         </child>
                     </object>

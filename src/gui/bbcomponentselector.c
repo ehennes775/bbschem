@@ -8,7 +8,7 @@ struct _BbComponentSelector
 };
 
 
-G_DEFINE_TYPE(BbComponentSelector, bb_component_selector, GTK_TYPE_BIN);
+G_DEFINE_TYPE(BbComponentSelector, bb_component_selector, GTK_TYPE_BOX);
 
 
 static void

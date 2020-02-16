@@ -1,26 +1,32 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <interface>
-    <template class="BbComponentSelector" parent="GtkBin">
+    <template class="BbComponentSelector" parent="GtkBox">
         <child>
             <object class="GtkPaned" id="library-paned">
-                <property name="margin">12</property>
                 <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
                 <property name="wide-handle">TRUE</property>
                 <child>
-                    <object class="GtkDrawingArea" id="preview-widget">
+                    <object class="GtkBox" id="preview-widget">
                         <property name="height-request">100</property>
+                        <style>
+                            <class name="panelitem"/>
+                            <class name="schematicview"/>
+                        </style>
                     </object>
                 </child>
                 <child>
                     <object class="GtkBox" id="library-box">
                         <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
-                        <property name="spacing">12</property>
                         <child>
                             <object class="GtkScrolledWindow" id="tree-scrolled">
                                 <child>
                                     <object class="GtkTreeView" id="tree">
                                         <property name="hexpand">true</property>
                                         <property name="vexpand">true</property>
+                                        <style>
+                                            <class name="panelitem"/>
+                                        </style>
+                                        <!--
                                         <child>
                                             <object class="GtkTreeViewColumn" id="column-name">
                                                 <property name="clickable">TRUE</property>
@@ -38,7 +44,7 @@
                                                     <object class="GtkCellRendererText" id="column-name-renderer-name">
                                                     </object>
                                                     <attributes>
-                                                        <attribute name="editable">4</attribute>
+                                                        -<attribute name="editable">4</attribute>
                                                         <attribute name="text">1</attribute>
                                                     </attributes>
                                                 </child>
@@ -59,6 +65,7 @@
                                                 </child>
                                             </object>
                                         </child>
+                                        -->
                                     </object>
                                 </child>
                             </object>
@@ -66,10 +73,12 @@
                         <child>
                             <object class="GtkBox" id="library-filter-box">
                                 <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>
-                                <property name="spacing">12</property>
                                 <child>
                                     <object class="GtkEntry" id="library-filter">
                                         <property name="hexpand">TRUE</property>
+                                        <style>
+                                            <class name="panelitem"/>
+                                        </style>
                                     </object>
                                 </child>
                                 <child>
@@ -77,6 +86,9 @@
                                         <property name="action-name">win.library-filter-clear</property>
                                         <property name="hexpand">FALSE</property>
                                         <property name="label">CLR</property>
+                                        <style>
+                                            <class name="panelitem"/>
+                                        </style>
                                     </object>
                                 </child>
                             </object>
@@ -84,24 +96,32 @@
                         <child>
                             <object class="GtkButtonBox" id="buttons">
                                 <property name="layout-style">GTK_BUTTONBOX_START</property>
-                                <property name="spacing">6</property>
                                 <property name="hexpand">true</property>
                                 <child>
                                     <object class="GtkButton" id="button-add">
                                         <property name="action-name">win.open-library-symbol</property>
                                         <property name="label">Open</property>
+                                        <style>
+                                            <class name="panelitem"/>
+                                        </style>
                                     </object>
                                 </child>
                                 <child>
                                     <object class="GtkButton" id="button-remove">
                                         <property name="action-name">win.remove-library-symbol</property>
                                         <property name="label">Remove</property>
+                                        <style>
+                                            <class name="panelitem"/>
+                                        </style>
                                     </object>
                                 </child>
                                 <child>
                                     <object class="GtkButton" id="button-open">
                                         <property name="action-name">win.rename-library-symbol</property>
                                         <property name="label">Rename</property>
+                                        <style>
+                                            <class name="panelitem"/>
+                                        </style>
                                     </object>
                                 </child>
                             </object>

@@ -1,4 +1,32 @@
+/*
 window
 {
-    background-color: #476c89;
+    background: #476c89;
+}
+
+treeview.view header button
+{
+    background: #d23b6d;
+    color: #9dffbb;
+}
+
+ */
+
+
+/* The outermost widgets on the side panel */
+.panelouter
+{
+    margin: 6px;
+}
+
+/* Widgets inside the side panel */
+.panelitem
+{
+    margin: 3px;
+}
+
+
+.schematicview
+{
+    background: tomato;
 }
