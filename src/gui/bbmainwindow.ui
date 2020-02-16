@@ -224,9 +224,8 @@
                                 </child>
                                 <child>
                                     <object class="GtkStack" id="stack-editors">
-<!--
                                         <child>
-                                            <object class="bbschLibraryWidget" id="library">
+                                            <object class="BbComponentSelector" id="component-selector">
                                                 <property name="hexpand">true</property>
                                                 <property name="vexpand">true</property>
                                             </object>
@@ -236,7 +235,7 @@
                                             </packing>
                                         </child>
                                         <child>
-                                            <object class="bbschAttributeEditor" id="editor">
+                                            <object class="BbAttributeEditor" id="attribute-editor">
                                                 <property name="hexpand">true</property>
                                                 <property name="vexpand">true</property>
                                             </object>
@@ -245,7 +244,6 @@
                                                 <property name="title">Editor</property>
                                             </packing>
                                         </child>
--->
                                         <child>
                                             <object class="GtkBox" id="property-editor">
                                                 <property name="hexpand">true</property>

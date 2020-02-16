@@ -12,6 +12,8 @@ $(BUILT_SOURCES) : $(RESOURCES_FILE) $(shell $(GLIB_COMPILE_RESOURCES) --generat
 
 bbtest_SOURCES = \
     gui/bbapplication.c \
+    gui/bbattributeeditor.c \
+    gui/bbcomponentselector.c \
     gui/bbmainwindow.c \
 	main.c \
 	$(BUILT_SOURCES)

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<interface>
+    <menu id="context">
+        <section>
+            <item>
+                <attribute name="label" translatable="yes">Open</attribute>
+                <attribute name="action">win.open-library-symbol</attribute>
+            </item>
+            <item>
+                <attribute name="label" translatable="yes">Remove</attribute>
+                <attribute name="action">win.remove-library-symbol</attribute>
+            </item>
+            <item>
+                <attribute name="label" translatable="yes">Rename</attribute>
+                <attribute name="action">win.rename-library-symbol</attribute>
+            </item>
+        </section>
+    </menu>
+</interface>

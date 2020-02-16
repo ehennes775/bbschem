@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<interface>
+
+    <object class="GtkListStore" id="list">
+        <columns>
+            <column type="GObject"/>
+            <column type="gchararray"/>
+            <column type="gboolean"/>
+            <column type="gchararray"/>
+            <column type="gboolean"/>
+            <column type="gboolean"/>
+            <column type="gboolean"/>
+            <column type="gboolean"/>
+            <column type="gboolean"/>
+            <column type="gboolean"/>
+            <column type="gboolean"/>
+            <column type="gboolean"/>
+            <column type="gboolean"/>
+        </columns>
+    </object>
+
+    <template class="BbAttributeEditor" parent="GtkBox">
+        <property name="margin">12</property>
+        <!--<property name="missing_text">missing</property>-->
+        <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
+        <child>
+            <object class="GtkBox" id="box">
+                <property name="hexpand">true</property>
+                <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
+                <property name="spacing">12</property>
+                <property name="vexpand">true</property>
+                <child>
+                    <object class="GtkScrolledWindow" id="tree-scrolled">
+                        <property name="hexpand">true</property>
+                        <property name="vexpand">true</property>
+                        <child>
+                            <object class="GtkTreeView" id="tree">
+                                <property name="hexpand">true</property>
+                                <property name="model">list</property>
+                                <property name="vexpand">true</property>
+                                <child>
+                                    <object class="GtkTreeViewColumn" id="column-name">
+                                        <property name="clickable">TRUE</property>
+                                        <property name="resizable">TRUE</property>
+                                        <property name="sort-column-id">1</property>
+                                        <property name="title">Name</property>
+                                        <child>
+                                            <object class="GtkCellRendererText" id="column-name-renderer-name">
+                                                <property name="placeholder-text">new name</property>
+                                            </object>
+                                            <attributes>
+                                                <attribute name="editable">2</attribute>
+                                                <attribute name="text">1</attribute>
+                                            </attributes>
+                                            <cell-packing>
+                                                <property name="expand">true</property>
+                                            </cell-packing>
+                                        </child>
+                                    </object>
+                                </child>
+                                <child>
+                                    <object class="GtkTreeViewColumn" id="column-value">
+                                        <property name="clickable">TRUE</property>
+                                        <property name="expand">TRUE</property>
+                                        <property name="resizable">TRUE</property>
+                                        <property name="sort-column-id">3</property>
+                                        <property name="title">Value</property>
+                                        <child>
+                                            <object class="GtkCellRendererText" id="column-value-renderer-value">
+                                                <property name="placeholder-text">new value</property>
+                                            </object>
+                                            <attributes>
+                                                <attribute name="editable">4</attribute>
+                                                <attribute name="text">3</attribute>
+                                            </attributes>
+                                            <cell-packing>
+                                                <property name="expand">true</property>
+                                            </cell-packing>
+                                        </child>
+                                    </object>
+                                </child>
+                                <child>
+                                    <object class="GtkTreeViewColumn" id="column-visible">
+                                        <property name="clickable">TRUE</property>
+                                        <property name="expand">FALSE</property>
+                                        <property name="resizable">FALSE</property>
+                                        <property name="title">Visible</property>
+                                        <child>
+                                            <object class="GtkCellRendererToggle" id="column-visible-renderer-visible">
+                                            </object>
+                                            <attributes>
+                                                <attribute name="active">5</attribute>
+                                                <attribute name="editable">6</attribute>
+                                            </attributes>
+                                            <cell-packing>
+                                                <property name="expand">false</property>
+                                            </cell-packing>
+                                        </child>
+                                    </object>
+                                </child>
+                                <child>
+                                    <object class="GtkTreeViewColumn" id="column-presentation">
+                                        <property name="clickable">TRUE</property>
+                                        <property name="expand">FALSE</property>
+                                        <property name="resizable">FALSE</property>
+                                        <property name="title">Presentation</property>
+                                        <child>
+                                            <object class="GtkCellRendererToggle" id="column-presentation-renderer-name">
+                                                <property name="radio">TRUE</property>
+                                                <property name="xalign">0.0</property>
+                                            </object>
+                                            <attributes>
+                                                <attribute name="active">7</attribute>
+                                                <attribute name="editable">8</attribute>
+                                            </attributes>
+                                            <cell-packing>
+                                                <property name="expand">false</property>
+                                            </cell-packing>
+                                        </child>
+                                        <child>
+                                            <object class="GtkCellRendererToggle" id="column-presentation-renderer-value">
+                                                <property name="radio">TRUE</property>
+                                                <property name="xalign">0.0</property>
+                                            </object>
+                                            <attributes>
+                                                <attribute name="active">9</attribute>
+                                                <attribute name="editable">10</attribute>
+                                            </attributes>
+                                            <cell-packing>
+                                                <property name="expand">false</property>
+                                            </cell-packing>
+                                        </child>
+                                        <child>
+                                            <object class="GtkCellRendererToggle" id="column-presentation-renderer-name-value">
+                                                <property name="radio">TRUE</property>
+                                                <property name="xalign">0.0</property>
+                                            </object>
+                                            <attributes>
+                                                <attribute name="active">11</attribute>
+                                                <attribute name="editable">12</attribute>
+                                            </attributes>
+                                            <cell-packing>
+                                                <property name="expand">false</property>
+                                            </cell-packing>
+                                        </child>
+                                    </object>
+                                </child>
+                            </object>
+                        </child>
+                    </object>
+                </child>
+                <child>
+                    <object class="GtkButtonBox" id="action-bar">
+                        <property name="hexpand">true</property>
+                        <property name="layout-style">GTK_BUTTONBOX_START</property>
+                        <property name="spacing">6</property>
+                        <property name="vexpand">false</property>
+                        <child>
+                            <object class="GtkButton" id="insert-button">
+                                <property name="label">Insert</property>
+                            </object>
+                        </child>
+                        <child>
+                            <object class="GtkButton" id="detach-button">
+                                <property name="label">Detach</property>
+                            </object>
+                        </child>
+                        <child>
+                            <object class="GtkButton" id="remove-button">
+                                <property name="label">Remove</property>
+                            </object>
+                        </child>
+                    </object>
+                </child>
+            </object>
+        </child>
+    </template>
+</interface>

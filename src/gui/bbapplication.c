@@ -13,6 +13,9 @@ G_DEFINE_TYPE(BbApplication, bb_application, GTK_TYPE_APPLICATION);
 static void
 bb_application_open(GApplication *application, GFile **files, gint n_files, const gchar *hint);
 
+static void
+bb_application_startup(GApplication *application);
+
 
 static void
 bb_application_activate(GApplication *application)
@@ -30,6 +33,7 @@ bb_application_class_init(BbApplicationClass *class)
 {
     G_APPLICATION_CLASS(class)->activate = bb_application_activate;
     G_APPLICATION_CLASS(class)->open = bb_application_open;
+    G_APPLICATION_CLASS(class)->startup = bb_application_startup;
 }
 
 
@@ -64,4 +68,24 @@ bb_application_open(GApplication *application, GFile **files, gint n_files, cons
         gtk_widget_show_all(GTK_WIDGET(window));
         gtk_window_present(GTK_WINDOW(window));
     }
+}
+
+
+static void
+bb_application_startup(GApplication *application)
+{
+    G_APPLICATION_CLASS(bb_application_parent_class)->startup(application);
+
+    GtkCssProvider* provider = gtk_css_provider_new();
+
+    gtk_css_provider_load_from_resource(
+        provider,
+        "/com/github/ehennes775/bbsch/gui/bbapplication.css"
+        );
+
+    gtk_style_context_add_provider_for_screen(
+        gdk_screen_get_default(),
+        GTK_STYLE_PROVIDER(provider),
+        600
+        );
 }
