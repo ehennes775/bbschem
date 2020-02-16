@@ -259,6 +259,51 @@
                                                 <style>
                                                     <class name="panelouter"/>
                                                 </style>
+                                                <child>
+                                                    <object class="BbColorEditor" id="color-editor">
+                                                        <property name="expanded">true</property>
+                                                        <property name="label">Object Properties</property>
+                                                        <style>
+                                                            <class name="propexpander"/>
+                                                        </style>
+                                                    </object>
+                                                </child>
+                                                <child>
+                                                    <object class="BbFillStyleEditor" id="fill-style-editor">
+                                                        <property name="expanded">true</property>
+                                                        <property name="label">Fill Style</property>
+                                                        <style>
+                                                            <class name="propexpander"/>
+                                                        </style>
+                                                    </object>
+                                                </child>
+                                                <child>
+                                                    <object class="BbLineStyleEditor" id="line-style-editor">
+                                                        <property name="expanded">true</property>
+                                                        <property name="label">Line Style</property>
+                                                        <style>
+                                                            <class name="propexpander"/>
+                                                        </style>
+                                                    </object>
+                                                </child>
+                                                <child>
+                                                    <object class="BbTextPropertyEditor" id="text-property-editor">
+                                                        <property name="expanded">true</property>
+                                                        <property name="label">Text Properties</property>
+                                                        <style>
+                                                            <class name="propexpander"/>
+                                                        </style>
+                                                    </object>
+                                                </child>
+                                                <child>
+                                                    <object class="BbPinPropertyEditor" id="pin-property-editor">
+                                                        <property name="expanded">true</property>
+                                                        <property name="label">Pin Properties</property>
+                                                        <style>
+                                                            <class name="propexpander"/>
+                                                        </style>
+                                                    </object>
+                                                </child>
                                             </object>
                                             <packing>
                                                 <property name="name">property-editor</property>

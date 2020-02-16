@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<interface>
+
+    <object class="GtkListStore" id="pin-type-list">
+        <columns>
+            <column type="gchararray"/>
+            <column type="gchararray"/>
+        </columns>
+        <data>
+            <row>
+                <col id="0">Net</col>
+                <col id="1">0</col>
+            </row>
+            <row>
+                <col id="0">Bus</col>
+                <col id="1">1</col>
+            </row>
+        </data>
+    </object>
+
+    <template class="BbPinPropertyEditor" parent="GtkExpander">
+        <child>
+            <object class="GtkGrid" id="grid">
+                <property name="row-homogeneous">true</property>
+                <style>
+                    <class name="propgrid"/>
+                </style>
+                <child>
+                    <object class="GtkLabel" id="pin-type-label">
+                        <property name="label">Type:</property>
+                        <property name="xalign">0.0</property>
+                        <style>
+                            <class name="proplabel"/>
+                        </style>
+                    </object>
+                    <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">0</property>
+                        <property name="width">1</property>
+                        <property name="height">1</property>
+                    </packing>
+                </child>
+                <child>
+                    <object class="GtkComboBox" id="pin-type-combo">
+                        <property name="hexpand">true</property>
+                        <property name="id-column">1</property>
+                        <property name="model">pin-type-list</property>
+                        <style>
+                            <class name="propedit"/>
+                        </style>
+                        <child>
+                            <object class="GtkCellRendererText" id="pin-type-renderer">
+                            </object>
+                            <attributes>
+                                <attribute name="text">0</attribute>
+                            </attributes>
+                            <cell-packing>
+                                <property name="expand">true</property>
+                            </cell-packing>
+                        </child>
+                    </object>
+                    <packing>
+                        <property name="left-attach">1</property>
+                        <property name="top-attach">0</property>
+                        <property name="width">1</property>
+                        <property name="height">1</property>
+                    </packing>
+                </child>
+            </object>
+        </child>
+    </template>
+</interface>

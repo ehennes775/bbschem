@@ -3,8 +3,13 @@
     <gresource prefix="/com/github/ehennes775/bbsch">
         <file>gui/bbapplication.css</file>
         <file>gui/bbattributeeditor.ui</file>
+        <file>gui/bbcoloreditor.ui</file>
         <file>gui/bbcomponentselector.ui</file>
+        <file>gui/bbfillstyleeditor.ui</file>
+        <file>gui/bblinestyleeditor.ui</file>
         <file>gui/bbmainwindow.ui</file>
+        <file>gui/bbpinpropertyeditor.ui</file>
+        <file>gui/bbtextpropertyeditor.ui</file>
         <!--
         <file>gui/aedit/AttributeEditor.ui.xml</file>
         <file>gui/epins/PinEditorDialog.ui.xml</file>

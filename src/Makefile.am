@@ -13,8 +13,13 @@ $(BUILT_SOURCES) : $(RESOURCES_FILE) $(shell $(GLIB_COMPILE_RESOURCES) --generat
 bbtest_SOURCES = \
     gui/bbapplication.c \
     gui/bbattributeeditor.c \
+    gui/bbcoloreditor.c \
     gui/bbcomponentselector.c \
+    gui/bbfillstyleeditor.c \
+    gui/bblinestyleeditor.c \
     gui/bbmainwindow.c \
+    gui/bbpinpropertyeditor.c \
+    gui/bbtextpropertyeditor.c \
 	main.c \
 	$(BUILT_SOURCES)
 

@@ -30,3 +30,30 @@ treeview.view header button
 {
     background: tomato;
 }
+
+
+
+/* Individual property editors (GtkCombo, etc...) */
+.propedit
+{
+    margin: 3px;
+}
+
+.propexpander title
+{
+    font-style: italic;
+    font-weight: bold;
+    margin: 3px;
+}
+
+/* Labels for individual property editor widgets */
+.proplabel
+{
+    margin: 3px;
+}
+
+/* Grids containing the labels and editors */
+.propgrid
+{
+    padding-left: 15px;
+}

@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<interface>
+
+    <object class="GtkListStore" id="color-list">
+        <columns>
+            <column type="gchararray"/>
+            <column type="gchararray"/>
+            <column type="GdkRGBA"/>
+            <column type="gint"/>
+        </columns>
+        <data>
+            <row>
+                <col id="0">Background</col>
+                <col id="1">0</col>
+                <col id="2">Black</col>
+                <col id="3">0</col>
+            </row>
+            <row>
+                <col id="0">Pin</col>
+                <col id="1">1</col>
+                <col id="2">White</col>
+                <col id="3">1</col>
+            </row>
+            <row>
+                <col id="0">Net Endpoint</col>
+                <col id="1">2</col>
+                <col id="2">Red</col>
+                <col id="3">2</col>
+            </row>
+            <row>
+                <col id="0">Graphic</col>
+                <col id="1">3</col>
+                <col id="2">Green</col>
+                <col id="3">3</col>
+            </row>
+            <row>
+                <col id="0">Net</col>
+                <col id="1">4</col>
+                <col id="2">Blue</col>
+                <col id="3">4</col>
+            </row>
+            <row>
+                <col id="0">Attribute</col>
+                <col id="1">5</col>
+                <col id="2">Yellow</col>
+                <col id="3">5</col>
+            </row>
+            <row>
+                <col id="0">Logic Bubble</col>
+                <col id="1">6</col>
+                <col id="2">Cyan</col>
+                <col id="3">6</col>
+            </row>
+            <row>
+                <col id="0">Grid Dots</col>
+                <col id="1">7</col>
+                <col id="2">Black</col>
+                <col id="3">7</col>
+            </row>
+            <row>
+                <col id="0">Detached Attribute</col>
+                <col id="1">8</col>
+                <col id="2">Black</col>
+                <col id="3">8</col>
+            </row>
+            <row>
+                <col id="0">Text</col>
+                <col id="1">9</col>
+                <col id="2">Black</col>
+                <col id="3">9</col>
+            </row>
+            <row>
+                <col id="0">Bus</col>
+                <col id="1">10</col>
+                <col id="2">Black</col>
+                <col id="3">10</col>
+            </row>
+            <row>
+                <col id="0">Select</col>
+                <col id="1">11</col>
+                <col id="2">Black</col>
+                <col id="3">11</col>
+            </row>
+            <row>
+                <col id="0">Bounding Box</col>
+                <col id="1">12</col>
+                <col id="2">Black</col>
+                <col id="3">12</col>
+            </row>
+            <row>
+                <col id="0">Zoom Box</col>
+                <col id="1">13</col>
+                <col id="2">Black</col>
+                <col id="3">13</col>
+            </row>
+            <row>
+                <col id="0">Stroke</col>
+                <col id="1">14</col>
+                <col id="2">Black</col>
+                <col id="3">14</col>
+            </row>
+            <row>
+                <col id="0">Lock</col>
+                <col id="1">15</col>
+                <col id="2">Black</col>
+                <col id="3">15</col>
+            </row>
+            <row>
+                <col id="0">Output</col>
+                <col id="1">16</col>
+                <col id="2">Black</col>
+                <col id="3">16</col>
+            </row>
+            <row>
+                <col id="0">Freestyle 1</col>
+                <col id="1">17</col>
+                <col id="2">Black</col>
+                <col id="3">17</col>
+            </row>
+            <row>
+                <col id="0">Freestyle 2</col>
+                <col id="1">18</col>
+                <col id="2">Black</col>
+                <col id="3">18</col>
+            </row>
+            <row>
+                <col id="0">Freestyle 3</col>
+                <col id="1">19</col>
+                <col id="2">Black</col>
+                <col id="3">19</col>
+            </row>
+            <row>
+                <col id="0">Freestyle 4</col>
+                <col id="1">20</col>
+                <col id="2">Black</col>
+                <col id="3">20</col>
+            </row>
+            <row>
+                <col id="0">Junction</col>
+                <col id="1">21</col>
+                <col id="2">Black</col>
+                <col id="3">21</col>
+            </row>
+            <row>
+                <col id="0">Major Grid</col>
+                <col id="1">22</col>
+                <col id="2">Black</col>
+                <col id="3">22</col>
+            </row>
+            <row>
+                <col id="0">Monor Grid</col>
+                <col id="1">23</col>
+                <col id="2">Black</col>
+                <col id="3">23</col>
+            </row>
+            <row>
+                <col id="0">Grid Axes</col>
+                <col id="1">24</col>
+                <col id="2">Black</col>
+                <col id="3">24</col>
+            </row>
+        </data>
+    </object>
+
+    <template class="BbColorEditor" parent="GtkExpander">
+        <child>
+            <object class="GtkGrid" id="grid">
+                <property name="row-homogeneous">true</property>
+                <style>
+                    <class name="propgrid"/>
+                </style>
+                <child>
+                    <object class="GtkLabel" id="color-label">
+                        <property name="label">Color:</property>
+                        <property name="xalign">0.0</property>
+                        <style>
+                            <class name="proplabel"/>
+                        </style>
+                    </object>
+                    <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">0</property>
+                        <property name="width">1</property>
+                        <property name="height">1</property>
+                    </packing>
+                </child>
+                <child>
+                    <object class="GtkComboBox" id="color-combo">
+                        <property name="hexpand">true</property>
+                        <property name="id-column">1</property>
+                        <property name="model">color-list</property>
+                        <style>
+                            <class name="propedit"/>
+                        </style>
+                        <child>
+                            <object class="GtkCellRendererText" id="color-swatch-renderer">
+                                <property name="width">25</property>
+                            </object>
+                            <attributes>
+                                <attribute name="color">2</attribute>
+                            </attributes>
+                            <cell-packing>
+                                <property name="expand">false</property>
+                            </cell-packing>
+                        </child>
+                        <child>
+                            <object class="GtkCellRendererText" id="color-renderer">
+                            </object>
+                            <attributes>
+                                <attribute name="text">0</attribute>
+                            </attributes>
+                            <cell-packing>
+                                <property name="expand">true</property>
+                            </cell-packing>
+                        </child>
+                    </object>
+                    <packing>
+                        <property name="left-attach">1</property>
+                        <property name="top-attach">0</property>
+                        <property name="width">1</property>
+                        <property name="height">1</property>
+                    </packing>
+                </child>
+            </object>
+        </child>
+    </template>
+</interface>

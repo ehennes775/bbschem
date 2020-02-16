@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<interface>
+
+    <template class="BbTextPropertyEditor" parent="GtkExpander">
+        <child>
+            <object class="GtkGrid" id="grid">
+                <property name="row-homogeneous">true</property>
+                <style>
+                    <class name="propgrid"/>
+                </style>
+                <child>
+                    <object class="GtkLabel" id="color-label">
+                        <property name="label">Color:</property>
+                        <property name="xalign">0.0</property>
+                        <style>
+                            <class name="proplabel"/>
+                        </style>
+                    </object>
+                    <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">0</property>
+                        <property name="width">1</property>
+                        <property name="height">1</property>
+                    </packing>
+                </child>
+                <child>
+                    <object class="GtkComboBox" id="color-combo">
+                        <property name="hexpand">true</property>
+                        <style>
+                            <class name="propedit"/>
+                        </style>
+                    </object>
+                    <packing>
+                        <property name="left-attach">1</property>
+                        <property name="top-attach">0</property>
+                        <property name="width">1</property>
+                        <property name="height">1</property>
+                    </packing>
+                </child>
+                <child>
+                    <object class="GtkLabel" id="size-label">
+                        <property name="label">Size:</property>
+                        <property name="xalign">0.0</property>
+                        <style>
+                            <class name="proplabel"/>
+                        </style>
+                    </object>
+                    <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">1</property>
+                        <property name="width">1</property>
+                        <property name="height">1</property>
+                    </packing>
+                </child>
+                <child>
+                    <object class="GtkComboBox" id="size-combo">
+                        <property name="entry-text-column">0</property>
+                        <property name="has-entry">true</property>
+                        <property name="hexpand">true</property>
+                        <style>
+                            <class name="propedit"/>
+                        </style>
+                        <child internal-child="entry">
+                            <object class="GtkEntry" id="size-entry">
+                            </object>
+                        </child>
+                    </object>
+                    <packing>
+                        <property name="left-attach">1</property>
+                        <property name="top-attach">1</property>
+                        <property name="width">1</property>
+                        <property name="height">1</property>
+                    </packing>
+                </child>
+                <child>
+                    <object class="GtkLabel" id="alignment-label">
+                        <property name="label">Alignment:</property>
+                        <property name="xalign">0.0</property>
+                        <style>
+                            <class name="proplabel"/>
+                        </style>
+                    </object>
+                    <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">2</property>
+                        <property name="width">1</property>
+                        <property name="height">1</property>
+                    </packing>
+                </child>
+                <child>
+                    <object class="GtkComboBox" id="alignment-combo">
+                        <property name="hexpand">true</property>
+                        <style>
+                            <class name="propedit"/>
+                        </style>
+                    </object>
+                    <packing>
+                        <property name="left-attach">1</property>
+                        <property name="top-attach">2</property>
+                        <property name="width">1</property>
+                        <property name="height">1</property>
+                    </packing>
+                </child>
+                <child>
+                    <object class="GtkLabel" id="rotation-label">
+                        <property name="label">Rotation:</property>
+                        <property name="xalign">0.0</property>
+                        <style>
+                            <class name="proplabel"/>
+                        </style>
+                    </object>
+                    <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">3</property>
+                        <property name="width">1</property>
+                        <property name="height">1</property>
+                    </packing>
+                </child>
+                <child>
+                    <object class="GtkComboBox" id="rotation-combo">
+                        <property name="hexpand">true</property>
+                        <style>
+                            <class name="propedit"/>
+                        </style>
+                    </object>
+                    <packing>
+                        <property name="left-attach">1</property>
+                        <property name="top-attach">3</property>
+                        <property name="width">1</property>
+                        <property name="height">1</property>
+                    </packing>
+                </child>
+            </object>
+        </child>
+    </template>
+</interface>

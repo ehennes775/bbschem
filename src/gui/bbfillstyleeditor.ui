@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<interface>
+
+    <object class="GtkListStore" id="fill-type-list">
+        <columns>
+            <column type="gchararray"/>
+            <column type="gchararray"/>
+            <column type="gint"/>
+        </columns>
+        <data>
+            <row>
+                <col id="0">Hollow</col>
+                <col id="1">0</col>
+                <col id="1">0</col>
+            </row>
+            <row>
+                <col id="0">Filled</col>
+                <col id="1">1</col>
+                <col id="2">1</col>
+            </row>
+            <row>
+                <col id="0">Mesh</col>
+                <col id="1">2</col>
+                <col id="2">2</col>
+            </row>
+            <row>
+                <col id="0">Hatch</col>
+                <col id="1">3</col>
+                <col id="2">3</col>
+            </row>
+        </data>
+    </object>
+
+    <object class="GtkListStore" id="width-list">
+        <columns>
+            <column type="gchararray"/>
+        </columns>
+        <data>
+            <row>
+                <col id="0">5</col>
+            </row>
+            <row>
+                <col id="0">10</col>
+            </row>
+            <row>
+                <col id="0">15</col>
+            </row>
+            <row>
+                <col id="0">20</col>
+            </row>
+        </data>
+    </object>
+
+    <object class="GtkListStore" id="angle-list">
+        <columns>
+            <column type="gchararray"/>
+        </columns>
+        <data>
+            <row>
+                <col id="0">0</col>
+            </row>
+            <row>
+                <col id="0">30</col>
+            </row>
+            <row>
+                <col id="0">45</col>
+            </row>
+            <row>
+                <col id="0">60</col>
+            </row>
+            <row>
+                <col id="0">90</col>
+            </row>
+            <row>
+                <col id="0">120</col>
+            </row>
+            <row>
+                <col id="0">135</col>
+            </row>
+            <row>
+                <col id="0">150</col>
+            </row>
+        </data>
+    </object>
+
+    <object class="GtkListStore" id="pitch-list">
+        <columns>
+            <column type="gchararray"/>
+        </columns>
+        <data>
+            <row>
+                <col id="0">50</col>
+            </row>
+            <row>
+                <col id="0">100</col>
+            </row>
+            <row>
+                <col id="0">150</col>
+            </row>
+            <row>
+                <col id="0">200</col>
+            </row>
+        </data>
+    </object>
+
+    <template class="BbFillStyleEditor" parent="GtkExpander">
+        <child>
+            <object class="GtkGrid" id="grid">
+                <property name="row-homogeneous">true</property>
+                <style>
+                    <class name="propgrid"/>
+                </style>
+                <child>
+                    <object class="GtkLabel" id="fill-type-label">
+                        <property name="label">Type:</property>
+                        <property name="xalign">0.0</property>
+                        <style>
+                            <class name="proplabel"/>
+                        </style>
+                    </object>
+                    <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">0</property>
+                        <property name="width">1</property>
+                        <property name="height">1</property>
+                    </packing>
+                </child>
+                <child>
+                    <object class="GtkComboBox" id="fill-type-combo">
+                        <property name="hexpand">true</property>
+                        <property name="id-column">1</property>
+                        <property name="model">fill-type-list</property>
+                        <style>
+                            <class name="propedit"/>
+                        </style>
+                        <child>
+                            <object class="GtkCellRendererText" id="fill-type-renderer">
+                                <property name="width">25</property>
+                            </object>
+                            <attributes>
+                                <attribute name="fill_type">2</attribute>
+                            </attributes>
+                            <cell-packing>
+                                <property name="expand">false</property>
+                            </cell-packing>
+                        </child>
+                        <child>
+                            <object class="GtkCellRendererText" id="line-type-renderer">
+                                <property name="xpad">5</property>
+                            </object>
+                            <attributes>
+                                <attribute name="text">0</attribute>
+                            </attributes>
+                            <cell-packing>
+                                <property name="expand">true</property>
+                            </cell-packing>
+                        </child>
+                    </object>
+                    <packing>
+                        <property name="left-attach">1</property>
+                        <property name="top-attach">0</property>
+                        <property name="width">1</property>
+                        <property name="height">1</property>
+                    </packing>
+                </child>
+                <child>
+                    <object class="GtkLabel" id="line-width-label">
+                        <property name="label">Line Width:</property>
+                        <property name="xalign">0.0</property>
+                        <style>
+                            <class name="proplabel"/>
+                        </style>
+                    </object>
+                    <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">1</property>
+                        <property name="width">1</property>
+                        <property name="height">1</property>
+                    </packing>
+                </child>
+                <child>
+                    <object class="GtkComboBox" id="line-width-combo">
+                        <property name="entry-text-column">0</property>
+                        <property name="has-entry">true</property>
+                        <property name="hexpand">true</property>
+                        <property name="model">width-list</property>
+                        <style>
+                            <class name="propedit"/>
+                        </style>
+                        <child internal-child="entry">
+                            <object class="GtkEntry" id="line-width-entry">
+                            </object>
+                        </child>
+                    </object>
+                    <packing>
+                        <property name="left-attach">1</property>
+                        <property name="top-attach">1</property>
+                        <property name="width">1</property>
+                        <property name="height">1</property>
+                    </packing>
+                </child>
+                <child>
+                    <object class="GtkLabel" id="fill-angle-1-label">
+                        <property name="label">Angle 1:</property>
+                        <property name="xalign">0.0</property>
+                        <style>
+                            <class name="proplabel"/>
+                        </style>
+                    </object>
+                    <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">2</property>
+                        <property name="width">1</property>
+                        <property name="height">1</property>
+                    </packing>
+                </child>
+                <child>
+                    <object class="GtkComboBox" id="fill-angle-1-combo">
+                        <property name="entry-text-column">0</property>
+                        <property name="has-entry">true</property>
+                        <property name="hexpand">true</property>
+                        <property name="model">angle-list</property>
+                        <style>
+                            <class name="propedit"/>
+                        </style>
+                        <child internal-child="entry">
+                            <object class="GtkEntry" id="fill-angle-1-entry">
+                            </object>
+                        </child>
+                    </object>
+                    <packing>
+                        <property name="left-attach">1</property>
+                        <property name="top-attach">2</property>
+                        <property name="width">1</property>
+                        <property name="height">1</property>
+                    </packing>
+                </child>
+                <child>
+                    <object class="GtkLabel" id="fill-pitch-1-label">
+                        <property name="label">Pitch 1:</property>
+                        <property name="xalign">0.0</property>
+                        <style>
+                            <class name="proplabel"/>
+                        </style>
+                    </object>
+                    <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">3</property>
+                        <property name="width">1</property>
+                        <property name="height">1</property>
+                    </packing>
+                </child>
+                <child>
+                    <object class="GtkComboBox" id="fill-pitch-1-combo">
+                        <property name="entry-text-column">0</property>
+                        <property name="has-entry">true</property>
+                        <property name="hexpand">true</property>
+                        <property name="model">pitch-list</property>
+                        <style>
+                            <class name="propedit"/>
+                        </style>
+                        <child internal-child="entry">
+                            <object class="GtkEntry" id="fill-pitch-1-entry">
+                            </object>
+                        </child>
+                    </object>
+                    <packing>
+                        <property name="left-attach">1</property>
+                        <property name="top-attach">3</property>
+                        <property name="width">1</property>
+                        <property name="height">1</property>
+                    </packing>
+                </child>
+                <child>
+                    <object class="GtkLabel" id="fill-angle-2-label">
+                        <property name="label">Angle 2:</property>
+                        <property name="xalign">0.0</property>
+                        <style>
+                            <class name="proplabel"/>
+                        </style>
+                    </object>
+                    <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">4</property>
+                        <property name="width">1</property>
+                        <property name="height">1</property>
+                    </packing>
+                </child>
+                <child>
+                    <object class="GtkComboBox" id="fill-angle-2-combo">
+                        <property name="entry-text-column">0</property>
+                        <property name="has-entry">true</property>
+                        <property name="hexpand">true</property>
+                        <property name="model">angle-list</property>
+                        <style>
+                            <class name="propedit"/>
+                        </style>
+                        <child internal-child="entry">
+                            <object class="GtkEntry" id="fill-angle-2-entry">
+                            </object>
+                        </child>
+                    </object>
+                    <packing>
+                        <property name="left-attach">1</property>
+                        <property name="top-attach">4</property>
+                        <property name="width">1</property>
+                        <property name="height">1</property>
+                    </packing>
+                </child>
+                <child>
+                    <object class="GtkLabel" id="fill-pitch-2-label">
+                        <property name="label">Pitch 2:</property>
+                        <property name="xalign">0.0</property>
+                        <style>
+                            <class name="proplabel"/>
+                        </style>
+                    </object>
+                    <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">5</property>
+                        <property name="width">1</property>
+                        <property name="height">1</property>
+                    </packing>
+                </child>
+                <child>
+                    <object class="GtkComboBox" id="fill-pitch-2-combo">
+                        <property name="entry-text-column">0</property>
+                        <property name="has-entry">true</property>
+                        <property name="hexpand">true</property>
+                        <property name="model">pitch-list</property>
+                        <style>
+                            <class name="propedit"/>
+                        </style>
+                        <child internal-child="entry">
+                            <object class="GtkEntry" id="fill-pitch-2-entry">
+                            </object>
+                        </child>
+                    </object>
+                    <packing>
+                        <property name="left-attach">1</property>
+                        <property name="top-attach">5</property>
+                        <property name="width">1</property>
+                        <property name="height">1</property>
+                    </packing>
+                </child>
+            </object>
+        </child>
+    </template>
+</interface>
