@@ -24,7 +24,7 @@
                     </packing>
                 </child>
                 <child>
-                    <object class="GtkComboBox" id="color-combo">
+                    <object class="BbPropertyComboBox" id="color-combo">
                         <property name="hexpand">true</property>
                         <style>
                             <class name="propedit"/>
@@ -53,7 +53,7 @@
                     </packing>
                 </child>
                 <child>
-                    <object class="GtkComboBox" id="size-combo">
+                    <object class="BbPropertyComboBox" id="size-combo">
                         <property name="entry-text-column">0</property>
                         <property name="has-entry">true</property>
                         <property name="hexpand">true</property>
@@ -88,7 +88,7 @@
                     </packing>
                 </child>
                 <child>
-                    <object class="GtkComboBox" id="alignment-combo">
+                    <object class="BbPropertyComboBox" id="alignment-combo">
                         <property name="hexpand">true</property>
                         <style>
                             <class name="propedit"/>
@@ -117,7 +117,7 @@
                     </packing>
                 </child>
                 <child>
-                    <object class="GtkComboBox" id="rotation-combo">
+                    <object class="BbPropertyComboBox" id="rotation-combo">
                         <property name="hexpand">true</property>
                         <style>
                             <class name="propedit"/>

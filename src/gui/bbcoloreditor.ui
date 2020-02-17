@@ -185,7 +185,7 @@
                     </packing>
                 </child>
                 <child>
-                    <object class="GtkComboBox" id="color-combo">
+                    <object class="BbPropertyComboBox" id="color-combo">
                         <property name="hexpand">true</property>
                         <property name="id-column">1</property>
                         <property name="model">color-list</property>

@@ -126,7 +126,7 @@
                     </packing>
                 </child>
                 <child>
-                    <object class="GtkComboBox" id="fill-type-combo">
+                    <object class="BbPropertyComboBox" id="fill-type-combo">
                         <property name="hexpand">true</property>
                         <property name="id-column">1</property>
                         <property name="model">fill-type-list</property>
@@ -179,7 +179,7 @@
                     </packing>
                 </child>
                 <child>
-                    <object class="GtkComboBox" id="line-width-combo">
+                    <object class="BbPropertyComboBox" id="line-width-combo">
                         <property name="entry-text-column">0</property>
                         <property name="has-entry">true</property>
                         <property name="hexpand">true</property>
@@ -215,7 +215,7 @@
                     </packing>
                 </child>
                 <child>
-                    <object class="GtkComboBox" id="fill-angle-1-combo">
+                    <object class="BbPropertyComboBox" id="fill-angle-1-combo">
                         <property name="entry-text-column">0</property>
                         <property name="has-entry">true</property>
                         <property name="hexpand">true</property>
@@ -251,7 +251,7 @@
                     </packing>
                 </child>
                 <child>
-                    <object class="GtkComboBox" id="fill-pitch-1-combo">
+                    <object class="BbPropertyComboBox" id="fill-pitch-1-combo">
                         <property name="entry-text-column">0</property>
                         <property name="has-entry">true</property>
                         <property name="hexpand">true</property>
@@ -287,7 +287,7 @@
                     </packing>
                 </child>
                 <child>
-                    <object class="GtkComboBox" id="fill-angle-2-combo">
+                    <object class="BbPropertyComboBox" id="fill-angle-2-combo">
                         <property name="entry-text-column">0</property>
                         <property name="has-entry">true</property>
                         <property name="hexpand">true</property>
@@ -323,7 +323,7 @@
                     </packing>
                 </child>
                 <child>
-                    <object class="GtkComboBox" id="fill-pitch-2-combo">
+                    <object class="BbPropertyComboBox" id="fill-pitch-2-combo">
                         <property name="entry-text-column">0</property>
                         <property name="has-entry">true</property>
                         <property name="hexpand">true</property>

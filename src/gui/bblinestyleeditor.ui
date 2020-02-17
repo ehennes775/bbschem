@@ -127,7 +127,7 @@
                     </packing>
                 </child>
                 <child>
-                    <object class="GtkComboBox" id="line-type-combo">
+                    <object class="BbPropertyComboBox" id="line-type-combo">
                         <property name="hexpand">true</property>
                         <property name="id-column">1</property>
                         <property name="model">line-type-list</property>
@@ -168,7 +168,7 @@
                     </packing>
                 </child>
                 <child>
-                    <object class="GtkComboBox" id="width-combo">
+                    <object class="BbPropertyComboBox" id="width-combo">
                         <property name="entry-text-column">0</property>
                         <property name="has-entry">true</property>
                         <property name="hexpand">true</property>
@@ -216,7 +216,7 @@
                     </packing>
                 </child>
                 <child>
-                    <object class="GtkComboBox" id="dash-length-combo">
+                    <object class="BbPropertyComboBox" id="dash-length-combo">
                         <property name="entry-text-column">0</property>
                         <property name="has-entry">true</property>
                         <property name="hexpand">true</property>
@@ -264,7 +264,7 @@
                     </packing>
                 </child>
                 <child>
-                    <object class="GtkComboBox" id="dash-space-combo">
+                    <object class="BbPropertyComboBox" id="dash-space-combo">
                         <property name="entry-text-column">0</property>
                         <property name="has-entry">true</property>
                         <property name="hexpand">true</property>
@@ -312,7 +312,7 @@
                     </packing>
                 </child>
                 <child>
-                    <object class="GtkComboBox" id="cap-type-combo">
+                    <object class="BbPropertyComboBox" id="cap-type-combo">
                         <property name="hexpand">true</property>
                         <property name="id-column">1</property>
                         <property name="model">cap-type-list</property>
