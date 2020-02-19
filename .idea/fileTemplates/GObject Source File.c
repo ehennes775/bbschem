@@ -23,8 +23,36 @@
 #parse("License.h")
 
 #[[#include]]# <gtk/gtk.h>
+#[[#include]]# "$modulePascalCase.toLowerCase()${classPascalCase.toLowerCase()}.h"
 
-#[[#define]]# ${moduleUpperSnake}_TYPE_${classUpperSnake} ${moduleLowerSnake}_${classLowerSnake}_get_type()
-G_DECLARE_FINAL_TYPE(${modulePascalCase}${classPascalCase}, ${moduleLowerSnake}_${classLowerSnake}, ${moduleUpperSnake}, ${classUpperSnake}, ${basePascalCase})
+struct _${modulePascalCase}${classPascalCase}
+{
+    ${basePascalCase} parent;
+};
 
-#[[#endif]]#
+
+G_DEFINE_TYPE(${modulePascalCase}${classPascalCase}, ${moduleLowerSnake}_${classLowerSnake}, ${baseUpperSnake});
+
+
+static void
+${moduleLowerSnake}_${classLowerSnake}_class_init(${modulePascalCase}${classPascalCase}Class *klasse)
+{
+    gtk_widget_class_set_template_from_resource(
+        GTK_WIDGET_CLASS(klasse),
+        "/com/github/ehennes775/bbsch/gui/$modulePascalCase.toLowerCase()${classPascalCase.toLowerCase()}.ui"
+        );
+}
+
+
+static void
+${moduleLowerSnake}_${classLowerSnake}_init(${modulePascalCase}${classPascalCase} *window)
+{
+    gtk_widget_init_template(GTK_WIDGET(window));
+}
+
+
+__attribute__((constructor)) void
+${moduleLowerSnake}_${classLowerSnake}_register()
+{
+    ${moduleLowerSnake}${classLowerSnake}_get_type();
+}
