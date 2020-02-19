@@ -20,6 +20,11 @@
 #[[#include]]# <gtk/gtk.h>
 
 #[[#define]]# ${moduleUpperSnake}_TYPE_${classUpperSnake} ${moduleLowerSnake}_${classLowerSnake}_get_type()
-G_DECLARE_FINAL_TYPE(${modulePascalCase}${classPascalCase}, ${moduleLowerSnake}_${classLowerSnake}, ${moduleUpperSnake}, ${classUpperSnake}, ${basePascalCase})
+G_DECLARE_DERIVABLE_TYPE(${modulePascalCase}${classPascalCase}, ${moduleLowerSnake}_${classLowerSnake}, ${moduleUpperSnake}, ${classUpperSnake}, ${basePascalCase})
+
+struct _${modulePascalCase}${classPascalCase}Class
+{
+    ${basePascalCase}Class parent_class;
+}
 
 #[[#endif]]#
