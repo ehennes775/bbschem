@@ -35,7 +35,7 @@ struct _BbDocumentWindowPrivate
 };
 
 
-G_DEFINE_TYPE_WITH_PRIVATE(BbDocumentWindow, bb_document_window, GTK_TYPE_WIDGET);
+G_DEFINE_TYPE_WITH_PRIVATE(BbDocumentWindow, bb_document_window, GTK_TYPE_BOX);
 
 
 static void
@@ -59,10 +59,23 @@ bb_document_window_class_init(BbDocumentWindowClass *klasse)
     G_OBJECT_CLASS(klasse)->get_property = bb_document_window_get_property;
     G_OBJECT_CLASS(klasse)->set_property = bb_document_window_set_property;
 
-    gtk_widget_class_set_template_from_resource(
-        GTK_WIDGET_CLASS(klasse),
-        "/com/github/ehennes775/bbsch/gui/bbdocumentwindow.ui"
-        );
+    //gtk_widget_class_set_template_from_resource(
+    //    GTK_WIDGET_CLASS(klasse),
+    //    "/com/github/ehennes775/bbsch/gui/bbdocumentwindow.ui"
+    //    );
+
+    g_signal_new(
+        "update",
+        G_OBJECT_CLASS_TYPE(klasse),
+        (GSignalFlags) 0,
+        0,
+        NULL,
+        NULL,
+        g_cclosure_marshal_VOID__VOID,
+        G_TYPE_NONE,
+        0
+    );
+
 }
 
 
@@ -103,7 +116,7 @@ bb_document_window_get_property(GObject *object, guint property_id, GValue *valu
 static void
 bb_document_window_init(BbDocumentWindow *window)
 {
-    gtk_widget_init_template(GTK_WIDGET(window));
+    //gtk_widget_init_template(GTK_WIDGET(window));
 }
 
 

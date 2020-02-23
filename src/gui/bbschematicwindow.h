@@ -1,5 +1,6 @@
-#ifndef __BBDOCUMENTWINDOWTAB__
-#define __BBDOCUMENTWINDOWTAB__
+#ifndef __BBSCHEMATICWINDOW__
+#define __BBSCHEMATICWINDOW__
+
 /*
  * bbsch
  * Copyright (C) 2020 Edward C. Hennessy
@@ -21,10 +22,10 @@
 #include <gtk/gtk.h>
 #include "bbdocumentwindow.h"
 
-#define BB_TYPE_DOCUMENT_WINDOW_TAB bb_document_window_tab_get_type()
-G_DECLARE_FINAL_TYPE(BbDocumentWindowTab, bb_document_window_tab, BB, DOCUMENT_WINDOW_TAB, GtkBox)
+#define BB_TYPE_SCHEMATIC_WINDOW bb_schematic_window_get_type()
+G_DECLARE_FINAL_TYPE(BbSchematicWindow, bb_schematic_window, BB, SCHEMATIC_WINDOW, BbDocumentWindow)
 
-BbDocumentWindowTab*
-bb_document_window_tab_new(BbDocumentWindow *window);
+void
+bb_schematic_window_apply_property(BbSchematicWindow *window, const char *name);
 
 #endif

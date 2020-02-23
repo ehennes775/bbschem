@@ -2,6 +2,7 @@
 #include "bbmainwindow.h"
 #include "bbtextpropertyeditor.h"
 #include "bbpropertycombobox.h"
+#include "bbschematicwindow.h"
 
 
 enum
@@ -27,11 +28,20 @@ bb_text_property_editor_get_property(GObject *object, guint param_id, GValue* va
 static void
 bb_text_property_editor_set_property(GObject *object, guint param_id, const GValue* value, GParamSpec* pspec);
 
+static void
+bb_text_property_editor_update(BbTextPropertyEditor *editor);
 
 static void
 bb_text_property_editor_apply(BbPropertyComboBox *combo, BbTextPropertyEditor *editor)
 {
-    g_message("Apply Text Property");
+    BbSchematicWindow *window = BB_SCHEMATIC_WINDOW(
+        bb_main_window_get_current_document_window(editor->main_window)
+    );
+
+    if (window != NULL)
+    {
+        bb_schematic_window_apply_property(window, "text-properties");
+    }
 }
 
 
@@ -110,6 +120,12 @@ bb_text_property_editor_set_main_window(BbTextPropertyEditor *editor, BbMainWind
 
     if (editor->main_window != NULL)
     {
+        g_signal_handlers_disconnect_by_func(
+            editor->main_window,
+            G_CALLBACK(bb_text_property_editor_update),
+            editor
+            );
+
         g_object_unref(editor->main_window);
     }
 
@@ -118,6 +134,13 @@ bb_text_property_editor_set_main_window(BbTextPropertyEditor *editor, BbMainWind
     if (editor->main_window != NULL)
     {
         g_object_ref(editor->main_window);
+
+        g_signal_connect(
+            editor->main_window,
+            "update",
+            G_CALLBACK(bb_text_property_editor_update),
+            editor
+            );
     }
 }
 
@@ -135,3 +158,11 @@ bb_text_property_editor_set_property(GObject *object, guint param_id, const GVal
             G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
     }
 }
+
+
+static void
+bb_text_property_editor_update(BbTextPropertyEditor *editor)
+{
+    g_message("Update text properties");
+}
+

@@ -5,6 +5,7 @@
         <file>gui/bbattributeeditor.ui</file>
         <file>gui/bbcoloreditor.ui</file>
         <file>gui/bbcomponentselector.ui</file>
+        <file>gui/bbdocumentwindowtab.ui</file>
         <file>gui/bbfillstyleeditor.ui</file>
         <file>gui/bblinestyleeditor.ui</file>
         <file>gui/bbmainwindow.ui</file>

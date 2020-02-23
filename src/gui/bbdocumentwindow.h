@@ -21,11 +21,11 @@
 #include <gtk/gtk.h>
 
 #define BB_TYPE_DOCUMENT_WINDOW bb_document_window_get_type()
-G_DECLARE_DERIVABLE_TYPE(BbDocumentWindow, bb_document_window, BB, DOCUMENT_WINDOW, GtkWidget)
+G_DECLARE_DERIVABLE_TYPE(BbDocumentWindow, bb_document_window, BB, DOCUMENT_WINDOW, GtkBox)
 
 struct _BbDocumentWindowClass
 {
-    GtkWidgetClass parent_class;
+    GtkBoxClass parent_class;
 };
 
 #endif

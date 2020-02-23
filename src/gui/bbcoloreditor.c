@@ -2,7 +2,7 @@
 #include "bbmainwindow.h"
 #include "bbcoloreditor.h"
 #include "bbpropertycombobox.h"
-
+#include "bbschematicwindow.h"
 
 enum
 {
@@ -27,11 +27,21 @@ bb_color_editor_get_property(GObject *object, guint param_id, GValue* value, GPa
 static void
 bb_color_editor_set_property(GObject *object, guint param_id, const GValue* value, GParamSpec* pspec);
 
+static void
+bb_color_editor_update(BbColorEditor *editor);
+
 
 static void
 bb_color_editor_apply(BbPropertyComboBox *combo, BbColorEditor *editor)
 {
-    g_message("Apply Color");
+    BbSchematicWindow *window = BB_SCHEMATIC_WINDOW(
+        bb_main_window_get_current_document_window(editor->main_window)
+        );
+
+    if (window != NULL)
+    {
+        bb_schematic_window_apply_property(window, "object-color");
+    }
 }
 
 
@@ -110,6 +120,12 @@ bb_color_editor_set_main_window(BbColorEditor *editor, BbMainWindow *window)
 
     if (editor->main_window != NULL)
     {
+        g_signal_handlers_disconnect_by_func(
+            editor->main_window,
+            G_CALLBACK(bb_color_editor_update),
+            editor
+            );
+
         g_object_unref(editor->main_window);
     }
 
@@ -118,6 +134,13 @@ bb_color_editor_set_main_window(BbColorEditor *editor, BbMainWindow *window)
     if (editor->main_window != NULL)
     {
         g_object_ref(editor->main_window);
+
+        g_signal_connect(
+            editor->main_window,
+            "update",
+            G_CALLBACK(bb_color_editor_update),
+            editor
+        );
     }
 }
 
@@ -134,4 +157,10 @@ bb_color_editor_set_property(GObject *object, guint param_id, const GValue* valu
         default:
             G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
     }
+}
+
+static void
+bb_color_editor_update(BbColorEditor *editor)
+{
+    g_message("Update color properties");
 }

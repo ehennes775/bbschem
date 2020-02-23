@@ -1,7 +1,8 @@
 #include <gtk/gtk.h>
 #include "bbmainwindow.h"
 #include "bbapplication.h"
-//#include "bbdocumentwindowtab.h"
+#include "bbdocumentwindowtab.h"
+#include "bbschematicwindow.h"
 
 struct _BbMainWindow
 {
@@ -14,11 +15,14 @@ struct _BbMainWindow
 G_DEFINE_TYPE(BbMainWindow, bb_main_window, GTK_TYPE_APPLICATION_WINDOW);
 
 
-void
-bb_main_window_page_added(GtkNotebook *notebook, GtkWidget *child, guint page_num, BbMainWindow *window);
+static void
+bb_main_window_page_added(BbMainWindow *window, GtkWidget *child, guint page_num, GtkNotebook *notebook);
 
-void
-bb_main_window_page_removed(GtkNotebook *notebook, GtkWidget *child, guint page_num, BbMainWindow *window);
+static void
+bb_main_window_page_removed(BbMainWindow *window, GtkWidget *child, guint page_num, GtkNotebook *notebook);
+
+static void
+bb_main_window_update(GtkWidget *child, BbMainWindow *window);
 
 
 void
@@ -31,7 +35,7 @@ bb_main_window_add_page(BbMainWindow *window, BbDocumentWindow *page)
     gtk_notebook_append_page(
         window->document_notebook,
         GTK_WIDGET(page),
-        GTK_WIDGET(bb_document_window_tab_new(page))
+        gtk_label_new("Hello") //GTK_WIDGET(bb_document_window_tab_new(page))
         );
 }
 
@@ -59,6 +63,18 @@ bb_main_window_class_init(BbMainWindowClass *class)
         GTK_WIDGET_CLASS(class),
         bb_main_window_page_removed
         );
+
+    g_signal_new(
+        "update",
+        G_OBJECT_CLASS_TYPE(class),
+        (GSignalFlags) 0,
+        0,
+        NULL,
+        NULL,
+        g_cclosure_marshal_VOID__VOID,
+        G_TYPE_NONE,
+        0
+        );
 }
 
 
@@ -79,6 +95,8 @@ static void
 bb_main_window_init(BbMainWindow *window)
 {
     gtk_widget_init_template(GTK_WIDGET(window));
+
+    bb_main_window_add_page(window, g_object_new(BB_TYPE_SCHEMATIC_WINDOW, NULL));
 }
 
 
@@ -92,28 +110,39 @@ bb_main_window_new(BbApplication *application)
         );
 }
 
-void
-bb_main_window_page_added(GtkNotebook *notebook, GtkWidget *child, guint page_num, BbMainWindow *window)
+static void
+bb_main_window_page_added(BbMainWindow *window, GtkWidget *child, guint page_num, GtkNotebook *notebook)
 {
     g_return_if_fail(child != NULL);
     g_return_if_fail(notebook != NULL);
     g_return_if_fail(window != NULL);
-    g_return_if_fail(window->document_notebook != notebook);
+    g_return_if_fail(window->document_notebook == notebook);
 
-    // connect signals
-
-    g_message("bb_main_window_page_added");
+    g_signal_connect(
+        child,
+        "update",
+        G_CALLBACK(bb_main_window_update),
+        window
+        );
 }
 
-void
-bb_main_window_page_removed(GtkNotebook *notebook, GtkWidget *child, guint page_num, BbMainWindow *window)
+static void
+bb_main_window_page_removed(BbMainWindow *window, GtkWidget *child, guint page_num, GtkNotebook *notebook)
 {
     g_return_if_fail(child != NULL);
     g_return_if_fail(notebook != NULL);
     g_return_if_fail(window != NULL);
-    g_return_if_fail(window->document_notebook != notebook);
+    g_return_if_fail(window->document_notebook == notebook);
 
-    // disconnect signals
+    g_signal_handlers_disconnect_by_func(
+        child,
+        G_CALLBACK(bb_main_window_update),
+        window
+        );
+}
 
-    g_message("bb_main_window_page_removed");
+static void
+bb_main_window_update(GtkWidget* child, BbMainWindow *window)
+{
+    g_signal_emit_by_name(window, "update");
 }

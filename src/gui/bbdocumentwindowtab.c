@@ -30,7 +30,7 @@ struct _BbDocumentWindowTab
 };
 
 
-G_DEFINE_TYPE(BbDocumentWindowTab, bb_document_window_tab, GTK_TYPE_WIDGET);
+G_DEFINE_TYPE(BbDocumentWindowTab, bb_document_window_tab, GTK_TYPE_BOX);
 
 
 static void
