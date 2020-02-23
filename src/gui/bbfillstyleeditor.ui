@@ -130,6 +130,7 @@
                         <property name="hexpand">true</property>
                         <property name="id-column">1</property>
                         <property name="model">fill-type-list</property>
+                        <signal name="apply" handler="bb_fill_style_editor_apply"/>
                         <style>
                             <class name="propedit"/>
                         </style>
@@ -184,6 +185,7 @@
                         <property name="has-entry">true</property>
                         <property name="hexpand">true</property>
                         <property name="model">width-list</property>
+                        <signal name="apply" handler="bb_fill_style_editor_apply"/>
                         <style>
                             <class name="propedit"/>
                         </style>
@@ -220,6 +222,7 @@
                         <property name="has-entry">true</property>
                         <property name="hexpand">true</property>
                         <property name="model">angle-list</property>
+                        <signal name="apply" handler="bb_fill_style_editor_apply"/>
                         <style>
                             <class name="propedit"/>
                         </style>
@@ -256,6 +259,7 @@
                         <property name="has-entry">true</property>
                         <property name="hexpand">true</property>
                         <property name="model">pitch-list</property>
+                        <signal name="apply" handler="bb_fill_style_editor_apply"/>
                         <style>
                             <class name="propedit"/>
                         </style>
@@ -292,6 +296,7 @@
                         <property name="has-entry">true</property>
                         <property name="hexpand">true</property>
                         <property name="model">angle-list</property>
+                        <signal name="apply" handler="bb_fill_style_editor_apply"/>
                         <style>
                             <class name="propedit"/>
                         </style>
@@ -328,6 +333,7 @@
                         <property name="has-entry">true</property>
                         <property name="hexpand">true</property>
                         <property name="model">pitch-list</property>
+                        <signal name="apply" handler="bb_fill_style_editor_apply"/>
                         <style>
                             <class name="propedit"/>
                         </style>

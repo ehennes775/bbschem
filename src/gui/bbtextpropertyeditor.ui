@@ -26,6 +26,7 @@
                 <child>
                     <object class="BbPropertyComboBox" id="color-combo">
                         <property name="hexpand">true</property>
+                        <signal name="apply" handler="bb_text_property_editor_apply"/>
                         <style>
                             <class name="propedit"/>
                         </style>
@@ -57,6 +58,7 @@
                         <property name="entry-text-column">0</property>
                         <property name="has-entry">true</property>
                         <property name="hexpand">true</property>
+                        <signal name="apply" handler="bb_text_property_editor_apply"/>
                         <style>
                             <class name="propedit"/>
                         </style>
@@ -90,6 +92,7 @@
                 <child>
                     <object class="BbPropertyComboBox" id="alignment-combo">
                         <property name="hexpand">true</property>
+                        <signal name="apply" handler="bb_text_property_editor_apply"/>
                         <style>
                             <class name="propedit"/>
                         </style>
@@ -119,6 +122,7 @@
                 <child>
                     <object class="BbPropertyComboBox" id="rotation-combo">
                         <property name="hexpand">true</property>
+                        <signal name="apply" handler="bb_text_property_editor_apply"/>
                         <style>
                             <class name="propedit"/>
                         </style>

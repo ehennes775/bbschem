@@ -189,6 +189,7 @@
                         <property name="hexpand">true</property>
                         <property name="id-column">1</property>
                         <property name="model">color-list</property>
+                        <signal name="apply" handler="bb_color_editor_apply"/>
                         <style>
                             <class name="propedit"/>
                         </style>

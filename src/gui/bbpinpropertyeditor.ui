@@ -45,6 +45,7 @@
                         <property name="hexpand">true</property>
                         <property name="id-column">1</property>
                         <property name="model">pin-type-list</property>
+                        <signal name="apply" handler="bb_pin_property_editor_apply"/>
                         <style>
                             <class name="propedit"/>
                         </style>

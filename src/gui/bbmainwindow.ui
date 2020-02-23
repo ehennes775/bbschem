@@ -263,6 +263,7 @@
                                                     <object class="BbColorEditor" id="color-editor">
                                                         <property name="expanded">true</property>
                                                         <property name="label">Object Properties</property>
+                                                        <property name="main-window">BbMainWindow</property>
                                                         <style>
                                                             <class name="propexpander"/>
                                                         </style>
@@ -272,6 +273,7 @@
                                                     <object class="BbFillStyleEditor" id="fill-style-editor">
                                                         <property name="expanded">true</property>
                                                         <property name="label">Fill Style</property>
+                                                        <property name="main-window">BbMainWindow</property>
                                                         <style>
                                                             <class name="propexpander"/>
                                                         </style>
@@ -281,6 +283,7 @@
                                                     <object class="BbLineStyleEditor" id="line-style-editor">
                                                         <property name="expanded">true</property>
                                                         <property name="label">Line Style</property>
+                                                        <property name="main-window">BbMainWindow</property>
                                                         <style>
                                                             <class name="propexpander"/>
                                                         </style>
@@ -290,6 +293,7 @@
                                                     <object class="BbTextPropertyEditor" id="text-property-editor">
                                                         <property name="expanded">true</property>
                                                         <property name="label">Text Properties</property>
+                                                        <property name="main-window">BbMainWindow</property>
                                                         <style>
                                                             <class name="propexpander"/>
                                                         </style>
@@ -299,6 +303,7 @@
                                                     <object class="BbPinPropertyEditor" id="pin-property-editor">
                                                         <property name="expanded">true</property>
                                                         <property name="label">Pin Properties</property>
+                                                        <property name="main-window">BbMainWindow</property>
                                                         <style>
                                                             <class name="propexpander"/>
                                                         </style>
