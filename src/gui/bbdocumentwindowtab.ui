@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+    <template class="BbDocumentWindowTab">
+        <child>
+            <object class="GtkImage" id="modified-label">
+                <property name="icon-name">dialog-warning</property>
+                <property name="no-show-all">true</property>
+            </object>
+        </child>
+        <child>
+            <object class="GtkLabel" id="changed-label">
+                <property name="label">*</property>
+                <property name="no-show-all">true</property>
+            </object>
+        </child>
+        <child>
+            <object class="GtkLabel" id="name-label">
+            </object>
+        </child>
+    </template>
+</interface>

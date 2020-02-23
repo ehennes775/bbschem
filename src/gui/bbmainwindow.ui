@@ -324,10 +324,12 @@
                             </packing>
                         </child>
                         <child>
-                            <object class="GtkNotebook" id="notebook-document-window">
+                            <object class="GtkNotebook" id="document_notebook">
                                 <property name="hexpand">true</property>
                                 <property name="scrollable">true</property>
                                 <property name="vexpand">true</property>
+                                <signal name="page-added" handler="bb_main_window_page_added"/>
+                                <signal name="page-removed" handler="bb_main_window_page_removed"/>
                             </object>
                             <packing>
                                 <property name="resize">true</property>
