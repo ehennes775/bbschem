@@ -31,7 +31,7 @@ bb_line_style_editor_set_property(GObject *object, guint param_id, const GValue*
 static void
 bb_line_style_editor_apply(BbPropertyComboBox *combo, BbLineStyleEditor *editor)
 {
-    g_message("Apply Line Style\n");
+    g_message("Apply Line Style");
 }
 
 

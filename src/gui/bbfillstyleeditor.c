@@ -31,7 +31,7 @@ bb_fill_style_editor_set_property(GObject *object, guint param_id, const GValue*
 static void
 bb_fill_style_editor_apply(BbPropertyComboBox *combo, BbFillStyleEditor *editor)
 {
-    g_message("Apply Fill Style\n");
+    g_message("Apply Fill Style");
 }
 
 

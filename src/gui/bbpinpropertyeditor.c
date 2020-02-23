@@ -31,7 +31,7 @@ bb_pin_property_editor_set_property(GObject *object, guint param_id, const GValu
 static void
 bb_pin_property_editor_apply(BbPropertyComboBox *combo, BbPinPropertyEditor *editor)
 {
-    g_message("Apply Pin Property\n");
+    g_message("Apply Pin Property");
 }
 
 

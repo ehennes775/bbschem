@@ -31,7 +31,7 @@ bb_text_property_editor_set_property(GObject *object, guint param_id, const GVal
 static void
 bb_text_property_editor_apply(BbPropertyComboBox *combo, BbTextPropertyEditor *editor)
 {
-    g_message("Apply Text Property\n");
+    g_message("Apply Text Property");
 }
 
 
