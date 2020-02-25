@@ -154,6 +154,13 @@ bb_document_window_get_property(GObject *object, guint property_id, GValue *valu
 }
 
 
+const char*
+bb_document_window_get_tab(BbDocumentWindow *window)
+{
+    return "file.sch";
+}
+
+
 static void
 bb_document_window_init(BbDocumentWindow *window)
 {

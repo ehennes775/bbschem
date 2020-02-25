@@ -24,7 +24,14 @@
 #define BB_TYPE_DOCUMENT_WINDOW_TAB bb_document_window_tab_get_type()
 G_DECLARE_FINAL_TYPE(BbDocumentWindowTab, bb_document_window_tab, BB, DOCUMENT_WINDOW_TAB, GtkBox)
 
+
+BbDocumentWindow*
+bb_document_window_tab_get_document_window(BbDocumentWindowTab *tab);
+
 BbDocumentWindowTab*
 bb_document_window_tab_new(BbDocumentWindow *window);
+
+void
+bb_document_window_tab_set_document_window(BbDocumentWindowTab *tab, BbDocumentWindow *window);
 
 #endif

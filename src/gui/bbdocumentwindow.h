@@ -35,6 +35,9 @@ struct _BbDocumentWindowClass
 void
 bb_document_window_attach_actions(BbDocumentWindow *window, GActionMap *map);
 
+const char*
+bb_document_window_get_tab(BbDocumentWindow *window);
+
 void
 bb_document_window_detach_actions(BbDocumentWindow *window, GActionMap *map);
 

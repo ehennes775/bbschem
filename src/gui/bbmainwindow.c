@@ -59,7 +59,7 @@ bb_main_window_add_page(BbMainWindow *window, BbDocumentWindow *page)
     gtk_notebook_append_page(
         window->document_notebook,
         GTK_WIDGET(page),
-        gtk_label_new("Hello") //GTK_WIDGET(bb_document_window_tab_new(page))
+        GTK_WIDGET(bb_document_window_tab_new(page))
         );
 }
 
@@ -138,6 +138,7 @@ bb_main_window_init(BbMainWindow *window)
 {
     gtk_widget_init_template(GTK_WIDGET(window));
 
+    bb_main_window_add_page(window, g_object_new(BB_TYPE_SCHEMATIC_WINDOW, NULL));
     bb_main_window_add_page(window, g_object_new(BB_TYPE_SCHEMATIC_WINDOW, NULL));
 }
 
