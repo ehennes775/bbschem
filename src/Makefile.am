@@ -23,6 +23,7 @@ bbtest_SOURCES = \
     gui/bbpinpropertyeditor.c \
     gui/bbpropertycombobox.c \
     gui/bbschematicwindow.c \
+    gui/bbschematicwindowinner.c \
     gui/bbtextpropertyeditor.c \
 	main.c \
 	$(BUILT_SOURCES)

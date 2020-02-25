@@ -95,10 +95,10 @@ bb_schematic_window_class_init(BbSchematicWindowClass *klasse)
     BB_DOCUMENT_WINDOW_CLASS(klasse)->attach_actions = bb_schematic_window_attach_actions;
     BB_DOCUMENT_WINDOW_CLASS(klasse)->detach_actions = bb_schematic_window_detach_actions;
 
-    //gtk_widget_class_set_template_from_resource(
-    //    GTK_WIDGET_CLASS(klasse),
-    //    "/com/github/ehennes775/bbsch/gui/bbschematicwindow.ui"
-    //    );
+    gtk_widget_class_set_template_from_resource(
+        GTK_WIDGET_CLASS(klasse),
+        "/com/github/ehennes775/bbsch/gui/bbschematicwindow.ui"
+        );
 }
 
 
@@ -152,7 +152,7 @@ bb_schematic_window_get_property(GObject *object, guint property_id, GValue *val
 static void
 bb_schematic_window_init(BbSchematicWindow *window)
 {
-    //gtk_widget_init_template(GTK_WIDGET(window));
+    gtk_widget_init_template(GTK_WIDGET(window));
 
     window->delete_action = g_simple_action_new("edit-delete", NULL);
     window->copy_action = g_simple_action_new("edit-copy", NULL);

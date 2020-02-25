@@ -11,6 +11,7 @@
         <file>gui/bbmainwindow.ui</file>
         <file>gui/bbmenus.ui</file>
         <file>gui/bbpinpropertyeditor.ui</file>
+        <file>gui/bbschematicwindow.ui</file>
         <file>gui/bbtextpropertyeditor.ui</file>
         <!--
         <file>gui/aedit/AttributeEditor.ui.xml</file>
