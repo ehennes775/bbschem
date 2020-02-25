@@ -34,9 +34,14 @@ struct _BbDocumentWindowPrivate
 {
 };
 
-
 G_DEFINE_TYPE_WITH_PRIVATE(BbDocumentWindow, bb_document_window, GTK_TYPE_BOX);
 
+
+static void
+bb_document_window_attach_actions_missing(BbDocumentWindow *window, GActionMap *map);
+
+static void
+bb_document_window_detach_actions_missing(BbDocumentWindow *window, GActionMap *map);
 
 static void
 bb_document_window_dispose(GObject *object);
@@ -51,6 +56,25 @@ static void
 bb_document_window_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
 
 
+void
+bb_document_window_attach_actions(BbDocumentWindow *window, GActionMap *map)
+{
+    BbDocumentWindowClass *klasse = BB_DOCUMENT_WINDOW_GET_CLASS(window);
+
+    g_return_if_fail(klasse != NULL);
+    g_return_if_fail(klasse->attach_actions != NULL);
+
+    klasse->attach_actions(window, map);
+}
+
+
+static void
+bb_document_window_attach_actions_missing(BbDocumentWindow *window, GActionMap *map)
+{
+    g_error("bb_document_window_attach_actions() not overridden");
+}
+
+
 static void
 bb_document_window_class_init(BbDocumentWindowClass *klasse)
 {
@@ -59,10 +83,8 @@ bb_document_window_class_init(BbDocumentWindowClass *klasse)
     G_OBJECT_CLASS(klasse)->get_property = bb_document_window_get_property;
     G_OBJECT_CLASS(klasse)->set_property = bb_document_window_set_property;
 
-    //gtk_widget_class_set_template_from_resource(
-    //    GTK_WIDGET_CLASS(klasse),
-    //    "/com/github/ehennes775/bbsch/gui/bbdocumentwindow.ui"
-    //    );
+    BB_DOCUMENT_WINDOW_CLASS(klasse)->attach_actions = bb_document_window_attach_actions_missing;
+    BB_DOCUMENT_WINDOW_CLASS(klasse)->detach_actions = bb_document_window_detach_actions_missing;
 
     g_signal_new(
         "update",
@@ -76,6 +98,25 @@ bb_document_window_class_init(BbDocumentWindowClass *klasse)
         0
     );
 
+}
+
+
+void
+bb_document_window_detach_actions(BbDocumentWindow *window, GActionMap *map)
+{
+    BbDocumentWindowClass *klasse = BB_DOCUMENT_WINDOW_GET_CLASS(window);
+
+    g_return_if_fail(klasse != NULL);
+    g_return_if_fail(klasse->detach_actions != NULL);
+
+    klasse->detach_actions(window, map);
+}
+
+
+static void
+bb_document_window_detach_actions_missing(BbDocumentWindow *window, GActionMap *map)
+{
+    g_error("bb_document_window_detach_actions() not overridden");
 }
 
 
@@ -116,7 +157,6 @@ bb_document_window_get_property(GObject *object, guint property_id, GValue *valu
 static void
 bb_document_window_init(BbDocumentWindow *window)
 {
-    //gtk_widget_init_template(GTK_WIDGET(window));
 }
 
 

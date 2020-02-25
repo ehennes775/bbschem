@@ -26,6 +26,16 @@ G_DECLARE_DERIVABLE_TYPE(BbDocumentWindow, bb_document_window, BB, DOCUMENT_WIND
 struct _BbDocumentWindowClass
 {
     GtkBoxClass parent_class;
+
+    void (*attach_actions)(BbDocumentWindow *window, GActionMap *map);
+    void (*detach_actions)(BbDocumentWindow *window, GActionMap *map);
 };
+
+
+void
+bb_document_window_attach_actions(BbDocumentWindow *window, GActionMap *map);
+
+void
+bb_document_window_detach_actions(BbDocumentWindow *window, GActionMap *map);
 
 #endif
