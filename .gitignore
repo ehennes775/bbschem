@@ -106,6 +106,7 @@ config.h
 bbsch.resource.c
 bbtest
 .deps
+.dirstamp
 
 # Backup files
 *~
