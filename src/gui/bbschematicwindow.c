@@ -32,6 +32,11 @@ enum
 struct _BbSchematicWindow
 {
     BbDocumentWindow parent;
+
+    GSimpleAction *delete_action;
+    GSimpleAction *copy_action;
+    GSimpleAction *cut_action;
+    GSimpleAction *paste_action;
 };
 
 
@@ -69,7 +74,13 @@ bb_schematic_window_apply_property(BbSchematicWindow *window, const char *name)
 static void
 bb_schematic_window_attach_actions(BbDocumentWindow *window, GActionMap *map)
 {
-    g_message("bb_schematic_window_attach_actions()");
+    BbSchematicWindow *x = BB_SCHEMATIC_WINDOW(window);
+    g_return_if_fail(x != NULL);
+
+    g_action_map_add_action(map, G_ACTION(x->delete_action));
+    g_action_map_add_action(map, G_ACTION(x->copy_action));
+    g_action_map_add_action(map, G_ACTION(x->cut_action));
+    g_action_map_add_action(map, G_ACTION(x->paste_action));
 }
 
 
@@ -94,7 +105,13 @@ bb_schematic_window_class_init(BbSchematicWindowClass *klasse)
 static void
 bb_schematic_window_detach_actions(BbDocumentWindow *window, GActionMap *map)
 {
-    g_message("bb_schematic_window_detach_actions()");
+    BbSchematicWindow *w = BB_SCHEMATIC_WINDOW(window);
+    g_return_if_fail(w != NULL);
+
+    g_action_map_remove_action(map, g_action_get_name(G_ACTION(w->delete_action)));
+    g_action_map_remove_action(map, g_action_get_name(G_ACTION(w->copy_action)));
+    g_action_map_remove_action(map, g_action_get_name(G_ACTION(w->cut_action)));
+    g_action_map_remove_action(map, g_action_get_name(G_ACTION(w->paste_action)));
 }
 
 
@@ -136,6 +153,11 @@ static void
 bb_schematic_window_init(BbSchematicWindow *window)
 {
     //gtk_widget_init_template(GTK_WIDGET(window));
+
+    window->delete_action = g_simple_action_new("edit-delete", NULL);
+    window->copy_action = g_simple_action_new("edit-copy", NULL);
+    window->cut_action = g_simple_action_new("edit-cut", NULL);
+    window->paste_action = g_simple_action_new("edit-paste", NULL);
 }
 
 
