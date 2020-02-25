@@ -1,6 +1,5 @@
 #ifndef __BBSCHEMATICWINDOW__
 #define __BBSCHEMATICWINDOW__
-
 /*
  * bbsch
  * Copyright (C) 2020 Edward C. Hennessy
