@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<interface>
+    <menu id="menubar">
+        <section>
+            <submenu>
+                <attribute name="label" translatable="yes">_File</attribute>
+                <section>
+                    <submenu>
+                        <attribute name="label" translatable="yes">New</attribute>
+                        <section>
+                            <item>
+                                <attribute name="label" translatable="yes">Project...</attribute>
+                                <attribute name="action">win.project-new</attribute>
+                            </item>
+                            <submenu>
+                                <attribute name="label" translatable="yes">File</attribute>
+                                <section>
+                                    <item>
+                                        <attribute name="label" translatable="yes">Schematic</attribute>
+                                        <attribute name="action">win.file-new</attribute>
+                                        <attribute name="target">sch</attribute>
+                                    </item>
+                                    <item>
+                                        <attribute name="label" translatable="yes">Symbol</attribute>
+                                        <attribute name="action">win.file-new</attribute>
+                                        <attribute name="target">sym</attribute>
+                                    </item>
+                                </section>
+                            </submenu>
+                        </section>
+                    </submenu>
+                    <submenu>
+                        <attribute name="label" translatable="yes">Open</attribute>
+                        <section>
+                            <item>
+                                <attribute name="label" translatable="yes">Project...</attribute>
+                                <attribute name="action">win.project-open</attribute>
+                            </item>
+                            <item>
+                                <attribute name="label" translatable="yes">File...</attribute>
+                                <attribute name="action">win.file-open</attribute>
+                            </item>
+                        </section>
+                    </submenu>
+                </section>
+                <section>
+                    <item>
+                        <attribute name="label" translatable="yes">Save Project</attribute>
+                        <attribute name="action">win.project-save</attribute>
+                    </item>
+                    <item>
+                        <attribute name="label" translatable="yes">Save</attribute>
+                        <attribute name="action">win.file-save</attribute>
+                    </item>
+                    <item>
+                        <attribute name="label" translatable="yes">Save As...</attribute>
+                        <attribute name="action">win.file-save-as</attribute>
+                    </item>
+                    <item>
+                        <attribute name="label" translatable="yes">Save All</attribute>
+                        <attribute name="action">win.file-save-all</attribute>
+                    </item>
+                    <item>
+                        <attribute name="label" translatable="yes">Reload</attribute>
+                        <attribute name="action">win.file-reload</attribute>
+                    </item>
+                </section>
+                <section>
+                    <submenu>
+                        <attribute name="label" translatable="yes">Export</attribute>
+                        <section>
+                            <item>
+                                <attribute name="label" translatable="yes">Bill of Material...</attribute>
+                                <attribute name="action">win.export-bill-of-material</attribute>
+                            </item>
+                            <item>
+                                <attribute name="label" translatable="yes">Netlist...</attribute>
+                                <attribute name="action">win.export-netlist</attribute>
+                            </item>
+                            <item>
+                                <attribute name="label" translatable="yes">Schematics...</attribute>
+                                <attribute name="action">win.export-schematics</attribute>
+                            </item>
+                        </section>
+                    </submenu>
+                </section>
+                <section>
+                    <item>
+                        <attribute name="label" translatable="yes">Quit</attribute>
+                    </item>
+                </section>
+            </submenu>
+        </section>
+        <section>
+            <submenu>
+                <attribute name="label" translatable="yes">Edit</attribute>
+                <section>
+                    <item>
+                        <attribute name="label" translatable="yes">Undo</attribute>
+                        <attribute name="action">win.edit-undo</attribute>
+                    </item>
+                    <item>
+                        <attribute name="label" translatable="yes">Redo</attribute>
+                        <attribute name="action">win.edit-redo</attribute>
+                    </item>
+                </section>
+                <section>
+                    <item>
+                        <attribute name="label" translatable="yes">Cut</attribute>
+                        <attribute name="action">win.edit-cut</attribute>
+                    </item>
+                    <item>
+                        <attribute name="label" translatable="yes">Copy</attribute>
+                        <attribute name="action">win.edit-copy</attribute>
+                    </item>
+                    <item>
+                        <attribute name="label" translatable="yes">Paste</attribute>
+                        <attribute name="action">win.edit-paste</attribute>
+                    </item>
+                    <item>
+                        <attribute name="label" translatable="yes">Delete</attribute>
+                        <attribute name="action">win.edit-delete</attribute>
+                    </item>
+                </section>
+                <section>
+                    <item>
+                        <attribute name="label" translatable="yes">Select All</attribute>
+                        <attribute name="action">win.edit-select-all</attribute>
+                    </item>
+                </section>
+                <section>
+                    <item>
+                        <attribute name="label" translatable="yes">Item...</attribute>
+                        <attribute name="action">win.edit-item</attribute>
+                    </item>
+                    <item>
+                        <attribute name="label" translatable="yes">Pins...</attribute>
+                        <attribute name="action">win.edit-pins</attribute>
+                    </item>
+                </section>
+            </submenu>
+        </section>
+        <section>
+            <submenu>
+                <attribute name="label" translatable="yes">_View</attribute>
+                <section>
+                    <item>
+                        <attribute name="label" translatable="yes">Zoom In</attribute>
+                        <attribute name="action">win.zoom-in</attribute>
+                    </item>
+                    <item>
+                        <attribute name="label" translatable="yes">Zoom Out</attribute>
+                        <attribute name="action">win.zoom-out</attribute>
+                    </item>
+                    <item>
+                        <attribute name="label" translatable="yes">Zoom Extents</attribute>
+                        <attribute name="action">win.zoom-extents</attribute>
+                    </item>
+                </section>
+                <section>
+                    <item>
+                        <!-- The original gschem label: Show/Hide Inv Text -->
+                        <!-- The original was in the edit menu and not the view menu -->
+                        <attribute name="label" translatable="yes">Show/Hide Invisible Text</attribute>
+                        <attribute name="action">win.view-reveal</attribute>
+                    </item>
+                </section>
+                <section>
+                    <item>
+                        <attribute name="label" translatable="yes">Scale Grid Down</attribute>
+                        <attribute name="action">win.scale-down</attribute>
+                    </item>
+                    <item>
+                        <attribute name="label" translatable="yes">Scale Grid Up</attribute>
+                        <attribute name="action">win.scale-up</attribute>
+                    </item>
+                </section>
+            </submenu>
+        </section>
+        <section>
+            <submenu>
+                <attribute name="label" translatable="yes">Draw</attribute>
+                <section>
+                    <item>
+                        <attribute name="label" translatable="yes">Select</attribute>
+                        <attribute name="action">win.select-tool</attribute>
+                        <attribute name="target">select</attribute>
+                    </item>
+                </section>
+                <section>
+                    <item>
+                        <attribute name="label" translatable="yes">Attribute</attribute>
+                        <attribute name="action">win.select-tool</attribute>
+                        <attribute name="target">attribute</attribute>
+                    </item>
+                    <item>
+                        <attribute name="label" translatable="yes">Text</attribute>
+                        <attribute name="action">win.select-tool</attribute>
+                        <attribute name="target">text</attribute>
+                    </item>
+                </section>
+                <section>
+                    <item>
+                        <attribute name="label" translatable="yes">Arc</attribute>
+                        <attribute name="action">win.select-tool</attribute>
+                        <attribute name="target">arc</attribute>
+                    </item>
+                    <item>
+                        <attribute name="label" translatable="yes">Box</attribute>
+                        <attribute name="action">win.select-tool</attribute>
+                        <attribute name="target">box</attribute>
+                    </item>
+                    <item>
+                        <attribute name="label" translatable="yes">Circle</attribute>
+                        <attribute name="action">win.select-tool</attribute>
+                        <attribute name="target">circle</attribute>
+                    </item>
+                    <item>
+                        <attribute name="label" translatable="yes">Line</attribute>
+                        <attribute name="action">win.select-tool</attribute>
+                        <attribute name="target">line</attribute>
+                    </item>
+                    <item>
+                        <attribute name="label" translatable="yes">Path</attribute>
+                        <attribute name="action">win.select-tool</attribute>
+                        <attribute name="target">path</attribute>
+                    </item>
+                </section>
+                <section>
+                    <item>
+                        <attribute name="label" translatable="yes">Bus</attribute>
+                        <attribute name="action">win.select-tool</attribute>
+                        <attribute name="target">bus</attribute>
+                    </item>
+                    <item>
+                        <attribute name="label" translatable="yes">Net</attribute>
+                        <attribute name="action">win.select-tool</attribute>
+                        <attribute name="target">net</attribute>
+                    </item>
+                    <item>
+                        <attribute name="label" translatable="yes">Pin</attribute>
+                        <attribute name="action">win.select-tool</attribute>
+                        <attribute name="target">pin</attribute>
+                    </item>
+                </section>
+                <section>
+                    <item>
+                        <attribute name="label" translatable="yes">Zoom</attribute>
+                        <attribute name="action">win.select-tool</attribute>
+                        <attribute name="target">zoom</attribute>
+                    </item>
+                </section>
+            </submenu>
+        </section>
+        <section>
+            <submenu>
+                <attribute name="label" translatable="yes">_Project</attribute>
+                <section>
+                    <item>
+                        <attribute name="label" translatable="yes">Open Files</attribute>
+                        <attribute name="action">win.project-open-files</attribute>
+                    </item>
+                </section>
+                <section>
+                    <item>
+                        <attribute name="label" translatable="yes">Add Files...</attribute>
+                        <attribute name="action">win.project-add-files</attribute>
+                    </item>
+                    <item>
+                        <attribute name="label" translatable="yes">Remove Files</attribute>
+                        <attribute name="action">win.project-remove-files</attribute>
+                    </item>
+                </section>
+                <section>
+                    <item>
+                        <attribute name="label" translatable="yes">Rename</attribute>
+                        <attribute name="action">win.project-rename-item</attribute>
+                    </item>
+                </section>
+            </submenu>
+        </section>
+        <section>
+            <submenu>
+                <attribute name="label" translatable="yes">_Options</attribute>
+                <section>
+                    <item>
+                        <attribute name="label" translatable="yes">No Grid</attribute>
+                        <attribute name="action">win.select-grid</attribute>
+                        <attribute name="target">none</attribute>
+                    </item>
+                    <item>
+                        <attribute name="label" translatable="yes">Mesh Grid</attribute>
+                        <attribute name="action">win.select-grid</attribute>
+                        <attribute name="target">mesh</attribute>
+                    </item>
+                </section>
+            </submenu>
+        </section>
+    </menu>
+</interface>

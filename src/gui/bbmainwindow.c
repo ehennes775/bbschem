@@ -12,7 +12,6 @@ struct _BbMainWindow
     GtkNotebook *document_notebook;
 };
 
-
 G_DEFINE_TYPE(BbMainWindow, bb_main_window, GTK_TYPE_APPLICATION_WINDOW);
 
 
@@ -95,9 +94,11 @@ bb_main_window_class_init(BbMainWindowClass *class)
 static void
 bb_main_window_dispose(GObject *object)
 {
-    g_return_if_fail(BB_MAIN_WINDOW(object) != NULL);
+    BbMainWindow *window = BB_MAIN_WINDOW(object);
 
-    g_set_object(&BB_MAIN_WINDOW(object)->current_page, NULL);
+    g_return_if_fail(window != NULL);
+
+    g_set_object(&window->current_page, NULL);
 }
 
 
@@ -177,6 +178,7 @@ bb_main_window_page_added(BbMainWindow *window, GtkWidget *child, guint page_num
         );
 }
 
+
 static void
 bb_main_window_page_removed(BbMainWindow *window, GtkWidget *child, guint page_num, GtkNotebook *notebook)
 {
@@ -192,8 +194,11 @@ bb_main_window_page_removed(BbMainWindow *window, GtkWidget *child, guint page_n
         );
 }
 
+
 static void
 bb_main_window_update(GtkWidget* child, BbMainWindow *window)
 {
+    g_return_if_fail(window != NULL);
+
     g_signal_emit_by_name(window, "update");
 }

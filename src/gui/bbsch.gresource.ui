@@ -9,6 +9,7 @@
         <file>gui/bbfillstyleeditor.ui</file>
         <file>gui/bblinestyleeditor.ui</file>
         <file>gui/bbmainwindow.ui</file>
+        <file>gui/bbmenus.ui</file>
         <file>gui/bbpinpropertyeditor.ui</file>
         <file>gui/bbtextpropertyeditor.ui</file>
         <!--

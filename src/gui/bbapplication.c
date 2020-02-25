@@ -88,4 +88,12 @@ bb_application_startup(GApplication *application)
         GTK_STYLE_PROVIDER(provider),
         600
         );
+
+    GtkBuilder *builder = gtk_builder_new_from_resource(
+        "/com/github/ehennes775/bbsch/gui/bbmenus.ui"
+        );
+
+    GMenuModel *model = G_MENU_MODEL(gtk_builder_get_object(builder, "menubar"));
+
+    gtk_application_set_menubar(GTK_APPLICATION(application), model);
 }
