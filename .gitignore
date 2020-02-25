@@ -101,3 +101,13 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
+# Project files
+config.h
+bbsch.resource.c
+bbtest
+.deps
+
+# Backup files
+*~
+
+
