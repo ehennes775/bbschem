@@ -39,6 +39,12 @@ G_DEFINE_TYPE(BbSchematicWindow, bb_schematic_window, BB_TYPE_DOCUMENT_WINDOW);
 
 
 static void
+bb_schematic_window_attach_actions(BbDocumentWindow *window, GActionMap *map);
+
+static void
+bb_schematic_window_detach_actions(BbDocumentWindow *window, GActionMap *map);
+
+static void
 bb_schematic_window_dispose(GObject *object);
 
 static void
@@ -61,6 +67,13 @@ bb_schematic_window_apply_property(BbSchematicWindow *window, const char *name)
 
 
 static void
+bb_schematic_window_attach_actions(BbDocumentWindow *window, GActionMap *map)
+{
+    g_message("bb_schematic_window_attach_actions()");
+}
+
+
+static void
 bb_schematic_window_class_init(BbSchematicWindowClass *klasse)
 {
     G_OBJECT_CLASS(klasse)->dispose = bb_schematic_window_dispose;
@@ -68,10 +81,20 @@ bb_schematic_window_class_init(BbSchematicWindowClass *klasse)
     G_OBJECT_CLASS(klasse)->get_property = bb_schematic_window_get_property;
     G_OBJECT_CLASS(klasse)->set_property = bb_schematic_window_set_property;
 
+    BB_DOCUMENT_WINDOW_CLASS(klasse)->attach_actions = bb_schematic_window_attach_actions;
+    BB_DOCUMENT_WINDOW_CLASS(klasse)->detach_actions = bb_schematic_window_detach_actions;
+
     //gtk_widget_class_set_template_from_resource(
     //    GTK_WIDGET_CLASS(klasse),
     //    "/com/github/ehennes775/bbsch/gui/bbschematicwindow.ui"
     //    );
+}
+
+
+static void
+bb_schematic_window_detach_actions(BbDocumentWindow *window, GActionMap *map)
+{
+    g_message("bb_schematic_window_detach_actions()");
 }
 
 

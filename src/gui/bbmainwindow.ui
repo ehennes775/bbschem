@@ -328,6 +328,7 @@
                                 <property name="hexpand">true</property>
                                 <property name="scrollable">true</property>
                                 <property name="vexpand">true</property>
+                                <signal name="notify::page_num" handler="bb_main_window_notify_page_num" object="BbMainWindow"/>
                                 <signal name="page-added" handler="bb_main_window_page_added" object="BbMainWindow"/>
                                 <signal name="page-removed" handler="bb_main_window_page_removed" object="BbMainWindow"/>
                             </object>

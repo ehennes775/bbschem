@@ -8,12 +8,19 @@ struct _BbMainWindow
 {
     GtkApplicationWindow parent;
 
+    BbDocumentWindow *current_page;
     GtkNotebook *document_notebook;
 };
 
 
 G_DEFINE_TYPE(BbMainWindow, bb_main_window, GTK_TYPE_APPLICATION_WINDOW);
 
+
+static void
+bb_main_window_dispose(GObject *object);
+
+static void
+bb_main_window_notify_page_num(BbMainWindow *window, GParamSpec *pspec, GtkNotebook *notebook);
 
 static void
 bb_main_window_page_added(BbMainWindow *window, GtkWidget *child, guint page_num, GtkNotebook *notebook);
@@ -43,6 +50,8 @@ bb_main_window_add_page(BbMainWindow *window, BbDocumentWindow *page)
 static void
 bb_main_window_class_init(BbMainWindowClass *class)
 {
+    G_OBJECT_CLASS(class)->dispose = bb_main_window_dispose;
+
     gtk_widget_class_set_template_from_resource(
         GTK_WIDGET_CLASS(class),
         "/com/github/ehennes775/bbsch/gui/bbmainwindow.ui"
@@ -52,6 +61,11 @@ bb_main_window_class_init(BbMainWindowClass *class)
         GTK_WIDGET_CLASS(class),
         BbMainWindow,
         document_notebook
+        );
+
+    gtk_widget_class_bind_template_callback(
+        GTK_WIDGET_CLASS(class),
+        bb_main_window_notify_page_num
         );
 
     gtk_widget_class_bind_template_callback(
@@ -75,6 +89,15 @@ bb_main_window_class_init(BbMainWindowClass *class)
         G_TYPE_NONE,
         0
         );
+}
+
+
+static void
+bb_main_window_dispose(GObject *object)
+{
+    g_return_if_fail(BB_MAIN_WINDOW(object) != NULL);
+
+    g_set_object(&BB_MAIN_WINDOW(object)->current_page, NULL);
 }
 
 
@@ -109,6 +132,34 @@ bb_main_window_new(BbApplication *application)
         NULL
         );
 }
+
+
+static void
+bb_main_window_notify_page_num(BbMainWindow *window, GParamSpec *pspec, GtkNotebook *notebook)
+{
+    g_return_if_fail(window != NULL);
+
+    GtkWidget *temp_page = bb_main_window_get_current_document_window(window);
+    BbDocumentWindow *next_page = BB_IS_DOCUMENT_WINDOW(temp_page) ? BB_DOCUMENT_WINDOW(temp_page) : NULL;
+
+    if (window->current_page != next_page)
+    {
+        if (window->current_page != NULL)
+        {
+            bb_document_window_detach_actions(window->current_page, G_ACTION_MAP(window));
+        }
+
+        g_set_object(&window->current_page, next_page);
+
+        if (window->current_page != NULL)
+        {
+            bb_document_window_attach_actions(window->current_page, G_ACTION_MAP(window));
+        }
+
+        g_signal_emit_by_name(window, "update");
+    }
+}
+
 
 static void
 bb_main_window_page_added(BbMainWindow *window, GtkWidget *child, guint page_num, GtkNotebook *notebook)
