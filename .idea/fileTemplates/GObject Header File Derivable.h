@@ -20,6 +20,8 @@
 #foreach($thing in $classLowerSnake.split("_",0))
 #set($classPascalCase = $classPascalCase.concat("${thing.charAt(0).toString().toUpperCase()}${thing.substring(1)}"))
 #end
+#[[#ifndef]]# __${classPascalCase.toUpperCase()}__
+#[[#define]]# __${classPascalCase.toUpperCase()}__
 #parse("License.h")
 
 #[[#include]]# <gtk/gtk.h>
