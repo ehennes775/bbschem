@@ -2,7 +2,7 @@
 <interface>
     <template class="BbSchematicWindow">
         <child>
-            <object class="BbSchematicWindowInner" id="drawing">
+            <object class="BbSchematicWindowInner" id="inner_window">
             </object>
         </child>
     </template>

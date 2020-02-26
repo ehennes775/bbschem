@@ -17,21 +17,25 @@
  */
 
 #include <gtk/gtk.h>
+#include "bbschematicwrapper.h"
 #include "bbschematicwindow.h"
+#include "bbschematicwindowinner.h"
 
 
 enum
 {
     PROP_0,
-    PROP_1,
-    PROP_2,
-    PROP_3
+    PROP_SCHEMATIC_WRAPPER
 };
 
 
 struct _BbSchematicWindow
 {
     BbDocumentWindow parent;
+
+    BbSchematicWindowInner *inner_window;
+
+    BbSchematicWrapper *schematic_wrapper;
 
     GSimpleAction *delete_action;
     GSimpleAction *copy_action;
@@ -95,9 +99,27 @@ bb_schematic_window_class_init(BbSchematicWindowClass *klasse)
     BB_DOCUMENT_WINDOW_CLASS(klasse)->attach_actions = bb_schematic_window_attach_actions;
     BB_DOCUMENT_WINDOW_CLASS(klasse)->detach_actions = bb_schematic_window_detach_actions;
 
+    g_object_class_install_property(
+        G_OBJECT_CLASS(klasse),
+        PROP_SCHEMATIC_WRAPPER,
+        g_param_spec_object(
+            "schematic-wrapper",
+            "",
+            "",
+            BB_TYPE_SCHEMATIC_WRAPPER,
+            G_PARAM_READWRITE
+            )
+        );
+
     gtk_widget_class_set_template_from_resource(
         GTK_WIDGET_CLASS(klasse),
         "/com/github/ehennes775/bbsch/gui/bbschematicwindow.ui"
+        );
+
+    gtk_widget_class_bind_template_child(
+        GTK_WIDGET_CLASS(klasse),
+        BbSchematicWindow,
+        inner_window
         );
 }
 
@@ -132,20 +154,27 @@ bb_schematic_window_finalize(GObject *object)
 static void
 bb_schematic_window_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec)
 {
+    BbSchematicWindow *window = BB_SCHEMATIC_WINDOW(object);
+    g_return_if_fail(window != NULL);
+
     switch (property_id)
     {
-        case PROP_1:
-            break;
-
-        case PROP_2:
-            break;
-
-        case PROP_3:
+        case PROP_SCHEMATIC_WRAPPER:
+            g_value_set_object(value, bb_schematic_window_get_schematic_wrapper(window));
             break;
 
         default:
             G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
     }
+}
+
+
+BbSchematicWrapper*
+bb_schematic_window_get_schematic_wrapper(BbSchematicWindow *window)
+{
+    g_return_val_if_fail(window != NULL, NULL);
+
+    return window->schematic_wrapper;
 }
 
 
@@ -171,18 +200,34 @@ bb_schematic_window_register()
 static void
 bb_schematic_window_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec)
 {
+    BbSchematicWindow *window = BB_SCHEMATIC_WINDOW(object);
+    g_return_if_fail(window != NULL);
+
     switch (property_id)
     {
-        case PROP_1:
-            break;
-
-        case PROP_2:
-            break;
-
-        case PROP_3:
+        case PROP_SCHEMATIC_WRAPPER:
+            bb_schematic_window_set_schematic_wrapper(window, BB_SCHEMATIC_WRAPPER(g_value_get_object(value)));
             break;
 
         default:
             G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
+    }
+}
+
+
+void
+bb_schematic_window_set_schematic_wrapper(BbSchematicWindow *window, BbSchematicWrapper *wrapper)
+{
+    g_return_if_fail(window != NULL);
+
+    g_set_object(&window->schematic_wrapper, wrapper);
+
+    if (window->schematic_wrapper != NULL)
+    {
+        // attach action ports
+    }
+    else
+    {
+        // detach action ports
     }
 }

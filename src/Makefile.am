@@ -24,6 +24,7 @@ bbtest_SOURCES = \
     gui/bbpropertycombobox.c \
     gui/bbschematicwindow.c \
     gui/bbschematicwindowinner.c \
+    gui/bbschematicwrapper.c \
     gui/bbtextpropertyeditor.c \
 	main.c \
 	$(BUILT_SOURCES)
