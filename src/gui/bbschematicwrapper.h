@@ -23,4 +23,10 @@
 #define BB_TYPE_SCHEMATIC_WRAPPER bb_schematic_wrapper_get_type()
 G_DECLARE_FINAL_TYPE(BbSchematicWrapper, bb_schematic_wrapper, BB, SCHEMATIC_WRAPPER, GObject)
 
+void
+bb_schematic_wrapper_attach_actions(BbSchematicWrapper *wrapper, GActionMap *map);
+
+void
+bb_schematic_wrapper_detach_actions(BbSchematicWrapper *wrapper, GActionMap *map);
+
 #endif

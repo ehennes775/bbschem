@@ -36,11 +36,6 @@ struct _BbSchematicWindow
     BbSchematicWindowInner *inner_window;
 
     BbSchematicWrapper *schematic_wrapper;
-
-    GSimpleAction *delete_action;
-    GSimpleAction *copy_action;
-    GSimpleAction *cut_action;
-    GSimpleAction *paste_action;
 };
 
 
@@ -81,10 +76,10 @@ bb_schematic_window_attach_actions(BbDocumentWindow *window, GActionMap *map)
     BbSchematicWindow *x = BB_SCHEMATIC_WINDOW(window);
     g_return_if_fail(x != NULL);
 
-    g_action_map_add_action(map, G_ACTION(x->delete_action));
-    g_action_map_add_action(map, G_ACTION(x->copy_action));
-    g_action_map_add_action(map, G_ACTION(x->cut_action));
-    g_action_map_add_action(map, G_ACTION(x->paste_action));
+    if (x->schematic_wrapper)
+    {
+        bb_schematic_wrapper_attach_actions(x->schematic_wrapper, map);
+    }
 }
 
 
@@ -130,10 +125,10 @@ bb_schematic_window_detach_actions(BbDocumentWindow *window, GActionMap *map)
     BbSchematicWindow *w = BB_SCHEMATIC_WINDOW(window);
     g_return_if_fail(w != NULL);
 
-    g_action_map_remove_action(map, g_action_get_name(G_ACTION(w->delete_action)));
-    g_action_map_remove_action(map, g_action_get_name(G_ACTION(w->copy_action)));
-    g_action_map_remove_action(map, g_action_get_name(G_ACTION(w->cut_action)));
-    g_action_map_remove_action(map, g_action_get_name(G_ACTION(w->paste_action)));
+    if (w->schematic_wrapper)
+    {
+        bb_schematic_wrapper_detach_actions(w->schematic_wrapper, map);
+    }
 }
 
 
@@ -183,10 +178,7 @@ bb_schematic_window_init(BbSchematicWindow *window)
 {
     gtk_widget_init_template(GTK_WIDGET(window));
 
-    window->delete_action = g_simple_action_new("edit-delete", NULL);
-    window->copy_action = g_simple_action_new("edit-copy", NULL);
-    window->cut_action = g_simple_action_new("edit-cut", NULL);
-    window->paste_action = g_simple_action_new("edit-paste", NULL);
+    window->schematic_wrapper = g_object_new(BB_TYPE_SCHEMATIC_WRAPPER, NULL);
 }
 
 
