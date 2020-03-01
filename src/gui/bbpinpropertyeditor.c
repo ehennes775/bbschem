@@ -53,13 +53,17 @@ bb_pin_property_editor_update(BbPinPropertyEditor *editor);
 static void
 bb_pin_property_editor_apply(BbPropertyComboBox *combo, BbPinPropertyEditor *editor)
 {
-    BbSchematicWindow *window = BB_SCHEMATIC_WINDOW(
-        bb_main_window_get_current_document_window(editor->main_window)
-    );
+    g_return_if_fail(editor != NULL);
 
-    if (window != NULL)
+    if (editor->main_window != NULL)
     {
-        bb_schematic_window_apply_property(window, "pin-type");
+        GVariant *color = g_variant_new_int32(10);
+
+        g_action_group_activate_action(
+            G_ACTION_GROUP(editor->main_window),
+            "apply-pin-type",
+            color
+            );
     }
 }
 

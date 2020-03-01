@@ -17,6 +17,7 @@
  */
 
 #include <gtk/gtk.h>
+#include "bbcolorcombobox.h"
 #include "bbmainwindow.h"
 #include "bbtextpropertyeditor.h"
 #include "bbpropertycombobox.h"
@@ -35,6 +36,8 @@ struct _BbTextPropertyEditor
     GtkExpander parent;
 
     BbMainWindow *main_window;
+
+    BbColorComboBox *color_combo;
 };
 
 G_DEFINE_TYPE(BbTextPropertyEditor, bb_text_property_editor, GTK_TYPE_EXPANDER);
@@ -48,19 +51,6 @@ bb_text_property_editor_set_property(GObject *object, guint param_id, const GVal
 
 static void
 bb_text_property_editor_update(BbTextPropertyEditor *editor);
-
-static void
-bb_text_property_editor_apply(BbPropertyComboBox *combo, BbTextPropertyEditor *editor)
-{
-    BbSchematicWindow *window = BB_SCHEMATIC_WINDOW(
-        bb_main_window_get_current_document_window(editor->main_window)
-    );
-
-    if (window != NULL)
-    {
-        bb_schematic_window_apply_property(window, "text-properties");
-    }
-}
 
 
 static void
@@ -86,9 +76,10 @@ bb_text_property_editor_class_init(BbTextPropertyEditorClass *class)
         "/com/github/ehennes775/bbsch/gui/bbtextpropertyeditor.ui"
         );
 
-    gtk_widget_class_bind_template_callback(
+    gtk_widget_class_bind_template_child(
         GTK_WIDGET_CLASS(class),
-        bb_text_property_editor_apply
+        BbTextPropertyEditor,
+        color_combo
         );
 }
 
@@ -143,16 +134,17 @@ bb_text_property_editor_set_main_window(BbTextPropertyEditor *editor, BbMainWind
             G_CALLBACK(bb_text_property_editor_update),
             editor
             );
-
-        g_object_unref(editor->main_window);
     }
 
-    editor->main_window = window;
+    g_set_object(&editor->main_window, window);
+
+    bb_property_combo_box_set_action_group(
+        BB_PROPERTY_COMBO_BOX(editor->color_combo),
+        G_ACTION_GROUP(editor->main_window)
+        );
 
     if (editor->main_window != NULL)
     {
-        g_object_ref(editor->main_window);
-
         g_signal_connect(
             editor->main_window,
             "update",

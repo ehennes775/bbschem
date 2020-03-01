@@ -1,5 +1,5 @@
-#ifndef __BBPROPERTYCOMBOBOX__
-#define __BBPROPERTYCOMBOBOX__
+#ifndef __BBCELLRENDERERCOLORSWATCH__
+#define __BBCELLRENDERERCOLORSWATCH__
 /*
  * bbsch
  * Copyright (C) 2020 Edward C. Hennessy
@@ -20,25 +20,13 @@
 
 #include <gtk/gtk.h>
 
+#define BB_TYPE_CELL_RENDERER_COLOR_SWATCH bb_cell_renderer_color_swatch_get_type()
+G_DECLARE_FINAL_TYPE(BbCellRendererColorSwatch, bb_cell_renderer_color_swatch, BB, CELL_RENDERER_COLOR_SWATCH, GtkCellRendererText)
 
-#define BB_TYPE_PROPERTY_COMBO_BOX bb_property_combo_box_get_type()
-G_DECLARE_DERIVABLE_TYPE(BbPropertyComboBox, bb_property_combo_box, BB, PROPERTY_COMBO_BOX, GtkComboBox)
-
-struct _BbPropertyComboBoxClass
-{
-    GtkComboBoxClass parent_class;
-};
-
-GActionGroup*
-bb_property_combo_box_get_action_group(BbPropertyComboBox *combo);
-
-const char*
-bb_property_combo_box_get_action_name(BbPropertyComboBox *combo);
+const GdkRGBA*
+bb_cell_renderer_color_swatch_get_color(BbCellRendererColorSwatch *renderer);
 
 void
-bb_property_combo_box_set_action_group(BbPropertyComboBox *combo, GActionGroup *group);
-
-void
-bb_property_combo_box_set_action_name(BbPropertyComboBox *combo, const char *name);
+bb_cell_renderer_color_swatch_set_color(BbCellRendererColorSwatch *renderer, GdkRGBA *color);
 
 #endif

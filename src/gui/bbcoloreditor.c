@@ -18,6 +18,7 @@
 
 #include <gtk/gtk.h>
 #include "bbmainwindow.h"
+#include "bbcolorcombobox.h"
 #include "bbcoloreditor.h"
 #include "bbpropertycombobox.h"
 #include "bbschematicwindow.h"
@@ -34,6 +35,8 @@ struct _BbColorEditor
     GtkExpander parent;
 
     BbMainWindow *main_window;
+
+    BbColorComboBox *color_combo;
 };
 
 G_DEFINE_TYPE(BbColorEditor, bb_color_editor, GTK_TYPE_EXPANDER);
@@ -50,15 +53,21 @@ bb_color_editor_update(BbColorEditor *editor);
 
 
 static void
-bb_color_editor_apply(BbPropertyComboBox *combo, BbColorEditor *editor)
+bb_color_editor_apply(BbColorComboBox *combo, BbColorEditor *editor)
 {
-    BbSchematicWindow *window = BB_SCHEMATIC_WINDOW(
-        bb_main_window_get_current_document_window(editor->main_window)
-        );
+    g_return_if_fail(editor != NULL);
 
-    if (window != NULL)
+    if (editor->main_window != NULL)
     {
-        bb_schematic_window_apply_property(window, "object-color");
+        GVariant *color = g_variant_new_int32(
+            bb_color_combo_box_get_color(combo)
+            );
+
+        g_action_group_activate_action(
+            G_ACTION_GROUP(editor->main_window),
+            "apply-object-color",
+            color
+            );
     }
 }
 
@@ -86,9 +95,10 @@ bb_color_editor_class_init(BbColorEditorClass *class)
         "/com/github/ehennes775/bbsch/gui/bbcoloreditor.ui"
         );
 
-    gtk_widget_class_bind_template_callback(
+    gtk_widget_class_bind_template_child(
         GTK_WIDGET_CLASS(class),
-        bb_color_editor_apply
+        BbColorEditor,
+        color_combo
         );
 }
 
@@ -143,22 +153,23 @@ bb_color_editor_set_main_window(BbColorEditor *editor, BbMainWindow *window)
             G_CALLBACK(bb_color_editor_update),
             editor
             );
-
-        g_object_unref(editor->main_window);
     }
 
-    editor->main_window = window;
+    g_set_object(&editor->main_window, window);
+
+    bb_property_combo_box_set_action_group(
+        BB_PROPERTY_COMBO_BOX(editor->color_combo),
+        G_ACTION_GROUP(editor->main_window)
+        );
 
     if (editor->main_window != NULL)
     {
-        g_object_ref(editor->main_window);
-
         g_signal_connect(
             editor->main_window,
             "update",
             G_CALLBACK(bb_color_editor_update),
             editor
-        );
+            );
     }
 }
 

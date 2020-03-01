@@ -176,11 +176,6 @@ bb_schematic_wrapper_class_init(BbSchematicWrapperClass *klasse)
     G_OBJECT_CLASS(klasse)->finalize = bb_schematic_wrapper_finalize;
     G_OBJECT_CLASS(klasse)->get_property = bb_schematic_wrapper_get_property;
     G_OBJECT_CLASS(klasse)->set_property = bb_schematic_wrapper_set_property;
-
-    gtk_widget_class_set_template_from_resource(
-        GTK_WIDGET_CLASS(klasse),
-        "/com/github/ehennes775/bbsch/gui/bbschematicwrapper.ui"
-        );
 }
 
 
@@ -234,8 +229,6 @@ bb_schematic_wrapper_get_property(GObject *object, guint property_id, GValue *va
 static void
 bb_schematic_wrapper_init(BbSchematicWrapper *wrapper)
 {
-    gtk_widget_init_template(GTK_WIDGET(wrapper));
-
     g_signal_connect(
         wrapper->action.apply_fill_angle1 = g_simple_action_new(
             "apply-fill-angle1",
@@ -268,7 +261,7 @@ bb_schematic_wrapper_init(BbSchematicWrapper *wrapper)
 
     g_signal_connect(
         wrapper->action.apply_fill_pitch2 = g_simple_action_new(
-            "apply-fill-pitch1",
+            "apply-fill-pitch2",
             G_VARIANT_TYPE_INT32
             ),
         "activate",
@@ -337,9 +330,10 @@ bb_schematic_wrapper_init(BbSchematicWrapper *wrapper)
         );
 
     g_signal_connect(
-        wrapper->action.apply_object_color = g_simple_action_new(
+        wrapper->action.apply_object_color = g_simple_action_new_stateful(
             "apply-object-color",
-            G_VARIANT_TYPE_INT32
+            G_VARIANT_TYPE_INT32,
+            g_variant_new_maybe(G_VARIANT_TYPE_INT32, NULL)
             ),
         "activate",
         G_CALLBACK(bb_schematic_wrapper_apply_object_color_action_cb),
@@ -621,9 +615,14 @@ bb_schematic_wrapper_apply_object_color_action_cb(GSimpleAction *simple, GVarian
     g_return_if_fail(g_variant_is_of_type(parameter, G_VARIANT_TYPE_INT32));
     g_return_if_fail(wrapper != NULL);
 
-    int value = g_variant_get_int32(parameter);
+    int index = g_variant_get_int32(parameter);
 
-    g_message("bb_schematic_wrapper_apply_object_color_action_cb");
+    g_message("bb_schematic_wrapper_apply_object_color_action_cb (color = %d)", index);
+
+    g_simple_action_set_state(
+        wrapper->action.apply_object_color,
+        g_variant_new_maybe(G_VARIANT_TYPE_INT32, parameter)
+        );
 }
 
 

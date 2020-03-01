@@ -19,17 +19,37 @@
 #include <gtk/gtk.h>
 #include "bbpropertycombobox.h"
 
-
-struct _BbPropertyComboBox
+enum
 {
-    GtkComboBox parent;
-
-    gboolean changed;
+    PROP_0,
+    PROP_ACTION_GROUP,
+    PROP_ACTION_NAME
 };
 
 
-G_DEFINE_TYPE(BbPropertyComboBox, bb_property_combo_box, GTK_TYPE_COMBO_BOX);
+typedef struct _BbPropertyComboBoxPrivate BbPropertyComboBoxPrivate;
 
+struct _BbPropertyComboBoxPrivate
+{
+    GtkActionGroup *action_group;
+    char *action_name;
+    gboolean changed;
+};
+
+G_DEFINE_TYPE_WITH_PRIVATE(BbPropertyComboBox, bb_property_combo_box, GTK_TYPE_COMBO_BOX);
+
+
+static void
+bb_property_combo_box_action_added_cb(GActionGroup *action_group, gchar *action_name, BbPropertyComboBox *combo);
+
+static void
+bb_property_combo_box_action_removed_cb(GActionGroup *action_group, gchar *action_name, BbPropertyComboBox *combo);
+
+static void
+bb_property_combo_box_action_state_changed_cb(GActionGroup *action_group, gchar *action_name, GVariant *value, BbPropertyComboBox *combo);
+
+static void
+bb_property_combo_box_action_enabled_changed_cb(GActionGroup *action_group, gchar *action_name, gboolean enabled, BbPropertyComboBox *combo);
 
 static void
 bb_property_combo_box_add_widget(BbPropertyComboBox *combo, GtkWidget *widget, gpointer unused);
@@ -38,13 +58,85 @@ static gboolean
 bb_property_combo_box_focus_out_event(GtkEntry *entry, GdkEvent *event, BbPropertyComboBox *combo);
 
 static void
+bb_property_combo_box_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
+
+static void
 bb_property_combo_box_notify_active(BbPropertyComboBox *combo, GParamSpec *pspec, gpointer unused);
 
 static void
 bb_property_combo_box_remove_widget(BbPropertyComboBox *combo, GtkWidget *widget, gpointer unused);
 
 static void
+bb_property_combo_box_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
+
+static void
 bb_property_combo_box_value_changed(BbPropertyComboBox *combo, gpointer unused);
+
+
+static void
+bb_property_combo_box_action_added_cb(GActionGroup *action_group, gchar *action_name, BbPropertyComboBox *combo)
+{
+    BbPropertyComboBoxPrivate *privat = bb_property_combo_box_get_instance_private(combo);
+    g_return_if_fail(privat != NULL);
+
+    if (g_strcmp0(privat->action_name, action_name) == 0)
+    {
+        gtk_widget_set_sensitive(
+            GTK_WIDGET(combo),
+            g_action_group_get_action_enabled(action_group, privat->action_name)
+            );
+    }
+}
+
+
+static void
+bb_property_combo_box_action_removed_cb(GActionGroup *action_group, gchar *action_name, BbPropertyComboBox *combo)
+{
+    BbPropertyComboBoxPrivate *privat = bb_property_combo_box_get_instance_private(combo);
+    g_return_if_fail(privat != NULL);
+
+    if (g_strcmp0(privat->action_name, action_name) == 0)
+    {
+        gtk_widget_set_sensitive(GTK_WIDGET(combo), FALSE);
+    }
+}
+
+
+static void
+bb_property_combo_box_action_enabled_changed_cb(GActionGroup *action_group, gchar *action_name, gboolean enabled, BbPropertyComboBox *combo)
+{
+    BbPropertyComboBoxPrivate *privat = bb_property_combo_box_get_instance_private(combo);
+    g_return_if_fail(privat != NULL);
+
+    if (g_strcmp0(privat->action_name, action_name) == 0)
+    {
+        gtk_widget_set_sensitive(GTK_WIDGET(combo), enabled);
+    }
+}
+
+
+static void
+bb_property_combo_box_action_state_changed_cb(GActionGroup *action_group, gchar *action_name, GVariant *value, BbPropertyComboBox *combo)
+{
+    BbPropertyComboBoxPrivate *privat = bb_property_combo_box_get_instance_private(combo);
+    g_return_if_fail(privat != NULL);
+
+    if (g_strcmp0(privat->action_name, action_name) == 0)
+    {
+        GVariant *maybe = g_variant_get_maybe(value);
+
+        if (maybe != NULL)
+        {
+            int index = g_variant_get_int32(maybe);
+
+            g_message("bb_property_combo_box_action_state_changed_cb (color = %d)", index);
+        }
+        else
+        {
+            gtk_combo_box_set_active(GTK_COMBO_BOX(combo), -1);
+        }
+    }
+}
 
 
 static void
@@ -62,12 +154,13 @@ bb_property_combo_box_add_widget(BbPropertyComboBox *combo, GtkWidget *widget, g
 static gboolean
 bb_property_combo_box_focus_out_event(GtkEntry *entry, GdkEvent *event, BbPropertyComboBox *combo)
 {
-    g_return_val_if_fail(combo != NULL, FALSE);
+    BbPropertyComboBoxPrivate *privat = bb_property_combo_box_get_instance_private(combo);
+    g_return_val_if_fail(privat != NULL, FALSE);
 
-    if (combo->changed)
+    if (privat->changed)
     {
         g_signal_emit_by_name (combo, "apply");
-        combo->changed = FALSE;
+        privat->changed = FALSE;
     }
 
     return FALSE;
@@ -77,6 +170,33 @@ bb_property_combo_box_focus_out_event(GtkEntry *entry, GdkEvent *event, BbProper
 static void
 bb_property_combo_box_class_init(BbPropertyComboBoxClass *class)
 {
+    G_OBJECT_CLASS(class)->get_property = bb_property_combo_box_get_property;
+    G_OBJECT_CLASS(class)->set_property = bb_property_combo_box_set_property;
+
+    g_object_class_install_property(
+        G_OBJECT_CLASS(class),
+        PROP_ACTION_GROUP,
+        g_param_spec_object(
+            "action-group",
+            "",
+            "",
+            G_TYPE_ACTION_GROUP,
+            G_PARAM_READWRITE
+            )
+        );
+
+    g_object_class_install_property(
+        G_OBJECT_CLASS(class),
+        PROP_ACTION_NAME,
+        g_param_spec_string(
+            "action-name",
+            "",
+            "",
+            "",
+            G_PARAM_READWRITE
+            )
+        );
+
     g_signal_new(
         "apply",
         G_OBJECT_CLASS_TYPE(class),
@@ -88,6 +208,51 @@ bb_property_combo_box_class_init(BbPropertyComboBoxClass *class)
         G_TYPE_NONE,
         0
         );
+}
+
+
+GActionGroup*
+bb_property_combo_box_get_action_group(BbPropertyComboBox *combo)
+{
+    BbPropertyComboBoxPrivate *privat = bb_property_combo_box_get_instance_private(combo);
+    g_return_val_if_fail(privat != NULL, NULL);
+
+    return privat->action_group;
+}
+
+
+const char*
+bb_property_combo_box_get_action_name(BbPropertyComboBox *combo)
+{
+    BbPropertyComboBoxPrivate *privat = bb_property_combo_box_get_instance_private(combo);
+    g_return_val_if_fail(privat != NULL, NULL);
+
+    return privat->action_name;
+}
+
+
+static void
+bb_property_combo_box_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec)
+{
+    switch (property_id)
+    {
+        case PROP_ACTION_GROUP:
+            g_value_set_object(
+                value,
+                bb_property_combo_box_get_action_group(BB_PROPERTY_COMBO_BOX(object))
+                );
+            break;
+
+        case PROP_ACTION_NAME:
+            g_value_set_string(
+                value,
+                bb_property_combo_box_get_action_name(BB_PROPERTY_COMBO_BOX(object))
+                );
+            break;
+
+        default:
+            G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
+    }
 }
 
 
@@ -127,10 +292,11 @@ bb_property_combo_box_init(BbPropertyComboBox *combo)
 static void
 bb_property_combo_box_notify_active(BbPropertyComboBox *combo, GParamSpec *pspec, gpointer unused)
 {
-    g_return_if_fail(combo != NULL);
+    BbPropertyComboBoxPrivate *privat = bb_property_combo_box_get_instance_private(combo);
+    g_return_if_fail(privat != NULL);
 
     g_signal_emit_by_name (combo, "apply");
-    combo->changed = FALSE;
+    privat->changed = FALSE;
 }
 
 
@@ -152,9 +318,116 @@ bb_property_combo_box_remove_widget(BbPropertyComboBox *combo, GtkWidget *widget
 }
 
 
+void
+bb_property_combo_box_set_action_group(BbPropertyComboBox *combo, GActionGroup *group)
+{
+    BbPropertyComboBoxPrivate *privat = bb_property_combo_box_get_instance_private(combo);
+    g_return_if_fail(privat != NULL);
+
+    if (privat->action_group != NULL)
+    {
+        g_signal_handlers_disconnect_by_func(
+            privat->action_group,
+            G_CALLBACK(bb_property_combo_box_action_state_changed_cb),
+            combo
+            );
+
+        g_signal_handlers_disconnect_by_func(
+            privat->action_group,
+            G_CALLBACK(bb_property_combo_box_action_enabled_changed_cb),
+            combo
+            );
+
+        g_signal_handlers_disconnect_by_func(
+            privat->action_group,
+            G_CALLBACK(bb_property_combo_box_action_removed_cb),
+            combo
+            );
+
+        g_signal_handlers_disconnect_by_func(
+            privat->action_group,
+            G_CALLBACK(bb_property_combo_box_action_added_cb),
+            combo
+            );
+    }
+
+    g_set_object(&privat->action_group, group);
+
+    if (privat->action_group != NULL)
+    {
+        g_signal_connect(
+            privat->action_group,
+            "action-added",
+            G_CALLBACK(bb_property_combo_box_action_added_cb),
+            combo
+            );
+
+        g_signal_connect(
+            privat->action_group,
+            "action-removed",
+            G_CALLBACK(bb_property_combo_box_action_removed_cb),
+            combo
+            );
+
+        g_signal_connect(
+            privat->action_group,
+            "action-enabled-changed",
+            G_CALLBACK(bb_property_combo_box_action_enabled_changed_cb),
+            combo
+            );
+
+        g_signal_connect(
+            privat->action_group,
+            "action-state-changed",
+            G_CALLBACK(bb_property_combo_box_action_state_changed_cb),
+            combo
+            );
+    }
+}
+
+
+void
+bb_property_combo_box_set_action_name(BbPropertyComboBox *combo, const char *name)
+{
+    BbPropertyComboBoxPrivate *privat = bb_property_combo_box_get_instance_private(combo);
+    g_return_if_fail(privat != NULL);
+
+    g_free(privat->action_name);
+    privat->action_name = g_strdup(name);
+}
+
+
+static void
+bb_property_combo_box_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec)
+{
+    switch (property_id)
+    {
+        case PROP_ACTION_GROUP:
+            bb_property_combo_box_set_action_group(
+                BB_PROPERTY_COMBO_BOX(object),
+                g_value_get_object(value)
+                );
+            break;
+
+        case PROP_ACTION_NAME:
+            bb_property_combo_box_set_action_name(
+                BB_PROPERTY_COMBO_BOX(object),
+                g_value_get_string(value)
+                );
+            break;
+
+        default:
+            G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
+    }
+}
+
+
 static void
 bb_property_combo_box_value_changed(BbPropertyComboBox *combo, gpointer unused)
 {
+    BbPropertyComboBoxPrivate *privat = bb_property_combo_box_get_instance_private(combo);
+    g_return_if_fail(privat != NULL);
+
     //if (gtk_widget_is_focus(GTK_WIDGET(gschem_integer_combo_box_get_entry (GTK_WIDGET (combo)))))
     //{
     //    combo->changed = TRUE;
@@ -162,6 +435,6 @@ bb_property_combo_box_value_changed(BbPropertyComboBox *combo, gpointer unused)
     //else
     {
         g_signal_emit_by_name(combo, "apply");
-        combo->changed = FALSE;
+        privat->changed = FALSE;
     }
 }

@@ -24,9 +24,9 @@
                     </packing>
                 </child>
                 <child>
-                    <object class="BbPropertyComboBox" id="color-combo">
+                    <object class="BbColorComboBox" id="color_combo">
+                        <property name="action-name">apply-text-color</property>
                         <property name="hexpand">true</property>
-                        <signal name="apply" handler="bb_text_property_editor_apply"/>
                         <style>
                             <class name="propedit"/>
                         </style>

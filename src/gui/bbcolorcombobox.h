@@ -1,5 +1,5 @@
-#ifndef __BBPROPERTYCOMBOBOX__
-#define __BBPROPERTYCOMBOBOX__
+#ifndef __BBCOLORCOMBOBOX__
+#define __BBCOLORCOMBOBOX__
 /*
  * bbsch
  * Copyright (C) 2020 Edward C. Hennessy
@@ -19,26 +19,12 @@
  */
 
 #include <gtk/gtk.h>
+#include "bbpropertycombobox.h"
 
+#define BB_TYPE_COLOR_COMBO_BOX bb_color_combo_box_get_type()
+G_DECLARE_FINAL_TYPE(BbColorComboBox, bb_color_combo_box, BB, COLOR_COMBO_BOX, BbPropertyComboBox)
 
-#define BB_TYPE_PROPERTY_COMBO_BOX bb_property_combo_box_get_type()
-G_DECLARE_DERIVABLE_TYPE(BbPropertyComboBox, bb_property_combo_box, BB, PROPERTY_COMBO_BOX, GtkComboBox)
-
-struct _BbPropertyComboBoxClass
-{
-    GtkComboBoxClass parent_class;
-};
-
-GActionGroup*
-bb_property_combo_box_get_action_group(BbPropertyComboBox *combo);
-
-const char*
-bb_property_combo_box_get_action_name(BbPropertyComboBox *combo);
-
-void
-bb_property_combo_box_set_action_group(BbPropertyComboBox *combo, GActionGroup *group);
-
-void
-bb_property_combo_box_set_action_name(BbPropertyComboBox *combo, const char *name);
+int
+bb_color_combo_box_get_color(BbColorComboBox *combo);
 
 #endif

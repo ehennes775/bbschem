@@ -3,6 +3,7 @@
     <gresource prefix="/com/github/ehennes775/bbsch">
         <file>gui/bbapplication.css</file>
         <file>gui/bbattributeeditor.ui</file>
+        <file>gui/bbcolorcombobox.ui</file>
         <file>gui/bbcoloreditor.ui</file>
         <file>gui/bbcomponentselector.ui</file>
         <file>gui/bbdocumentwindowtab.ui</file>
