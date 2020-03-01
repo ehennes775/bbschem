@@ -341,9 +341,10 @@ bb_schematic_wrapper_init(BbSchematicWrapper *wrapper)
         );
 
     g_signal_connect(
-        wrapper->action.apply_pin_type = g_simple_action_new(
+        wrapper->action.apply_pin_type = g_simple_action_new_stateful(
             "apply-pin-type",
-            G_VARIANT_TYPE_INT32
+            G_VARIANT_TYPE_INT32,
+            g_variant_new_maybe(G_VARIANT_TYPE_INT32, NULL)
             ),
         "activate",
         G_CALLBACK(bb_schematic_wrapper_apply_pin_type_action_cb),
@@ -351,9 +352,10 @@ bb_schematic_wrapper_init(BbSchematicWrapper *wrapper)
         );
 
     g_signal_connect(
-        wrapper->action.apply_text_alignment = g_simple_action_new(
+        wrapper->action.apply_text_alignment = g_simple_action_new_stateful(
             "apply-text-alignment",
-            G_VARIANT_TYPE_INT32
+            G_VARIANT_TYPE_INT32,
+            g_variant_new_maybe(G_VARIANT_TYPE_INT32, NULL)
             ),
         "activate",
         G_CALLBACK(bb_schematic_wrapper_apply_text_alignment_action_cb),
@@ -361,9 +363,10 @@ bb_schematic_wrapper_init(BbSchematicWrapper *wrapper)
         );
 
     g_signal_connect(
-        wrapper->action.apply_text_color = g_simple_action_new(
+        wrapper->action.apply_text_color = g_simple_action_new_stateful(
             "apply-text-color",
-            G_VARIANT_TYPE_INT32
+            G_VARIANT_TYPE_INT32,
+            g_variant_new_maybe(G_VARIANT_TYPE_INT32, NULL)
             ),
         "activate",
         G_CALLBACK(bb_schematic_wrapper_apply_text_color_action_cb),
@@ -371,9 +374,10 @@ bb_schematic_wrapper_init(BbSchematicWrapper *wrapper)
         );
 
     g_signal_connect(
-        wrapper->action.apply_text_rotation = g_simple_action_new(
+        wrapper->action.apply_text_rotation = g_simple_action_new_stateful(
             "apply-text-rotation",
-            G_VARIANT_TYPE_INT32
+            G_VARIANT_TYPE_INT32,
+            g_variant_new_maybe(G_VARIANT_TYPE_INT32, NULL)
             ),
         "activate",
         G_CALLBACK(bb_schematic_wrapper_apply_text_rotation_action_cb),
@@ -381,9 +385,10 @@ bb_schematic_wrapper_init(BbSchematicWrapper *wrapper)
         );
 
     g_signal_connect(
-        wrapper->action.apply_text_size = g_simple_action_new(
+        wrapper->action.apply_text_size = g_simple_action_new_stateful(
             "apply-text-size",
-            G_VARIANT_TYPE_INT32
+            G_VARIANT_TYPE_INT32,
+            g_variant_new_maybe(G_VARIANT_TYPE_INT32, NULL)
             ),
         "activate",
         G_CALLBACK(bb_schematic_wrapper_apply_text_size_action_cb),
@@ -635,6 +640,11 @@ bb_schematic_wrapper_apply_pin_type_action_cb(GSimpleAction *simple, GVariant *p
     int value = g_variant_get_int32(parameter);
 
     g_message("bb_schematic_wrapper_apply_pin_type_action_cb");
+
+    g_simple_action_set_state(
+        wrapper->action.apply_pin_type,
+        g_variant_new_maybe(G_VARIANT_TYPE_INT32, parameter)
+        );
 }
 
 
@@ -647,6 +657,11 @@ bb_schematic_wrapper_apply_text_alignment_action_cb(GSimpleAction *simple, GVari
     int value = g_variant_get_int32(parameter);
 
     g_message("bb_schematic_wrapper_apply_text_alignment_action_cb");
+
+    g_simple_action_set_state(
+        wrapper->action.apply_text_alignment,
+        g_variant_new_maybe(G_VARIANT_TYPE_INT32, parameter)
+        );
 }
 
 
@@ -659,6 +674,11 @@ bb_schematic_wrapper_apply_text_color_action_cb(GSimpleAction *simple, GVariant 
     int value = g_variant_get_int32(parameter);
 
     g_message("bb_schematic_wrapper_apply_text_color_action_cb");
+
+    g_simple_action_set_state(
+        wrapper->action.apply_text_color,
+        g_variant_new_maybe(G_VARIANT_TYPE_INT32, parameter)
+        );
 }
 
 
@@ -671,6 +691,11 @@ bb_schematic_wrapper_apply_text_rotation_action_cb(GSimpleAction *simple, GVaria
     int value = g_variant_get_int32(parameter);
 
     g_message("bb_schematic_wrapper_apply_text_rotation_action_cb");
+
+    g_simple_action_set_state(
+        wrapper->action.apply_text_rotation,
+        g_variant_new_maybe(G_VARIANT_TYPE_INT32, parameter)
+        );
 }
 
 
@@ -683,6 +708,11 @@ bb_schematic_wrapper_apply_text_size_action_cb(GSimpleAction *simple, GVariant *
     int value = g_variant_get_int32(parameter);
 
     g_message("bb_schematic_wrapper_apply_text_size_action_cb");
+
+    g_simple_action_set_state(
+        wrapper->action.apply_text_size,
+        g_variant_new_maybe(G_VARIANT_TYPE_INT32, parameter)
+        );
 }
 
 

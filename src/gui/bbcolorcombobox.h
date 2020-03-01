@@ -27,4 +27,7 @@ G_DECLARE_FINAL_TYPE(BbColorComboBox, bb_color_combo_box, BB, COLOR_COMBO_BOX, B
 int
 bb_color_combo_box_get_color(BbColorComboBox *combo);
 
+void
+bb_color_combo_box_set_color(BbColorComboBox *combo, int index);
+
 #endif

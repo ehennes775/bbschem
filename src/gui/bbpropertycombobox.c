@@ -31,12 +31,12 @@ typedef struct _BbPropertyComboBoxPrivate BbPropertyComboBoxPrivate;
 
 struct _BbPropertyComboBoxPrivate
 {
-    GtkActionGroup *action_group;
+    GActionGroup *action_group;
     char *action_name;
     gboolean changed;
 };
 
-G_DEFINE_TYPE_WITH_PRIVATE(BbPropertyComboBox, bb_property_combo_box, GTK_TYPE_COMBO_BOX);
+G_DEFINE_TYPE_WITH_PRIVATE(BbPropertyComboBox, bb_property_combo_box, GTK_TYPE_COMBO_BOX)
 
 
 static void
@@ -53,6 +53,9 @@ bb_property_combo_box_action_enabled_changed_cb(GActionGroup *action_group, gcha
 
 static void
 bb_property_combo_box_add_widget(BbPropertyComboBox *combo, GtkWidget *widget, gpointer unused);
+
+static void
+bb_property_combo_box_emit_update(BbPropertyComboBox *combo, GVariant *state);
 
 static gboolean
 bb_property_combo_box_focus_out_event(GtkEntry *entry, GdkEvent *event, BbPropertyComboBox *combo);
@@ -127,9 +130,7 @@ bb_property_combo_box_action_state_changed_cb(GActionGroup *action_group, gchar 
 
         if (maybe != NULL)
         {
-            int index = g_variant_get_int32(maybe);
-
-            g_message("bb_property_combo_box_action_state_changed_cb (color = %d)", index);
+            bb_property_combo_box_emit_update(combo, maybe);
         }
         else
         {
@@ -148,6 +149,15 @@ bb_property_combo_box_add_widget(BbPropertyComboBox *combo, GtkWidget *widget, g
         G_CALLBACK(bb_property_combo_box_focus_out_event),
         combo
         );
+}
+
+
+static void
+bb_property_combo_box_emit_update(BbPropertyComboBox *combo, GVariant *state)
+{
+    g_return_if_fail(BB_IS_PROPERTY_COMBO_BOX(combo));
+
+    g_signal_emit_by_name(combo, "update", state);
 }
 
 
@@ -197,7 +207,7 @@ bb_property_combo_box_class_init(BbPropertyComboBoxClass *class)
             )
         );
 
-    g_signal_new(
+    class->apply_signal_id = g_signal_new(
         "apply",
         G_OBJECT_CLASS_TYPE(class),
         (GSignalFlags) 0,
@@ -207,6 +217,19 @@ bb_property_combo_box_class_init(BbPropertyComboBoxClass *class)
         g_cclosure_marshal_VOID__VOID,
         G_TYPE_NONE,
         0
+        );
+
+    class->update_signal_id = g_signal_new(
+        "update",
+        G_OBJECT_CLASS_TYPE(class),
+        (GSignalFlags) 0,
+        0,
+        NULL,
+        NULL,
+        g_cclosure_marshal_VOID__VARIANT,
+        G_TYPE_NONE,
+        1,
+        G_TYPE_VARIANT
         );
 }
 

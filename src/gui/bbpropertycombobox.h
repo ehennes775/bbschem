@@ -27,6 +27,9 @@ G_DECLARE_DERIVABLE_TYPE(BbPropertyComboBox, bb_property_combo_box, BB, PROPERTY
 struct _BbPropertyComboBoxClass
 {
     GtkComboBoxClass parent_class;
+
+    gint apply_signal_id;
+    gint update_signal_id;
 };
 
 GActionGroup*

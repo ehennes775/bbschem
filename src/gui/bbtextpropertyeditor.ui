@@ -55,10 +55,10 @@
                 </child>
                 <child>
                     <object class="BbPropertyComboBox" id="size-combo">
+                        <property name="action-name">apply-text-size</property>
                         <property name="entry-text-column">0</property>
                         <property name="has-entry">true</property>
                         <property name="hexpand">true</property>
-                        <signal name="apply" handler="bb_text_property_editor_apply"/>
                         <style>
                             <class name="propedit"/>
                         </style>
@@ -91,8 +91,8 @@
                 </child>
                 <child>
                     <object class="BbPropertyComboBox" id="alignment-combo">
+                        <property name="action-name">apply-text-alignment</property>
                         <property name="hexpand">true</property>
-                        <signal name="apply" handler="bb_text_property_editor_apply"/>
                         <style>
                             <class name="propedit"/>
                         </style>
@@ -121,8 +121,8 @@
                 </child>
                 <child>
                     <object class="BbPropertyComboBox" id="rotation-combo">
+                        <property name="action-name">apply-text-rotation</property>
                         <property name="hexpand">true</property>
-                        <signal name="apply" handler="bb_text_property_editor_apply"/>
                         <style>
                             <class name="propedit"/>
                         </style>

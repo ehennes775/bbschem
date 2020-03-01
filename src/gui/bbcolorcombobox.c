@@ -32,6 +32,8 @@ enum
 struct _BbColorComboBox
 {
     BbPropertyComboBox parent;
+
+    gulong apply_handler_id;
 };
 
 
@@ -49,6 +51,9 @@ bb_color_combo_box_get_property(GObject *object, guint property_id, GValue *valu
 
 static void
 bb_color_combo_box_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
+
+static void
+bb_color_combo_box_update(BbPropertyComboBox *unused, GVariant *value, BbColorComboBox *combo);
 
 
 static void
@@ -87,6 +92,11 @@ bb_color_combo_box_class_init(BbColorComboBoxClass *klasse)
     gtk_widget_class_bind_template_callback(
         GTK_WIDGET_CLASS(klasse),
         bb_color_combo_box_apply
+        );
+
+    gtk_widget_class_bind_template_callback(
+        GTK_WIDGET_CLASS(klasse),
+        bb_color_combo_box_update
         );
 }
 
@@ -151,6 +161,18 @@ static void
 bb_color_combo_box_init(BbColorComboBox *window)
 {
     gtk_widget_init_template(GTK_WIDGET(window));
+
+    g_return_if_fail(BB_PROPERTY_COMBO_BOX_GET_CLASS(window) != NULL);
+
+    window->apply_handler_id = g_signal_handler_find(
+        window,
+        G_SIGNAL_MATCH_ID,
+        BB_PROPERTY_COMBO_BOX_GET_CLASS(window)->apply_signal_id,
+        0,
+        NULL,
+        NULL,
+        NULL
+        );
 }
 
 
@@ -158,6 +180,15 @@ __attribute__((constructor)) void
 bb_color_combo_box_register()
 {
     bb_color_combo_box_get_type();
+}
+
+void
+bb_color_combo_box_set_color(BbColorComboBox *combo, int index)
+{
+    gtk_combo_box_set_active(
+        GTK_COMBO_BOX(combo),
+        index
+        );
 }
 
 
@@ -178,4 +209,21 @@ bb_color_combo_box_set_property(GObject *object, guint property_id, const GValue
         default:
             G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
     }
+}
+
+
+static void
+bb_color_combo_box_update(BbPropertyComboBox *property_combo, GVariant *value, BbColorComboBox *color_combo)
+{
+    g_signal_handler_block(
+        property_combo,
+        color_combo->apply_handler_id
+        );
+
+    bb_color_combo_box_set_color(color_combo, g_variant_get_int32(value));
+
+    g_signal_handler_unblock(
+        property_combo,
+        color_combo->apply_handler_id
+        );
 }
