@@ -23,9 +23,7 @@
 enum
 {
     PROP_0,
-    PROP_1,
-    PROP_2,
-    PROP_3,
+    PROP_COLOR
 };
 
 
@@ -34,17 +32,14 @@ struct _BbColorComboBox
     BbPropertyComboBox parent;
 
     gulong apply_handler_id;
+    gulong update_handler_id;
 };
-
 
 G_DEFINE_TYPE(BbColorComboBox, bb_color_combo_box, BB_TYPE_PROPERTY_COMBO_BOX);
 
 
 static void
-bb_color_combo_box_dispose(GObject *object);
-
-static void
-bb_color_combo_box_finalize(GObject *object);
+bb_color_combo_box_apply_cb(BbPropertyComboBox *unused, BbColorComboBox *combo);
 
 static void
 bb_color_combo_box_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
@@ -53,23 +48,26 @@ static void
 bb_color_combo_box_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
 
 static void
-bb_color_combo_box_update(BbPropertyComboBox *unused, GVariant *value, BbColorComboBox *combo);
+bb_color_combo_box_update_cb(BbPropertyComboBox *unused, GVariant *value, BbColorComboBox *combo);
 
 
 static void
-bb_color_combo_box_apply(BbPropertyComboBox *unused, BbColorComboBox *combo)
+bb_color_combo_box_apply_cb(BbPropertyComboBox *property_combo, BbColorComboBox *color_combo)
 {
-    GActionGroup *group = bb_property_combo_box_get_action_group(BB_PROPERTY_COMBO_BOX(combo));
+    g_return_if_fail(BB_IS_COLOR_COMBO_BOX(color_combo));
+    g_return_if_fail(BB_IS_PROPERTY_COMBO_BOX(property_combo));
+
+    GActionGroup *group = bb_property_combo_box_get_action_group(property_combo);
 
     if (group != NULL)
     {
         GVariant *color = g_variant_new_int32(
-            bb_color_combo_box_get_color(combo)
+            bb_color_combo_box_get_color(color_combo)
             );
 
         g_action_group_activate_action(
             group,
-            bb_property_combo_box_get_action_name(BB_PROPERTY_COMBO_BOX(combo)),
+            bb_property_combo_box_get_action_name(property_combo),
             color
             );
     }
@@ -79,8 +77,8 @@ bb_color_combo_box_apply(BbPropertyComboBox *unused, BbColorComboBox *combo)
 static void
 bb_color_combo_box_class_init(BbColorComboBoxClass *klasse)
 {
-    G_OBJECT_CLASS(klasse)->dispose = bb_color_combo_box_dispose;
-    G_OBJECT_CLASS(klasse)->finalize = bb_color_combo_box_finalize;
+    g_return_if_fail(G_OBJECT_CLASS(klasse) != NULL);
+
     G_OBJECT_CLASS(klasse)->get_property = bb_color_combo_box_get_property;
     G_OBJECT_CLASS(klasse)->set_property = bb_color_combo_box_set_property;
 
@@ -88,30 +86,6 @@ bb_color_combo_box_class_init(BbColorComboBoxClass *klasse)
         GTK_WIDGET_CLASS(klasse),
         "/com/github/ehennes775/bbsch/gui/bbcolorcombobox.ui"
         );
-
-    gtk_widget_class_bind_template_callback(
-        GTK_WIDGET_CLASS(klasse),
-        bb_color_combo_box_apply
-        );
-
-    gtk_widget_class_bind_template_callback(
-        GTK_WIDGET_CLASS(klasse),
-        bb_color_combo_box_update
-        );
-}
-
-
-static void
-bb_color_combo_box_dispose(GObject *object)
-{
-    // BbColorComboBox* privat = BBCOLOR_COMBO_BOX_GET_PRIVATE(object);
-}
-
-
-static void
-bb_color_combo_box_finalize(GObject *object)
-{
-    // BbColorComboBox* privat = BBCOLOR_COMBO_BOX_GET_PRIVATE(object);
 }
 
 
@@ -142,13 +116,8 @@ bb_color_combo_box_get_property(GObject *object, guint property_id, GValue *valu
 {
     switch (property_id)
     {
-        case PROP_1:
-            break;
-
-        case PROP_2:
-            break;
-
-        case PROP_3:
+        case PROP_COLOR:
+            g_value_set_int(value, bb_color_combo_box_get_color(BB_COLOR_COMBO_BOX(object)));
             break;
 
         default:
@@ -158,20 +127,22 @@ bb_color_combo_box_get_property(GObject *object, guint property_id, GValue *valu
 
 
 static void
-bb_color_combo_box_init(BbColorComboBox *window)
+bb_color_combo_box_init(BbColorComboBox *combo)
 {
-    gtk_widget_init_template(GTK_WIDGET(window));
+    gtk_widget_init_template(GTK_WIDGET(combo));
 
-    g_return_if_fail(BB_PROPERTY_COMBO_BOX_GET_CLASS(window) != NULL);
+    combo->apply_handler_id = g_signal_connect(
+        combo,
+        "apply",
+        G_CALLBACK(bb_color_combo_box_apply_cb),
+        combo
+        );
 
-    window->apply_handler_id = g_signal_handler_find(
-        window,
-        G_SIGNAL_MATCH_ID,
-        BB_PROPERTY_COMBO_BOX_GET_CLASS(window)->apply_signal_id,
-        0,
-        NULL,
-        NULL,
-        NULL
+    combo->update_handler_id = g_signal_connect(
+        combo,
+        "update",
+        G_CALLBACK(bb_color_combo_box_update_cb),
+        combo
         );
 }
 
@@ -182,13 +153,13 @@ bb_color_combo_box_register()
     bb_color_combo_box_get_type();
 }
 
+
 void
 bb_color_combo_box_set_color(BbColorComboBox *combo, int index)
 {
-    gtk_combo_box_set_active(
-        GTK_COMBO_BOX(combo),
-        index
-        );
+    g_return_if_fail(index >= 0);
+
+    gtk_combo_box_set_active(GTK_COMBO_BOX(combo), index);
 }
 
 
@@ -197,13 +168,8 @@ bb_color_combo_box_set_property(GObject *object, guint property_id, const GValue
 {
     switch (property_id)
     {
-        case PROP_1:
-            break;
-
-        case PROP_2:
-            break;
-
-        case PROP_3:
+        case PROP_COLOR:
+            bb_color_combo_box_set_color(BB_COLOR_COMBO_BOX(object), g_value_get_int(value));
             break;
 
         default:
@@ -213,8 +179,12 @@ bb_color_combo_box_set_property(GObject *object, guint property_id, const GValue
 
 
 static void
-bb_color_combo_box_update(BbPropertyComboBox *property_combo, GVariant *value, BbColorComboBox *color_combo)
+bb_color_combo_box_update_cb(BbPropertyComboBox *property_combo, GVariant *value, BbColorComboBox *color_combo)
 {
+    g_return_if_fail(BB_IS_COLOR_COMBO_BOX(color_combo));
+    g_return_if_fail(BB_IS_PROPERTY_COMBO_BOX(property_combo));
+    g_return_if_fail(g_variant_is_of_type(value, G_VARIANT_TYPE_INT32));
+
     g_signal_handler_block(
         property_combo,
         color_combo->apply_handler_id

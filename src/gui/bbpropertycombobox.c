@@ -451,11 +451,13 @@ bb_property_combo_box_value_changed(BbPropertyComboBox *combo, gpointer unused)
     BbPropertyComboBoxPrivate *privat = bb_property_combo_box_get_instance_private(combo);
     g_return_if_fail(privat != NULL);
 
-    //if (gtk_widget_is_focus(GTK_WIDGET(gschem_integer_combo_box_get_entry (GTK_WIDGET (combo)))))
-    //{
-    //    combo->changed = TRUE;
-    //}
-    //else
+    GtkWidget *entry = gtk_bin_get_child(GTK_BIN(combo));
+
+    if ((entry != NULL) && gtk_widget_is_focus(entry))
+    {
+        privat->changed = TRUE;
+    }
+    else
     {
         g_signal_emit_by_name(combo, "apply");
         privat->changed = FALSE;
