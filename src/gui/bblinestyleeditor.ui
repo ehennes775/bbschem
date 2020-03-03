@@ -169,7 +169,7 @@
                     </packing>
                 </child>
                 <child>
-                    <object class="BbPropertyComboBox" id="width-combo">
+                    <object class="BbInt32ComboBox" id="width-combo">
                         <property name="entry-text-column">0</property>
                         <property name="has-entry">true</property>
                         <property name="hexpand">true</property>
@@ -178,22 +178,6 @@
                         <style>
                             <class name="propedit"/>
                         </style>
-                        <child internal-child="entry">
-                            <object class="GtkEntry" id="width-entry">
-                            </object>
-                        </child>
-                        <!-- The entry-text-column seems to provide this functionality
-                        <child>
-                            <object class="GtkCellRendererText" id="line-width-renderer">
-                            </object>
-                            <attributes>
-                                <attribute name="text">0</attribute>
-                            </attributes>
-                            <cell-packing>
-                                <property name="expand">true</property>
-                            </cell-packing>
-                        </child>
-                        -->
                     </object>
                     <packing>
                         <property name="left-attach">1</property>
@@ -218,7 +202,7 @@
                     </packing>
                 </child>
                 <child>
-                    <object class="BbPropertyComboBox" id="dash-length-combo">
+                    <object class="BbInt32ComboBox" id="dash-length-combo">
                         <property name="entry-text-column">0</property>
                         <property name="has-entry">true</property>
                         <property name="hexpand">true</property>
@@ -227,22 +211,6 @@
                         <style>
                             <class name="propedit"/>
                         </style>
-                        <child internal-child="entry">
-                            <object class="GtkEntry" id="dash-length-entry">
-                            </object>
-                        </child>
-                        <!-- The entry-text-column seems to provide this functionality
-                        <child>
-                            <object class="GtkCellRendererText" id="dash-length-renderer">
-                            </object>
-                            <attributes>
-                                <attribute name="text">0</attribute>
-                            </attributes>
-                            <cell-packing>
-                                <property name="expand">true</property>
-                            </cell-packing>
-                        </child>
-                        -->
                     </object>
                     <packing>
                         <property name="left-attach">1</property>
@@ -267,7 +235,7 @@
                     </packing>
                 </child>
                 <child>
-                    <object class="BbPropertyComboBox" id="dash-space-combo">
+                    <object class="BbInt32ComboBox" id="dash-space-combo">
                         <property name="entry-text-column">0</property>
                         <property name="has-entry">true</property>
                         <property name="hexpand">true</property>
@@ -276,22 +244,6 @@
                         <style>
                             <class name="propedit"/>
                         </style>
-                        <child internal-child="entry">
-                            <object class="GtkEntry" id="dash-space-entry">
-                            </object>
-                        </child>
-                        <!-- The entry-text-column seems to provide this functionality
-                        <child>
-                            <object class="GtkCellRendererText" id="dash-space-renderer">
-                            </object>
-                            <attributes>
-                                <attribute name="text">0</attribute>
-                            </attributes>
-                            <cell-packing>
-                                <property name="expand">true</property>
-                            </cell-packing>
-                        </child>
-                        -->
                     </object>
                     <packing>
                         <property name="left-attach">1</property>

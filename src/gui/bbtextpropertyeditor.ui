@@ -54,7 +54,7 @@
                     </packing>
                 </child>
                 <child>
-                    <object class="BbPropertyComboBox" id="size-combo">
+                    <object class="BbInt32ComboBox" id="size-combo">
                         <property name="action-name">apply-text-size</property>
                         <property name="entry-text-column">0</property>
                         <property name="has-entry">true</property>
@@ -62,10 +62,6 @@
                         <style>
                             <class name="propedit"/>
                         </style>
-                        <child internal-child="entry">
-                            <object class="GtkEntry" id="size-entry">
-                            </object>
-                        </child>
                     </object>
                     <packing>
                         <property name="left-attach">1</property>

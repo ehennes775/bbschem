@@ -180,7 +180,7 @@
                     </packing>
                 </child>
                 <child>
-                    <object class="BbPropertyComboBox" id="line-width-combo">
+                    <object class="BbInt32ComboBox" id="line-width-combo">
                         <property name="entry-text-column">0</property>
                         <property name="has-entry">true</property>
                         <property name="hexpand">true</property>
@@ -189,10 +189,6 @@
                         <style>
                             <class name="propedit"/>
                         </style>
-                        <child internal-child="entry">
-                            <object class="GtkEntry" id="line-width-entry">
-                            </object>
-                        </child>
                     </object>
                     <packing>
                         <property name="left-attach">1</property>
@@ -217,7 +213,7 @@
                     </packing>
                 </child>
                 <child>
-                    <object class="BbPropertyComboBox" id="fill-angle-1-combo">
+                    <object class="BbInt32ComboBox" id="fill-angle-1-combo">
                         <property name="entry-text-column">0</property>
                         <property name="has-entry">true</property>
                         <property name="hexpand">true</property>
@@ -226,10 +222,6 @@
                         <style>
                             <class name="propedit"/>
                         </style>
-                        <child internal-child="entry">
-                            <object class="GtkEntry" id="fill-angle-1-entry">
-                            </object>
-                        </child>
                     </object>
                     <packing>
                         <property name="left-attach">1</property>
@@ -254,7 +246,7 @@
                     </packing>
                 </child>
                 <child>
-                    <object class="BbPropertyComboBox" id="fill-pitch-1-combo">
+                    <object class="BbInt32ComboBox" id="fill-pitch-1-combo">
                         <property name="entry-text-column">0</property>
                         <property name="has-entry">true</property>
                         <property name="hexpand">true</property>
@@ -263,10 +255,6 @@
                         <style>
                             <class name="propedit"/>
                         </style>
-                        <child internal-child="entry">
-                            <object class="GtkEntry" id="fill-pitch-1-entry">
-                            </object>
-                        </child>
                     </object>
                     <packing>
                         <property name="left-attach">1</property>
@@ -291,7 +279,7 @@
                     </packing>
                 </child>
                 <child>
-                    <object class="BbPropertyComboBox" id="fill-angle-2-combo">
+                    <object class="BbInt32ComboBox" id="fill-angle-2-combo">
                         <property name="entry-text-column">0</property>
                         <property name="has-entry">true</property>
                         <property name="hexpand">true</property>
@@ -300,10 +288,6 @@
                         <style>
                             <class name="propedit"/>
                         </style>
-                        <child internal-child="entry">
-                            <object class="GtkEntry" id="fill-angle-2-entry">
-                            </object>
-                        </child>
                     </object>
                     <packing>
                         <property name="left-attach">1</property>
@@ -328,7 +312,7 @@
                     </packing>
                 </child>
                 <child>
-                    <object class="BbPropertyComboBox" id="fill-pitch-2-combo">
+                    <object class="BbInt32ComboBox" id="fill-pitch-2-combo">
                         <property name="entry-text-column">0</property>
                         <property name="has-entry">true</property>
                         <property name="hexpand">true</property>
@@ -337,10 +321,6 @@
                         <style>
                             <class name="propedit"/>
                         </style>
-                        <child internal-child="entry">
-                            <object class="GtkEntry" id="fill-pitch-2-entry">
-                            </object>
-                        </child>
                     </object>
                     <packing>
                         <property name="left-attach">1</property>
