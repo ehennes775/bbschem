@@ -230,9 +230,10 @@ static void
 bb_schematic_wrapper_init(BbSchematicWrapper *wrapper)
 {
     g_signal_connect(
-        wrapper->action.apply_fill_angle1 = g_simple_action_new(
+        wrapper->action.apply_fill_angle1 = g_simple_action_new_stateful(
             "apply-fill-angle1",
-            G_VARIANT_TYPE_INT32
+            G_VARIANT_TYPE_INT32,
+            g_variant_new_maybe(G_VARIANT_TYPE_INT32, NULL)
             ),
         "activate",
         G_CALLBACK(bb_schematic_wrapper_apply_fill_angle1_action_cb),
@@ -240,9 +241,10 @@ bb_schematic_wrapper_init(BbSchematicWrapper *wrapper)
         );
 
     g_signal_connect(
-        wrapper->action.apply_fill_angle2 = g_simple_action_new(
+        wrapper->action.apply_fill_angle2 = g_simple_action_new_stateful(
             "apply-fill-angle2",
-            G_VARIANT_TYPE_INT32
+            G_VARIANT_TYPE_INT32,
+            g_variant_new_maybe(G_VARIANT_TYPE_INT32, NULL)
             ),
         "activate",
         G_CALLBACK(bb_schematic_wrapper_apply_fill_angle2_action_cb),
@@ -250,9 +252,10 @@ bb_schematic_wrapper_init(BbSchematicWrapper *wrapper)
         );
 
     g_signal_connect(
-        wrapper->action.apply_fill_pitch1 = g_simple_action_new(
+        wrapper->action.apply_fill_pitch1 = g_simple_action_new_stateful(
             "apply-fill-pitch1",
-            G_VARIANT_TYPE_INT32
+            G_VARIANT_TYPE_INT32,
+            g_variant_new_maybe(G_VARIANT_TYPE_INT32, NULL)
             ),
         "activate",
         G_CALLBACK(bb_schematic_wrapper_apply_fill_pitch1_action_cb),
@@ -260,9 +263,10 @@ bb_schematic_wrapper_init(BbSchematicWrapper *wrapper)
         );
 
     g_signal_connect(
-        wrapper->action.apply_fill_pitch2 = g_simple_action_new(
+        wrapper->action.apply_fill_pitch2 = g_simple_action_new_stateful(
             "apply-fill-pitch2",
-            G_VARIANT_TYPE_INT32
+            G_VARIANT_TYPE_INT32,
+            g_variant_new_maybe(G_VARIANT_TYPE_INT32, NULL)
             ),
         "activate",
         G_CALLBACK(bb_schematic_wrapper_apply_fill_pitch2_action_cb),
@@ -503,6 +507,11 @@ bb_schematic_wrapper_apply_fill_angle1_action_cb(GSimpleAction *simple, GVariant
     int value = g_variant_get_int32(parameter);
 
     g_message("bb_schematic_wrapper_apply_fill_angle1_action_cb");
+
+    g_simple_action_set_state(
+        wrapper->action.apply_fill_angle1,
+        g_variant_new_maybe(G_VARIANT_TYPE_INT32, parameter)
+        );
 }
 
 
@@ -515,6 +524,11 @@ bb_schematic_wrapper_apply_fill_angle2_action_cb(GSimpleAction *simple, GVariant
     int value = g_variant_get_int32(parameter);
 
     g_message("bb_schematic_wrapper_apply_fill_angle2_action_cb");
+
+    g_simple_action_set_state(
+        wrapper->action.apply_fill_angle2,
+        g_variant_new_maybe(G_VARIANT_TYPE_INT32, parameter)
+        );
 }
 
 
@@ -527,6 +541,11 @@ bb_schematic_wrapper_apply_fill_pitch1_action_cb(GSimpleAction *simple, GVariant
     int value = g_variant_get_int32(parameter);
 
     g_message("bb_schematic_wrapper_apply_fill_pitch1_action_cb");
+
+    g_simple_action_set_state(
+        wrapper->action.apply_fill_pitch1,
+        g_variant_new_maybe(G_VARIANT_TYPE_INT32, parameter)
+        );
 }
 
 
@@ -539,6 +558,11 @@ bb_schematic_wrapper_apply_fill_pitch2_action_cb(GSimpleAction *simple, GVariant
     int value = g_variant_get_int32(parameter);
 
     g_message("bb_schematic_wrapper_apply_fill_pitch2_action_cb");
+
+    g_simple_action_set_state(
+        wrapper->action.apply_fill_pitch2,
+        g_variant_new_maybe(G_VARIANT_TYPE_INT32, parameter)
+        );
 }
 
 
@@ -575,6 +599,11 @@ bb_schematic_wrapper_apply_line_dash_length_action_cb(GSimpleAction *simple, GVa
     int value = g_variant_get_int32(parameter);
 
     g_message("bb_schematic_wrapper_apply_line_dash_length_action_cb");
+
+    g_simple_action_set_state(
+        wrapper->action.apply_line_dash_length,
+        g_variant_new_maybe(G_VARIANT_TYPE_INT32, parameter)
+        );
 }
 
 
@@ -587,6 +616,11 @@ bb_schematic_wrapper_apply_line_dash_space_action_cb(GSimpleAction *simple, GVar
     int value = g_variant_get_int32(parameter);
 
     g_message("bb_schematic_wrapper_apply_line_dash_space_action_cb");
+
+    g_simple_action_set_state(
+        wrapper->action.apply_line_dash_space,
+        g_variant_new_maybe(G_VARIANT_TYPE_INT32, parameter)
+        );
 }
 
 
@@ -611,6 +645,11 @@ bb_schematic_wrapper_apply_line_width_action_cb(GSimpleAction *simple, GVariant 
     int value = g_variant_get_int32(parameter);
 
     g_message("bb_schematic_wrapper_apply_line_width_action_cb");
+
+    g_simple_action_set_state(
+        wrapper->action.apply_line_width,
+        g_variant_new_maybe(G_VARIANT_TYPE_INT32, parameter)
+        );
 }
 
 

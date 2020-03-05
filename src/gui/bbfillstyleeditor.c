@@ -19,6 +19,7 @@
 #include <gtk/gtk.h>
 #include "bbmainwindow.h"
 #include "bbfillstyleeditor.h"
+#include "bbint32combobox.h"
 #include "bbpropertycombobox.h"
 #include "bbschematicwindow.h"
 
@@ -35,6 +36,11 @@ struct _BbFillStyleEditor
     GtkExpander parent;
 
     BbMainWindow *main_window;
+
+    BbInt32ComboBox *fill_angle1_combo;
+    BbInt32ComboBox *fill_pitch1_combo;
+    BbInt32ComboBox *fill_angle2_combo;
+    BbInt32ComboBox *fill_pitch2_combo;
 };
 
 G_DEFINE_TYPE(BbFillStyleEditor, bb_fill_style_editor, GTK_TYPE_EXPANDER);
@@ -94,6 +100,30 @@ bb_fill_style_editor_class_init(BbFillStyleEditorClass *class)
     gtk_widget_class_bind_template_callback(
         GTK_WIDGET_CLASS(class),
         bb_fill_style_editor_apply
+        );
+
+    gtk_widget_class_bind_template_child(
+        GTK_WIDGET_CLASS(class),
+        BbFillStyleEditor,
+        fill_angle1_combo
+        );
+
+    gtk_widget_class_bind_template_child(
+        GTK_WIDGET_CLASS(class),
+        BbFillStyleEditor,
+        fill_angle2_combo
+        );
+
+    gtk_widget_class_bind_template_child(
+        GTK_WIDGET_CLASS(class),
+        BbFillStyleEditor,
+        fill_pitch1_combo
+        );
+
+    gtk_widget_class_bind_template_child(
+        GTK_WIDGET_CLASS(class),
+        BbFillStyleEditor,
+        fill_pitch2_combo
         );
 }
 
@@ -156,6 +186,26 @@ bb_fill_style_editor_set_main_window(BbFillStyleEditor *editor, BbMainWindow *wi
     }
 
     editor->main_window = window;
+
+    bb_property_combo_box_set_action_group(
+        BB_PROPERTY_COMBO_BOX(editor->fill_angle1_combo),
+        G_ACTION_GROUP(editor->main_window)
+        );
+
+    bb_property_combo_box_set_action_group(
+        BB_PROPERTY_COMBO_BOX(editor->fill_angle2_combo),
+        G_ACTION_GROUP(editor->main_window)
+        );
+
+    bb_property_combo_box_set_action_group(
+        BB_PROPERTY_COMBO_BOX(editor->fill_pitch1_combo),
+        G_ACTION_GROUP(editor->main_window)
+        );
+
+    bb_property_combo_box_set_action_group(
+        BB_PROPERTY_COMBO_BOX(editor->fill_pitch2_combo),
+        G_ACTION_GROUP(editor->main_window)
+        );
 
     if (editor->main_window != NULL)
     {

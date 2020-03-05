@@ -27,6 +27,9 @@ G_DECLARE_FINAL_TYPE(BbInt32ComboBox, bb_int32_combo_box, BB, INT32_COMBO_BOX, B
 int
 bb_int32_combo_box_get_value(BbInt32ComboBox *combo);
 
+int
+bb_int32_combo_box_parse_value(BbInt32ComboBox *combo, GError **error);
+
 void
 bb_int32_combo_box_set_value(BbInt32ComboBox *combo, int value);
 

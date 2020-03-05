@@ -17,6 +17,7 @@
  */
 
 #include <gtk/gtk.h>
+#include <errno.h>
 #include "bbint32combobox.h"
 
 
@@ -30,6 +31,8 @@ enum
 struct _BbInt32ComboBox
 {
     BbPropertyComboBox parent;
+
+    GtkEntry *entry;
 
     gulong apply_handler_id;
     gulong update_handler_id;
@@ -61,15 +64,19 @@ bb_int32_combo_box_apply_cb(BbPropertyComboBox *property_combo, BbInt32ComboBox 
 
     if (group != NULL)
     {
-        GVariant *int32 = g_variant_new_int32(
-            bb_int32_combo_box_get_value(int32_combo)
-            );
+        GError *error = NULL;
+        int value = bb_int32_combo_box_parse_value(int32_combo, &error);
 
-        g_action_group_activate_action(
-            group,
-            bb_property_combo_box_get_action_name(property_combo),
-            int32
-            );
+        if (error == NULL)
+        {
+            g_action_group_activate_action(
+                group,
+                bb_property_combo_box_get_action_name(property_combo),
+                g_variant_new_int32(value)
+                );
+        }
+
+        g_error_free(error);
     }
 }
 
@@ -85,29 +92,29 @@ bb_int32_combo_box_class_init(BbInt32ComboBoxClass *klasse)
     gtk_widget_class_set_template_from_resource(
         GTK_WIDGET_CLASS(klasse),
         "/com/github/ehennes775/bbsch/gui/bbint32combobox.ui"
-    );
+        );
+
+    //gtk_widget_class_bind_template_child(
+    //    GTK_WIDGET_CLASS(klasse),
+    //    BbInt32ComboBox,
+    //    entry
+    //    );
 }
 
 
 int
 bb_int32_combo_box_get_value(BbInt32ComboBox *combo)
 {
-    int int32 = 0;
-    GtkTreeIter iter;
+    GError *error = NULL;
+    int value = bb_int32_combo_box_parse_value(combo, &error);
 
-    gboolean success = gtk_combo_box_get_active_iter(GTK_COMBO_BOX(combo), &iter);
-    GtkTreeModel *model = gtk_combo_box_get_model(GTK_COMBO_BOX(combo));
-
-    if (success && (model != NULL))
+    if (error != NULL)
     {
-        GValue value = G_VALUE_INIT;
-
-        gtk_tree_model_get_value(model, &iter, 3, &value);
-
-        int32 = g_value_get_int(&value);
+        g_error_free(error);
+        value = -1;
     }
 
-    return int32;
+    return value;
 }
 
 
@@ -147,6 +154,54 @@ bb_int32_combo_box_init(BbInt32ComboBox *combo)
 }
 
 
+int
+bb_int32_combo_box_parse_value(BbInt32ComboBox *combo, GError **error)
+{
+    GError *temp_error = NULL;
+    GtkWidget *entry = GTK_WIDGET(gtk_bin_get_child(GTK_BIN(combo)));
+    int value = -1;
+    const char *text0 = gtk_entry_get_text(GTK_ENTRY(entry));
+
+    if (text0 != NULL)
+    {
+        long temp;
+        char *text1;
+
+        errno = 0;
+
+        temp = strtol (text0, &text1, 0);
+
+        if ((errno == 0) && (text1 != NULL) && (*text1 == '\0') && (temp >= 0))
+        {
+            value = temp;
+        }
+        else
+        {
+            temp_error = g_error_new(
+                g_quark_from_string("bbsch"),
+                0,
+                ""
+                );
+        }
+    }
+    else
+    {
+        temp_error = g_error_new(
+            g_quark_from_string("bbsch"),
+            0,
+            ""
+            );
+    }
+
+    if (temp_error != NULL)
+    {
+        g_propagate_error (error, temp_error);
+    }
+
+    return value;
+}
+
+
 __attribute__((constructor)) void
 bb_int32_combo_box_register()
 {
@@ -155,11 +210,9 @@ bb_int32_combo_box_register()
 
 
 void
-bb_int32_combo_box_set_value(BbInt32ComboBox *combo, int index)
+bb_int32_combo_box_set_value(BbInt32ComboBox *combo, int value)
 {
-    g_return_if_fail(index >= 0);
-
-    gtk_combo_box_set_active(GTK_COMBO_BOX(combo), index);
+    g_message("bb_int32_combo_box_set_value (value = %d)", value);
 }
 
 

@@ -185,7 +185,6 @@
                         <property name="has-entry">true</property>
                         <property name="hexpand">true</property>
                         <property name="model">width-list</property>
-                        <signal name="apply" handler="bb_fill_style_editor_apply"/>
                         <style>
                             <class name="propedit"/>
                         </style>
@@ -213,12 +212,12 @@
                     </packing>
                 </child>
                 <child>
-                    <object class="BbInt32ComboBox" id="fill-angle-1-combo">
+                    <object class="BbInt32ComboBox" id="fill_angle1_combo">
+                        <property name="action-name">apply-fill-angle1</property>
                         <property name="entry-text-column">0</property>
                         <property name="has-entry">true</property>
                         <property name="hexpand">true</property>
                         <property name="model">angle-list</property>
-                        <signal name="apply" handler="bb_fill_style_editor_apply"/>
                         <style>
                             <class name="propedit"/>
                         </style>
@@ -246,12 +245,12 @@
                     </packing>
                 </child>
                 <child>
-                    <object class="BbInt32ComboBox" id="fill-pitch-1-combo">
+                    <object class="BbInt32ComboBox" id="fill_pitch1_combo">
+                        <property name="action-name">apply-fill-pitch1</property>
                         <property name="entry-text-column">0</property>
                         <property name="has-entry">true</property>
                         <property name="hexpand">true</property>
                         <property name="model">pitch-list</property>
-                        <signal name="apply" handler="bb_fill_style_editor_apply"/>
                         <style>
                             <class name="propedit"/>
                         </style>
@@ -279,12 +278,12 @@
                     </packing>
                 </child>
                 <child>
-                    <object class="BbInt32ComboBox" id="fill-angle-2-combo">
+                    <object class="BbInt32ComboBox" id="fill_angle2_combo">
+                        <property name="action-name">apply-fill-angle2</property>
                         <property name="entry-text-column">0</property>
                         <property name="has-entry">true</property>
                         <property name="hexpand">true</property>
                         <property name="model">angle-list</property>
-                        <signal name="apply" handler="bb_fill_style_editor_apply"/>
                         <style>
                             <class name="propedit"/>
                         </style>
@@ -312,12 +311,12 @@
                     </packing>
                 </child>
                 <child>
-                    <object class="BbInt32ComboBox" id="fill-pitch-2-combo">
+                    <object class="BbInt32ComboBox" id="fill_pitch2_combo">
+                        <property name="action-name">apply-fill-pitch2</property>
                         <property name="entry-text-column">0</property>
                         <property name="has-entry">true</property>
                         <property name="hexpand">true</property>
                         <property name="model">pitch-list</property>
-                        <signal name="apply" handler="bb_fill_style_editor_apply"/>
                         <style>
                             <class name="propedit"/>
                         </style>

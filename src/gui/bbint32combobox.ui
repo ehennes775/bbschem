@@ -3,7 +3,7 @@
 
     <template class="BbInt32ComboBox" parent="BbPropertyComboBox">
         <child internal-child="entry">
-            <object class="GtkEntry" id="int32-entry">
+            <object class="GtkEntry" id="entry">
             </object>
         </child>
     </template>
