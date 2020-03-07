@@ -22,6 +22,8 @@ bbtest_SOURCES = \
     gui/bbdocumentwindowtab.c \
     gui/bbfillstyleeditor.c \
     gui/bbint32combobox.c \
+    gui/bbitembuilder.c \
+    gui/bblinebuilder.c \
     gui/bblinestyleeditor.c \
     gui/bbmainwindow.c \
     gui/bbpinpropertyeditor.c \
