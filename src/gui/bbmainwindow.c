@@ -22,6 +22,12 @@
 #include "bbdocumentwindowtab.h"
 #include "bbschematicwindow.h"
 
+enum
+{
+    PROP_0,
+    PROP_CURRENT_DOCUMENT_WINDOW
+};
+
 struct _BbMainWindow
 {
     GtkApplicationWindow parent;
@@ -34,6 +40,9 @@ G_DEFINE_TYPE(BbMainWindow, bb_main_window, GTK_TYPE_APPLICATION_WINDOW);
 
 
 static void
+bb_main_window_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
+
+static void
 bb_main_window_dispose(GObject *object);
 
 static void
@@ -44,6 +53,9 @@ bb_main_window_page_added(BbMainWindow *window, GtkWidget *child, guint page_num
 
 static void
 bb_main_window_page_removed(BbMainWindow *window, GtkWidget *child, guint page_num, GtkNotebook *notebook);
+
+static void
+bb_main_window_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
 
 static void
 bb_main_window_update(GtkWidget *child, BbMainWindow *window);
@@ -68,6 +80,20 @@ static void
 bb_main_window_class_init(BbMainWindowClass *class)
 {
     G_OBJECT_CLASS(class)->dispose = bb_main_window_dispose;
+    G_OBJECT_CLASS(class)->get_property = bb_main_window_get_property;
+    G_OBJECT_CLASS(class)->set_property = bb_main_window_set_property;
+
+    g_object_class_install_property(
+        G_OBJECT_CLASS(class),
+        PROP_CURRENT_DOCUMENT_WINDOW,
+        g_param_spec_object(
+            "current-document-window",
+            "",
+            "",
+            BB_TYPE_DOCUMENT_WINDOW,
+            G_PARAM_READABLE
+            )
+        );
 
     gtk_widget_class_set_template_from_resource(
         GTK_WIDGET_CLASS(class),
@@ -134,9 +160,27 @@ bb_main_window_get_current_document_window(BbMainWindow* window)
 
 
 static void
+bb_main_window_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec)
+{
+    switch (property_id)
+    {
+        case PROP_CURRENT_DOCUMENT_WINDOW:
+            g_value_set_object(value, bb_main_window_get_current_document_window(BB_MAIN_WINDOW(object)));
+            break;
+
+        default:
+            G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
+    }
+}
+
+
+static void
 bb_main_window_init(BbMainWindow *window)
 {
+    g_message("%s", g_type_name(BB_TYPE_MAIN_WINDOW));
+
     gtk_widget_init_template(GTK_WIDGET(window));
+
 
     bb_main_window_add_page(window, g_object_new(BB_TYPE_SCHEMATIC_WINDOW, NULL));
     bb_main_window_add_page(window, g_object_new(BB_TYPE_SCHEMATIC_WINDOW, NULL));
@@ -147,7 +191,7 @@ BbMainWindow*
 bb_main_window_new(BbApplication *application)
 {
     return g_object_new(
-        BB_MAIN_WINDOW_TYPE,
+        BB_TYPE_MAIN_WINDOW,
         "application", application,
         NULL
         );
@@ -211,6 +255,24 @@ bb_main_window_page_removed(BbMainWindow *window, GtkWidget *child, guint page_n
         G_CALLBACK(bb_main_window_update),
         window
         );
+}
+
+
+__attribute__((constructor)) void
+bb_main_window_register()
+{
+    bb_main_window_get_type();
+}
+
+
+static void
+bb_main_window_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec)
+{
+    switch (property_id)
+    {
+        default:
+            G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
+    }
 }
 
 

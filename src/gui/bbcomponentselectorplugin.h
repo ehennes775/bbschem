@@ -1,3 +1,5 @@
+#ifndef __BBCOMPONENTSELECTORPLUGIN__
+#define __BBCOMPONENTSELECTORPLUGIN__
 /*
  * bbsch
  * Copyright (C) 2020 Edward C. Hennessy
@@ -17,41 +19,18 @@
  */
 
 #include <gtk/gtk.h>
-#include "bbcomponentselector.h"
+#include <libpeas/peas.h>
 
 
-struct _BbComponentSelector
-{
-    GtkBox parent;
-};
+#define BB_TYPE_COMPONENT_SELECTOR_PLUGIN bb_component_selector_plugin_get_type()
+G_DECLARE_FINAL_TYPE(BbComponentSelectorPlugin, bb_component_selector_plugin, BB, COMPONENT_SELECTOR_PLUGIN, PeasExtensionBase)
 
 
-G_DEFINE_TYPE(
-    BbComponentSelector,
-    bb_component_selector,
-    GTK_TYPE_BOX
-    );
+GObject*
+bb_component_selector_plugin_get_object(BbComponentSelectorPlugin *plugin);
+
+void
+bb_component_selector_plugin_set_object(BbComponentSelectorPlugin *plugin, GObject *object);
 
 
-static void
-bb_component_selector_class_init(BbComponentSelectorClass *class)
-{
-    gtk_widget_class_set_template_from_resource(
-        GTK_WIDGET_CLASS(class),
-        "/com/github/ehennes775/bbsch/gui/bbcomponentselector.ui"
-        );
-}
-
-
-static void
-bb_component_selector_init(BbComponentSelector *window)
-{
-    gtk_widget_init_template(GTK_WIDGET(window));
-}
-
-
-__attribute__((constructor)) void
-bb_component_selector_register()
-{
-    bb_component_selector_get_type();
-}
+#endif

@@ -19,10 +19,16 @@
  */
 
 #include <gtk/gtk.h>
+#include "bbdocumentwindow.h"
 
 
 #define BB_TYPE_COMPONENT_SELECTOR bb_attribute_editor_get_type()
-G_DECLARE_FINAL_TYPE(BbAttributeEditor, bb_attribute_editor, BB, AttributeEditor, GtkBox)
+G_DECLARE_FINAL_TYPE(BbAttributeEditor, bb_attribute_editor, BB, ATTRIBUTE_EDITOR, GtkBox)
 
+BbDocumentWindow*
+bb_attribute_editor_get_document_window(BbAttributeEditor *editor);
+
+void
+bb_attribute_editor_set_document_window(BbAttributeEditor *editor, BbDocumentWindow *window);
 
 #endif

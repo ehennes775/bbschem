@@ -15,6 +15,7 @@ AC_CONFIG_FILES([
 PKG_CHECK_MODULES([DEPS], [
     glib-2.0 >= 2.40
     gtk+-3.0 >= 3.10
+    libpeas-1.0 >= 1.22
     ])
 
 AC_OUTPUT

@@ -87,7 +87,7 @@ bb_fill_style_editor_class_init(BbFillStyleEditorClass *class)
             "main-window",
             "",
             "",
-            BB_MAIN_WINDOW_TYPE,
+            BB_TYPE_MAIN_WINDOW,
             G_PARAM_READWRITE
             )
         );

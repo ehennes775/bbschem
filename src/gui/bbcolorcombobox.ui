@@ -165,8 +165,8 @@
     <template class="BbColorComboBox" parent="BbPropertyComboBox">
         <property name="id-column">1</property>
         <property name="model">color-list</property>
-        <signal name="apply" handler="bb_color_combo_box_apply"/>
-        <signal name="update" handler="bb_color_combo_box_update"/>
+        <!--<signal name="apply" handler="bb_color_combo_box_apply"/>
+        <signal name="update" handler="bb_color_combo_box_update"/>-->
         <child>
             <object class="BbCellRendererColorSwatch" id="color-swatch-renderer">
                 <property name="width">25</property>

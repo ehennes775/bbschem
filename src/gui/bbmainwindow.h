@@ -23,7 +23,7 @@
 #include "bbdocumentwindow.h"
 
 
-#define BB_MAIN_WINDOW_TYPE bb_main_window_get_type()
+#define BB_TYPE_MAIN_WINDOW bb_main_window_get_type()
 G_DECLARE_FINAL_TYPE(BbMainWindow, bb_main_window, BB, MAIN_WINDOW, GtkApplicationWindow)
 
 

@@ -17,6 +17,7 @@ bbtest_SOURCES = \
     gui/bbcolorcombobox.c \
     gui/bbcoloreditor.c \
     gui/bbcomponentselector.c \
+    gui/bbcomponentselectorplugin.c \
     gui/bbdocumentwindow.c \
     gui/bbdocumentwindowtab.c \
     gui/bbfillstyleeditor.c \

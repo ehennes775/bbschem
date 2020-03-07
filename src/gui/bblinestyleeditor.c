@@ -81,7 +81,7 @@ bb_line_style_editor_class_init(BbLineStyleEditorClass *class)
             "main-window",
             "",
             "",
-            BB_MAIN_WINDOW_TYPE,
+            BB_TYPE_MAIN_WINDOW,
             G_PARAM_READWRITE
             )
         );

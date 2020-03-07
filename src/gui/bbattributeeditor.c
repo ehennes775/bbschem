@@ -20,9 +20,18 @@
 #include "bbattributeeditor.h"
 
 
+enum
+{
+    PROP_0,
+    PROP_DOCUMENT_WINDOW
+};
+
+
 struct _BbAttributeEditor
 {
     GtkBox parent;
+
+    BbDocumentWindow *document_window;
 };
 
 
@@ -30,12 +39,73 @@ G_DEFINE_TYPE(BbAttributeEditor, bb_attribute_editor, GTK_TYPE_BOX);
 
 
 static void
+bb_attribute_editor_dispose(GObject *object);
+
+static void
+bb_attribute_editor_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
+
+static void
+bb_attribute_editor_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
+
+
+static void
 bb_attribute_editor_class_init(BbAttributeEditorClass *class)
 {
+
+    G_OBJECT_CLASS(class)->dispose = bb_attribute_editor_dispose;
+    G_OBJECT_CLASS(class)->get_property = bb_attribute_editor_get_property;
+    G_OBJECT_CLASS(class)->set_property = bb_attribute_editor_set_property;
+
+    g_object_class_install_property(
+        G_OBJECT_CLASS(class),
+        PROP_DOCUMENT_WINDOW,
+        g_param_spec_object(
+            "document-window",
+            "",
+            "",
+            BB_TYPE_DOCUMENT_WINDOW,
+            G_PARAM_READWRITE
+            )
+        );
+
     gtk_widget_class_set_template_from_resource(
         GTK_WIDGET_CLASS(class),
         "/com/github/ehennes775/bbsch/gui/bbattributeeditor.ui"
         );
+}
+
+
+static void
+bb_attribute_editor_dispose(GObject *object)
+{
+    BbAttributeEditor *editor = BB_ATTRIBUTE_EDITOR(object);
+    g_return_if_fail(editor != NULL);
+
+    g_clear_object(&editor->document_window);
+}
+
+
+BbDocumentWindow*
+bb_attribute_editor_get_document_window(BbAttributeEditor *editor)
+{
+    g_return_val_if_fail(editor != NULL, NULL);
+
+    return editor->document_window;
+}
+
+
+static void
+bb_attribute_editor_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec)
+{
+    switch (property_id)
+    {
+        case PROP_DOCUMENT_WINDOW:
+            g_value_set_object(value, bb_attribute_editor_get_document_window(BB_ATTRIBUTE_EDITOR(object)));
+            break;
+
+        default:
+            G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
+    }
 }
 
 
@@ -50,4 +120,28 @@ __attribute__((constructor)) void
 bb_attribute_editor_register()
 {
     bb_attribute_editor_get_type();
+}
+
+
+void
+bb_attribute_editor_set_document_window(BbAttributeEditor *editor, BbDocumentWindow *window)
+{
+    g_return_if_fail(editor != NULL);
+
+    g_set_object(&editor->document_window, window);
+}
+
+
+static void
+bb_attribute_editor_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec)
+{
+    switch (property_id)
+    {
+        case PROP_DOCUMENT_WINDOW:
+            bb_attribute_editor_set_document_window(BB_ATTRIBUTE_EDITOR(object), g_value_get_object(value));
+            break;
+
+        default:
+            G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
+    }
 }

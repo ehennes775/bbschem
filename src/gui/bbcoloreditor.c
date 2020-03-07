@@ -85,7 +85,7 @@ bb_color_editor_class_init(BbColorEditorClass *class)
             "main-window",
             "",
             "",
-            BB_MAIN_WINDOW_TYPE,
+            BB_TYPE_MAIN_WINDOW,
             G_PARAM_READWRITE
             )
         );
