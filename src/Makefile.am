@@ -13,16 +13,20 @@ $(BUILT_SOURCES) : $(RESOURCES_FILE) $(shell $(GLIB_COMPILE_RESOURCES) --generat
 bbtest_SOURCES = \
     gui/bbapplication.c \
     gui/bbattributeeditor.c \
+    gui/bbboxbuilder.c \
     gui/bbcellrenderercolorswatch.c \
+    gui/bbcirclebuilder.c \
     gui/bbcolorcombobox.c \
     gui/bbcoloreditor.c \
     gui/bbcomponentselector.c \
     gui/bbcomponentselectorplugin.c \
     gui/bbdocumentwindow.c \
     gui/bbdocumentwindowtab.c \
+    gui/bbdrawingtool.c \
     gui/bbfillstyleeditor.c \
     gui/bbint32combobox.c \
     gui/bbitembuilder.c \
+    gui/bbitembuildtool.c \
     gui/bblinebuilder.c \
     gui/bblinestyleeditor.c \
     gui/bbmainwindow.c \
@@ -32,6 +36,12 @@ bbtest_SOURCES = \
     gui/bbschematicwindowinner.c \
     gui/bbschematicwrapper.c \
     gui/bbtextpropertyeditor.c \
+    gui/bbtoolpalette.c \
+    lib/bbbounds.c \
+    lib/bbboundscalculator.c \
+    lib/bbgraphicline.c \
+    lib/bbitemrenderer.c \
+    lib/bbschematicitem.c \
 	main.c \
 	$(BUILT_SOURCES)
 
