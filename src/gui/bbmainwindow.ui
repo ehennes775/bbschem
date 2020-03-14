@@ -316,6 +316,19 @@
                                                 <property name="title">Prop</property>
                                             </packing>
                                         </child>
+                                        <child>
+                                            <object class="BbToolPalette" id="tool_palette">
+                                                <property name="hexpand">true</property>
+                                                <property name="vexpand">true</property>
+                                                <style>
+                                                    <class name="panelouter"/>
+                                                </style>
+                                            </object>
+                                            <packing>
+                                                <property name="name">tools</property>
+                                                <property name="title">Tools</property>
+                                            </packing>
+                                        </child>
                                     </object>
                                 </child>
                             </object>

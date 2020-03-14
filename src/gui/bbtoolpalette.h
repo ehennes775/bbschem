@@ -1,5 +1,5 @@
-#ifndef __BBITEMBUILDER__
-#define __BBITEMBUILDER__
+#ifndef __BBTOOLPALETTE__
+#define __BBTOOLPALETTE__
 /*
  * bbsch
  * Copyright (C) 2020 Edward C. Hennessy
@@ -19,23 +19,16 @@
  */
 
 #include <gtk/gtk.h>
+#include "bbmainwindow.h"
 
-#define BB_TYPE_ITEM_BUILDER bb_item_builder_get_type()
-G_DECLARE_DERIVABLE_TYPE(BbItemBuilder, bb_item_builder, BB, ITEM_BUILDER, GObject)
-
-struct _BbItemBuilderClass
-{
-    GObjectClass parent_class;
-
-    GSList* (*create_items)(BbItemBuilder *builder);
-    void (*put_point)(BbItemBuilder *builder, int index, int x, int y);
-};
+#define BB_TYPE_TOOL_PALETTE bb_tool_palette_get_type()
+G_DECLARE_FINAL_TYPE(BbToolPalette, bb_tool_palette, BB, TOOL_PALETTE, GtkBox)
 
 
-GSList*
-bb_item_builder_create_items(BbItemBuilder *builder);
+BbMainWindow*
+bb_tool_palette_get_main_window(BbToolPalette *palette);
 
 void
-bb_item_builder_put_point(BbItemBuilder *builder, int index, int x, int y);
+bb_tool_palette_set_main_window(BbToolPalette *palette, BbMainWindow *window);
 
 #endif

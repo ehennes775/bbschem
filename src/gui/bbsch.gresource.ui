@@ -15,6 +15,7 @@
         <file>gui/bbpinpropertyeditor.ui</file>
         <file>gui/bbschematicwindow.ui</file>
         <file>gui/bbtextpropertyeditor.ui</file>
+        <file>gui/bbtoolpalette.ui</file>
         <!--
         <file>gui/aedit/AttributeEditor.ui.xml</file>
         <file>gui/epins/PinEditorDialog.ui.xml</file>

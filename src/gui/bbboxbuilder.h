@@ -1,5 +1,5 @@
-#ifndef __BBITEMBUILDER__
-#define __BBITEMBUILDER__
+#ifndef __BBBOXBUILDER__
+#define __BBBOXBUILDER__
 /*
  * bbsch
  * Copyright (C) 2020 Edward C. Hennessy
@@ -19,23 +19,34 @@
  */
 
 #include <gtk/gtk.h>
+#include "bbitembuilder.h"
 
-#define BB_TYPE_ITEM_BUILDER bb_item_builder_get_type()
-G_DECLARE_DERIVABLE_TYPE(BbItemBuilder, bb_item_builder, BB, ITEM_BUILDER, GObject)
-
-struct _BbItemBuilderClass
-{
-    GObjectClass parent_class;
-
-    GSList* (*create_items)(BbItemBuilder *builder);
-    void (*put_point)(BbItemBuilder *builder, int index, int x, int y);
-};
+#define BB_TYPE_BOX_BUILDER bb_box_builder_get_type()
+G_DECLARE_FINAL_TYPE(BbBoxBuilder, bb_box_builder, BB, BOX_BUILDER, BbItemBuilder)
 
 
-GSList*
-bb_item_builder_create_items(BbItemBuilder *builder);
+int
+bb_box_builder_get_x0(BbBoxBuilder *builder);
+
+int
+bb_box_builder_get_x1(BbBoxBuilder *builder);
+
+int
+bb_box_builder_get_y0(BbBoxBuilder *builder);
+
+int
+bb_box_builder_get_y1(BbBoxBuilder *builder);
 
 void
-bb_item_builder_put_point(BbItemBuilder *builder, int index, int x, int y);
+bb_box_builder_set_x0(BbBoxBuilder *builder, int x);
+
+void
+bb_box_builder_set_x1(BbBoxBuilder *builder, int x);
+
+void
+bb_box_builder_set_y0(BbBoxBuilder *builder, int y);
+
+void
+bb_box_builder_set_y1(BbBoxBuilder *builder, int y);
 
 #endif

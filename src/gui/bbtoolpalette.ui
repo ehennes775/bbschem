@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<interface>
+    <object class="GtkImage" id="icon-tool-select">
+        <property name="resource">/com/github/ehennes775/bbsch/gui/img/SelectTool.svg</property>
+    </object>
+    <object class="GtkImage" id="icon-tool-arc">
+        <property name="resource">/com/github/ehennes775/bbsch/gui/img/ArcTool.svg</property>
+    </object>
+    <object class="GtkImage" id="icon-tool-box">
+        <property name="resource">/com/github/ehennes775/bbsch/gui/img/BoxTool.svg</property>
+    </object>
+    <object class="GtkImage" id="icon-tool-circle">
+        <property name="resource">/com/github/ehennes775/bbsch/gui/img/CircleTool.svg</property>
+    </object>
+    <object class="GtkImage" id="icon-tool-line">
+        <property name="resource">/com/github/ehennes775/bbsch/gui/img/LineTool.svg</property>
+    </object>
+    <object class="GtkImage" id="icon-tool-path">
+        <property name="resource">/com/github/ehennes775/bbsch/gui/img/PathTool.svg</property>
+    </object>
+    <object class="GtkImage" id="icon-tool-bus">
+        <property name="resource">/com/github/ehennes775/bbsch/gui/img/BusTool.svg</property>
+    </object>
+    <object class="GtkImage" id="icon-tool-net">
+        <property name="resource">/com/github/ehennes775/bbsch/gui/img/NetTool.svg</property>
+    </object>
+    <object class="GtkImage" id="icon-tool-pin">
+        <property name="resource">/com/github/ehennes775/bbsch/gui/img/PinTool.svg</property>
+    </object>
+    <object class="GtkImage" id="icon-tool-select-2">
+        <property name="resource">/com/github/ehennes775/bbsch/gui/img/Schematic.svg</property>
+    </object>
+    <object class="GtkImage" id="icon-tool-select-3">
+        <property name="resource">/com/github/ehennes775/bbsch/gui/img/Schematic.svg</property>
+    </object>
+    <object class="GtkImage" id="icon-tool-select-4">
+        <property name="resource">/com/github/ehennes775/bbsch/gui/img/Schematic.svg</property>
+    </object>
+    <object class="GtkImage" id="icon-tool-select-5">
+        <property name="resource">/com/github/ehennes775/bbsch/gui/img/Schematic.svg</property>
+    </object>
+    <object class="GtkImage" id="icon-tool-select-6">
+        <property name="resource">/com/github/ehennes775/bbsch/gui/img/Schematic.svg</property>
+    </object>
+    <object class="GtkImage" id="icon-tool-select-7">
+        <property name="resource">/com/github/ehennes775/bbsch/gui/img/Schematic.svg</property>
+    </object>
+    <object class="GtkImage" id="icon-tool-attribute">
+        <property name="resource">/com/github/ehennes775/bbsch/gui/img/AttributeTool.svg</property>
+    </object>
+    <object class="GtkImage" id="icon-tool-text">
+        <property name="resource">/com/github/ehennes775/bbsch/gui/img/TextTool.svg</property>
+    </object>
+    <object class="GtkImage" id="icon-project-switch">
+        <property name="resource">/com/github/ehennes775/bbsch/gui/img/OrangeFolder.svg</property>
+    </object>
+    <object class="GtkImage" id="icon-zoom-extents">
+        <property name="resource">/com/github/ehennes775/bbsch/gui/img/ZoomExtents.svg</property>
+    </object>
+    <object class="GtkImage" id="icon-zoom-in">
+        <property name="resource">/com/github/ehennes775/bbsch/gui/img/ZoomIn.svg</property>
+    </object>
+    <object class="GtkImage" id="icon-zoom-out">
+        <property name="resource">/com/github/ehennes775/bbsch/gui/img/ZoomOut.svg</property>
+    </object>
+    <object class="GtkImage" id="icon-tool-zoom">
+        <property name="resource">/com/github/ehennes775/bbsch/gui/img/ZoomTool.svg</property>
+    </object>
+    <template class="BbToolPalette" parent="GtkBox">
+        <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
+        <child>
+            <object class="GtkFlowBox" id="tools">
+                <child>
+                    <object class="GtkButton" id="button1">
+                        <!--<property name="label">Select</property>-->
+                        <property name="action-name">win.select-tool</property>
+                        <property name="action-target">'select'</property>
+                        <property name="image">icon-tool-select</property>
+                    </object>
+                </child>
+                <child>
+                    <object class="GtkButton" id="button7">
+                        <property name="action-name">win.select-tool</property>
+                        <property name="action-target">'bus'</property>
+                        <property name="image">icon-tool-bus</property>
+                    </object>
+                </child>
+                <child>
+                    <object class="GtkButton" id="button8">
+                        <property name="action-name">win.select-tool</property>
+                        <property name="action-target">'net'</property>
+                        <property name="image">icon-tool-net</property>
+                    </object>
+                </child>
+                <child>
+                    <object class="GtkButton" id="button9">
+                        <property name="action-name">win.select-tool</property>
+                        <property name="action-target">'pin'</property>
+                        <property name="image">icon-tool-pin</property>
+                    </object>
+                </child>
+                <child>
+                    <object class="GtkButton" id="button10">
+                        <property name="label">Cpx</property>
+                        <property name="action-name">win.select-tool</property>
+                        <property name="image">'complex'</property>
+                    </object>
+                </child>
+                <child>
+                    <object class="GtkButton" id="button11">
+                        <property name="action-name">win.select-tool</property>
+                        <property name="action-target">'attribute'</property>
+                        <property name="image">icon-tool-attribute</property>
+                    </object>
+                </child>
+                <child>
+                    <object class="GtkButton" id="button12">
+                        <property name="action-name">win.select-tool</property>
+                        <property name="action-target">'text'</property>
+                        <property name="image">icon-tool-text</property>
+                    </object>
+                </child>
+            </object>
+        </child>
+        <child>
+            <object class="GtkFlowBox" id="graphic-tools">
+                <child>
+                    <object class="GtkButton" id="button2">
+                        <property name="action-name">win.select-tool</property>
+                        <property name="action-target">'arc'</property>
+                        <property name="image">icon-tool-arc</property>
+                    </object>
+                </child>
+                <child>
+                    <object class="GtkButton" id="button3">
+                        <property name="action-name">win.select-tool</property>
+                        <property name="action-target">'box'</property>
+                        <property name="image">icon-tool-box</property>
+                    </object>
+                </child>
+                <child>
+                    <object class="GtkButton" id="button4">
+                        <property name="action-name">win.select-tool</property>
+                        <property name="action-target">'circle'</property>
+                        <property name="image">icon-tool-circle</property>
+                    </object>
+                </child>
+                <child>
+                    <object class="GtkButton" id="button5">
+                        <property name="action-name">win.select-tool</property>
+                        <property name="action-target">'line'</property>
+                        <property name="image">icon-tool-line</property>
+                    </object>
+                </child>
+                <child>
+                    <object class="GtkButton" id="button6">
+                        <property name="action-name">win.select-tool</property>
+                        <property name="action-target">'path'</property>
+                        <property name="image">icon-tool-path</property>
+                    </object>
+                </child>
+            </object>
+        </child>
+        <child>
+            <object class="GtkBox" id="box-2">
+            </object>
+        </child>
+        <child>
+            <object class="GtkStack" id="stack-1">
+                <child>
+                    <object class="GtkBox" id="empty-box">
+                        <child>
+                            <object class="GtkLabel" id="empty-label">
+                                <property name="label">Hello</property>
+                            </object>
+                        </child>
+                    </object>
+                </child>
+            </object>
+        </child>
+    </template>
+</interface>

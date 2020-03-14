@@ -17,7 +17,7 @@
  */
 
 #include <gtk/gtk.h>
-#include "bblinebuilder.h"
+#include "bbboxbuilder.h"
 
 
 enum
@@ -31,7 +31,7 @@ enum
 };
 
 
-struct _BbLineBuilder
+struct _BbBoxBuilder
 {
     BbItemBuilder parent;
 
@@ -41,35 +41,29 @@ struct _BbLineBuilder
 
 
 static void
-bb_line_builder_dispose(GObject *object);
+bb_box_builder_dispose(GObject *object);
 
 static void
-bb_line_builder_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
-
-void
-bb_line_builder_put_point(BbItemBuilder *builder, int index, int x, int y);
+bb_box_builder_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
 
 static void
-bb_line_builder_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
+bb_box_builder_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
 
 
-G_DEFINE_TYPE(BbLineBuilder, bb_line_builder, BB_TYPE_ITEM_BUILDER)
+G_DEFINE_TYPE(BbBoxBuilder, bb_box_builder, BB_TYPE_ITEM_BUILDER)
 
 
 static GParamSpec *properties[N_PROPERTIES];
 
 
 static void
-bb_line_builder_class_init(BbLineBuilderClass *class)
+bb_box_builder_class_init(BbBoxBuilderClass *class)
 {
     g_return_if_fail(G_OBJECT_CLASS(class) != NULL);
-    g_return_if_fail(BB_ITEM_BUILDER_CLASS(class) != NULL);
 
-    G_OBJECT_CLASS(class)->dispose = bb_line_builder_dispose;
-    G_OBJECT_CLASS(class)->get_property = bb_line_builder_get_property;
-    G_OBJECT_CLASS(class)->set_property = bb_line_builder_set_property;
-
-    BB_ITEM_BUILDER_CLASS(class)->put_point = bb_line_builder_put_point;
+    G_OBJECT_CLASS(class)->dispose = bb_box_builder_dispose;
+    G_OBJECT_CLASS(class)->get_property = bb_box_builder_get_property;
+    G_OBJECT_CLASS(class)->set_property = bb_box_builder_set_property;
 
     properties[PROP_X0] = g_param_spec_int(
         "x0",
@@ -123,14 +117,14 @@ bb_line_builder_class_init(BbLineBuilderClass *class)
 
 
 static void
-bb_line_builder_dispose(GObject *object)
+bb_box_builder_dispose(GObject *object)
 {
     g_return_if_fail(object != NULL);
 }
 
 
 int
-bb_line_builder_get_x0(BbLineBuilder *builder)
+bb_box_builder_get_x0(BbBoxBuilder *builder)
 {
     g_return_val_if_fail(builder != NULL, 0);
 
@@ -139,7 +133,7 @@ bb_line_builder_get_x0(BbLineBuilder *builder)
 
 
 int
-bb_line_builder_get_x1(BbLineBuilder *builder)
+bb_box_builder_get_x1(BbBoxBuilder *builder)
 {
     g_return_val_if_fail(builder != NULL, 0);
 
@@ -148,7 +142,7 @@ bb_line_builder_get_x1(BbLineBuilder *builder)
 
 
 int
-bb_line_builder_get_y0(BbLineBuilder *builder)
+bb_box_builder_get_y0(BbBoxBuilder *builder)
 {
     g_return_val_if_fail(builder != NULL, 0);
 
@@ -157,7 +151,7 @@ bb_line_builder_get_y0(BbLineBuilder *builder)
 
 
 int
-bb_line_builder_get_y1(BbLineBuilder *builder)
+bb_box_builder_get_y1(BbBoxBuilder *builder)
 {
     g_return_val_if_fail(builder != NULL, 0);
 
@@ -166,24 +160,24 @@ bb_line_builder_get_y1(BbLineBuilder *builder)
 
 
 static void
-bb_line_builder_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec)
+bb_box_builder_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec)
 {
     switch (property_id)
     {
         case PROP_X0:
-            g_value_set_int(value, bb_line_builder_get_x0(BB_LINE_BUILDER(object)));
+            g_value_set_int(value, bb_box_builder_get_x0(BB_BOX_BUILDER(object)));
             break;
 
         case PROP_X1:
-            g_value_set_int(value, bb_line_builder_get_x1(BB_LINE_BUILDER(object)));
+            g_value_set_int(value, bb_box_builder_get_x1(BB_BOX_BUILDER(object)));
             break;
 
         case PROP_Y0:
-            g_value_set_int(value, bb_line_builder_get_y0(BB_LINE_BUILDER(object)));
+            g_value_set_int(value, bb_box_builder_get_y0(BB_BOX_BUILDER(object)));
             break;
 
         case PROP_Y1:
-            g_value_set_int(value, bb_line_builder_get_y1(BB_LINE_BUILDER(object)));
+            g_value_set_int(value, bb_box_builder_get_y1(BB_BOX_BUILDER(object)));
             break;
 
         default:
@@ -193,26 +187,20 @@ bb_line_builder_get_property(GObject *object, guint property_id, GValue *value, 
 
 
 static void
-bb_line_builder_init(BbLineBuilder *builder)
+bb_box_builder_init(BbBoxBuilder *builder)
 {
     g_return_if_fail(builder != NULL);
 }
 
-void
-bb_line_builder_put_point(BbItemBuilder *builder, int index, int x, int y)
-{
-
-}
-
 
 __attribute__((constructor)) void
-bb_line_builder_register()
+bb_box_builder_register()
 {
 }
 
 
 void
-bb_line_builder_set_x0(BbLineBuilder *builder, int x)
+bb_box_builder_set_x0(BbBoxBuilder *builder, int x)
 {
     g_return_if_fail(builder != NULL);
 
@@ -226,7 +214,7 @@ bb_line_builder_set_x0(BbLineBuilder *builder, int x)
 
 
 void
-bb_line_builder_set_x1(BbLineBuilder *builder, int x)
+bb_box_builder_set_x1(BbBoxBuilder *builder, int x)
 {
     g_return_if_fail(builder != NULL);
 
@@ -240,7 +228,7 @@ bb_line_builder_set_x1(BbLineBuilder *builder, int x)
 
 
 void
-bb_line_builder_set_y0(BbLineBuilder *builder, int y)
+bb_box_builder_set_y0(BbBoxBuilder *builder, int y)
 {
     g_return_if_fail(builder != NULL);
 
@@ -254,7 +242,7 @@ bb_line_builder_set_y0(BbLineBuilder *builder, int y)
 
 
 void
-bb_line_builder_set_y1(BbLineBuilder *builder, int y)
+bb_box_builder_set_y1(BbBoxBuilder *builder, int y)
 {
     g_return_if_fail(builder != NULL);
 
@@ -268,24 +256,24 @@ bb_line_builder_set_y1(BbLineBuilder *builder, int y)
 
 
 static void
-bb_line_builder_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec)
+bb_box_builder_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec)
 {
     switch (property_id)
     {
         case PROP_X0:
-            bb_line_builder_set_x0(BB_LINE_BUILDER(object), g_value_get_int(value));
+            bb_box_builder_set_x0(BB_BOX_BUILDER(object), g_value_get_int(value));
             break;
 
         case PROP_X1:
-            bb_line_builder_set_x1(BB_LINE_BUILDER(object), g_value_get_int(value));
+            bb_box_builder_set_x1(BB_BOX_BUILDER(object), g_value_get_int(value));
             break;
 
         case PROP_Y0:
-            bb_line_builder_set_y0(BB_LINE_BUILDER(object), g_value_get_int(value));
+            bb_box_builder_set_y0(BB_BOX_BUILDER(object), g_value_get_int(value));
             break;
 
         case PROP_Y1:
-            bb_line_builder_set_y1(BB_LINE_BUILDER(object), g_value_get_int(value));
+            bb_box_builder_set_y1(BB_BOX_BUILDER(object), g_value_get_int(value));
             break;
 
         default:

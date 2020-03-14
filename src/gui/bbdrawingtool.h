@@ -1,5 +1,5 @@
-#ifndef __BBITEMBUILDER__
-#define __BBITEMBUILDER__
+#ifndef __BBDRAWINGTOOL__
+#define __BBDRAWINGTOOL__
 /*
  * bbsch
  * Copyright (C) 2020 Edward C. Hennessy
@@ -19,23 +19,20 @@
  */
 
 #include <gtk/gtk.h>
+#include "bbschematicwindow.h"
 
-#define BB_TYPE_ITEM_BUILDER bb_item_builder_get_type()
-G_DECLARE_DERIVABLE_TYPE(BbItemBuilder, bb_item_builder, BB, ITEM_BUILDER, GObject)
+#define BB_TYPE_DRAWING_TOOL bb_drawing_tool_get_type()
+G_DECLARE_DERIVABLE_TYPE(BbDrawingTool, bb_drawing_tool, BB, DRAWING_TOOL, GObject)
 
-struct _BbItemBuilderClass
+struct _BbDrawingToolClass
 {
     GObjectClass parent_class;
-
-    GSList* (*create_items)(BbItemBuilder *builder);
-    void (*put_point)(BbItemBuilder *builder, int index, int x, int y);
 };
 
-
-GSList*
-bb_item_builder_create_items(BbItemBuilder *builder);
+BbSchematicWindow*
+bb_drawing_tool_get_window(BbDrawingTool *tool);
 
 void
-bb_item_builder_put_point(BbItemBuilder *builder, int index, int x, int y);
+bb_drawing_tool_set_window(BbDrawingTool *tool, BbSchematicWindow *window);
 
 #endif

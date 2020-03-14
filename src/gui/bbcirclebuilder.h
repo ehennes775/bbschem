@@ -1,5 +1,5 @@
-#ifndef __BBITEMBUILDER__
-#define __BBITEMBUILDER__
+#ifndef __BBCIRCLEBUILDER__
+#define __BBCIRCLEBUILDER__
 /*
  * bbsch
  * Copyright (C) 2020 Edward C. Hennessy
@@ -19,23 +19,34 @@
  */
 
 #include <gtk/gtk.h>
+#include "bbitembuilder.h"
 
-#define BB_TYPE_ITEM_BUILDER bb_item_builder_get_type()
-G_DECLARE_DERIVABLE_TYPE(BbItemBuilder, bb_item_builder, BB, ITEM_BUILDER, GObject)
-
-struct _BbItemBuilderClass
-{
-    GObjectClass parent_class;
-
-    GSList* (*create_items)(BbItemBuilder *builder);
-    void (*put_point)(BbItemBuilder *builder, int index, int x, int y);
-};
+#define BB_TYPE_CIRCLE_BUILDER bb_circle_builder_get_type()
+G_DECLARE_FINAL_TYPE(BbCircleBuilder, bb_circle_builder, BB, CIRCLE_BUILDER, BbItemBuilder)
 
 
-GSList*
-bb_item_builder_create_items(BbItemBuilder *builder);
+int
+bb_circle_builder_get_x0(BbCircleBuilder *builder);
+
+int
+bb_circle_builder_get_x1(BbCircleBuilder *builder);
+
+int
+bb_circle_builder_get_y0(BbCircleBuilder *builder);
+
+int
+bb_circle_builder_get_y1(BbCircleBuilder *builder);
 
 void
-bb_item_builder_put_point(BbItemBuilder *builder, int index, int x, int y);
+bb_circle_builder_set_x0(BbCircleBuilder *builder, int x);
+
+void
+bb_circle_builder_set_x1(BbCircleBuilder *builder, int x);
+
+void
+bb_circle_builder_set_y0(BbCircleBuilder *builder, int y);
+
+void
+bb_circle_builder_set_y1(BbCircleBuilder *builder, int y);
 
 #endif

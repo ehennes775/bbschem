@@ -1,5 +1,5 @@
-#ifndef __BBITEMBUILDER__
-#define __BBITEMBUILDER__
+#ifndef __BBITEMBUILDTOOL__
+#define __BBITEMBUILDTOOL__
 /*
  * bbsch
  * Copyright (C) 2020 Edward C. Hennessy
@@ -19,23 +19,9 @@
  */
 
 #include <gtk/gtk.h>
+#include "bbdrawingtool.h"
 
-#define BB_TYPE_ITEM_BUILDER bb_item_builder_get_type()
-G_DECLARE_DERIVABLE_TYPE(BbItemBuilder, bb_item_builder, BB, ITEM_BUILDER, GObject)
-
-struct _BbItemBuilderClass
-{
-    GObjectClass parent_class;
-
-    GSList* (*create_items)(BbItemBuilder *builder);
-    void (*put_point)(BbItemBuilder *builder, int index, int x, int y);
-};
-
-
-GSList*
-bb_item_builder_create_items(BbItemBuilder *builder);
-
-void
-bb_item_builder_put_point(BbItemBuilder *builder, int index, int x, int y);
+#define BB_TYPE_ITEM_BUILD_TOOL bb_item_build_tool_get_type()
+G_DECLARE_FINAL_TYPE(BbItemBuildTool, bb_item_build_tool, BB, ITEM_BUILD_TOOL, BbDrawingTool)
 
 #endif

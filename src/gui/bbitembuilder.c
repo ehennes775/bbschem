@@ -27,11 +27,17 @@ enum
 };
 
 
+GSList*
+bb_item_builder_create_items_missing(BbItemBuilder *builder);
+
 static void
 bb_item_builder_dispose(GObject *object);
 
 static void
 bb_item_builder_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
+
+static void
+bb_item_builder_put_point_missing(BbItemBuilder *builder, int index, int x, int y);
 
 static void
 bb_item_builder_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
@@ -47,10 +53,14 @@ static void
 bb_item_builder_class_init(BbItemBuilderClass *class)
 {
     g_return_if_fail(G_OBJECT_CLASS(class) != NULL);
+    g_return_if_fail(BB_ITEM_BUILDER_CLASS(class) != NULL);
 
     G_OBJECT_CLASS(class)->dispose = bb_item_builder_dispose;
     G_OBJECT_CLASS(class)->get_property = bb_item_builder_get_property;
     G_OBJECT_CLASS(class)->set_property = bb_item_builder_set_property;
+
+    BB_ITEM_BUILDER_CLASS(class)->create_items = bb_item_builder_create_items_missing;
+    BB_ITEM_BUILDER_CLASS(class)->put_point = bb_item_builder_put_point_missing;
 
     for (int index = PROP_0 + 1; index < N_PROPERTIES; ++index)
     {
@@ -60,6 +70,21 @@ bb_item_builder_class_init(BbItemBuilderClass *class)
             properties[index]
         );
     }
+}
+
+GSList*
+bb_item_builder_create_items(BbItemBuilder *builder)
+{
+    g_return_val_if_fail(BB_ITEM_BUILDER_GET_CLASS(builder) != NULL, NULL);
+
+    return BB_ITEM_BUILDER_GET_CLASS(builder)->create_items(builder);
+}
+
+
+GSList*
+bb_item_builder_create_items_missing(BbItemBuilder *builder)
+{
+    g_error("bb_item_builder_create_items() not overridden");
 }
 
 
@@ -85,6 +110,22 @@ static void
 bb_item_builder_init(BbItemBuilder *plugin)
 {
     g_return_if_fail(plugin != NULL);
+}
+
+
+void
+bb_item_builder_put_point(BbItemBuilder *builder, int index, int x, int y)
+{
+    g_return_if_fail(BB_ITEM_BUILDER_GET_CLASS(builder) != NULL);
+
+    BB_ITEM_BUILDER_GET_CLASS(builder)->put_point(builder, index, x, y);
+}
+
+
+static void
+bb_item_builder_put_point_missing(BbItemBuilder *builder, int index, int x, int y)
+{
+    g_error("bb_item_builder_put_point() not overridden");
 }
 
 
