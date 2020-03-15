@@ -17,6 +17,7 @@
  */
 
 #include <gtk/gtk.h>
+#include <src/lib/bbgraphiccircle.h>
 #include "bbcirclebuilder.h"
 
 
@@ -35,16 +36,27 @@ struct _BbCircleBuilder
 {
     BbItemBuilder parent;
 
+    BbGraphicCircle *prototype;
+
     int x[2];
     int y[2];
 };
 
+
+static GSList*
+bb_circle_builder_create_items(BbItemBuilder *builder);
 
 static void
 bb_circle_builder_dispose(GObject *object);
 
 static void
 bb_circle_builder_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
+
+static void
+bb_circle_builder_put_point(BbItemBuilder *builder, int index, int x, int y);
+
+static void
+bb_circle_builder_render_items(BbItemBuilder *builder, BbItemRenderer *renderer);
 
 static void
 bb_circle_builder_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
@@ -60,10 +72,15 @@ static void
 bb_circle_builder_class_init(BbCircleBuilderClass *class)
 {
     g_return_if_fail(G_OBJECT_CLASS(class) != NULL);
+    g_return_if_fail(BB_ITEM_BUILDER_CLASS(class) != NULL);
 
     G_OBJECT_CLASS(class)->dispose = bb_circle_builder_dispose;
     G_OBJECT_CLASS(class)->get_property = bb_circle_builder_get_property;
     G_OBJECT_CLASS(class)->set_property = bb_circle_builder_set_property;
+
+    BB_ITEM_BUILDER_CLASS(class)->create_items = bb_circle_builder_create_items;
+    BB_ITEM_BUILDER_CLASS(class)->put_point = bb_circle_builder_put_point;
+    BB_ITEM_BUILDER_CLASS(class)->render_items = bb_circle_builder_render_items;
 
     properties[PROP_X0] = g_param_spec_int(
         "x0",
@@ -116,10 +133,34 @@ bb_circle_builder_class_init(BbCircleBuilderClass *class)
 }
 
 
+static GSList*
+bb_circle_builder_create_items(BbItemBuilder *builder)
+{
+    GSList *items = NULL;
+    BbCircleBuilder *circle_builder = BB_CIRCLE_BUILDER(builder);
+
+    g_return_val_if_fail(circle_builder != NULL, items);
+
+    if (bb_schematic_item_is_significant(BB_SCHEMATIC_ITEM(circle_builder->prototype)))
+    {
+        items = g_slist_append(
+            items,
+            bb_schematic_item_clone(BB_SCHEMATIC_ITEM(circle_builder->prototype))
+        );
+    }
+
+    return items;
+}
+
+
 static void
 bb_circle_builder_dispose(GObject *object)
 {
-    g_return_if_fail(object != NULL);
+    BbCircleBuilder *circle_builder = BB_CIRCLE_BUILDER(object);
+
+    g_return_if_fail(circle_builder != NULL);
+
+    g_clear_object(&circle_builder->prototype);
 }
 
 
@@ -190,12 +231,53 @@ static void
 bb_circle_builder_init(BbCircleBuilder *builder)
 {
     g_return_if_fail(builder != NULL);
+
+    builder->prototype = bb_graphic_circle_new();
+}
+
+
+static void
+bb_circle_builder_put_point(BbItemBuilder *builder, int index, int x, int y)
+{
+    BbCircleBuilder *circle_builder = BB_CIRCLE_BUILDER(builder);
+
+    g_return_if_fail(circle_builder != NULL);
+
+    switch (index)
+    {
+        case 0:
+            bb_circle_builder_set_x0(circle_builder, x);
+            bb_circle_builder_set_y0(circle_builder, y);
+            break;
+
+        case 1:
+            bb_circle_builder_set_x1(circle_builder, x);
+            bb_circle_builder_set_y1(circle_builder, y);
+            break;
+
+        default:
+            g_error("index out of range");
+    }
 }
 
 
 __attribute__((constructor)) void
 bb_circle_builder_register()
 {
+}
+
+
+static void
+bb_circle_builder_render_items(BbItemBuilder *builder, BbItemRenderer *renderer)
+{
+    BbCircleBuilder *circle_builder = BB_CIRCLE_BUILDER(builder);
+
+    g_return_if_fail(circle_builder != NULL);
+
+    bb_schematic_item_render(
+        BB_SCHEMATIC_ITEM(circle_builder->prototype),
+        renderer
+        );
 }
 
 

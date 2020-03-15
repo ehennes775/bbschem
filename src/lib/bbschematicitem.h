@@ -31,12 +31,20 @@ struct _BbSchematicItemClass
     GObjectClass parent_class;
 
     BbBounds* (*calculate_bounds)(BbSchematicItem *item, BbBoundsCalculator *calculator);
+    BbSchematicItem* (*clone)(BbSchematicItem *item);
+    gboolean (*is_significant)(BbSchematicItem *item);
     void (*render)(BbSchematicItem *item, BbItemRenderer *renderer);
 };
 
 
 BbBounds*
 bb_schematic_item_calculate_bounds(BbSchematicItem *item, BbBoundsCalculator *calculator);
+
+BbSchematicItem*
+bb_schematic_item_clone(BbSchematicItem *item);
+
+gboolean
+bb_schematic_item_is_significant(BbSchematicItem *item);
 
 void
 bb_schematic_item_render(BbSchematicItem *item, BbItemRenderer *renderer);

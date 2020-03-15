@@ -39,6 +39,9 @@ G_DEFINE_TYPE(BbSchematicItem, bb_schematic_item, G_TYPE_OBJECT);
 static BbBounds*
 bb_schematic_item_calculate_bounds_missing(BbSchematicItem *item, BbBoundsCalculator *calculator);
 
+static BbSchematicItem*
+bb_schematic_item_clone_missing(BbSchematicItem *item);
+
 static void
 bb_schematic_item_dispose(GObject *object);
 
@@ -47,6 +50,9 @@ bb_schematic_item_finalize(GObject *object);
 
 static void
 bb_schematic_item_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
+
+static gboolean
+bb_schematic_item_is_significant_missing(BbSchematicItem *item);
 
 static void
 bb_schematic_item_render_missing(BbSchematicItem *item, BbItemRenderer *renderer);
@@ -78,29 +84,48 @@ bb_schematic_item_calculate_bounds_missing(BbSchematicItem *item, BbBoundsCalcul
 
 
 static void
-bb_schematic_item_class_init(BbSchematicItemClass *klasse)
+bb_schematic_item_class_init(BbSchematicItemClass *class)
 {
-    G_OBJECT_CLASS(klasse)->dispose = bb_schematic_item_dispose;
-    G_OBJECT_CLASS(klasse)->finalize = bb_schematic_item_finalize;
-    G_OBJECT_CLASS(klasse)->get_property = bb_schematic_item_get_property;
-    G_OBJECT_CLASS(klasse)->set_property = bb_schematic_item_set_property;
+    G_OBJECT_CLASS(class)->dispose = bb_schematic_item_dispose;
+    G_OBJECT_CLASS(class)->finalize = bb_schematic_item_finalize;
+    G_OBJECT_CLASS(class)->get_property = bb_schematic_item_get_property;
+    G_OBJECT_CLASS(class)->set_property = bb_schematic_item_set_property;
 
-    klasse->calculate_bounds = bb_schematic_item_calculate_bounds_missing;
-    klasse->render = bb_schematic_item_render_missing;
+    class->calculate_bounds = bb_schematic_item_calculate_bounds_missing;
+    class->clone = bb_schematic_item_clone_missing;
+    class->is_significant = bb_schematic_item_is_significant;
+    class->render = bb_schematic_item_render_missing;
+}
+
+
+BbSchematicItem*
+bb_schematic_item_clone(BbSchematicItem *item)
+{
+    BbSchematicItemClass *class = BB_SCHEMATIC_ITEM_GET_CLASS(item);
+
+    g_return_val_if_fail(class != NULL, FALSE);
+    g_return_val_if_fail(class->clone != NULL, FALSE);
+
+    return class->clone(item);
+}
+
+
+static BbSchematicItem*
+bb_schematic_item_clone_missing(BbSchematicItem *item)
+{
+    g_error("bb_schematic_item_clone() not overridden");
 }
 
 
 static void
 bb_schematic_item_dispose(GObject *object)
 {
-    // BbSchematicitem* privat = BBSCHEMATICITEM_GET_PRIVATE(object);
 }
 
 
 static void
 bb_schematic_item_finalize(GObject *object)
 {
-    // BbSchematicitem* privat = BBSCHEMATICITEM_GET_PRIVATE(object);
 }
 
 
@@ -118,6 +143,25 @@ bb_schematic_item_get_property(GObject *object, guint property_id, GValue *value
 static void
 bb_schematic_item_init(BbSchematicItem *window)
 {
+}
+
+
+gboolean
+bb_schematic_item_is_significant(BbSchematicItem *item)
+{
+    BbSchematicItemClass *class = BB_SCHEMATIC_ITEM_GET_CLASS(item);
+
+    g_return_val_if_fail(class != NULL, FALSE);
+    g_return_val_if_fail(class->is_significant != NULL, FALSE);
+
+    return class->is_significant(item);
+}
+
+
+static gboolean
+bb_schematic_item_is_significant_missing(BbSchematicItem *item)
+{
+    g_error("bb_schematic_item_is_significant() not overridden");
 }
 
 

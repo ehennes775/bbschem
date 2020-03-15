@@ -37,6 +37,9 @@ bb_graphic_circle_get_radius(BbGraphicCircle *circle);
 int
 bb_graphic_circle_get_width(BbGraphicCircle *circle);
 
+BbGraphicCircle*
+bb_graphic_circle_new();
+
 void
 bb_graphic_circle_set_center_x(BbGraphicCircle *circle, int x);
 

@@ -230,6 +230,13 @@ bb_graphic_circle_init(BbGraphicCircle *window)
 }
 
 
+BbGraphicCircle*
+bb_graphic_circle_new()
+{
+    return g_object_new(BB_TYPE_GRAPHIC_CIRCLE, NULL);
+}
+
+
 __attribute__((constructor)) void
 bb_graphic_circle_register()
 {

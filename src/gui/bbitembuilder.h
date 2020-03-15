@@ -19,6 +19,7 @@
  */
 
 #include <gtk/gtk.h>
+#include <src/lib/bbitemrenderer.h>
 
 #define BB_TYPE_ITEM_BUILDER bb_item_builder_get_type()
 G_DECLARE_DERIVABLE_TYPE(BbItemBuilder, bb_item_builder, BB, ITEM_BUILDER, GObject)
@@ -29,6 +30,7 @@ struct _BbItemBuilderClass
 
     GSList* (*create_items)(BbItemBuilder *builder);
     void (*put_point)(BbItemBuilder *builder, int index, int x, int y);
+    void (*render_items)(BbItemBuilder *builder, BbItemRenderer *renderer);
 };
 
 
@@ -37,5 +39,8 @@ bb_item_builder_create_items(BbItemBuilder *builder);
 
 void
 bb_item_builder_put_point(BbItemBuilder *builder, int index, int x, int y);
+
+void
+bb_item_builder_render_items(BbItemBuilder *builder, BbItemRenderer *renderer);
 
 #endif

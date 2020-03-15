@@ -40,6 +40,9 @@ static void
 bb_item_builder_put_point_missing(BbItemBuilder *builder, int index, int x, int y);
 
 static void
+bb_item_builder_render_items_missing(BbItemBuilder *builder, BbItemRenderer *renderer);
+
+static void
 bb_item_builder_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
 
 
@@ -61,6 +64,7 @@ bb_item_builder_class_init(BbItemBuilderClass *class)
 
     BB_ITEM_BUILDER_CLASS(class)->create_items = bb_item_builder_create_items_missing;
     BB_ITEM_BUILDER_CLASS(class)->put_point = bb_item_builder_put_point_missing;
+    BB_ITEM_BUILDER_CLASS(class)->render_items = bb_item_builder_render_items_missing;
 
     for (int index = PROP_0 + 1; index < N_PROPERTIES; ++index)
     {
@@ -126,6 +130,25 @@ static void
 bb_item_builder_put_point_missing(BbItemBuilder *builder, int index, int x, int y)
 {
     g_error("bb_item_builder_put_point() not overridden");
+}
+
+
+void
+bb_item_builder_render_items(BbItemBuilder *builder, BbItemRenderer *renderer)
+{
+    BbItemBuilderClass *class = BB_ITEM_BUILDER_GET_CLASS(builder);
+
+    g_return_if_fail(class != NULL);
+    g_return_if_fail(class->render_items != NULL);
+
+    class->render_items(builder, renderer);
+}
+
+
+static void
+bb_item_builder_render_items_missing(BbItemBuilder *builder, BbItemRenderer *renderer)
+{
+    g_error("bb_item_builder_render_items() not overridden");
 }
 
 

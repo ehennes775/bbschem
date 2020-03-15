@@ -252,6 +252,13 @@ bb_graphic_line_init(BbGraphicLine *window)
 }
 
 
+BbGraphicLine*
+bb_graphic_line_new()
+{
+    return g_object_new(BB_TYPE_GRAPHIC_LINE, NULL);
+}
+
+
 __attribute__((constructor)) void
 bb_graphic_line_register()
 {
