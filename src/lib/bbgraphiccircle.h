@@ -1,5 +1,5 @@
-#ifndef __BBGRAPHICLINE__
-#define __BBGRAPHICLINE__
+#ifndef __BBGRAPHICCIRCLE__
+#define __BBGRAPHICCIRCLE__
 /*
  * bbsch
  * Copyright (C) 2020 Edward C. Hennessy
@@ -21,37 +21,32 @@
 #include <gtk/gtk.h>
 #include "bbschematicitem.h"
 
-#define BB_TYPE_GRAPHIC_LINE bb_graphic_line_get_type()
-G_DECLARE_FINAL_TYPE(BbGraphicLine, bb_graphic_line, BB, GRAPHIC_LINE, BbSchematicItem)
+#define BB_TYPE_GRAPHIC_CIRCLE bb_graphic_circle_get_type()
+G_DECLARE_FINAL_TYPE(BbGraphicCircle, bb_graphic_circle, BB, GRAPHIC_CIRCLE, BbSchematicItem)
+
 
 int
-bb_graphic_line_get_width(BbGraphicLine *line);
+bb_graphic_circle_get_center_x(BbGraphicCircle *circle);
 
 int
-bb_graphic_line_get_x0(BbGraphicLine *line);
+bb_graphic_circle_get_center_y(BbGraphicCircle *circle);
 
 int
-bb_graphic_line_get_x1(BbGraphicLine *line);
+bb_graphic_circle_get_radius(BbGraphicCircle *circle);
 
 int
-bb_graphic_line_get_y0(BbGraphicLine *line);
-
-int
-bb_graphic_line_get_y1(BbGraphicLine *line);
+bb_graphic_circle_get_width(BbGraphicCircle *circle);
 
 void
-bb_graphic_line_set_width(BbGraphicLine *line, int width);
+bb_graphic_circle_set_center_x(BbGraphicCircle *circle, int x);
 
 void
-bb_graphic_line_set_x0(BbGraphicLine *line, int x);
+bb_graphic_circle_set_center_y(BbGraphicCircle *circle, int y);
 
 void
-bb_graphic_line_set_x1(BbGraphicLine *line, int x);
+bb_graphic_circle_set_radius(BbGraphicCircle *circle, int radius);
 
 void
-bb_graphic_line_set_y0(BbGraphicLine *line, int y);
-
-void
-bb_graphic_line_set_y1(BbGraphicLine *line, int y);
+bb_graphic_circle_set_width(BbGraphicCircle *circle, int width);
 
 #endif

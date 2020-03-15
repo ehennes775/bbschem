@@ -19,6 +19,7 @@
  */
 
 #include <gtk/gtk.h>
+#include "bbbounds.h"
 
 #define BB_TYPE_BOUNDS_CALCULATOR bb_bounds_calculator_get_type()
 G_DECLARE_INTERFACE(BbBoundsCalculator, bb_bounds_calculator, BB, BOUNDS_CALCULATOR, GObject)
@@ -26,6 +27,12 @@ G_DECLARE_INTERFACE(BbBoundsCalculator, bb_bounds_calculator, BB, BOUNDS_CALCULA
 struct _BbBoundsCalculatorInterface
 {
     GTypeInterface g_iface;
+
+    BbBounds* (*calculate_from_corners)(BbBoundsCalculator *calculator, int x0, int y0, int x1, int y1, int width);
 };
+
+
+BbBounds*
+bb_bounds_calculator_calculate_from_corners(BbBoundsCalculator *calculator, int x0, int y0, int x1, int y1, int width);
 
 #endif

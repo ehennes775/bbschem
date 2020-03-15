@@ -1,5 +1,5 @@
-#ifndef __BBGRAPHICLINE__
-#define __BBGRAPHICLINE__
+#ifndef __BBGRAPHICBOX__
+#define __BBGRAPHICBOX__
 /*
  * bbsch
  * Copyright (C) 2020 Edward C. Hennessy
@@ -21,37 +21,37 @@
 #include <gtk/gtk.h>
 #include "bbschematicitem.h"
 
-#define BB_TYPE_GRAPHIC_LINE bb_graphic_line_get_type()
-G_DECLARE_FINAL_TYPE(BbGraphicLine, bb_graphic_line, BB, GRAPHIC_LINE, BbSchematicItem)
+#define BB_TYPE_GRAPHIC_BOX bb_graphic_box_get_type()
+G_DECLARE_FINAL_TYPE(BbGraphicBox, bb_graphic_box, BB, GRAPHIC_BOX, BbSchematicItem)
 
 int
-bb_graphic_line_get_width(BbGraphicLine *line);
+bb_graphic_box_get_width(BbGraphicBox *box);
 
 int
-bb_graphic_line_get_x0(BbGraphicLine *line);
+bb_graphic_box_get_x0(BbGraphicBox *box);
 
 int
-bb_graphic_line_get_x1(BbGraphicLine *line);
+bb_graphic_box_get_x1(BbGraphicBox *box);
 
 int
-bb_graphic_line_get_y0(BbGraphicLine *line);
+bb_graphic_box_get_y0(BbGraphicBox *box);
 
 int
-bb_graphic_line_get_y1(BbGraphicLine *line);
+bb_graphic_box_get_y1(BbGraphicBox *box);
 
 void
-bb_graphic_line_set_width(BbGraphicLine *line, int width);
+bb_graphic_box_set_width(BbGraphicBox *box, int width);
 
 void
-bb_graphic_line_set_x0(BbGraphicLine *line, int x);
+bb_graphic_box_set_x0(BbGraphicBox *box, int x);
 
 void
-bb_graphic_line_set_x1(BbGraphicLine *line, int x);
+bb_graphic_box_set_x1(BbGraphicBox *box, int x);
 
 void
-bb_graphic_line_set_y0(BbGraphicLine *line, int y);
+bb_graphic_box_set_y0(BbGraphicBox *box, int y);
 
 void
-bb_graphic_line_set_y1(BbGraphicLine *line, int y);
+bb_graphic_box_set_y1(BbGraphicBox *box, int y);
 
 #endif

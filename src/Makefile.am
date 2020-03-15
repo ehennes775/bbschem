@@ -39,7 +39,11 @@ bbtest_SOURCES = \
     gui/bbtoolpalette.c \
     lib/bbbounds.c \
     lib/bbboundscalculator.c \
+    lib/bbgraphicarc.c \
+    lib/bbgraphicbox.c \
+    lib/bbgraphiccircle.c \
     lib/bbgraphicline.c \
+    lib/bbgraphicpath.c \
     lib/bbitemrenderer.c \
     lib/bbschematicitem.c \
 	main.c \

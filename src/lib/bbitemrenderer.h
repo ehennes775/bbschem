@@ -20,12 +20,43 @@
 
 #include <gtk/gtk.h>
 
+/* forward declarations */
+
+struct _BbGraphicArc;
+struct _BbGraphicBox;
+struct _BbGraphicCircle;
+struct _BbGraphicLine;
+struct _BbGraphicPath;
+
+
 #define BB_TYPE_ITEM_RENDERER bb_item_renderer_get_type()
 G_DECLARE_INTERFACE(BbItemRenderer, bb_item_renderer, BB, ITEM_RENDERER, GObject)
 
 struct _BbItemRendererInterface
 {
     GTypeInterface g_iface;
+
+    void (*render_graphic_arc)(BbItemRenderer *renderer, struct _BbGraphicArc *arc);
+    void (*render_graphic_box)(BbItemRenderer *renderer, struct _BbGraphicBox *box);
+    void (*render_graphic_circle)(BbItemRenderer *renderer, struct _BbGraphicCircle *circle);
+    void (*render_graphic_line)(BbItemRenderer *renderer, struct _BbGraphicLine *line);
+    void (*render_graphic_path)(BbItemRenderer *renderer, struct _BbGraphicPath *path);
 };
+
+
+void
+bb_item_renderer_render_graphic_arc(BbItemRenderer *renderer, struct _BbGraphicArc *arc);
+
+void
+bb_item_renderer_render_graphic_box(BbItemRenderer *renderer, struct _BbGraphicBox *box);
+
+void
+bb_item_renderer_render_graphic_circle(BbItemRenderer *renderer, struct _BbGraphicCircle *circle);
+
+void
+bb_item_renderer_render_graphic_line(BbItemRenderer *renderer, struct _BbGraphicLine *line);
+
+void
+bb_item_renderer_render_graphic_path(BbItemRenderer *renderer, struct _BbGraphicPath *path);
 
 #endif

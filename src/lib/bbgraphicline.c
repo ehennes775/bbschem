@@ -23,6 +23,7 @@
 enum
 {
     PROP_0,
+    PROP_WIDTH,
     PROP_X0,
     PROP_X1,
     PROP_Y0,
@@ -34,6 +35,8 @@ enum
 struct _BbGraphicLine
 {
     BbSchematicItem parent;
+
+    int width;
 
     int x[2];
     int y[2];
@@ -68,7 +71,18 @@ GParamSpec *properties[N_PROPERTIES];
 static BbBounds*
 bb_graphic_line_calculate_bounds(BbSchematicItem *item, BbBoundsCalculator *calculator)
 {
-    return NULL;
+    BbGraphicLine *line = BB_GRAPHIC_LINE(item);
+
+    g_return_val_if_fail(line != NULL, NULL);
+
+    return bb_bounds_calculator_calculate_from_corners(
+        calculator,
+        line->x[0],
+        line->y[0],
+        line->x[1],
+        line->y[1],
+        line->width
+        );
 }
 
 
@@ -82,6 +96,16 @@ bb_graphic_line_class_init(BbGraphicLineClass *klasse)
 
     BB_SCHEMATIC_ITEM_CLASS(klasse)->calculate_bounds = bb_graphic_line_calculate_bounds;
     BB_SCHEMATIC_ITEM_CLASS(klasse)->render = bb_graphic_line_render;
+
+    properties[PROP_WIDTH] = g_param_spec_int(
+        "width",
+        "Line Width",
+        "The line width",
+        0,
+        INT_MAX,
+        0,
+        G_PARAM_READWRITE
+        );
 
     properties[PROP_X0] = g_param_spec_int(
         "x0",
@@ -151,6 +175,10 @@ bb_graphic_line_get_property(GObject *object, guint property_id, GValue *value, 
 {
     switch (property_id)
     {
+        case PROP_WIDTH:
+            g_value_set_int(value, bb_graphic_line_get_width(BB_GRAPHIC_LINE(object)));
+            break;
+
         case PROP_X0:
             g_value_set_int(value, bb_graphic_line_get_x0(BB_GRAPHIC_LINE(object)));
             break;
@@ -170,6 +198,15 @@ bb_graphic_line_get_property(GObject *object, guint property_id, GValue *value, 
         default:
             G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
     }
+}
+
+
+int
+bb_graphic_line_get_width(BbGraphicLine *line)
+{
+    g_return_val_if_fail(line != NULL, 0);
+
+    return line->width;
 }
 
 
@@ -225,14 +262,19 @@ bb_graphic_line_register()
 static void
 bb_graphic_line_render(BbSchematicItem *item, BbItemRenderer *renderer)
 {
-
+    bb_item_renderer_render_graphic_line(renderer, BB_GRAPHIC_LINE(item));
 }
+
 
 static void
 bb_graphic_line_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec)
 {
     switch (property_id)
     {
+        case PROP_WIDTH:
+            bb_graphic_line_set_width(BB_GRAPHIC_LINE(object), g_value_get_int(value));
+            break;
+
         case PROP_X0:
             bb_graphic_line_set_x0(BB_GRAPHIC_LINE(object), g_value_get_int(value));
             break;
@@ -251,6 +293,20 @@ bb_graphic_line_set_property(GObject *object, guint property_id, const GValue *v
 
         default:
             G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
+    }
+}
+
+
+void
+bb_graphic_line_set_width(BbGraphicLine *line, int width)
+{
+    g_return_if_fail(line != NULL);
+
+    if (line->width != width)
+    {
+        line->width = width;
+
+        g_object_notify_by_pspec(G_OBJECT(line), properties[PROP_WIDTH]);
     }
 }
 

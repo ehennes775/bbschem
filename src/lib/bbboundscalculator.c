@@ -27,8 +27,29 @@ bb_bounds_calculator_default_init(BbBoundsCalculatorInterface *class);
 G_DEFINE_INTERFACE(BbBoundsCalculator, bb_bounds_calculator, G_TYPE_OBJECT)
 
 
+BbBounds*
+bb_bounds_calculator_calculate_from_corners(BbBoundsCalculator *calculator, int x0, int y0, int x1, int y1, int width)
+{
+    BbBoundsCalculatorInterface *iface = BB_BOUNDS_CALCULATOR_GET_IFACE(calculator);
+
+    g_return_val_if_fail(iface != NULL, NULL);
+    g_return_val_if_fail(iface->calculate_from_corners != NULL, NULL);
+
+    return iface->calculate_from_corners(calculator, x0, y0, x1, y1, width);
+}
+
+
+static BbBounds*
+bb_bounds_calculator_calculate_from_corners_missing(BbBoundsCalculator *calculator, int x0, int y0, int x1, int y1, int width)
+{
+    g_error("bb_bounds_calculator_calculate_from_corners() not overridden");
+}
+
+
 static void
 bb_bounds_calculator_default_init(BbBoundsCalculatorInterface *class)
 {
     g_return_if_fail(class != NULL);
+
+    class->calculate_from_corners = bb_bounds_calculator_calculate_from_corners_missing;
 }

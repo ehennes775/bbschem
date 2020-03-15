@@ -23,6 +23,21 @@
 static void
 bb_item_renderer_default_init(BbItemRendererInterface *class);
 
+void
+bb_item_renderer_render_graphic_arc_missing(BbItemRenderer *renderer, struct _BbGraphicArc *arc);
+
+void
+bb_item_renderer_render_graphic_box_missing(BbItemRenderer *renderer, struct _BbGraphicBox *box);
+
+void
+bb_item_renderer_render_graphic_circle_missing(BbItemRenderer *renderer, struct _BbGraphicCircle *circle);
+
+void
+bb_item_renderer_render_graphic_line_missing(BbItemRenderer *renderer, struct _BbGraphicLine *line);
+
+void
+bb_item_renderer_render_graphic_path_missing(BbItemRenderer *renderer, struct _BbGraphicPath *path);
+
 
 G_DEFINE_INTERFACE(BbItemRenderer, bb_item_renderer, G_TYPE_OBJECT)
 
@@ -31,4 +46,105 @@ static void
 bb_item_renderer_default_init(BbItemRendererInterface *class)
 {
     g_return_if_fail(class != NULL);
+
+    class->render_graphic_arc = bb_item_renderer_render_graphic_arc_missing;
+    class->render_graphic_box = bb_item_renderer_render_graphic_box_missing;
+    class->render_graphic_circle = bb_item_renderer_render_graphic_circle_missing;
+    class->render_graphic_line = bb_item_renderer_render_graphic_line_missing;
+    class->render_graphic_path = bb_item_renderer_render_graphic_path_missing;
+}
+
+
+void
+bb_item_renderer_render_graphic_arc(BbItemRenderer *renderer, struct _BbGraphicArc *arc)
+{
+    BbItemRendererInterface *iface = BB_ITEM_RENDERER_GET_IFACE(renderer);
+
+    g_return_if_fail(iface != NULL);
+    g_return_if_fail(iface->render_graphic_arc != NULL);
+
+    return iface->render_graphic_arc(renderer, arc);
+}
+
+
+void
+bb_item_renderer_render_graphic_arc_missing(BbItemRenderer *renderer, struct _BbGraphicArc *arc)
+{
+    g_error("bb_item_renderer_render_graphic_arc() not overridden");
+}
+
+
+void
+bb_item_renderer_render_graphic_box(BbItemRenderer *renderer, struct _BbGraphicBox *box)
+{
+    BbItemRendererInterface *iface = BB_ITEM_RENDERER_GET_IFACE(renderer);
+
+    g_return_if_fail(iface != NULL);
+    g_return_if_fail(iface->render_graphic_box != NULL);
+
+    return iface->render_graphic_box(renderer, box);
+}
+
+
+void
+bb_item_renderer_render_graphic_box_missing(BbItemRenderer *renderer, struct _BbGraphicBox *box)
+{
+    g_error("bb_item_renderer_render_graphic_box() not overridden");
+}
+
+
+void
+bb_item_renderer_render_graphic_circle(BbItemRenderer *renderer, struct _BbGraphicCircle *circle)
+{
+    BbItemRendererInterface *iface = BB_ITEM_RENDERER_GET_IFACE(renderer);
+
+    g_return_if_fail(iface != NULL);
+    g_return_if_fail(iface->render_graphic_circle != NULL);
+
+    return iface->render_graphic_circle(renderer, circle);
+}
+
+
+void
+bb_item_renderer_render_graphic_circle_missing(BbItemRenderer *renderer, struct _BbGraphicCircle *circle)
+{
+    g_error("bb_item_renderer_render_graphic_circle() not overridden");
+}
+
+
+void
+bb_item_renderer_render_graphic_line(BbItemRenderer *renderer, struct _BbGraphicLine *line)
+{
+    BbItemRendererInterface *iface = BB_ITEM_RENDERER_GET_IFACE(renderer);
+
+    g_return_if_fail(iface != NULL);
+    g_return_if_fail(iface->render_graphic_line != NULL);
+
+    return iface->render_graphic_line(renderer, line);
+}
+
+
+void
+bb_item_renderer_render_graphic_line_missing(BbItemRenderer *renderer, struct _BbGraphicLine *line)
+{
+    g_error("bb_item_renderer_render_graphic_line() not overridden");
+}
+
+
+void
+bb_item_renderer_render_graphic_path(BbItemRenderer *renderer, struct _BbGraphicPath *path)
+{
+    BbItemRendererInterface *iface = BB_ITEM_RENDERER_GET_IFACE(renderer);
+
+    g_return_if_fail(iface != NULL);
+    g_return_if_fail(iface->render_graphic_path != NULL);
+
+    return iface->render_graphic_path(renderer, path);
+}
+
+
+void
+bb_item_renderer_render_graphic_path_missing(BbItemRenderer *renderer, struct _BbGraphicPath *path)
+{
+    g_error("bb_item_renderer_render_graphic_path() not overridden");
 }
