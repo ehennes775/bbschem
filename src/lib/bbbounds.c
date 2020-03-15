@@ -29,17 +29,20 @@ struct _BbBounds
 };
 
 
-static gpointer
-bb_bounds_copy(const gpointer boxed);
+G_DEFINE_BOXED_TYPE(BbBounds, bb_bounds, bb_bounds_copy, bb_bounds_free)
 
 
-G_DEFINE_BOXED_TYPE(BbBounds, bb_bounds, bb_bounds_copy, g_free)
-
-
-static gpointer
-bb_bounds_copy(const gpointer boxed)
+BbBounds*
+bb_bounds_copy(const BbBounds *bounds)
 {
-    return g_memdup(boxed, sizeof(BbBounds));
+    return g_memdup(bounds, sizeof(BbBounds));
+}
+
+
+void
+bb_bounds_free(BbBounds *bounds)
+{
+    g_free(bounds);
 }
 
 

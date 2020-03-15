@@ -25,6 +25,12 @@
 typedef struct _BbBounds BbBounds;
 
 
+BbBounds*
+bb_bounds_copy(const BbBounds *bounds);
+
+void
+bb_bounds_free(BbBounds *bounds);
+
 gboolean
 bb_bounds_is_empty(const BbBounds *bounds);
 

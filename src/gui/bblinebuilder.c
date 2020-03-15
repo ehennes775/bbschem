@@ -245,13 +245,13 @@ bb_line_builder_put_point(BbItemBuilder *builder, int index, int x, int y)
     switch (index)
     {
         case 0:
-            bb_graphic_line_set_x0(line_builder->prototype, x);
-            bb_graphic_line_set_y0(line_builder->prototype, y);
+            bb_line_builder_set_x0(line_builder, x);
+            bb_line_builder_set_y0(line_builder, y);
             break;
 
         case 1:
-            bb_graphic_line_set_x1(line_builder->prototype, x);
-            bb_graphic_line_set_y1(line_builder->prototype, y);
+            bb_line_builder_set_x1(line_builder, x);
+            bb_line_builder_set_y1(line_builder, y);
             break;
 
         default:
