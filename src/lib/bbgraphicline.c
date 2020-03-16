@@ -23,6 +23,7 @@
 enum
 {
     PROP_0,
+    PROP_COLOR,
     PROP_WIDTH,
     PROP_X0,
     PROP_X1,
@@ -35,6 +36,8 @@ enum
 struct _BbGraphicLine
 {
     BbSchematicItem parent;
+
+    int color;
 
     int width;
 
@@ -96,6 +99,16 @@ bb_graphic_line_class_init(BbGraphicLineClass *klasse)
 
     BB_SCHEMATIC_ITEM_CLASS(klasse)->calculate_bounds = bb_graphic_line_calculate_bounds;
     BB_SCHEMATIC_ITEM_CLASS(klasse)->render = bb_graphic_line_render;
+
+    properties[PROP_COLOR] = g_param_spec_int(
+        "color",
+        "Color",
+        "The item color",
+        0,
+        INT_MAX,
+        0,
+        G_PARAM_READWRITE
+        );
 
     properties[PROP_WIDTH] = g_param_spec_int(
         "width",
@@ -170,11 +183,24 @@ bb_graphic_line_finalize(GObject *object)
 }
 
 
+int
+bb_graphic_line_get_color(BbGraphicLine *line)
+{
+    g_return_val_if_fail(line != NULL, 0);
+
+    return line->color;
+}
+
+
 static void
 bb_graphic_line_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec)
 {
     switch (property_id)
     {
+        case PROP_COLOR:
+            g_value_set_int(value, bb_graphic_line_get_color(BB_GRAPHIC_LINE(object)));
+            break;
+
         case PROP_WIDTH:
             g_value_set_int(value, bb_graphic_line_get_width(BB_GRAPHIC_LINE(object)));
             break;
@@ -273,11 +299,29 @@ bb_graphic_line_render(BbSchematicItem *item, BbItemRenderer *renderer)
 }
 
 
+void
+bb_graphic_line_set_color(BbGraphicLine *line, int color)
+{
+    g_return_if_fail(line != NULL);
+
+    if (line->color != color)
+    {
+        line->color = color;
+
+        g_object_notify_by_pspec(G_OBJECT(line), properties[PROP_COLOR]);
+    }
+}
+
+
 static void
 bb_graphic_line_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec)
 {
     switch (property_id)
     {
+        case PROP_COLOR:
+            bb_graphic_line_set_color(BB_GRAPHIC_LINE(object), g_value_get_int(value));
+            break;
+
         case PROP_WIDTH:
             bb_graphic_line_set_width(BB_GRAPHIC_LINE(object), g_value_get_int(value));
             break;

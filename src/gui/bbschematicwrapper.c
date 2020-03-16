@@ -17,6 +17,7 @@
  */
 
 #include <gtk/gtk.h>
+#include <src/lib/bbschematic.h>
 #include "bbschematicwrapper.h"
 
 
@@ -63,6 +64,8 @@ struct _Actions
 struct _BbSchematicWrapper
 {
     GObject parent;
+
+    BbSchematic *schematic;
 
     union
     {
@@ -229,6 +232,8 @@ bb_schematic_wrapper_get_property(GObject *object, guint property_id, GValue *va
 static void
 bb_schematic_wrapper_init(BbSchematicWrapper *wrapper)
 {
+    wrapper->schematic = bb_schematic_new();
+
     g_signal_connect(
         wrapper->action.apply_fill_angle1 = g_simple_action_new_stateful(
             "apply-fill-angle1",
@@ -504,9 +509,11 @@ bb_schematic_wrapper_apply_fill_angle1_action_cb(GSimpleAction *simple, GVariant
     g_return_if_fail(g_variant_is_of_type(parameter, G_VARIANT_TYPE_INT32));
     g_return_if_fail(wrapper != NULL);
 
-    int value = g_variant_get_int32(parameter);
+    GValue value = G_VALUE_INIT;
+    g_value_init(&value, G_TYPE_INT);
+    g_value_set_int(&value,  g_variant_get_int32(parameter));
 
-    g_message("bb_schematic_wrapper_apply_fill_angle1_action_cb");
+    bb_schematic_apply_item_property(wrapper->schematic, "fill-angle1", &value);
 
     g_simple_action_set_state(
         wrapper->action.apply_fill_angle1,
@@ -521,9 +528,11 @@ bb_schematic_wrapper_apply_fill_angle2_action_cb(GSimpleAction *simple, GVariant
     g_return_if_fail(g_variant_is_of_type(parameter, G_VARIANT_TYPE_INT32));
     g_return_if_fail(wrapper != NULL);
 
-    int value = g_variant_get_int32(parameter);
+    GValue value = G_VALUE_INIT;
+    g_value_init(&value, G_TYPE_INT);
+    g_value_set_int(&value,  g_variant_get_int32(parameter));
 
-    g_message("bb_schematic_wrapper_apply_fill_angle2_action_cb");
+    bb_schematic_apply_item_property(wrapper->schematic, "fill-angle2", &value);
 
     g_simple_action_set_state(
         wrapper->action.apply_fill_angle2,
@@ -538,9 +547,11 @@ bb_schematic_wrapper_apply_fill_pitch1_action_cb(GSimpleAction *simple, GVariant
     g_return_if_fail(g_variant_is_of_type(parameter, G_VARIANT_TYPE_INT32));
     g_return_if_fail(wrapper != NULL);
 
-    int value = g_variant_get_int32(parameter);
+    GValue value = G_VALUE_INIT;
+    g_value_init(&value, G_TYPE_INT);
+    g_value_set_int(&value,  g_variant_get_int32(parameter));
 
-    g_message("bb_schematic_wrapper_apply_fill_pitch1_action_cb");
+    bb_schematic_apply_item_property(wrapper->schematic, "fill-pitch1", &value);
 
     g_simple_action_set_state(
         wrapper->action.apply_fill_pitch1,
@@ -555,9 +566,11 @@ bb_schematic_wrapper_apply_fill_pitch2_action_cb(GSimpleAction *simple, GVariant
     g_return_if_fail(g_variant_is_of_type(parameter, G_VARIANT_TYPE_INT32));
     g_return_if_fail(wrapper != NULL);
 
-    int value = g_variant_get_int32(parameter);
+    GValue value = G_VALUE_INIT;
+    g_value_init(&value, G_TYPE_INT);
+    g_value_set_int(&value,  g_variant_get_int32(parameter));
 
-    g_message("bb_schematic_wrapper_apply_fill_pitch2_action_cb");
+    bb_schematic_apply_item_property(wrapper->schematic, "fill-pitch2", &value);
 
     g_simple_action_set_state(
         wrapper->action.apply_fill_pitch2,
@@ -572,9 +585,11 @@ bb_schematic_wrapper_apply_fill_type_action_cb(GSimpleAction *simple, GVariant *
     g_return_if_fail(g_variant_is_of_type(parameter, G_VARIANT_TYPE_INT32));
     g_return_if_fail(wrapper != NULL);
 
-    int value = g_variant_get_int32(parameter);
+    GValue value = G_VALUE_INIT;
+    g_value_init(&value, G_TYPE_INT);
+    g_value_set_int(&value,  g_variant_get_int32(parameter));
 
-    g_message("bb_schematic_wrapper_apply_fill_type_action_cb");
+    bb_schematic_apply_item_property(wrapper->schematic, "fill-type", &value);
 }
 
 
@@ -584,9 +599,11 @@ bb_schematic_wrapper_apply_line_cap_type_action_cb(GSimpleAction *simple, GVaria
     g_return_if_fail(g_variant_is_of_type(parameter, G_VARIANT_TYPE_INT32));
     g_return_if_fail(wrapper != NULL);
 
-    int value = g_variant_get_int32(parameter);
+    GValue value = G_VALUE_INIT;
+    g_value_init(&value, G_TYPE_INT);
+    g_value_set_int(&value,  g_variant_get_int32(parameter));
 
-    g_message("bb_schematic_wrapper_apply_line_cap_type_action_cb");
+    bb_schematic_apply_item_property(wrapper->schematic, "line-cap-type", &value);
 }
 
 
@@ -596,9 +613,11 @@ bb_schematic_wrapper_apply_line_dash_length_action_cb(GSimpleAction *simple, GVa
     g_return_if_fail(g_variant_is_of_type(parameter, G_VARIANT_TYPE_INT32));
     g_return_if_fail(wrapper != NULL);
 
-    int value = g_variant_get_int32(parameter);
+    GValue value = G_VALUE_INIT;
+    g_value_init(&value, G_TYPE_INT);
+    g_value_set_int(&value,  g_variant_get_int32(parameter));
 
-    g_message("bb_schematic_wrapper_apply_line_dash_length_action_cb");
+    bb_schematic_apply_item_property(wrapper->schematic, "dash-length", &value);
 
     g_simple_action_set_state(
         wrapper->action.apply_line_dash_length,
@@ -613,9 +632,11 @@ bb_schematic_wrapper_apply_line_dash_space_action_cb(GSimpleAction *simple, GVar
     g_return_if_fail(g_variant_is_of_type(parameter, G_VARIANT_TYPE_INT32));
     g_return_if_fail(wrapper != NULL);
 
-    int value = g_variant_get_int32(parameter);
+    GValue value = G_VALUE_INIT;
+    g_value_init(&value, G_TYPE_INT);
+    g_value_set_int(&value,  g_variant_get_int32(parameter));
 
-    g_message("bb_schematic_wrapper_apply_line_dash_space_action_cb");
+    bb_schematic_apply_item_property(wrapper->schematic, "dash-space", &value);
 
     g_simple_action_set_state(
         wrapper->action.apply_line_dash_space,
@@ -630,9 +651,11 @@ bb_schematic_wrapper_apply_line_type_action_cb(GSimpleAction *simple, GVariant *
     g_return_if_fail(g_variant_is_of_type(parameter, G_VARIANT_TYPE_INT32));
     g_return_if_fail(wrapper != NULL);
 
-    int value = g_variant_get_int32(parameter);
+    GValue value = G_VALUE_INIT;
+    g_value_init(&value, G_TYPE_INT);
+    g_value_set_int(&value,  g_variant_get_int32(parameter));
 
-    g_message("bb_schematic_wrapper_apply_line_type_action_cb");
+    bb_schematic_apply_item_property(wrapper->schematic, "line-type", &value);
 }
 
 
@@ -642,9 +665,11 @@ bb_schematic_wrapper_apply_line_width_action_cb(GSimpleAction *simple, GVariant 
     g_return_if_fail(g_variant_is_of_type(parameter, G_VARIANT_TYPE_INT32));
     g_return_if_fail(wrapper != NULL);
 
-    int value = g_variant_get_int32(parameter);
+    GValue value = G_VALUE_INIT;
+    g_value_init(&value, G_TYPE_INT);
+    g_value_set_int(&value,  g_variant_get_int32(parameter));
 
-    g_message("bb_schematic_wrapper_apply_line_width_action_cb");
+    bb_schematic_apply_item_property(wrapper->schematic, "width", &value);
 
     g_simple_action_set_state(
         wrapper->action.apply_line_width,
@@ -659,9 +684,13 @@ bb_schematic_wrapper_apply_object_color_action_cb(GSimpleAction *simple, GVarian
     g_return_if_fail(g_variant_is_of_type(parameter, G_VARIANT_TYPE_INT32));
     g_return_if_fail(wrapper != NULL);
 
-    int index = g_variant_get_int32(parameter);
+    GValue value = G_VALUE_INIT;
+    g_value_init(&value, G_TYPE_INT);
+    g_value_set_int(&value, g_variant_get_int32(parameter));
 
-    g_message("bb_schematic_wrapper_apply_object_color_action_cb (color = %d)", index);
+    g_message("bb_schematic_wrapper_apply_object_color_action_cb() %s", "color");
+
+    bb_schematic_apply_item_property(wrapper->schematic, "color", &value);
 
     g_simple_action_set_state(
         wrapper->action.apply_object_color,
@@ -676,9 +705,11 @@ bb_schematic_wrapper_apply_pin_type_action_cb(GSimpleAction *simple, GVariant *p
     g_return_if_fail(g_variant_is_of_type(parameter, G_VARIANT_TYPE_INT32));
     g_return_if_fail(wrapper != NULL);
 
-    int value = g_variant_get_int32(parameter);
+    GValue value = G_VALUE_INIT;
+    g_value_init(&value, G_TYPE_INT);
+    g_value_set_int(&value,  g_variant_get_int32(parameter));
 
-    g_message("bb_schematic_wrapper_apply_pin_type_action_cb");
+    bb_schematic_apply_item_property(wrapper->schematic, "pin-type", &value);
 
     g_simple_action_set_state(
         wrapper->action.apply_pin_type,
@@ -693,9 +724,11 @@ bb_schematic_wrapper_apply_text_alignment_action_cb(GSimpleAction *simple, GVari
     g_return_if_fail(g_variant_is_of_type(parameter, G_VARIANT_TYPE_INT32));
     g_return_if_fail(wrapper != NULL);
 
-    int value = g_variant_get_int32(parameter);
+    GValue value = G_VALUE_INIT;
+    g_value_init(&value, G_TYPE_INT);
+    g_value_set_int(&value,  g_variant_get_int32(parameter));
 
-    g_message("bb_schematic_wrapper_apply_text_alignment_action_cb");
+    bb_schematic_apply_item_property(wrapper->schematic, "text-alignment", &value);
 
     g_simple_action_set_state(
         wrapper->action.apply_text_alignment,
@@ -710,9 +743,11 @@ bb_schematic_wrapper_apply_text_color_action_cb(GSimpleAction *simple, GVariant 
     g_return_if_fail(g_variant_is_of_type(parameter, G_VARIANT_TYPE_INT32));
     g_return_if_fail(wrapper != NULL);
 
-    int value = g_variant_get_int32(parameter);
+    GValue value = G_VALUE_INIT;
+    g_value_init(&value, G_TYPE_INT);
+    g_value_set_int(&value,  g_variant_get_int32(parameter));
 
-    g_message("bb_schematic_wrapper_apply_text_color_action_cb");
+    bb_schematic_apply_item_property(wrapper->schematic, "text-color", &value);
 
     g_simple_action_set_state(
         wrapper->action.apply_text_color,
@@ -727,9 +762,11 @@ bb_schematic_wrapper_apply_text_rotation_action_cb(GSimpleAction *simple, GVaria
     g_return_if_fail(g_variant_is_of_type(parameter, G_VARIANT_TYPE_INT32));
     g_return_if_fail(wrapper != NULL);
 
-    int value = g_variant_get_int32(parameter);
+    GValue value = G_VALUE_INIT;
+    g_value_init(&value, G_TYPE_INT);
+    g_value_set_int(&value,  g_variant_get_int32(parameter));
 
-    g_message("bb_schematic_wrapper_apply_text_rotation_action_cb");
+    bb_schematic_apply_item_property(wrapper->schematic, "text-rotation", &value);
 
     g_simple_action_set_state(
         wrapper->action.apply_text_rotation,
@@ -744,9 +781,11 @@ bb_schematic_wrapper_apply_text_size_action_cb(GSimpleAction *simple, GVariant *
     g_return_if_fail(g_variant_is_of_type(parameter, G_VARIANT_TYPE_INT32));
     g_return_if_fail(wrapper != NULL);
 
-    int value = g_variant_get_int32(parameter);
+    GValue value = G_VALUE_INIT;
+    g_value_init(&value, G_TYPE_INT);
+    g_value_set_int(&value,  g_variant_get_int32(parameter));
 
-    g_message("bb_schematic_wrapper_apply_text_size_action_cb");
+    bb_schematic_apply_item_property(wrapper->schematic, "text-size", &value);
 
     g_simple_action_set_state(
         wrapper->action.apply_text_size,

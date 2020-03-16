@@ -240,7 +240,7 @@
                                         </child>
                                         <child>
                                             <object class="BbAttributeEditor" id="attribute-editor">
-                                                <property name="document-window" bind-source="BbMainWindow" bind-property="current-document-window"/>
+                                                <!--<property name="document-window" bind-source="BbMainWindow" bind-property="current-document-window"/>-->
                                                 <property name="hexpand">true</property>
                                                 <property name="vexpand">true</property>
                                                 <style>

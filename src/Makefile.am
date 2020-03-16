@@ -45,6 +45,7 @@ bbtest_SOURCES = \
     lib/bbgraphicline.c \
     lib/bbgraphicpath.c \
     lib/bbitemrenderer.c \
+    lib/bbschematic.c \
     lib/bbschematicitem.c \
 	main.c \
 	$(BUILT_SOURCES)

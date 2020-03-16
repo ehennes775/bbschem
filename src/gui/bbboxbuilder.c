@@ -17,6 +17,7 @@
  */
 
 #include <gtk/gtk.h>
+#include <src/lib/bbgraphicbox.h>
 #include "bbboxbuilder.h"
 
 
@@ -34,6 +35,8 @@ enum
 struct _BbBoxBuilder
 {
     BbItemBuilder parent;
+
+    BbGraphicBox *prototype;
 
     int x[2];
     int y[2];
@@ -119,7 +122,11 @@ bb_box_builder_class_init(BbBoxBuilderClass *class)
 static void
 bb_box_builder_dispose(GObject *object)
 {
-    g_return_if_fail(object != NULL);
+    BbBoxBuilder *box_builder = BB_BOX_BUILDER(object);
+
+    g_return_if_fail(box_builder != NULL);
+
+    g_clear_object(&box_builder->prototype);
 }
 
 
@@ -190,6 +197,8 @@ static void
 bb_box_builder_init(BbBoxBuilder *builder)
 {
     g_return_if_fail(builder != NULL);
+
+    builder->prototype = bb_graphic_box_new();
 }
 
 

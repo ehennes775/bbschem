@@ -252,6 +252,13 @@ bb_graphic_box_init(BbGraphicBox *window)
 }
 
 
+BbGraphicBox*
+bb_graphic_box_new()
+{
+    return g_object_new(BB_TYPE_GRAPHIC_BOX, NULL);
+}
+
+
 __attribute__((constructor)) void
 bb_graphic_box_register()
 {

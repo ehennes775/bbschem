@@ -25,6 +25,9 @@
 G_DECLARE_FINAL_TYPE(BbGraphicLine, bb_graphic_line, BB, GRAPHIC_LINE, BbSchematicItem)
 
 int
+bb_graphic_line_get_color(BbGraphicLine *line);
+
+int
 bb_graphic_line_get_width(BbGraphicLine *line);
 
 int
@@ -41,6 +44,9 @@ bb_graphic_line_get_y1(BbGraphicLine *line);
 
 BbGraphicLine*
 bb_graphic_line_new();
+
+void
+bb_graphic_line_set_color(BbGraphicLine *line, int color);
 
 void
 bb_graphic_line_set_width(BbGraphicLine *line, int width);
