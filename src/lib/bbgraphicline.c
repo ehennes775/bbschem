@@ -18,6 +18,7 @@
 
 #include <gtk/gtk.h>
 #include "bbgraphicline.h"
+#include "bbcoord.h"
 
 
 enum
@@ -67,6 +68,9 @@ bb_graphic_line_render(BbSchematicItem *item, BbItemRenderer *renderer);
 static void
 bb_graphic_line_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
 
+static void
+bb_graphic_line_translate(BbSchematicItem *item, int dx, int dy);
+
 
 GParamSpec *properties[N_PROPERTIES];
 
@@ -99,6 +103,7 @@ bb_graphic_line_class_init(BbGraphicLineClass *klasse)
 
     BB_SCHEMATIC_ITEM_CLASS(klasse)->calculate_bounds = bb_graphic_line_calculate_bounds;
     BB_SCHEMATIC_ITEM_CLASS(klasse)->render = bb_graphic_line_render;
+    BB_SCHEMATIC_ITEM_CLASS(klasse)->translate = bb_graphic_line_translate;
 
     properties[PROP_COLOR] = g_param_spec_int(
         "color",
@@ -415,4 +420,19 @@ bb_graphic_line_set_y1(BbGraphicLine *line, int y)
 
         g_object_notify_by_pspec(G_OBJECT(line), properties[PROP_Y1]);
     };
+}
+
+
+static void
+bb_graphic_line_translate(BbSchematicItem *item, int dx, int dy)
+{
+    BbGraphicLine *line = BB_GRAPHIC_LINE(item);
+    g_return_if_fail(line != NULL);
+
+    bb_coord_translate(dx, dy, line->x, line->y, 2);
+
+    g_object_notify_by_pspec(G_OBJECT(line), properties[PROP_X0]);
+    g_object_notify_by_pspec(G_OBJECT(line), properties[PROP_Y0]);
+    g_object_notify_by_pspec(G_OBJECT(line), properties[PROP_X1]);
+    g_object_notify_by_pspec(G_OBJECT(line), properties[PROP_Y1]);
 }

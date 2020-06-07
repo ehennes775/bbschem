@@ -187,3 +187,11 @@ bb_graphic_path_set_width(BbGraphicPath *path, int width)
         g_object_notify_by_pspec(G_OBJECT(path), properties[PROP_WIDTH]);
     }
 }
+
+
+static void
+bb_graphic_line_translate(BbSchematicItem *item, int dx, int dy)
+{
+    BbGraphicPath *path = BB_GRAPHIC_PATH(item);
+    g_return_if_fail(path != NULL);
+}

@@ -34,6 +34,7 @@ struct _BbSchematicItemClass
     BbSchematicItem* (*clone)(BbSchematicItem *item);
     gboolean (*is_significant)(BbSchematicItem *item);
     void (*render)(BbSchematicItem *item, BbItemRenderer *renderer);
+    void (*translate)(BbSchematicItem *item, int dx, int dy);
 };
 
 
@@ -48,5 +49,8 @@ bb_schematic_item_is_significant(BbSchematicItem *item);
 
 void
 bb_schematic_item_render(BbSchematicItem *item, BbItemRenderer *renderer);
+
+void
+bb_schematic_item_translate(BbSchematicItem *item, int dx, int dy);
 
 #endif

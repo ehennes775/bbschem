@@ -91,4 +91,17 @@ void
 bb_coord_snap_orthogonal(int x0, int y0, int* x1, int* y1);
 
 
+/**
+ * Translate coordinates
+ *
+ * @param dx The displacement along the x axis
+ * @param dy The displacement along the y axis
+ * @param x The x coordinates to translate
+ * @param y The y coordinates to translate
+ * @param count The number of coordinate pairs to translate
+ */
+void
+bb_coord_translate(int dx, int dy, int *x, int *y, int count);
+
+
 #endif

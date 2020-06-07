@@ -60,6 +60,9 @@ bb_schematic_item_render_missing(BbSchematicItem *item, BbItemRenderer *renderer
 static void
 bb_schematic_item_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
 
+static void
+bb_schematic_item_translate_missing(BbSchematicItem *item, int dx, int dy);
+
 
 GParamSpec *properties[N_PROPERTIES];
 
@@ -95,6 +98,7 @@ bb_schematic_item_class_init(BbSchematicItemClass *class)
     class->clone = bb_schematic_item_clone_missing;
     class->is_significant = bb_schematic_item_is_significant;
     class->render = bb_schematic_item_render_missing;
+    class->translate = bb_schematic_item_translate_missing;
 }
 
 
@@ -199,4 +203,11 @@ bb_schematic_item_set_property(GObject *object, guint property_id, const GValue 
         default:
             G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
     }
+}
+
+
+static void
+bb_schematic_item_translate_missing(BbSchematicItem *item, int dx, int dy)
+{
+    g_error("bb_schematic_item_translate() not overridden");
 }

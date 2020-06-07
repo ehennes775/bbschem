@@ -18,6 +18,7 @@
 
 #include <gtk/gtk.h>
 #include "bbgraphicbox.h"
+#include "bbcoord.h"
 
 
 enum
@@ -64,6 +65,9 @@ bb_graphic_box_render(BbSchematicItem *item, BbItemRenderer *renderer);
 static void
 bb_graphic_box_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
 
+static void
+bb_graphic_box_translate(BbSchematicItem *item, int dx, int dy);
+
 
 GParamSpec *properties[N_PROPERTIES];
 
@@ -96,6 +100,7 @@ bb_graphic_box_class_init(BbGraphicBoxClass *klasse)
 
     BB_SCHEMATIC_ITEM_CLASS(klasse)->calculate_bounds = bb_graphic_box_calculate_bounds;
     BB_SCHEMATIC_ITEM_CLASS(klasse)->render = bb_graphic_box_render;
+    BB_SCHEMATIC_ITEM_CLASS(klasse)->translate = bb_graphic_box_translate;
 
     properties[PROP_WIDTH] = g_param_spec_int(
         "width",
@@ -371,4 +376,19 @@ bb_graphic_box_set_y1(BbGraphicBox *box, int y)
 
         g_object_notify_by_pspec(G_OBJECT(box), properties[PROP_Y1]);
     };
+}
+
+
+static void
+bb_graphic_box_translate(BbSchematicItem *item, int dx, int dy)
+{
+    BbGraphicBox *box = BB_GRAPHIC_BOX(item);
+    g_return_if_fail(box != NULL);
+
+    bb_coord_translate(dx, dy, box->x, box->y, 2);
+
+    g_object_notify_by_pspec(G_OBJECT(box), properties[PROP_X0]);
+    g_object_notify_by_pspec(G_OBJECT(box), properties[PROP_Y0]);
+    g_object_notify_by_pspec(G_OBJECT(box), properties[PROP_X1]);
+    g_object_notify_by_pspec(G_OBJECT(box), properties[PROP_Y1]);
 }

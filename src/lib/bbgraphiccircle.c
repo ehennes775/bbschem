@@ -18,6 +18,7 @@
 
 #include <gtk/gtk.h>
 #include "bbgraphiccircle.h"
+#include "bbcoord.h"
 
 
 enum
@@ -65,6 +66,9 @@ bb_graphic_circle_render(BbSchematicItem *item, BbItemRenderer *renderer);
 static void
 bb_graphic_circle_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
 
+static void
+bb_graphic_circle_translate(BbSchematicItem *item, int dx, int dy);
+
 
 GParamSpec *properties[N_PROPERTIES];
 
@@ -97,6 +101,7 @@ bb_graphic_circle_class_init(BbGraphicCircleClass *klasse)
 
     BB_SCHEMATIC_ITEM_CLASS(klasse)->calculate_bounds = bb_graphic_circle_calculate_bounds;
     BB_SCHEMATIC_ITEM_CLASS(klasse)->render = bb_graphic_circle_render;
+    BB_SCHEMATIC_ITEM_CLASS(klasse)->translate = bb_graphic_circle_translate;
 
     properties[PROP_CENTER_X] = g_param_spec_int(
         "center-x",
@@ -331,4 +336,17 @@ bb_graphic_circle_set_width(BbGraphicCircle *circle, int width)
 
         g_object_notify_by_pspec(G_OBJECT(circle), properties[PROP_WIDTH]);
     }
+}
+
+
+static void
+bb_graphic_circle_translate(BbSchematicItem *item, int dx, int dy)
+{
+    BbGraphicCircle *circle = BB_GRAPHIC_CIRCLE(item);
+    g_return_if_fail(circle != NULL);
+
+    bb_coord_translate(dx, dy, &circle->center_x, &circle->center_y, 1);
+
+    g_object_notify_by_pspec(G_OBJECT(circle), properties[PROP_CENTER_X]);
+    g_object_notify_by_pspec(G_OBJECT(circle), properties[PROP_CENTER_Y]);
 }

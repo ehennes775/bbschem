@@ -18,6 +18,7 @@
 
 #include <gtk/gtk.h>
 #include "bbgraphicarc.h"
+#include "bbcoord.h"
 
 
 enum
@@ -70,6 +71,9 @@ bb_graphic_arc_render(BbSchematicItem *item, BbItemRenderer *renderer);
 static void
 bb_graphic_arc_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
 
+static void
+bb_graphic_arc_translate(BbSchematicItem *item, int dx, int dy);
+
 
 GParamSpec *properties[N_PROPERTIES];
 
@@ -102,6 +106,7 @@ bb_graphic_arc_class_init(BbGraphicArcClass *klasse)
 
     BB_SCHEMATIC_ITEM_CLASS(klasse)->calculate_bounds = bb_graphic_arc_calculate_bounds;
     BB_SCHEMATIC_ITEM_CLASS(klasse)->render = bb_graphic_arc_render;
+    BB_SCHEMATIC_ITEM_CLASS(klasse)->translate = bb_graphic_arc_translate;
 
     properties[PROP_CENTER_X] = g_param_spec_int(
         "center-x",
@@ -413,3 +418,15 @@ bb_graphic_arc_set_width(BbGraphicArc *arc, int width)
     }
 }
 
+
+static void
+bb_graphic_arc_translate(BbSchematicItem *item, int dx, int dy)
+{
+    BbGraphicArc *arc = BB_GRAPHIC_ARC(item);
+    g_return_if_fail(arc != NULL);
+
+    bb_coord_translate(dx, dy, &arc->center_x, &arc->center_y, 1);
+
+    g_object_notify_by_pspec(G_OBJECT(arc), properties[PROP_CENTER_X]);
+    g_object_notify_by_pspec(G_OBJECT(arc), properties[PROP_CENTER_Y]);
+}

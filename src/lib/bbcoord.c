@@ -160,7 +160,7 @@ bb_coord_snap(int coord, int grid)
  * @param y1 The y coordinate of the second point
  */
 void
-snap_orthogonal(int x0, int y0, int *x1, int *y1)
+bb_coord_snap_orthogonal(int x0, int y0, int *x1, int *y1)
 {
     g_return_if_fail(x1 != NULL);
     g_return_if_fail(y1 != NULL);
@@ -175,5 +175,25 @@ snap_orthogonal(int x0, int y0, int *x1, int *y1)
     else
     {
         *y1 = y0;
+    }
+}
+
+
+void
+bb_coord_translate(int dx, int dy, int *x, int *y, int count)
+{
+    g_return_if_fail(x != NULL);
+    g_return_if_fail(y != NULL);
+    g_return_if_fail(count >= 0);
+
+    int *x1 = x + count;
+
+    while(x < x1)
+    {
+        *x += dx;
+        *y += dy;
+
+        x++;
+        y++;
     }
 }
