@@ -40,6 +40,7 @@ bbtest_SOURCES = \
     lib/bbangle.c \
     lib/bbbounds.c \
     lib/bbboundscalculator.c \
+    lib/bbcoord.c \
     lib/bbgraphicarc.c \
     lib/bbgraphicbox.c \
     lib/bbgraphiccircle.c \
