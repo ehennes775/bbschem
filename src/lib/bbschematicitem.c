@@ -55,7 +55,16 @@ static gboolean
 bb_schematic_item_is_significant_missing(BbSchematicItem *item);
 
 static void
+bb_schematic_item_mirror_x_missing(BbSchematicItem *item, int cx);
+
+static void
+bb_schematic_item_mirror_y_missing(BbSchematicItem *item, int cy);
+
+static void
 bb_schematic_item_render_missing(BbSchematicItem *item, BbItemRenderer *renderer);
+
+static void
+bb_schematic_item_rotate_missing(BbSchematicItem *item, int cx, int cy, int angle);
 
 static void
 bb_schematic_item_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
@@ -97,7 +106,10 @@ bb_schematic_item_class_init(BbSchematicItemClass *class)
     class->calculate_bounds = bb_schematic_item_calculate_bounds_missing;
     class->clone = bb_schematic_item_clone_missing;
     class->is_significant = bb_schematic_item_is_significant;
+    class->mirror_x = bb_schematic_item_mirror_x_missing;
+    class->mirror_y = bb_schematic_item_mirror_y_missing;
     class->render = bb_schematic_item_render_missing;
+    class->rotate = bb_schematic_item_rotate_missing;
     class->translate = bb_schematic_item_translate_missing;
 }
 
@@ -189,9 +201,30 @@ bb_schematic_item_render(BbSchematicItem *item, BbItemRenderer *renderer)
 
 
 static void
+bb_schematic_item_mirror_x_missing(BbSchematicItem *item, int cx)
+{
+    g_error("bb_schematic_item_mirror_x() not overridden");
+}
+
+
+static void
+bb_schematic_item_mirror_y_missing(BbSchematicItem *item, int cy)
+{
+    g_error("bb_schematic_item_mirror_y() not overridden");
+}
+
+
+static void
 bb_schematic_item_render_missing(BbSchematicItem *item, BbItemRenderer *renderer)
 {
     g_error("bb_schematic_item_render() not overridden");
+}
+
+
+static void
+bb_schematic_item_rotate_missing(BbSchematicItem *item, int cx, int cy, int angle)
+{
+    g_error("bb_schematic_item_rotate() not overridden");
 }
 
 

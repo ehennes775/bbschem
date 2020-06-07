@@ -33,7 +33,10 @@ struct _BbSchematicItemClass
     BbBounds* (*calculate_bounds)(BbSchematicItem *item, BbBoundsCalculator *calculator);
     BbSchematicItem* (*clone)(BbSchematicItem *item);
     gboolean (*is_significant)(BbSchematicItem *item);
+    void (*mirror_x)(BbSchematicItem *item, int cx);
+    void (*mirror_y)(BbSchematicItem *item, int cy);
     void (*render)(BbSchematicItem *item, BbItemRenderer *renderer);
+    void (*rotate)(BbSchematicItem *item, int cx, int cy, int angle);
     void (*translate)(BbSchematicItem *item, int dx, int dy);
 };
 
@@ -48,7 +51,16 @@ gboolean
 bb_schematic_item_is_significant(BbSchematicItem *item);
 
 void
+bb_schematic_item_mirror_x(BbSchematicItem *item, int cx);
+
+void
+bb_schematic_item_mirror_y(BbSchematicItem *item, int cy);
+
+void
 bb_schematic_item_render(BbSchematicItem *item, BbItemRenderer *renderer);
+
+void
+bb_schematic_item_rotate(BbSchematicItem *item, int cx, int cy, int angle);
 
 void
 bb_schematic_item_translate(BbSchematicItem *item, int dx, int dy);
