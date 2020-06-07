@@ -37,6 +37,7 @@ bbtest_SOURCES = \
     gui/bbschematicwrapper.c \
     gui/bbtextpropertyeditor.c \
     gui/bbtoolpalette.c \
+    lib/bbangle.c \
     lib/bbbounds.c \
     lib/bbboundscalculator.c \
     lib/bbgraphicarc.c \
@@ -47,8 +48,9 @@ bbtest_SOURCES = \
     lib/bbitemrenderer.c \
     lib/bbschematic.c \
     lib/bbschematicitem.c \
+    lib/bbsweep.c \
 	main.c \
 	$(BUILT_SOURCES)
 
 bbtest_CFLAGS = $(AM_CFLAGS) $(DEPS_CFLAGS) $(GTK_CFLAGS)
-bbtest_LDADD = $(DEPS_LIBS) $(GTK_LIBS)
+bbtest_LDADD = $(DEPS_LIBS) $(GTK_LIBS) -lm
