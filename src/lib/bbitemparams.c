@@ -1,5 +1,3 @@
-#ifndef __BBSCHEMATIC__
-#define __BBSCHEMATIC__
 /*
  * bbsch
  * Copyright (C) 2020 Edward C. Hennessy
@@ -19,38 +17,65 @@
  */
 
 #include <gtk/gtk.h>
+#include "bbitemparams.h"
 
-#define BB_TYPE_SCHEMATIC bb_schematic_get_type()
-G_DECLARE_FINAL_TYPE(BbSchematic, bb_schematic, BB, SCHEMATIC, GObject)
+
+struct _BbItemParams
+{
+};
+
+
+G_DEFINE_BOXED_TYPE(BbItemParams, bb_item_params, bb_item_params_copy, bb_item_params_free)
+
+
+BbItemParams*
+bb_item_params_copy(const BbItemParams *bounds)
+{
+    return g_memdup(bounds, sizeof(BbItemParams));
+}
 
 
 void
-bb_schematic_add_items(BbSchematic *schematic, GSList *items);
+bb_item_params_free(BbItemParams *bounds)
+{
+    g_free(bounds);
+}
+
 
 void
-bb_schematic_apply_item_property(BbSchematic *schematic, const char *name, const GValue *value);
-
-void
-bb_schematic_foreach(BbSchematic *schematic, GFunc func, gpointer user_data);
-
-BbSchematic*
-bb_schematic_new();
-
-void
-bb_schematic_write_async(
-    BbSchematic *schematic,
+bb_item_params_write_async(
+    BbItemParams *params,
     GOutputStream *stream,
     int io_priority,
     GCancellable *cancellable,
     GAsyncReadyCallback callback,
     gpointer callback_data
-    );
+    )
+{
+    g_output_stream_write_all_async(
+        stream,
+        "",
+        0,
+        io_priority,
+        cancellable,
+        callback,
+        callback_data
+        );
+}
+
 
 void
-bb_schematic_write_finish(
-    BbSchematic *schematic,
+bb_item_params_write_finish(
+    BbItemParams *params,
+    GOutputStream *stream,
     GAsyncResult *result,
     GError **error
-    );
-
-#endif
+    )
+{
+    g_output_stream_write_all_finish(
+        stream,
+        result,
+        NULL,
+        error
+        );
+}

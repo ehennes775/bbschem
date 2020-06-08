@@ -50,6 +50,14 @@ struct _ApplyItemPropertyCapture
     const GValue *value;
 };
 
+typedef struct _AsyncWriteData AsyncWriteData;
+
+struct _AsyncWriteData
+{
+    GOutputStream *stream;
+    int io_priority;
+    GSList *item;
+};
 
 static void
 bb_schematic_add_items_lambda(BbSchematicItem *item, BbSchematic *schematic);
@@ -68,6 +76,15 @@ bb_schematic_get_property(GObject *object, guint property_id, GValue *value, GPa
 
 static void
 bb_schematic_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
+
+static void
+bb_schematic_write_callback(GObject *source, GAsyncResult *result, gpointer callback_data);
+
+static AsyncWriteData*
+bb_schematic_async_write_data_new();
+
+static void
+bb_schematic_async_write_data_free(gpointer slice);
 
 
 GParamSpec *properties[N_PROPERTIES];
@@ -209,4 +226,108 @@ bb_schematic_set_property(GObject *object, guint property_id, const GValue *valu
         default:
             G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
     }
+}
+
+
+void
+bb_schematic_write_async(
+    BbSchematic *schematic,
+    GOutputStream *stream,
+    int io_priority,
+    GCancellable *cancellable,
+    GAsyncReadyCallback callback,
+    gpointer callback_data
+    )
+{
+    GTask *task = g_task_new(schematic, cancellable, callback, callback_data);
+
+    if (schematic->items != NULL)
+    {
+        AsyncWriteData *data = bb_schematic_async_write_data_new();
+        g_task_set_task_data(task, data, bb_schematic_async_write_data_free);
+
+        data->stream = stream;
+        data->io_priority = io_priority;
+        data->item = schematic->items;
+
+        bb_schematic_item_write_async(
+            BB_SCHEMATIC_ITEM(data->item->data),
+            stream,
+            io_priority,
+            g_task_get_cancellable(task),
+            bb_schematic_write_callback,
+            task
+            );
+    }
+    else
+    {
+        g_task_return_boolean(task, TRUE);
+    }
+}
+
+
+void
+bb_schematic_write_finish(
+    BbSchematic *schematic,
+    GAsyncResult *result,
+    GError **error
+    )
+{
+    g_return_if_fail(g_task_is_valid(result, schematic));
+
+    g_task_propagate_pointer(G_TASK(result), error);
+}
+
+
+static void
+bb_schematic_write_callback(GObject *source, GAsyncResult *result, gpointer callback_data)
+{
+    GError *error = NULL;
+    GTask *task = G_TASK(callback_data);
+    AsyncWriteData *data = g_task_get_task_data(task);
+
+    bb_schematic_item_write_finish(
+        BB_SCHEMATIC_ITEM(data->item->data),
+        result,
+        &error
+        );
+
+    if (error != NULL)
+    {
+        data->item = data->item->next;
+
+        if (data->item != NULL)
+        {
+            bb_schematic_item_write_async(
+                BB_SCHEMATIC_ITEM(data->item->data),
+                data->stream,
+                data->io_priority,
+                g_task_get_cancellable(G_TASK(result)),
+                bb_schematic_write_callback,
+                task
+                );
+        }
+        else
+        {
+            g_task_return_boolean(task, TRUE);
+        }
+    }
+    else
+    {
+        g_task_return_error(G_TASK(result), error);
+    }
+}
+
+
+static AsyncWriteData*
+bb_schematic_async_write_data_new()
+{
+    return g_slice_new(AsyncWriteData);
+}
+
+
+static void
+bb_schematic_async_write_data_free(gpointer slice)
+{
+    g_slice_free(AsyncWriteData, slice);
 }

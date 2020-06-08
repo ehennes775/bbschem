@@ -38,6 +38,19 @@ struct _BbSchematicItemClass
     void (*render)(BbSchematicItem *item, BbItemRenderer *renderer);
     void (*rotate)(BbSchematicItem *item, int cx, int cy, int angle);
     void (*translate)(BbSchematicItem *item, int dx, int dy);
+    void (*write_async)(
+        BbSchematicItem *item,
+        GOutputStream *stream,
+        int io_priority,
+        GCancellable *cancellable,
+        GAsyncReadyCallback callback,
+        gpointer callback_data
+        );
+    void (*write_finish)(
+        BbSchematicItem *item,
+        GAsyncResult *result,
+        GError **error
+        );
 };
 
 
@@ -64,5 +77,22 @@ bb_schematic_item_rotate(BbSchematicItem *item, int cx, int cy, int angle);
 
 void
 bb_schematic_item_translate(BbSchematicItem *item, int dx, int dy);
+
+void
+bb_schematic_item_write_async(
+    BbSchematicItem *item,
+    GOutputStream *stream,
+    int io_priority,
+    GCancellable *cancellable,
+    GAsyncReadyCallback callback,
+    gpointer callback_data
+    );
+
+void
+bb_schematic_item_write_finish(
+    BbSchematicItem *item,
+    GAsyncResult *result,
+    GError **error
+    );
 
 #endif

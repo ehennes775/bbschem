@@ -1,5 +1,5 @@
-#ifndef __BBSCHEMATIC__
-#define __BBSCHEMATIC__
+#ifndef __BBITEMPARAMS__
+#define __BBITEMPARAMS__
 /*
  * bbsch
  * Copyright (C) 2020 Edward C. Hennessy
@@ -20,25 +20,20 @@
 
 #include <gtk/gtk.h>
 
-#define BB_TYPE_SCHEMATIC bb_schematic_get_type()
-G_DECLARE_FINAL_TYPE(BbSchematic, bb_schematic, BB, SCHEMATIC, GObject)
+#define BB_TYPE_ITEM_PARAMS bb_item_params_get_type()
+
+typedef struct _BbItemParams BbItemParams;
 
 
-void
-bb_schematic_add_items(BbSchematic *schematic, GSList *items);
-
-void
-bb_schematic_apply_item_property(BbSchematic *schematic, const char *name, const GValue *value);
+BbItemParams*
+bb_item_params_copy(const BbItemParams *params);
 
 void
-bb_schematic_foreach(BbSchematic *schematic, GFunc func, gpointer user_data);
-
-BbSchematic*
-bb_schematic_new();
+bb_item_params_free(BbItemParams *params);
 
 void
-bb_schematic_write_async(
-    BbSchematic *schematic,
+bb_item_params_write_async(
+    BbItemParams *params,
     GOutputStream *stream,
     int io_priority,
     GCancellable *cancellable,
@@ -47,8 +42,9 @@ bb_schematic_write_async(
     );
 
 void
-bb_schematic_write_finish(
-    BbSchematic *schematic,
+bb_item_params_write_finish(
+    BbItemParams *params,
+    GOutputStream *stream,
     GAsyncResult *result,
     GError **error
     );

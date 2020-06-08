@@ -19,6 +19,7 @@
 #include <gtk/gtk.h>
 #include "bbgraphicline.h"
 #include "bbcoord.h"
+#include "bbitemparams.h"
 
 
 enum
@@ -37,6 +38,8 @@ enum
 struct _BbGraphicLine
 {
     BbSchematicItem parent;
+
+    BbItemParams *params;
 
     int color;
 
@@ -71,6 +74,24 @@ bb_graphic_line_set_property(GObject *object, guint property_id, const GValue *v
 static void
 bb_graphic_line_translate(BbSchematicItem *item, int dx, int dy);
 
+static void
+bb_graphic_line_write_async(
+    BbSchematicItem *item,
+    GOutputStream *stream,
+    int io_priority,
+    GCancellable *cancellable,
+    GAsyncReadyCallback callback,
+    gpointer callback_data
+    );
+
+static void
+bb_graphic_line_write_finish(
+    BbSchematicItem *item,
+    GOutputStream *stream,
+    GAsyncResult *result,
+    GError **error
+    );
+
 
 GParamSpec *properties[N_PROPERTIES];
 
@@ -104,6 +125,8 @@ bb_graphic_line_class_init(BbGraphicLineClass *klasse)
     BB_SCHEMATIC_ITEM_CLASS(klasse)->calculate_bounds = bb_graphic_line_calculate_bounds;
     BB_SCHEMATIC_ITEM_CLASS(klasse)->render = bb_graphic_line_render;
     BB_SCHEMATIC_ITEM_CLASS(klasse)->translate = bb_graphic_line_translate;
+    BB_SCHEMATIC_ITEM_CLASS(klasse)->write_async = bb_graphic_line_write_async;
+    BB_SCHEMATIC_ITEM_CLASS(klasse)->write_finish = bb_graphic_line_write_finish;
 
     properties[PROP_COLOR] = g_param_spec_int(
         "color",
@@ -435,4 +458,44 @@ bb_graphic_line_translate(BbSchematicItem *item, int dx, int dy)
     g_object_notify_by_pspec(G_OBJECT(line), properties[PROP_Y0]);
     g_object_notify_by_pspec(G_OBJECT(line), properties[PROP_X1]);
     g_object_notify_by_pspec(G_OBJECT(line), properties[PROP_Y1]);
+}
+
+
+static void
+bb_graphic_line_write_async(
+    BbSchematicItem *item,
+    GOutputStream *stream,
+    int io_priority,
+    GCancellable *cancellable,
+    GAsyncReadyCallback callback,
+    gpointer callback_data
+    )
+{
+    BbGraphicLine *line = BB_GRAPHIC_LINE(item);
+
+    bb_item_params_write_async(
+        line->params,
+        stream,
+        io_priority,
+        cancellable,
+        callback,
+        callback_data
+        );
+}
+
+
+static void
+bb_graphic_line_write_finish(
+    BbSchematicItem *item,
+    GOutputStream *stream,
+    GAsyncResult *result,
+    GError **error
+    )
+{
+    g_output_stream_write_all_finish(
+        stream,
+        result,
+        NULL,
+        error
+        );
 }

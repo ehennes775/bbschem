@@ -46,6 +46,7 @@ bbtest_SOURCES = \
     lib/bbgraphiccircle.c \
     lib/bbgraphicline.c \
     lib/bbgraphicpath.c \
+    lib/bbitemparams.c \
     lib/bbitemrenderer.c \
     lib/bbschematic.c \
     lib/bbschematicitem.c \

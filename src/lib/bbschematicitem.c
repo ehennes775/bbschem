@@ -72,6 +72,23 @@ bb_schematic_item_set_property(GObject *object, guint property_id, const GValue 
 static void
 bb_schematic_item_translate_missing(BbSchematicItem *item, int dx, int dy);
 
+static void
+bb_schematic_item_write_async_missing(
+    BbSchematicItem *item,
+    GOutputStream *stream,
+    int io_priority,
+    GCancellable *cancellable,
+    GAsyncReadyCallback callback,
+    gpointer callback_data
+    );
+
+static void
+bb_schematic_item_write_finish_missing(
+    BbSchematicItem *item,
+    GAsyncResult *result,
+    GError **error
+    );
+
 
 GParamSpec *properties[N_PROPERTIES];
 
@@ -111,6 +128,8 @@ bb_schematic_item_class_init(BbSchematicItemClass *class)
     class->render = bb_schematic_item_render_missing;
     class->rotate = bb_schematic_item_rotate_missing;
     class->translate = bb_schematic_item_translate_missing;
+    class->write_async = bb_schematic_item_write_async_missing;
+    class->write_finish = bb_schematic_item_write_finish_missing;
 }
 
 
@@ -243,4 +262,64 @@ static void
 bb_schematic_item_translate_missing(BbSchematicItem *item, int dx, int dy)
 {
     g_error("bb_schematic_item_translate() not overridden");
+}
+
+
+void
+bb_schematic_item_write_async(
+    BbSchematicItem *item,
+    GOutputStream *stream,
+    int io_priority,
+    GCancellable *cancellable,
+    GAsyncReadyCallback callback,
+    gpointer callback_data
+    )
+{
+    BbSchematicItemClass *class = BB_SCHEMATIC_ITEM_GET_CLASS(item);
+
+    g_return_if_fail(class != NULL);
+    g_return_if_fail(class->write_async != NULL);
+
+    return class->write_async(item, stream, io_priority, cancellable, callback, callback_data);
+}
+
+
+static void
+bb_schematic_item_write_async_missing(
+    BbSchematicItem *item,
+    GOutputStream *stream,
+    int io_priority,
+    GCancellable *cancellable,
+    GAsyncReadyCallback callback,
+    gpointer callback_data
+    )
+{
+    g_error("bb_schematic_item_write_async() not overridden");
+}
+
+
+void
+bb_schematic_item_write_finish(
+    BbSchematicItem *item,
+    GAsyncResult *result,
+    GError **error
+    )
+{
+    BbSchematicItemClass *class = BB_SCHEMATIC_ITEM_GET_CLASS(item);
+
+    g_return_if_fail(class != NULL);
+    g_return_if_fail(class->write_finish != NULL);
+
+    return class->write_finish(item, result, error);
+}
+
+
+static void
+bb_schematic_item_write_finish_missing(
+    BbSchematicItem *item,
+    GAsyncResult *result,
+    GError **error
+    )
+{
+    g_error("bb_schematic_item_write_finish() not overridden");
 }

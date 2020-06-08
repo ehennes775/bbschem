@@ -18,6 +18,7 @@
 
 #include <gtk/gtk.h>
 #include "bbgraphicpath.h"
+#include "bbitemparams.h"
 
 
 enum
@@ -31,6 +32,8 @@ enum
 struct _BbGraphicPath
 {
     BbSchematicItem parent;
+
+    BbItemParams *params;
 
     int width;
 };
@@ -57,6 +60,24 @@ bb_graphic_path_render(BbSchematicItem *item, BbItemRenderer *renderer);
 static void
 bb_graphic_path_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
 
+static void
+bb_graphic_path_write_async(
+    BbSchematicItem *item,
+    GOutputStream *stream,
+    int io_priority,
+    GCancellable *cancellable,
+    GAsyncReadyCallback callback,
+    gpointer callback_data
+    );
+
+static void
+bb_graphic_path_write_finish(
+    BbSchematicItem *item,
+    GOutputStream *stream,
+    GAsyncResult *result,
+    GError **error
+    );
+
 
 GParamSpec *properties[N_PROPERTIES];
 
@@ -82,6 +103,8 @@ bb_graphic_path_class_init(BbGraphicPathClass *klasse)
 
     BB_SCHEMATIC_ITEM_CLASS(klasse)->calculate_bounds = bb_graphic_path_calculate_bounds;
     BB_SCHEMATIC_ITEM_CLASS(klasse)->render = bb_graphic_path_render;
+    BB_SCHEMATIC_ITEM_CLASS(klasse)->write_async = bb_graphic_path_write_async;
+    BB_SCHEMATIC_ITEM_CLASS(klasse)->write_finish = bb_graphic_path_write_finish;
 
     properties[PROP_WIDTH] = g_param_spec_int(
         "width",
@@ -194,4 +217,43 @@ bb_graphic_line_translate(BbSchematicItem *item, int dx, int dy)
 {
     BbGraphicPath *path = BB_GRAPHIC_PATH(item);
     g_return_if_fail(path != NULL);
+}
+
+static void
+bb_graphic_path_write_async(
+    BbSchematicItem *item,
+    GOutputStream *stream,
+    int io_priority,
+    GCancellable *cancellable,
+    GAsyncReadyCallback callback,
+    gpointer callback_data
+    )
+{
+    BbGraphicPath *path = BB_GRAPHIC_PATH(item);
+
+    bb_item_params_write_async(
+        path->params,
+        stream,
+        io_priority,
+        cancellable,
+        callback,
+        callback_data
+        );
+}
+
+
+static void
+bb_graphic_path_write_finish(
+    BbSchematicItem *item,
+    GOutputStream *stream,
+    GAsyncResult *result,
+    GError **error
+    )
+{
+    g_output_stream_write_all_finish(
+        stream,
+        result,
+        NULL,
+        error
+        );
 }
