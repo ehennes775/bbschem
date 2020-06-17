@@ -37,6 +37,7 @@ bbtest_SOURCES = \
     gui/bbschematicwrapper.c \
     gui/bbtextpropertyeditor.c \
     gui/bbtoolpalette.c \
+    lib/bbabsolutemoveto.c \
     lib/bbangle.c \
     lib/bbbounds.c \
     lib/bbboundscalculator.c \
@@ -48,6 +49,7 @@ bbtest_SOURCES = \
     lib/bbgraphicpath.c \
     lib/bbitemparams.c \
     lib/bbitemrenderer.c \
+    lib/bbpathcommand.c \
     lib/bbschematic.c \
     lib/bbschematicitem.c \
     lib/bbsweep.c \
