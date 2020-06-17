@@ -49,6 +49,9 @@ static void
 bb_path_command_rotate_missing(BbPathCommand *command, int cx, int cy, int angle);
 
 static void
+bb_path_command_render_missing(BbPathCommand *command, BbItemRenderer *renderer);
+
+static void
 bb_path_command_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
 
 static void
@@ -67,6 +70,7 @@ bb_path_command_class_init(BbPathCommandClass *klasse)
     G_OBJECT_CLASS(klasse)->set_property = bb_path_command_set_property;
 
     klasse->clone = bb_path_command_clone_missing;
+    klasse->render = bb_path_command_render_missing;
     klasse->rotate = bb_path_command_rotate_missing;
     klasse->translate = bb_path_command_translate_missing;
 
@@ -141,6 +145,25 @@ __attribute__((constructor)) void
 bb_path_command_register()
 {
     bb_path_command_get_type();
+}
+
+
+void
+bb_path_command_render(BbPathCommand *command, BbItemRenderer *renderer)
+{
+    BbPathCommandClass *class = BB_PATH_COMMAND_GET_CLASS(command);
+
+    g_return_if_fail(class != NULL);
+    g_return_if_fail(class->render != NULL);
+
+    class->render(command, renderer);
+}
+
+
+static void
+bb_path_command_render_missing(BbPathCommand *command, BbItemRenderer *renderer)
+{
+    g_error("bb_path_command_render() not overridden");
 }
 
 

@@ -19,6 +19,7 @@
  */
 
 #include <gtk/gtk.h>
+#include "bbitemrenderer.h"
 
 #define BB_TYPE_PATH_COMMAND bb_path_command_get_type()
 G_DECLARE_DERIVABLE_TYPE(BbPathCommand, bb_path_command, BB, PATH_COMMAND, GObject)
@@ -28,6 +29,7 @@ struct _BbPathCommandClass
     GObjectClass parent_class;
 
     BbPathCommand* (*clone)(BbPathCommand *command);
+    void (*render)(BbPathCommand *command, BbItemRenderer *renderer);
     void (*rotate)(BbPathCommand *command, int cx, int cy, int angle);
     void (*translate)(BbPathCommand *command, int dx, int dy);
 };
@@ -41,6 +43,10 @@ struct _BbPathCommandClass
  */
 BbPathCommand*
 bb_path_command_clone(const BbPathCommand *command);
+
+
+void
+bb_path_command_render(BbPathCommand *command, BbItemRenderer *renderer);
 
 
 /**

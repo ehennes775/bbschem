@@ -36,13 +36,23 @@ struct _BbItemRendererInterface
 {
     GTypeInterface g_iface;
 
+    void (*render_absolute_line_to)(BbItemRenderer *renderer, int x, int y);
+    void (*render_absolute_move_to)(BbItemRenderer *renderer, int x, int y);
     void (*render_graphic_arc)(BbItemRenderer *renderer, struct _BbGraphicArc *arc);
     void (*render_graphic_box)(BbItemRenderer *renderer, struct _BbGraphicBox *box);
     void (*render_graphic_circle)(BbItemRenderer *renderer, struct _BbGraphicCircle *circle);
     void (*render_graphic_line)(BbItemRenderer *renderer, struct _BbGraphicLine *line);
     void (*render_graphic_path)(BbItemRenderer *renderer, struct _BbGraphicPath *path);
+    void (*render_relative_line_to)(BbItemRenderer *renderer, int dx, int dy);
+    void (*render_relative_move_to)(BbItemRenderer *renderer, int dx, int dy);
 };
 
+
+void
+bb_item_renderer_render_absolute_line_to(BbItemRenderer *renderer, int x, int y);
+
+void
+bb_item_renderer_render_absolute_move_to(BbItemRenderer *renderer, int x, int y);
 
 void
 bb_item_renderer_render_graphic_arc(BbItemRenderer *renderer, struct _BbGraphicArc *arc);
@@ -58,5 +68,11 @@ bb_item_renderer_render_graphic_line(BbItemRenderer *renderer, struct _BbGraphic
 
 void
 bb_item_renderer_render_graphic_path(BbItemRenderer *renderer, struct _BbGraphicPath *path);
+
+void
+bb_item_renderer_render_relative_line_to(BbItemRenderer *renderer, int dx, int dy);
+
+void
+bb_item_renderer_render_relative_move_to(BbItemRenderer *renderer, int dx, int dy);
 
 #endif

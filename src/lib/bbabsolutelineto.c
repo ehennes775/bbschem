@@ -54,6 +54,9 @@ static void
 bb_absolute_line_to_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
 
 static void
+bb_absolute_line_to_render(BbPathCommand *command, BbItemRenderer *renderer);
+
+static void
 bb_absolute_line_to_rotate(BbPathCommand *command, int cx, int cy, int angle);
 
 static void
@@ -74,9 +77,10 @@ bb_absolute_line_to_class_init(BbAbsoluteLineToClass *klasse)
     G_OBJECT_CLASS(klasse)->get_property = bb_absolute_line_to_get_property;
     G_OBJECT_CLASS(klasse)->set_property = bb_absolute_line_to_set_property;
 
+    BB_PATH_COMMAND_CLASS(klasse)->clone = bb_absolute_line_to_clone;
+    BB_PATH_COMMAND_CLASS(klasse)->render = bb_absolute_line_to_render;
     BB_PATH_COMMAND_CLASS(klasse)->rotate = bb_absolute_line_to_rotate;
     BB_PATH_COMMAND_CLASS(klasse)->translate = bb_absolute_line_to_translate;
-    BB_PATH_COMMAND_CLASS(klasse)->clone = bb_absolute_line_to_clone;
 
     properties[PROP_X] = g_param_spec_int(
         "x",
@@ -192,6 +196,17 @@ __attribute__((constructor)) void
 bb_absolute_line_to_register()
 {
     bb_absolute_line_to_get_type();
+}
+
+
+static void
+bb_absolute_line_to_render(BbPathCommand *command, BbItemRenderer *renderer)
+{
+    bb_item_renderer_render_absolute_line_to(
+        renderer,
+        bb_absolute_line_to_get_x(command),
+        bb_absolute_line_to_get_y(command)
+        );
 }
 
 
