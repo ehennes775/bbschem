@@ -19,6 +19,7 @@
 #include <gtk/gtk.h>
 #include "bbgraphicpath.h"
 #include "bbitemparams.h"
+#include "bbpathcommand.h"
 
 
 enum
@@ -36,10 +37,47 @@ struct _BbGraphicPath
     BbItemParams *params;
 
     int width;
+
+    GSList *commands;
 };
 
 
 G_DEFINE_TYPE(BbGraphicPath, bb_graphic_path, BB_TYPE_SCHEMATIC_ITEM)
+
+
+typedef struct _MirrorXCapture MirrorXCapture;
+
+struct _MirrorXCapture
+{
+    int cx;
+};
+
+
+typedef struct _MirrorYCapture MirrorYCapture;
+
+struct _MirrorYCapture
+{
+    int cy;
+};
+
+
+typedef struct _RotateCapture RotateCapture;
+
+struct _RotateCapture
+{
+    int cx;
+    int cy;
+    int angle;
+};
+
+
+typedef struct _TranslateCapture TranslateCapture;
+
+struct _TranslateCapture
+{
+    int dx;
+    int dy;
+};
 
 
 static BbBounds*
@@ -55,10 +93,34 @@ static void
 bb_graphic_path_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
 
 static void
+bb_graphic_path_mirror_x(BbSchematicItem *item, int cx);
+
+static void
+bb_graphic_path_mirror_x_lambda(BbPathCommand *command, MirrorXCapture *capture);
+
+static void
+bb_graphic_path_mirror_y(BbSchematicItem *item, int cy);
+
+static void
+bb_graphic_path_mirror_y_lambda(BbPathCommand *command, MirrorYCapture *capture);
+
+static void
 bb_graphic_path_render(BbSchematicItem *item, BbItemRenderer *renderer);
 
 static void
+bb_graphic_path_rotate(BbSchematicItem *item, int cx, int cy, int angle);
+
+static void
+bb_graphic_path_rotate_lambda(BbPathCommand *command, RotateCapture *capture);
+
+static void
 bb_graphic_path_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
+
+static void
+bb_graphic_path_translate(BbSchematicItem *item, int dx, int dy);
+
+static void
+bb_graphic_path_translate_lambda(BbPathCommand *command, TranslateCapture *capture);
 
 static void
 bb_graphic_path_write_async(
@@ -102,7 +164,11 @@ bb_graphic_path_class_init(BbGraphicPathClass *klasse)
     G_OBJECT_CLASS(klasse)->set_property = bb_graphic_path_set_property;
 
     BB_SCHEMATIC_ITEM_CLASS(klasse)->calculate_bounds = bb_graphic_path_calculate_bounds;
+    BB_SCHEMATIC_ITEM_CLASS(klasse)->mirror_x = bb_graphic_path_mirror_x;
+    BB_SCHEMATIC_ITEM_CLASS(klasse)->mirror_y = bb_graphic_path_mirror_y;
     BB_SCHEMATIC_ITEM_CLASS(klasse)->render = bb_graphic_path_render;
+    BB_SCHEMATIC_ITEM_CLASS(klasse)->rotate = bb_graphic_path_rotate;
+    BB_SCHEMATIC_ITEM_CLASS(klasse)->translate = bb_graphic_path_translate;
     BB_SCHEMATIC_ITEM_CLASS(klasse)->write_async = bb_graphic_path_write_async;
     BB_SCHEMATIC_ITEM_CLASS(klasse)->write_finish = bb_graphic_path_write_finish;
 
@@ -169,6 +235,89 @@ bb_graphic_path_init(BbGraphicPath *window)
 }
 
 
+static void
+bb_graphic_path_mirror_x(BbSchematicItem *item, int cx)
+{
+    BbGraphicPath *path = BB_GRAPHIC_PATH(item);
+    g_return_if_fail(path != NULL);
+
+    MirrorXCapture capture;
+
+    capture.cx = cx;
+
+    g_slist_foreach(
+        path->commands,
+        bb_graphic_path_mirror_x_lambda,
+        &capture
+        );
+}
+
+
+static void
+bb_graphic_path_mirror_x_lambda(BbPathCommand *command, MirrorXCapture *capture)
+{
+    g_return_if_fail(capture != NULL);
+
+    bb_path_command_mirror_x(command, capture->cx);
+}
+
+
+static void
+bb_graphic_path_mirror_y(BbSchematicItem *item, int cy)
+{
+    BbGraphicPath *path = BB_GRAPHIC_PATH(item);
+    g_return_if_fail(path != NULL);
+
+    MirrorYCapture capture;
+
+    capture.cy = cy;
+
+    g_slist_foreach(
+        path->commands,
+        bb_graphic_path_mirror_y_lambda,
+        &capture
+        );
+}
+
+
+static void
+bb_graphic_path_mirror_y_lambda(BbPathCommand *command, MirrorYCapture *capture)
+{
+    g_return_if_fail(capture != NULL);
+
+    bb_path_command_mirror_y(command, capture->cy);
+}
+
+
+static void
+bb_graphic_path_rotate(BbSchematicItem *item, int cx, int cy, int angle)
+{
+    BbGraphicPath *path = BB_GRAPHIC_PATH(item);
+    g_return_if_fail(path != NULL);
+
+    RotateCapture capture;
+
+    capture.cx = cx;
+    capture.cy = cy;
+    capture.angle = angle;
+
+    g_slist_foreach(
+        path->commands,
+        bb_graphic_path_rotate_lambda,
+        &capture
+        );
+}
+
+
+static void
+bb_graphic_path_rotate_lambda(BbPathCommand *command, RotateCapture *capture)
+{
+    g_return_if_fail(capture != NULL);
+
+    bb_path_command_rotate(command, capture->cx, capture->cy, capture->angle);
+}
+
+
 __attribute__((constructor)) void
 bb_graphic_path_register()
 {
@@ -213,11 +362,32 @@ bb_graphic_path_set_width(BbGraphicPath *path, int width)
 
 
 static void
-bb_graphic_line_translate(BbSchematicItem *item, int dx, int dy)
+bb_graphic_path_translate(BbSchematicItem *item, int dx, int dy)
 {
     BbGraphicPath *path = BB_GRAPHIC_PATH(item);
     g_return_if_fail(path != NULL);
+
+    TranslateCapture capture;
+
+    capture.dx = dx;
+    capture.dy = dy;
+
+    g_slist_foreach(
+        path->commands,
+        bb_graphic_path_translate_lambda,
+        &capture
+        );
 }
+
+
+static void
+bb_graphic_path_translate_lambda(BbPathCommand *command, TranslateCapture *capture)
+{
+    g_return_if_fail(capture != NULL);
+
+    bb_path_command_translate(command, capture->dx, capture->dy);
+}
+
 
 static void
 bb_graphic_path_write_async(

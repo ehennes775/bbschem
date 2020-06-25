@@ -54,6 +54,12 @@ static void
 bb_absolute_move_to_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
 
 static void
+bb_absolute_move_to_mirror_x(BbPathCommand *command, int cx);
+
+static void
+bb_absolute_move_to_mirror_y(BbPathCommand *command, int cy);
+
+static void
 bb_absolute_move_to_render(BbPathCommand *command, BbItemRenderer *renderer);
 
 static void
@@ -78,6 +84,8 @@ bb_absolute_move_to_class_init(BbAbsoluteMoveToClass *klasse)
     G_OBJECT_CLASS(klasse)->set_property = bb_absolute_move_to_set_property;
 
     BB_PATH_COMMAND_CLASS(klasse)->render = bb_absolute_move_to_render;
+    BB_PATH_COMMAND_CLASS(klasse)->mirror_x = bb_absolute_move_to_mirror_x;
+    BB_PATH_COMMAND_CLASS(klasse)->mirror_y = bb_absolute_move_to_mirror_y;
     BB_PATH_COMMAND_CLASS(klasse)->rotate = bb_absolute_move_to_rotate;
     BB_PATH_COMMAND_CLASS(klasse)->translate = bb_absolute_move_to_translate;
     BB_PATH_COMMAND_CLASS(klasse)->clone = bb_absolute_move_to_clone;
@@ -192,6 +200,26 @@ bb_absolute_move_to_new(int x, int y)
 }
 
 
+static void
+bb_absolute_move_to_mirror_x(BbPathCommand *command, int cx)
+{
+    bb_absolute_move_to_set_x(
+        command,
+        2 * cx - bb_absolute_move_to_get_x(command)
+        );
+}
+
+
+static void
+bb_absolute_move_to_mirror_y(BbPathCommand *command, int cy)
+{
+    bb_absolute_move_to_set_y(
+        command,
+        2 * cy - bb_absolute_move_to_get_y(command)
+        );
+}
+
+
 __attribute__((constructor)) void
 bb_absolute_move_to_register()
 {
@@ -218,6 +246,9 @@ bb_absolute_move_to_rotate(BbPathCommand *command, int cx, int cy, int angle)
     g_return_if_fail(instance != NULL);
 
     bb_coord_rotate(cx, cy, angle, &instance->x, &instance->y);
+
+    g_object_notify_by_pspec(G_OBJECT(command), properties[PROP_X]);
+    g_object_notify_by_pspec(G_OBJECT(command), properties[PROP_Y]);
 }
 
 
@@ -270,4 +301,7 @@ bb_absolute_move_to_translate(BbPathCommand *command, int dx, int dy)
     g_return_if_fail(instance != NULL);
 
     bb_coord_translate(dx, dy, &instance->x, &instance->y, 1);
+
+    g_object_notify_by_pspec(G_OBJECT(command), properties[PROP_X]);
+    g_object_notify_by_pspec(G_OBJECT(command), properties[PROP_Y]);
 }

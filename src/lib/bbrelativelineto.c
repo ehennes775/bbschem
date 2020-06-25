@@ -54,6 +54,12 @@ static void
 bb_relative_line_to_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
 
 static void
+bb_relative_line_to_mirror_x(BbPathCommand *command, int cx);
+
+static void
+bb_relative_line_to_mirror_y(BbPathCommand *command, int cy);
+
+static void
 bb_relative_line_to_render(BbPathCommand *command, BbItemRenderer *renderer);
 
 static void
@@ -78,6 +84,8 @@ bb_relative_line_to_class_init(BbRelativeLineToClass *klasse)
     G_OBJECT_CLASS(klasse)->set_property = bb_relative_line_to_set_property;
 
     BB_PATH_COMMAND_CLASS(klasse)->clone = bb_relative_line_to_clone;
+    BB_PATH_COMMAND_CLASS(klasse)->mirror_x = bb_relative_line_to_mirror_x;
+    BB_PATH_COMMAND_CLASS(klasse)->mirror_y = bb_relative_line_to_mirror_y;
     BB_PATH_COMMAND_CLASS(klasse)->render = bb_relative_line_to_render;
     BB_PATH_COMMAND_CLASS(klasse)->rotate = bb_relative_line_to_rotate;
     BB_PATH_COMMAND_CLASS(klasse)->translate = bb_relative_line_to_translate;
@@ -90,7 +98,7 @@ bb_relative_line_to_class_init(BbRelativeLineToClass *klasse)
         INT_MAX,
         0,
         G_PARAM_READWRITE
-    );
+        );
 
     properties[PROP_DY] = g_param_spec_int(
         "dy",
@@ -100,7 +108,7 @@ bb_relative_line_to_class_init(BbRelativeLineToClass *klasse)
         INT_MAX,
         0,
         G_PARAM_READWRITE
-    );
+        );
 
     for (int index = PROP_0 + 1; index < N_PROPERTIES; ++index)
     {
@@ -108,7 +116,7 @@ bb_relative_line_to_class_init(BbRelativeLineToClass *klasse)
             G_OBJECT_CLASS(klasse),
             index,
             properties[index]
-        );
+            );
     }
 
 }
@@ -120,7 +128,7 @@ bb_relative_line_to_clone(const BbPathCommand *command)
     return bb_relative_line_to_new(
         bb_relative_line_to_get_dx(command),
         bb_relative_line_to_get_dy(command)
-    );
+        );
 }
 
 
@@ -180,6 +188,26 @@ bb_relative_line_to_init(BbRelativeLineTo *window)
 }
 
 
+static void
+bb_relative_line_to_mirror_x(BbPathCommand *command, int cx)
+{
+    bb_relative_line_to_set_dx(
+        BB_RELATIVE_LINE_TO(command),
+        - bb_relative_line_to_get_dx(BB_RELATIVE_LINE_TO(command))
+        );
+}
+
+
+static void
+bb_relative_line_to_mirror_y(BbPathCommand *command, int cy)
+{
+    bb_relative_line_to_set_dy(
+        BB_RELATIVE_LINE_TO(command),
+        - bb_relative_line_to_get_dy(BB_RELATIVE_LINE_TO(command))
+        );
+}
+
+
 BbRelativeLineTo*
 bb_relative_line_to_new(int dx, int dy)
 {
@@ -188,7 +216,7 @@ bb_relative_line_to_new(int dx, int dy)
         "dx", dx,
         "dy", dy,
         NULL
-    );
+        );
 }
 
 
@@ -218,6 +246,9 @@ bb_relative_line_to_rotate(BbPathCommand *command, int cx, int cy, int angle)
     g_return_if_fail(instance != NULL);
 
     bb_coord_rotate(0, 0, angle, &instance->dx, &instance->dy);
+
+    g_object_notify_by_pspec(G_OBJECT(command), properties[PROP_DX]);
+    g_object_notify_by_pspec(G_OBJECT(command), properties[PROP_DY]);
 }
 
 

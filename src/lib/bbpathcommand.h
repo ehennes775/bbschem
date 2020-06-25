@@ -29,6 +29,8 @@ struct _BbPathCommandClass
     GObjectClass parent_class;
 
     BbPathCommand* (*clone)(BbPathCommand *command);
+    void (*mirror_x)(BbPathCommand *command, int cx);
+    void (*mirror_y)(BbPathCommand *command, int cy);
     void (*render)(BbPathCommand *command, BbItemRenderer *renderer);
     void (*rotate)(BbPathCommand *command, int cx, int cy, int angle);
     void (*translate)(BbPathCommand *command, int dx, int dy);
@@ -45,6 +47,32 @@ BbPathCommand*
 bb_path_command_clone(const BbPathCommand *command);
 
 
+/**
+ * Mirror this path command horizontally
+ *
+ * @param command The command to mirror
+ * @param cx The x coordinate of the vertical line to mirror across
+ */
+void
+bb_path_command_mirror_x(BbPathCommand *command, int cx);
+
+
+/**
+ * Mirror this path command vertically
+ *
+ * @param command The command to mirror
+ * @param cy The y coordinate of the horizontal line to mirror across
+ */
+void
+bb_path_command_mirror_y(BbPathCommand *command, int cy);
+
+
+/**
+ * Render this path command
+ *
+ * @param command The command to render
+ * @param renderer
+ */
 void
 bb_path_command_render(BbPathCommand *command, BbItemRenderer *renderer);
 
