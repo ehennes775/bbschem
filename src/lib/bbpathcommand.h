@@ -31,6 +31,7 @@ struct _BbPathCommandClass
     BbPathCommand* (*clone)(BbPathCommand *command);
     void (*mirror_x)(BbPathCommand *command, int cx);
     void (*mirror_y)(BbPathCommand *command, int cy);
+    GSList* (*output)(BbPathCommand *command, GSList *collector);
     void (*render)(BbPathCommand *command, BbItemRenderer *renderer);
     void (*rotate)(BbPathCommand *command, int cx, int cy, int angle);
     void (*translate)(BbPathCommand *command, int dx, int dy);
@@ -65,6 +66,17 @@ bb_path_command_mirror_x(BbPathCommand *command, int cx);
  */
 void
 bb_path_command_mirror_y(BbPathCommand *command, int cy);
+
+
+/**
+ * Output this path command as a list of strings
+ *
+ * @param command The command to output
+ * @param collector The list of previous output commands
+ * @return The new list after prepending the command
+ */
+GSList*
+bb_path_command_output(BbPathCommand *command, GSList *collector);
 
 
 /**

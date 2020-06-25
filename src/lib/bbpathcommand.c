@@ -51,6 +51,9 @@ bb_path_command_mirror_x_missing(BbPathCommand *command, int cx);
 static void
 bb_path_command_mirror_y_missing(BbPathCommand *command, int cy);
 
+static GSList*
+bb_path_command_output_missing(BbPathCommand *command, GSList *collector);
+
 static void
 bb_path_command_rotate_missing(BbPathCommand *command, int cx, int cy, int angle);
 
@@ -78,6 +81,7 @@ bb_path_command_class_init(BbPathCommandClass *klasse)
     klasse->clone = bb_path_command_clone_missing;
     klasse->mirror_x = bb_path_command_mirror_x_missing;
     klasse->mirror_y = bb_path_command_mirror_y_missing;
+    klasse->output = bb_path_command_output_missing;
     klasse->render = bb_path_command_render_missing;
     klasse->rotate = bb_path_command_rotate_missing;
     klasse->translate = bb_path_command_translate_missing;
@@ -182,6 +186,25 @@ void
 bb_path_command_mirror_y_missing(BbPathCommand *command, int cy)
 {
     g_error("bb_path_command_mirror_y() not overridden");
+}
+
+
+GSList*
+bb_path_command_output(BbPathCommand *command, GSList *collector)
+{
+    BbPathCommandClass *class = BB_PATH_COMMAND_GET_CLASS(command);
+
+    g_return_val_if_fail(class != NULL, collector);
+    g_return_val_if_fail(class->mirror_y != NULL, collector);
+
+    return class->output(command, collector);
+}
+
+
+static GSList*
+bb_path_command_output_missing(BbPathCommand *command, GSList *collector)
+{
+    g_error("bb_path_command_output() not overridden");
 }
 
 
