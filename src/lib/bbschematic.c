@@ -145,6 +145,13 @@ bb_schematic_modify_fill_width_lambda(
     );
 
 
+static void
+bb_schematic_modify_item_color_lambda(
+    gpointer data,
+    gpointer user_data
+    );
+
+
 GParamSpec *properties[N_PROPERTIES];
 
 
@@ -226,6 +233,18 @@ bb_schematic_foreach(BbSchematic *schematic, GFunc func, gpointer user_data)
 }
 
 
+void
+bb_schematic_foreach_modify(
+    BbSchematic *schematic,
+    BbPred where_pred,
+    gpointer where_user_data,
+    GFunc modify_func,
+    gpointer modify_user_data
+    )
+{
+
+}
+
 static void
 bb_schematic_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec)
 {
@@ -261,7 +280,13 @@ bb_schematic_modify_fill_angle_1(
     int fill_angle
     )
 {
-
+    bb_schematic_foreach_modify(
+        schematic,
+        where_pred,
+        where_user_data,
+        bb_schematic_modify_fill_angle_1_lambda,
+        &fill_angle
+        );
 }
 
 
@@ -290,7 +315,13 @@ bb_schematic_modify_fill_angle_2(
     int fill_angle
     )
 {
-
+    bb_schematic_foreach_modify(
+        schematic,
+        where_pred,
+        where_user_data,
+        bb_schematic_modify_fill_angle_2_lambda,
+        &fill_angle
+        );
 }
 
 
@@ -319,7 +350,13 @@ bb_schematic_modify_fill_pitch_1(
     int fill_pitch
     )
 {
-
+    bb_schematic_foreach_modify(
+        schematic,
+        where_pred,
+        where_user_data,
+        bb_schematic_modify_fill_pitch_1_lambda,
+        &fill_pitch
+        );
 }
 
 
@@ -348,7 +385,13 @@ bb_schematic_modify_fill_pitch_2(
     int fill_pitch
     )
 {
-
+    bb_schematic_foreach_modify(
+        schematic,
+        where_pred,
+        where_user_data,
+        bb_schematic_modify_fill_pitch_2_lambda,
+        &fill_pitch
+        );
 }
 
 
@@ -377,7 +420,13 @@ bb_schematic_modify_fill_type(
     int fill_type
     )
 {
-
+    bb_schematic_foreach_modify(
+        schematic,
+        where_pred,
+        where_user_data,
+        bb_schematic_modify_fill_type_lambda,
+        &fill_type
+        );
 }
 
 
@@ -406,7 +455,13 @@ bb_schematic_modify_fill_width(
     int fill_width
     )
 {
-
+    bb_schematic_foreach_modify(
+        schematic,
+        where_pred,
+        where_user_data,
+        bb_schematic_modify_fill_width_lambda,
+        &fill_width
+        );
 }
 
 
@@ -435,6 +490,13 @@ bb_schematic_modify_item_color(
     int color
     )
 {
+    bb_schematic_foreach_modify(
+        schematic,
+        where_pred,
+        where_user_data,
+        bb_schematic_modify_item_color_lambda,
+        &color
+        );
 }
 
 

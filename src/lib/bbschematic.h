@@ -36,6 +36,16 @@ void
 bb_schematic_foreach(BbSchematic *schematic, GFunc func, gpointer user_data);
 
 
+void
+bb_schematic_foreach_modify(
+    BbSchematic *schematic,
+    BbPred where_pred,
+    gpointer where_user_data,
+    GFunc modify_func,
+    gpointer modify_user_data
+    );
+
+
 /**
  * Modify the first fill angle for a set of items
  *
