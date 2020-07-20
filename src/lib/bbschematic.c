@@ -242,7 +242,23 @@ bb_schematic_foreach_modify(
     gpointer modify_user_data
     )
 {
+    GSList *iter;
 
+    g_return_if_fail(schematic != NULL);
+    g_return_if_fail(where_pred != NULL);
+    g_return_if_fail(modify_func != NULL);
+
+    iter = schematic->items;
+
+    while (iter != NULL)
+    {
+        if (where_pred(iter->data , where_user_data))
+        {
+            modify_func(iter->data , modify_user_data);
+        }
+
+        iter = g_slist_next(iter);
+    }
 }
 
 static void
