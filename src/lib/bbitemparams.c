@@ -42,6 +42,27 @@ bb_item_params_free(BbItemParams *bounds)
 }
 
 
+gboolean
+bb_item_params_write(
+    BbItemParams *params,
+    GOutputStream *stream,
+    GCancellable *cancellable,
+    GError **error
+    )
+{
+    GString *line = NULL;
+
+    return g_output_stream_write_all(
+        stream,
+        line->str,
+        line->len,
+        NULL,
+        cancellable,
+        error
+        );
+}
+
+
 void
 bb_item_params_write_async(
     BbItemParams *params,

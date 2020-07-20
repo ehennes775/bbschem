@@ -77,6 +77,9 @@ bb_graphic_arc_set_property(GObject *object, guint property_id, const GValue *va
 static void
 bb_graphic_arc_translate(BbSchematicItem *item, int dx, int dy);
 
+static gboolean
+bb_graphic_arc_write(BbSchematicItem *item, GOutputStream *stream, GCancellable *cancellable, GError **error);
+
 static void
 bb_graphic_arc_write_async(
     BbSchematicItem *item,
@@ -87,7 +90,7 @@ bb_graphic_arc_write_async(
     gpointer callback_data
     );
 
-static void
+static gboolean
 bb_graphic_arc_write_finish(
     BbSchematicItem *item,
     GOutputStream *stream,
@@ -128,6 +131,7 @@ bb_graphic_arc_class_init(BbGraphicArcClass *klasse)
     BB_SCHEMATIC_ITEM_CLASS(klasse)->calculate_bounds = bb_graphic_arc_calculate_bounds;
     BB_SCHEMATIC_ITEM_CLASS(klasse)->render = bb_graphic_arc_render;
     BB_SCHEMATIC_ITEM_CLASS(klasse)->translate = bb_graphic_arc_translate;
+    BB_SCHEMATIC_ITEM_CLASS(klasse)->write = bb_graphic_arc_write;
     BB_SCHEMATIC_ITEM_CLASS(klasse)->write_async = bb_graphic_arc_write_async;
     BB_SCHEMATIC_ITEM_CLASS(klasse)->write_finish = bb_graphic_arc_write_finish;
 
@@ -455,6 +459,21 @@ bb_graphic_arc_translate(BbSchematicItem *item, int dx, int dy)
 }
 
 
+static gboolean
+bb_graphic_arc_write(BbSchematicItem *item, GOutputStream *stream, GCancellable *cancellable, GError **error)
+{
+    BbGraphicArc *arc = BB_GRAPHIC_ARC(item);
+    g_return_val_if_fail(arc != NULL, NULL);
+
+    bb_item_params_write(
+        arc->params,
+        stream,
+        cancellable,
+        error
+        );
+}
+
+
 static void
 bb_graphic_arc_write_async(
     BbSchematicItem *item,
@@ -478,7 +497,7 @@ bb_graphic_arc_write_async(
 }
 
 
-static void
+static gboolean
 bb_graphic_arc_write_finish(
     BbSchematicItem *item,
     GOutputStream *stream,
@@ -486,7 +505,7 @@ bb_graphic_arc_write_finish(
     GError **error
     )
 {
-    g_output_stream_write_all_finish(
+    return g_output_stream_write_all_finish(
         stream,
         result,
         NULL,

@@ -36,6 +36,14 @@ bb_schematic_foreach(BbSchematic *schematic, GFunc func, gpointer user_data);
 BbSchematic*
 bb_schematic_new();
 
+gboolean
+bb_schematic_write(
+    BbSchematic *schematic,
+    GOutputStream *stream,
+    GCancellable *cancellable,
+    GError **error
+    );
+
 void
 bb_schematic_write_async(
     BbSchematic *schematic,

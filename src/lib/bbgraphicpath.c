@@ -132,7 +132,7 @@ bb_graphic_path_write_async(
     gpointer callback_data
     );
 
-static void
+static gboolean
 bb_graphic_path_write_finish(
     BbSchematicItem *item,
     GOutputStream *stream,
@@ -412,7 +412,7 @@ bb_graphic_path_write_async(
 }
 
 
-static void
+static gboolean
 bb_graphic_path_write_finish(
     BbSchematicItem *item,
     GOutputStream *stream,
@@ -420,7 +420,7 @@ bb_graphic_path_write_finish(
     GError **error
     )
 {
-    g_output_stream_write_all_finish(
+    return g_output_stream_write_all_finish(
         stream,
         result,
         NULL,

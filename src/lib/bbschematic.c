@@ -59,6 +59,16 @@ struct _AsyncWriteData
     GSList *item;
 };
 
+
+typedef struct _WriteCapture WriteCapture;
+
+struct _WriteCapture
+{
+    GOutputStream *stream;
+    GCancellable *cancellable;
+    GError ***error;
+};
+
 static void
 bb_schematic_add_items_lambda(BbSchematicItem *item, BbSchematic *schematic);
 
@@ -79,6 +89,9 @@ bb_schematic_set_property(GObject *object, guint property_id, const GValue *valu
 
 static void
 bb_schematic_write_callback(GObject *source, GAsyncResult *result, gpointer callback_data);
+
+static void
+bb_schematic_write_lambda(BbSchematicItem *item, WriteCapture *capture);
 
 static AsyncWriteData*
 bb_schematic_async_write_data_new();
@@ -226,6 +239,40 @@ bb_schematic_set_property(GObject *object, guint property_id, const GValue *valu
         default:
             G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
     }
+}
+
+
+gboolean
+bb_schematic_write(
+    BbSchematic *schematic,
+    GOutputStream *stream,
+    GCancellable *cancellable,
+    GError **error
+    )
+{
+    WriteCapture capture;
+
+    capture.stream = stream;
+    capture.cancellable = cancellable;
+    capture.error = error;
+
+    g_slist_foreach(
+        schematic->items,
+        (GFunc) bb_schematic_write_lambda,
+        &capture
+        );
+}
+
+
+static void
+bb_schematic_write_lambda(BbSchematicItem *item, WriteCapture *capture)
+{
+    bb_schematic_item_write(
+        item,
+        capture->stream,
+        capture->cancellable,
+        capture->error
+    );
 }
 
 

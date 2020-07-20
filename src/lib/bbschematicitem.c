@@ -72,6 +72,14 @@ bb_schematic_item_set_property(GObject *object, guint property_id, const GValue 
 static void
 bb_schematic_item_translate_missing(BbSchematicItem *item, int dx, int dy);
 
+static gboolean
+bb_schematic_item_write_missing(
+    BbSchematicItem *item,
+    GOutputStream *stream,
+    GCancellable *cancellable,
+    GError **error
+    );
+
 static void
 bb_schematic_item_write_async_missing(
     BbSchematicItem *item,
@@ -82,7 +90,7 @@ bb_schematic_item_write_async_missing(
     gpointer callback_data
     );
 
-static void
+static gboolean
 bb_schematic_item_write_finish_missing(
     BbSchematicItem *item,
     GAsyncResult *result,
@@ -128,6 +136,7 @@ bb_schematic_item_class_init(BbSchematicItemClass *class)
     class->render = bb_schematic_item_render_missing;
     class->rotate = bb_schematic_item_rotate_missing;
     class->translate = bb_schematic_item_translate_missing;
+    class->write = bb_schematic_item_write_missing;
     class->write_async = bb_schematic_item_write_async_missing;
     class->write_finish = bb_schematic_item_write_finish_missing;
 }
@@ -265,6 +274,30 @@ bb_schematic_item_translate_missing(BbSchematicItem *item, int dx, int dy)
 }
 
 
+gboolean
+bb_schematic_item_write(BbSchematicItem *item, GOutputStream *stream, GCancellable *cancellable, GError **error)
+{
+    BbSchematicItemClass *class = BB_SCHEMATIC_ITEM_GET_CLASS(item);
+
+    g_return_val_if_fail(class != NULL, FALSE);
+    g_return_val_if_fail(class->write != NULL, FALSE);
+
+    return class->write(item, stream, cancellable, error);
+}
+
+
+gboolean
+bb_schematic_item_write_missing(
+    BbSchematicItem *item,
+    GOutputStream *stream,
+    GCancellable *cancellable,
+    GError **error
+    )
+{
+    g_error("bb_schematic_item_write() not overridden");
+}
+
+
 void
 bb_schematic_item_write_async(
     BbSchematicItem *item,
@@ -298,7 +331,7 @@ bb_schematic_item_write_async_missing(
 }
 
 
-void
+gboolean
 bb_schematic_item_write_finish(
     BbSchematicItem *item,
     GAsyncResult *result,
@@ -307,14 +340,14 @@ bb_schematic_item_write_finish(
 {
     BbSchematicItemClass *class = BB_SCHEMATIC_ITEM_GET_CLASS(item);
 
-    g_return_if_fail(class != NULL);
-    g_return_if_fail(class->write_finish != NULL);
+    g_return_val_if_fail(class != NULL, FALSE);
+    g_return_val_if_fail(class->write_finish != NULL, FALSE);
 
     return class->write_finish(item, result, error);
 }
 
 
-static void
+static gboolean
 bb_schematic_item_write_finish_missing(
     BbSchematicItem *item,
     GAsyncResult *result,

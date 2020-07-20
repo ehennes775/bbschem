@@ -31,6 +31,25 @@ bb_item_params_copy(const BbItemParams *params);
 void
 bb_item_params_free(BbItemParams *params);
 
+
+/**
+ * Write the parameters to an output stream
+ *
+ * @param params The parameters to write
+ * @param stream  The output stream for writing
+ * @param cancellable An optional cancellable object
+ * @param error An optional location to store an error
+ * @return TRUE on success, FALSE on failure
+ */
+gboolean
+bb_item_params_write(
+    BbItemParams *params,
+    GOutputStream *stream,
+    GCancellable *cancellable,
+    GError **error
+    );
+
+
 void
 bb_item_params_write_async(
     BbItemParams *params,
