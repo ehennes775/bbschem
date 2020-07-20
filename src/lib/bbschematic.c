@@ -17,6 +17,9 @@
  */
 
 #include <gtk/gtk.h>
+#include "bbadjustablefillstyle.h"
+#include "bbadjustableitemcolor.h"
+#include "bbadjustablelinestyle.h"
 #include "bbschematic.h"
 #include "bbschematicitem.h"
 #include "bbgraphicline.h"
@@ -98,6 +101,48 @@ bb_schematic_async_write_data_new();
 
 static void
 bb_schematic_async_write_data_free(gpointer slice);
+
+
+static void
+bb_schematic_modify_fill_angle_1_lambda(
+    gpointer data,
+    gpointer user_data
+    );
+
+
+static void
+bb_schematic_modify_fill_angle_2_lambda(
+    gpointer data,
+    gpointer user_data
+    );
+
+
+static void
+bb_schematic_modify_fill_pitch_1_lambda(
+    gpointer data,
+    gpointer user_data
+    );
+
+
+static void
+bb_schematic_modify_fill_pitch_2_lambda(
+    gpointer data,
+    gpointer user_data
+    );
+
+
+static void
+bb_schematic_modify_fill_type_lambda(
+    gpointer data,
+    gpointer user_data
+    );
+
+
+static void
+bb_schematic_modify_fill_width_lambda(
+    gpointer data,
+    gpointer user_data
+    );
 
 
 GParamSpec *properties[N_PROPERTIES];
@@ -205,6 +250,208 @@ static void
 bb_schematic_init(BbSchematic *schematic)
 {
     schematic->items = g_slist_append(schematic->items, bb_graphic_line_new());
+}
+
+
+void
+bb_schematic_modify_fill_angle_1(
+    BbSchematic *schematic,
+    BbPred where_pred,
+    gpointer where_user_data,
+    int fill_angle
+    )
+{
+
+}
+
+
+static void
+bb_schematic_modify_fill_angle_1_lambda(
+    gpointer data,
+    gpointer user_data
+    )
+{
+    if (BB_IS_ADJUSTABLE_FILL_STYLE(data))
+    {
+        g_object_set(
+            G_OBJECT(data),
+            "fill-angle-1", *((int*) user_data),
+            NULL
+            );
+    }
+}
+
+
+void
+bb_schematic_modify_fill_angle_2(
+    BbSchematic *schematic,
+    BbPred where_pred,
+    gpointer where_user_data,
+    int fill_angle
+    )
+{
+
+}
+
+
+static void
+bb_schematic_modify_fill_angle_2_lambda(
+    gpointer data,
+    gpointer user_data
+    )
+{
+    if (BB_IS_ADJUSTABLE_FILL_STYLE(data))
+    {
+        g_object_set(
+            G_OBJECT(data),
+            "fill-angle-2", *((int*) user_data),
+            NULL
+            );
+    }
+}
+
+
+void
+bb_schematic_modify_fill_pitch_1(
+    BbSchematic *schematic,
+    BbPred where_pred,
+    gpointer where_user_data,
+    int fill_pitch
+    )
+{
+
+}
+
+
+static void
+bb_schematic_modify_fill_pitch_1_lambda(
+    gpointer data,
+    gpointer user_data
+    )
+{
+    if (BB_IS_ADJUSTABLE_FILL_STYLE(data))
+    {
+        g_object_set(
+            G_OBJECT(data),
+            "fill-pitch-1", *((int*) user_data),
+            NULL
+            );
+    }
+}
+
+
+void
+bb_schematic_modify_fill_pitch_2(
+    BbSchematic *schematic,
+    BbPred where_pred,
+    gpointer where_user_data,
+    int fill_pitch
+    )
+{
+
+}
+
+
+static void
+bb_schematic_modify_fill_pitch_2_lambda(
+    gpointer data,
+    gpointer user_data
+    )
+{
+    if (BB_IS_ADJUSTABLE_FILL_STYLE(data))
+    {
+        g_object_set(
+            G_OBJECT(data),
+            "fill-pitch-2", *((int*) user_data),
+            NULL
+            );
+    }
+}
+
+
+void
+bb_schematic_modify_fill_type(
+    BbSchematic *schematic,
+    BbPred where_pred,
+    gpointer where_user_data,
+    int fill_type
+    )
+{
+
+}
+
+
+static void
+bb_schematic_modify_fill_type_lambda(
+    gpointer data,
+    gpointer user_data
+    )
+{
+    if (BB_IS_ADJUSTABLE_FILL_STYLE(data))
+    {
+        g_object_set(
+            G_OBJECT(data),
+            "fill-type", *((int*) user_data),
+            NULL
+            );
+    }
+}
+
+
+void
+bb_schematic_modify_fill_width(
+    BbSchematic *schematic,
+    BbPred where_pred,
+    gpointer where_user_data,
+    int fill_width
+    )
+{
+
+}
+
+
+static void
+bb_schematic_modify_fill_width_lambda(
+    gpointer data,
+    gpointer user_data
+    )
+{
+    if (BB_IS_ADJUSTABLE_FILL_STYLE(data))
+    {
+        g_object_set(
+            G_OBJECT(data),
+            "fill-width", *((int*) user_data),
+            NULL
+            );
+    }
+}
+
+
+void
+bb_schematic_modify_item_color(
+    BbSchematic *schematic,
+    BbPred where_pred,
+    gpointer where_user_data,
+    int color
+    )
+{
+}
+
+
+static void
+bb_schematic_modify_item_color_lambda(
+    gpointer data,
+    gpointer user_data
+    )
+{
+    if (BB_IS_ADJUSTABLE_ITEM_COLOR(data))
+    {
+        g_object_set(
+            G_OBJECT(data),
+            "color", *((int*) user_data),
+            NULL
+            );
+    }
 }
 
 

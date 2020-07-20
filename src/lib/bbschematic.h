@@ -19,6 +19,8 @@
  */
 
 #include <gtk/gtk.h>
+#include "bbpred.h"
+
 
 #define BB_TYPE_SCHEMATIC bb_schematic_get_type()
 G_DECLARE_FINAL_TYPE(BbSchematic, bb_schematic, BB, SCHEMATIC, GObject)
@@ -32,6 +34,104 @@ bb_schematic_apply_item_property(BbSchematic *schematic, const char *name, const
 
 void
 bb_schematic_foreach(BbSchematic *schematic, GFunc func, gpointer user_data);
+
+
+/**
+ * Modify the first fill angle for a set of items
+ *
+ * @param schematic A schematic
+ * @param where_pred A predicate for filtering items
+ * @param where_user_data User data to pass to the filter predicate
+ * @param fill_angle The new fill angle for filtered items
+ */
+void
+bb_schematic_modify_fill_angle_1(
+    BbSchematic *schematic,
+    BbPred where_pred,
+    gpointer where_user_data,
+    int fill_angle
+    );
+
+
+/**
+ * Modify the second fill angle for a set of items
+ *
+ * @param schematic A schematic
+ * @param where_pred A predicate for filtering items
+ * @param where_user_data User data to pass to the filter predicate
+ * @param fill_angle The new fill angle for filtered items
+ */
+void
+bb_schematic_modify_fill_angle_2(
+    BbSchematic *schematic,
+    BbPred where_pred,
+    gpointer where_user_data,
+    int fill_angle
+    );
+
+
+/**
+ * Modify the first fill pitch for a set of items
+ *
+ * @param schematic A schematic
+ * @param where_pred A predicate for filtering items
+ * @param where_user_data User data to pass to the filter predicate
+ * @param fill_pitch The new fill pitch for filtered items
+ */
+void
+bb_schematic_modify_fill_pitch_1(
+    BbSchematic *schematic,
+    BbPred where_pred,
+    gpointer where_user_data,
+    int fill_pitch
+    );
+
+
+/**
+ * Modify the second fill pitch for a set of items
+ *
+ * @param schematic A schematic
+ * @param where_pred A predicate for filtering items
+ * @param where_user_data User data to pass to the filter predicate
+ * @param fill_pitch The new fill pitch for filtered items
+ */
+void
+bb_schematic_modify_fill_pitch_2(
+    BbSchematic *schematic,
+    BbPred where_pred,
+    gpointer where_user_data,
+    int fill_pitch
+    );
+
+
+void
+bb_schematic_modify_fill_type(
+    BbSchematic *schematic,
+    BbPred where_pred,
+    gpointer where_user_data,
+    int fill_type
+    );
+
+
+void
+bb_schematic_modify_fill_width(
+    BbSchematic *schematic,
+    BbPred where_pred,
+    gpointer where_user_data,
+    int fill_width
+    );
+
+
+void
+bb_schematic_modify_item_color(
+    BbSchematic *schematic,
+    BbPred where_pred,
+    gpointer where_user_data,
+    int color
+    );
+
+
+
 
 BbSchematic*
 bb_schematic_new();

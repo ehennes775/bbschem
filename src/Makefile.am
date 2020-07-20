@@ -39,6 +39,9 @@ bbtest_SOURCES = \
     gui/bbtoolpalette.c \
     lib/bbabsolutelineto.c \
     lib/bbabsolutemoveto.c \
+    lib/bbadjustablefillstyle.c \
+    lib/bbadjustableitemcolor.c \
+    lib/bbadjustablelinestyle.c \
     lib/bbangle.c \
     lib/bbbounds.c \
     lib/bbboundscalculator.c \
