@@ -51,6 +51,7 @@ bbtest_SOURCES = \
     lib/bbitemparams.c \
     lib/bbitemrenderer.c \
     lib/bbpathcommand.c \
+    lib/bbpred.c \
     lib/bbrelativelineto.c \
     lib/bbrelativemoveto.c \
     lib/bbschematic.c \
