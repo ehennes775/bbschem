@@ -33,7 +33,7 @@ enum
 //};
 
 
-G_DEFINE_TYPE(BbSchematicItem, bb_schematic_item, G_TYPE_OBJECT);
+G_DEFINE_TYPE(BbSchematicItem, bb_schematic_item, G_TYPE_OBJECT)
 
 
 static BbBounds*

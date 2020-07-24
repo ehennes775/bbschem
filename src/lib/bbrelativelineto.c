@@ -33,12 +33,14 @@ enum
 
 struct _BbRelativeLineTo
 {
+    BbPathCommand parent_instance;
+
     int dx;
     int dy;
 };
 
 
-G_DEFINE_TYPE(BbRelativeLineTo, bb_relative_line_to, BB_PATH_COMMAND);
+G_DEFINE_TYPE(BbRelativeLineTo, bb_relative_line_to, BB_TYPE_PATH_COMMAND);
 
 
 static BbPathCommand*

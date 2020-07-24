@@ -33,12 +33,14 @@ enum
 
 struct _BbAbsoluteLineTo
 {
+    BbPathCommand parent_instance;
+
     int x;
     int y;
 };
 
 
-G_DEFINE_TYPE(BbAbsoluteLineTo, bb_absolute_line_to, BB_PATH_COMMAND);
+G_DEFINE_TYPE(BbAbsoluteLineTo, bb_absolute_line_to, BB_TYPE_PATH_COMMAND)
 
 
 static BbPathCommand*

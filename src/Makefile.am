@@ -56,6 +56,7 @@ bbtest_SOURCES = \
     lib/bbschematic.c \
     lib/bbschematicitem.c \
     lib/bbsweep.c \
+    lib/bbvaluecount.c \
 	main.c \
 	$(BUILT_SOURCES)
 

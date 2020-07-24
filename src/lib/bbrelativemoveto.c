@@ -33,12 +33,14 @@ enum
 
 struct _BbRelativeMoveTo
 {
+    BbPathCommand parent_instance;
+
     int dx;
     int dy;
 };
 
 
-G_DEFINE_TYPE(BbRelativeMoveTo, bb_relative_move_to, BB_PATH_COMMAND);
+G_DEFINE_TYPE(BbRelativeMoveTo, bb_relative_move_to, BB_TYPE_PATH_COMMAND);
 
 
 static BbPathCommand*
@@ -298,3 +300,4 @@ bb_relative_move_to_translate(BbPathCommand *command, int dx, int dy)
 {
     g_return_if_fail(command != NULL);
 }
+

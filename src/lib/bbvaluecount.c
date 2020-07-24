@@ -1,5 +1,3 @@
-#ifndef __BBSCHEMATICWINDOW__
-#define __BBSCHEMATICWINDOW__
 /*
  * bbsch
  * Copyright (C) 2020 Edward C. Hennessy
@@ -19,24 +17,33 @@
  */
 
 #include <gtk/gtk.h>
-#include <src/lib/bbqueryfunc.h>
-#include "bbdocumentwindow.h"
-#include "bbschematicwrapper.h"
-
-#define BB_TYPE_SCHEMATIC_WINDOW bb_schematic_window_get_type()
-G_DECLARE_FINAL_TYPE(BbSchematicWindow, bb_schematic_window, BB, SCHEMATIC_WINDOW, BbDocumentWindow)
-
-void
-bb_schematic_window_apply_property(BbSchematicWindow *window, const char *name);
-
-BbSchematicWrapper*
-bb_schematic_window_get_schematic_wrapper(BbSchematicWindow *window);
-
-void
-bb_schematic_window_query(BbSchematicWindow *window, BbQueryFunc func, gpointer user_data);
+#include "bbvaluecount.h"
 
 
-void
-bb_schematic_window_set_schematic_wrapper(BbSchematicWindow *window, BbSchematicWrapper *wrapper);
+BbValueCount
+bb_value_count_from_count(int count)
+{
+    return CLAMP(count, BB_VALUE_COUNT_NONE, BB_VALUE_COUNT_MANY);
+}
 
-#endif
+
+gboolean
+bb_value_count_inconsistent(BbValueCount count)
+{
+    g_return_val_if_fail(count < BB_VALUE_COUNT_NONE, TRUE);
+    g_return_val_if_fail(count > BB_VALUE_COUNT_MANY, TRUE);
+
+    return (count != BB_VALUE_COUNT_ONE);
+}
+
+
+gboolean
+bb_value_count_sensitive(BbValueCount count)
+{
+    g_return_val_if_fail(count < BB_VALUE_COUNT_NONE, FALSE);
+    g_return_val_if_fail(count > BB_VALUE_COUNT_MANY, FALSE);
+
+    return (count != BB_VALUE_COUNT_NONE);
+}
+
+

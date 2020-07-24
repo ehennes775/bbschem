@@ -1,5 +1,5 @@
-#ifndef __BBSCHEMATICWINDOW__
-#define __BBSCHEMATICWINDOW__
+#ifndef __BBQUERYFUNC__
+#define __BBQUERYFUNC__
 /*
  * bbsch
  * Copyright (C) 2020 Edward C. Hennessy
@@ -19,24 +19,11 @@
  */
 
 #include <gtk/gtk.h>
-#include <src/lib/bbqueryfunc.h>
-#include "bbdocumentwindow.h"
-#include "bbschematicwrapper.h"
+#include "bbschematicitem.h"
 
-#define BB_TYPE_SCHEMATIC_WINDOW bb_schematic_window_get_type()
-G_DECLARE_FINAL_TYPE(BbSchematicWindow, bb_schematic_window, BB, SCHEMATIC_WINDOW, BbDocumentWindow)
-
-void
-bb_schematic_window_apply_property(BbSchematicWindow *window, const char *name);
-
-BbSchematicWrapper*
-bb_schematic_window_get_schematic_wrapper(BbSchematicWindow *window);
-
-void
-bb_schematic_window_query(BbSchematicWindow *window, BbQueryFunc func, gpointer user_data);
-
-
-void
-bb_schematic_window_set_schematic_wrapper(BbSchematicWindow *window, BbSchematicWrapper *wrapper);
+/**
+ *
+ */
+typedef gboolean (*BbQueryFunc)(BbSchematicItem *item, gpointer user_data);
 
 #endif

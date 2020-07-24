@@ -182,6 +182,13 @@ bb_schematic_window_init(BbSchematicWindow *window)
 }
 
 
+void
+bb_schematic_window_query(BbSchematicWindow *window, BbQueryFunc func, gpointer user_data)
+{
+
+}
+
+
 __attribute__((constructor)) void
 bb_schematic_window_register()
 {

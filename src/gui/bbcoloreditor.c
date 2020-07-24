@@ -17,6 +17,7 @@
  */
 
 #include <gtk/gtk.h>
+#include <lib/bbvaluecount.h>
 #include "bbmainwindow.h"
 #include "bbcolorcombobox.h"
 #include "bbcoloreditor.h"
@@ -50,6 +51,9 @@ bb_color_editor_set_property(GObject *object, guint param_id, const GValue* valu
 
 static void
 bb_color_editor_update(BbColorEditor *editor);
+
+static gboolean
+bb_color_editor_update_lambda(BbSchematicItem *item, gpointer user_data);
 
 
 static void
@@ -188,8 +192,65 @@ bb_color_editor_set_property(GObject *object, guint param_id, const GValue* valu
     }
 }
 
+
+gboolean
+always(gpointer key, gpointer value, gpointer user_data)
+{
+    return TRUE;
+}
+
+
 static void
 bb_color_editor_update(BbColorEditor *editor)
 {
+    BbValueCount count;
+    GHashTable *table = g_hash_table_new(NULL, NULL);
+    GtkApplicationWindow *window;
+
     g_message("Update color properties");
+
+    g_return_if_fail(editor != NULL);
+
+    if (BB_IS_SCHEMATIC_WINDOW(window))
+    {
+        bb_schematic_window_query(
+            BB_SCHEMATIC_WINDOW(window),
+            bb_color_editor_update_lambda,
+            table
+            );
+    }
+
+    count = bb_value_count_from_count(g_hash_table_size(table));
+
+    if (bb_value_count_inconsistent(count))
+    {
+        bb_color_combo_box_set_color(editor->color_combo, -1);
+    }
+    else
+    {
+        bb_color_combo_box_set_color(
+            editor->color_combo,
+            GPOINTER_TO_INT(g_hash_table_find(table, always, NULL))
+            );
+    }
+
+    gtk_widget_set_sensitive(
+        GTK_WIDGET(editor->color_combo),
+        bb_value_count_sensitive(count)
+        );
+}
+
+
+static gboolean
+bb_color_editor_update_lambda(BbSchematicItem *item, gpointer user_data)
+{
+    //if (BB_IS_ADJUSTABLE_ITEM_COLOR(item))
+    //{
+    //    g_hash_table_add(
+    //        (GHashTable*) user_data,
+    //        GINT_TO_POINTER(bb_adjustable_item_color_get_color(BB_ADJUSTABLE_COLOR(item)))
+    //        );
+    //}
+
+    return g_hash_table_size((GHashTable*) user_data) < BB_VALUE_COUNT_MANY;
 }

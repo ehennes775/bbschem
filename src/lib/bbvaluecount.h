@@ -1,5 +1,5 @@
-#ifndef __BBSCHEMATICWINDOW__
-#define __BBSCHEMATICWINDOW__
+#ifndef __BBVALUECOUNT__
+#define __BBVALUECOUNT__
 /*
  * bbsch
  * Copyright (C) 2020 Edward C. Hennessy
@@ -19,24 +19,29 @@
  */
 
 #include <gtk/gtk.h>
-#include <src/lib/bbqueryfunc.h>
-#include "bbdocumentwindow.h"
-#include "bbschematicwrapper.h"
 
-#define BB_TYPE_SCHEMATIC_WINDOW bb_schematic_window_get_type()
-G_DECLARE_FINAL_TYPE(BbSchematicWindow, bb_schematic_window, BB, SCHEMATIC_WINDOW, BbDocumentWindow)
+typedef enum _BbValueCount BbValueCount;
 
-void
-bb_schematic_window_apply_property(BbSchematicWindow *window, const char *name);
+enum _BbValueCount
+{
+    BB_VALUE_COUNT_NONE,
 
-BbSchematicWrapper*
-bb_schematic_window_get_schematic_wrapper(BbSchematicWindow *window);
+    BB_VALUE_COUNT_ONE,
 
-void
-bb_schematic_window_query(BbSchematicWindow *window, BbQueryFunc func, gpointer user_data);
+    BB_VALUE_COUNT_MANY
+};
 
 
-void
-bb_schematic_window_set_schematic_wrapper(BbSchematicWindow *window, BbSchematicWrapper *wrapper);
+BbValueCount
+bb_value_count_from_count(int count);
+
+
+gboolean
+bb_value_count_inconsistent(BbValueCount count);
+
+
+gboolean
+bb_value_count_sensitive(BbValueCount count);
+
 
 #endif
