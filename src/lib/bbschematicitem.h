@@ -39,6 +39,7 @@ struct _BbSchematicItemClass
     void (*rotate)(BbSchematicItem *item, int cx, int cy, int angle);
     void (*translate)(BbSchematicItem *item, int dx, int dy);
     gboolean (*write)(BbSchematicItem *item, GOutputStream *stream, GCancellable *cancellable, GError **error);
+
     void (*write_async)(
         BbSchematicItem *item,
         GOutputStream *stream,
@@ -47,6 +48,7 @@ struct _BbSchematicItemClass
         GAsyncReadyCallback callback,
         gpointer callback_data
         );
+
     gboolean (*write_finish)(
         BbSchematicItem *item,
         GAsyncResult *result,

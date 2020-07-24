@@ -30,7 +30,7 @@ enum
 };
 
 
-G_DEFINE_TYPE(BbPathCommand, bb_path_command, G_TYPE_OBJECT);
+G_DEFINE_TYPE(BbPathCommand, bb_path_command, G_TYPE_OBJECT)
 
 
 static BbPathCommand*

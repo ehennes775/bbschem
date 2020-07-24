@@ -33,12 +33,14 @@ enum
 
 struct _BbAbsoluteMoveTo
 {
+    BbPathCommand parent_instance;
+
     int x;
     int y;
 };
 
 
-G_DEFINE_TYPE(BbAbsoluteMoveTo, bb_absolute_move_to, BB_PATH_COMMAND);
+G_DEFINE_TYPE(BbAbsoluteMoveTo, bb_absolute_move_to, BB_TYPE_PATH_COMMAND);
 
 
 static BbPathCommand*

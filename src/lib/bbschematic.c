@@ -43,7 +43,7 @@ struct _BbSchematic
 };
 
 
-G_DEFINE_TYPE(BbSchematic, bb_schematic, G_TYPE_OBJECT);
+G_DEFINE_TYPE(BbSchematic, bb_schematic, G_TYPE_OBJECT)
 
 typedef struct _ApplyItemPropertyCapture ApplyItemPropertyCapture;
 
