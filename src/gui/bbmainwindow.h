@@ -27,6 +27,12 @@
 G_DECLARE_FINAL_TYPE(BbMainWindow, bb_main_window, BB, MAIN_WINDOW, GtkApplicationWindow)
 
 
+struct _BbMainWindowClass
+{
+    GtkApplicationWindowClass parent;
+};
+
+
 void
 bb_main_window_add_page(BbMainWindow *window, BbDocumentWindow *page);
 

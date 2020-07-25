@@ -103,7 +103,7 @@
                     <object class="GtkButton" id="button10">
                         <property name="label">Cpx</property>
                         <property name="action-name">win.select-tool</property>
-                        <property name="image">'complex'</property>
+                        <!--<property name="image">'complex'</property>-->
                     </object>
                 </child>
                 <child>

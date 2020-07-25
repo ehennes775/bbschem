@@ -132,7 +132,7 @@ bb_item_build_tool_button_pressed(BbItemBuildTool *tool, GdkEventButton event)
 //            bb_item_builder_create_items(tool->builder)
 //            );
 
-        reset();
+        // reset();
     }
     else
     {

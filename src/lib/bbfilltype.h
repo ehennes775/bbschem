@@ -20,7 +20,7 @@
 
 enum _BbFillType
 {
-
+    temp
 };
 
 #endif

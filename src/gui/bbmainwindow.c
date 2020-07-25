@@ -28,6 +28,7 @@ enum
     PROP_CURRENT_DOCUMENT_WINDOW
 };
 
+
 struct _BbMainWindow
 {
     GtkApplicationWindow parent;
@@ -36,7 +37,8 @@ struct _BbMainWindow
     GtkNotebook *document_notebook;
 };
 
-G_DEFINE_TYPE(BbMainWindow, bb_main_window, GTK_TYPE_APPLICATION_WINDOW);
+
+G_DEFINE_TYPE(BbMainWindow, bb_main_window, GTK_TYPE_APPLICATION_WINDOW)
 
 
 static void
