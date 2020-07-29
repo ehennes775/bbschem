@@ -20,7 +20,9 @@
 
 #include <gtk/gtk.h>
 
+
 typedef enum _BbValueCount BbValueCount;
+
 
 enum _BbValueCount
 {
@@ -32,14 +34,32 @@ enum _BbValueCount
 };
 
 
+/**
+ * Summarize the number of values in a selection
+ *
+ * @param count The actual number of different values
+ * @return The value count
+ */
 BbValueCount
 bb_value_count_from_count(int count);
 
 
+/**
+ * Indicates if a control presenting the value should be inconsistent
+ *
+ * @param count The value count
+ * @return TRUE if multiple values are present
+ */
 gboolean
 bb_value_count_inconsistent(BbValueCount count);
 
 
+/**
+ * Indicates if a control presenting the value should be sensitive
+ *
+ * @param count The value count
+ * @return TRUE if values are present
+ */
 gboolean
 bb_value_count_sensitive(BbValueCount count);
 

@@ -41,7 +41,7 @@
                     </packing>
                 </child>
                 <child>
-                    <object class="BbPropertyComboBox" id="pin-type-combo">
+                    <object class="BbPropertyComboBox" id="pin_type_combo">
                         <property name="hexpand">true</property>
                         <property name="id-column">1</property>
                         <property name="model">pin-type-list</property>

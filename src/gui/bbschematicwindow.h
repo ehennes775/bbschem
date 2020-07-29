@@ -19,6 +19,7 @@
  */
 
 #include <gtk/gtk.h>
+#include <src/lib/bbapplyfunc.h>
 #include <src/lib/bbqueryfunc.h>
 #include "bbdocumentwindow.h"
 #include "bbschematicwrapper.h"
@@ -32,8 +33,27 @@ bb_schematic_window_apply_property(BbSchematicWindow *window, const char *name);
 BbSchematicWrapper*
 bb_schematic_window_get_schematic_wrapper(BbSchematicWindow *window);
 
+
+/**
+ * Perform an operation to modify all items in the selection
+ *
+ * @param window
+ * @param func The operation to perform on each item in the selection
+ * @param user_data Data to pass through to the operation as a parameter
+ */
 void
-bb_schematic_window_query(BbSchematicWindow *window, BbQueryFunc func, gpointer user_data);
+bb_schematic_window_apply_selection(BbSchematicWindow *window, BbApplyFunc func, gpointer user_data);
+
+
+/**
+ * Perform an operation to query all items in the selection
+ *
+ * @param window
+ * @param func The operation to perform on each item in the selection
+ * @param user_data Data to pass through to the operation as a parameter
+ */
+void
+bb_schematic_window_query_selection(BbSchematicWindow *window, BbQueryFunc func, gpointer user_data);
 
 
 void

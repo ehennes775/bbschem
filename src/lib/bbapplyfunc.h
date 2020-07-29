@@ -1,3 +1,5 @@
+#ifndef __BBAPPLYFUNC__
+#define __BBAPPLYFUNC__
 /*
  * bbsch
  * Copyright (C) 2020 Edward C. Hennessy
@@ -17,31 +19,26 @@
  */
 
 #include <gtk/gtk.h>
-#include "bbvaluecount.h"
+#include "bbschematicitem.h"
 
 
-BbValueCount
-bb_value_count_from_count(int count)
-{
-    return CLAMP(count, BB_VALUE_COUNT_NONE, BB_VALUE_COUNT_MANY);
-}
+/**
+ * A function for applying changes to an item
+ *
+ * @param item A schematic item
+ * @param user_data User data passed in from the caller
+ */
+typedef void (*BbApplyFunc)(BbSchematicItem *item, gpointer user_data);
 
 
-gboolean
-bb_value_count_inconsistent(BbValueCount count)
-{
-    g_return_val_if_fail(count >= BB_VALUE_COUNT_NONE, FALSE);
-    g_return_val_if_fail(count <= BB_VALUE_COUNT_MANY, FALSE);
+/**
+ * Applies nothing
+ *
+ * @param item Unused
+ * @param user_data Unused
+ */
+void
+bb_apply_func_nothing(BbSchematicItem *item, gpointer user_data);
 
-    return (count != BB_VALUE_COUNT_ONE);
-}
 
-
-gboolean
-bb_value_count_sensitive(BbValueCount count)
-{
-    g_return_val_if_fail(count >= BB_VALUE_COUNT_NONE, FALSE);
-    g_return_val_if_fail(count <= BB_VALUE_COUNT_MANY, FALSE);
-
-    return (count != BB_VALUE_COUNT_NONE);
-}
+#endif

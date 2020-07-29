@@ -1,3 +1,5 @@
+#ifndef __BBHASHTABLE__
+#define __BBHASHTABLE__
 /*
  * bbsch
  * Copyright (C) 2020 Edward C. Hennessy
@@ -17,31 +19,18 @@
  */
 
 #include <gtk/gtk.h>
-#include "bbvaluecount.h"
 
 
-BbValueCount
-bb_value_count_from_count(int count)
-{
-    return CLAMP(count, BB_VALUE_COUNT_NONE, BB_VALUE_COUNT_MANY);
-}
-
-
+/**
+ * A predicate that always returns TRUE
+ *
+ * @param key Unused
+ * @param value Unused
+ * @param user_data Unused
+ * @return Always TRUE
+ */
 gboolean
-bb_value_count_inconsistent(BbValueCount count)
-{
-    g_return_val_if_fail(count >= BB_VALUE_COUNT_NONE, FALSE);
-    g_return_val_if_fail(count <= BB_VALUE_COUNT_MANY, FALSE);
-
-    return (count != BB_VALUE_COUNT_ONE);
-}
+bb_hash_table_always(gpointer key, gpointer value, gpointer user_data);
 
 
-gboolean
-bb_value_count_sensitive(BbValueCount count)
-{
-    g_return_val_if_fail(count >= BB_VALUE_COUNT_NONE, FALSE);
-    g_return_val_if_fail(count <= BB_VALUE_COUNT_MANY, FALSE);
-
-    return (count != BB_VALUE_COUNT_NONE);
-}
+#endif

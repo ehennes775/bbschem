@@ -30,4 +30,12 @@ struct _BbAdjustableItemColorInterface
 };
 
 
+int
+bb_adjustable_item_color_get_color(BbAdjustableItemColor *item);
+
+
+void
+bb_adjustable_item_color_set_color(BbAdjustableItemColor *item, int color);
+
+
 #endif

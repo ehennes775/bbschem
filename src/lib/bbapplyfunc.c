@@ -17,31 +17,10 @@
  */
 
 #include <gtk/gtk.h>
-#include "bbvaluecount.h"
+#include "bbapplyfunc.h"
 
 
-BbValueCount
-bb_value_count_from_count(int count)
+void
+bb_apply_func_nothing(BbSchematicItem *item, gpointer user_data)
 {
-    return CLAMP(count, BB_VALUE_COUNT_NONE, BB_VALUE_COUNT_MANY);
-}
-
-
-gboolean
-bb_value_count_inconsistent(BbValueCount count)
-{
-    g_return_val_if_fail(count >= BB_VALUE_COUNT_NONE, FALSE);
-    g_return_val_if_fail(count <= BB_VALUE_COUNT_MANY, FALSE);
-
-    return (count != BB_VALUE_COUNT_ONE);
-}
-
-
-gboolean
-bb_value_count_sensitive(BbValueCount count)
-{
-    g_return_val_if_fail(count >= BB_VALUE_COUNT_NONE, FALSE);
-    g_return_val_if_fail(count <= BB_VALUE_COUNT_MANY, FALSE);
-
-    return (count != BB_VALUE_COUNT_NONE);
 }

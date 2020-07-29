@@ -62,6 +62,13 @@ bb_schematic_window_set_property(GObject *object, guint property_id, const GValu
 
 
 void
+bb_schematic_window_apply_selection(BbSchematicWindow *window, BbApplyFunc func, gpointer user_data)
+{
+
+}
+
+
+void
 bb_schematic_window_apply_property(BbSchematicWindow *window, const char *name)
 {
     g_message("apply-property = \"%s\"", name);
@@ -183,7 +190,7 @@ bb_schematic_window_init(BbSchematicWindow *window)
 
 
 void
-bb_schematic_window_query(BbSchematicWindow *window, BbQueryFunc func, gpointer user_data)
+bb_schematic_window_query_selection(BbSchematicWindow *window, BbQueryFunc func, gpointer user_data)
 {
 
 }

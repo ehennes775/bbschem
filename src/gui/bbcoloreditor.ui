@@ -24,7 +24,6 @@
                 </child>
                 <child>
                     <object class="BbColorComboBox" id="color_combo">
-                        <property name="action-name">apply-object-color</property>
                         <property name="hexpand">true</property>
                         <style>
                             <class name="propedit"/>

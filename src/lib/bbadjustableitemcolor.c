@@ -41,3 +41,33 @@ bb_adjustable_item_color_default_init(BbAdjustableItemColorInterface *class)
             )
         );
 }
+
+
+int
+bb_adjustable_item_color_get_color(BbAdjustableItemColor *item)
+{
+    int color;
+
+    g_return_val_if_fail(item != NULL, 0);
+
+    g_object_get(
+        G_OBJECT(item),
+        "color", &color,
+        NULL
+        );
+
+    return color;
+}
+
+
+void
+bb_adjustable_item_color_set_color(BbAdjustableItemColor *item, int color)
+{
+    g_return_if_fail(item != NULL);
+
+    g_object_set(
+        G_OBJECT(item),
+        "color", color,
+        NULL
+        );
+}

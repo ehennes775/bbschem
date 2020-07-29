@@ -22,8 +22,32 @@
 #include "bbschematicitem.h"
 
 /**
+ * A function for querying items
  *
+ * @param item A schematic item
+ * @param user_data User data passed in from the caller
  */
 typedef gboolean (*BbQueryFunc)(BbSchematicItem *item, gpointer user_data);
+
+
+/**
+ * A predicate always returning TRUE
+ *
+ * @param item Unused
+ * @param user_data Unused
+ */
+gboolean
+bb_query_func_always(BbSchematicItem *item, gpointer user_data);
+
+
+/**
+ * A predicate always returning FALSE
+ *
+ * @param item Unused
+ * @param user_data Unused
+ */
+gboolean
+bb_query_func_never(BbSchematicItem *item, gpointer user_data);
+
 
 #endif

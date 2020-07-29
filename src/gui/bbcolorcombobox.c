@@ -157,7 +157,7 @@ bb_color_combo_box_register()
 void
 bb_color_combo_box_set_color(BbColorComboBox *combo, int index)
 {
-    g_return_if_fail(index >= 0);
+    g_return_if_fail(index >= 0 || index == -1);
 
     gtk_combo_box_set_active(GTK_COMBO_BOX(combo), index);
 }

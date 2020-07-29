@@ -23,6 +23,9 @@
 #include "bbcoloreditor.h"
 #include "bbpropertycombobox.h"
 #include "bbschematicwindow.h"
+#include "bbadjustableitemcolor.h"
+#include "bbhashtable.h"
+
 
 enum
 {
@@ -40,8 +43,12 @@ struct _BbColorEditor
     BbColorComboBox *color_combo;
 };
 
-G_DEFINE_TYPE(BbColorEditor, bb_color_editor, GTK_TYPE_EXPANDER);
 
+G_DEFINE_TYPE(BbColorEditor, bb_color_editor, GTK_TYPE_EXPANDER)
+
+
+static void
+bb_color_editor_apply_lambda(BbSchematicItem *item, gpointer user_data);
 
 static void
 bb_color_editor_get_property(GObject *object, guint param_id, GValue* value, GParamSpec* pspec);
@@ -50,27 +57,54 @@ static void
 bb_color_editor_set_property(GObject *object, guint param_id, const GValue* value, GParamSpec* pspec);
 
 static void
-bb_color_editor_update(BbColorEditor *editor);
+bb_color_editor_update(BbMainWindow *main_window, BbColorEditor *editor);
 
 static gboolean
 bb_color_editor_update_lambda(BbSchematicItem *item, gpointer user_data);
 
 
+/**
+ * Apply an item color to the selection
+ *
+ * @param combo The color combo box widget
+ * @param editor A color editor
+ */
 static void
 bb_color_editor_apply(BbColorComboBox *combo, BbColorEditor *editor)
 {
+    GtkWidget *window;
+
+    g_return_if_fail(combo != NULL);
     g_return_if_fail(editor != NULL);
+    g_return_if_fail(combo == editor->color_combo);
 
-    if (editor->main_window != NULL)
+    window = bb_main_window_get_current_document_window(editor->main_window);
+
+    if (BB_IS_SCHEMATIC_WINDOW(window))
     {
-        GVariant *color = g_variant_new_int32(
-            bb_color_combo_box_get_color(combo)
+        bb_schematic_window_apply_selection(
+            BB_SCHEMATIC_WINDOW(window),
+            bb_color_editor_apply_lambda,
+            GINT_TO_POINTER(bb_color_combo_box_get_color(combo))
             );
+    }
+}
 
-        g_action_group_activate_action(
-            G_ACTION_GROUP(editor->main_window),
-            "apply-object-color",
-            color
+
+/**
+ * Apply a new item color to an individual item
+ *
+ * @param item A schematic item
+ * @param user_data The color
+ */
+static void
+bb_color_editor_apply_lambda(BbSchematicItem *item, gpointer user_data)
+{
+    if (BB_IS_ADJUSTABLE_ITEM_COLOR(item))
+    {
+        bb_adjustable_item_color_set_color(
+            BB_ADJUSTABLE_ITEM_COLOR(item),
+            GPOINTER_TO_INT(user_data)
             );
     }
 }
@@ -97,6 +131,11 @@ bb_color_editor_class_init(BbColorEditorClass *class)
     gtk_widget_class_set_template_from_resource(
         GTK_WIDGET_CLASS(class),
         "/com/github/ehennes775/bbsch/gui/bbcoloreditor.ui"
+        );
+
+    gtk_widget_class_bind_template_callback(
+        GTK_WIDGET_CLASS(class),
+        bb_color_editor_apply
         );
 
     gtk_widget_class_bind_template_child(
@@ -193,64 +232,79 @@ bb_color_editor_set_property(GObject *object, guint param_id, const GValue* valu
 }
 
 
-gboolean
-always(gpointer key, gpointer value, gpointer user_data)
-{
-    return TRUE;
-}
-
-
+/**
+ * Update the color widget from items in the selection
+ *
+ * @param main_window
+ * @param editor
+ */
 static void
-bb_color_editor_update(BbColorEditor *editor)
+bb_color_editor_update(BbMainWindow *main_window, BbColorEditor *editor)
 {
-//    BbValueCount count;
-//    GHashTable *table = g_hash_table_new(NULL, NULL);
-//    GtkApplicationWindow *window;
-//
-//    g_message("Update color properties");
-//
-//    g_return_if_fail(editor != NULL);
-//
-//    if (BB_IS_SCHEMATIC_WINDOW(window))
-//    {
-//        bb_schematic_window_query(
-//            BB_SCHEMATIC_WINDOW(window),
-//            bb_color_editor_update_lambda,
-//            table
-//            );
-//    }
-//
-//    count = bb_value_count_from_count(g_hash_table_size(table));
-//
-//    if (bb_value_count_inconsistent(count))
-//    {
-//        bb_color_combo_box_set_color(editor->color_combo, -1);
-//    }
-//    else
-//    {
-//        bb_color_combo_box_set_color(
-//            editor->color_combo,
-//            GPOINTER_TO_INT(g_hash_table_find(table, always, NULL))
-//            );
-//    }
-//
-//    gtk_widget_set_sensitive(
-//        GTK_WIDGET(editor->color_combo),
-//        bb_value_count_sensitive(count)
-//        );
+    BbValueCount count;
+    GHashTable *table;
+    GtkWidget *window;
+
+    g_message("Update color properties");
+
+    g_return_if_fail(editor != NULL);
+    g_return_if_fail(main_window != NULL);
+    g_return_if_fail(editor->main_window == main_window);
+
+    table = g_hash_table_new(NULL, NULL);
+    window = bb_main_window_get_current_document_window(main_window);
+
+    if (BB_IS_SCHEMATIC_WINDOW(window))
+    {
+        bb_schematic_window_query_selection(
+            BB_SCHEMATIC_WINDOW(window),
+            bb_color_editor_update_lambda,
+            table
+            );
+    }
+
+    count = bb_value_count_from_count(g_hash_table_size(table));
+
+    if (bb_value_count_inconsistent(count))
+    {
+        bb_color_combo_box_set_color(editor->color_combo, -1);
+    }
+    else
+    {
+        bb_color_combo_box_set_color(
+            editor->color_combo,
+            GPOINTER_TO_INT(g_hash_table_find(table, bb_hash_table_always, NULL))
+            );
+    }
+
+    gtk_widget_set_sensitive(
+        GTK_WIDGET(editor->color_combo),
+        bb_value_count_sensitive(count)
+        );
 }
 
 
+/**
+ * Add the item color, into a hash table, for a single schematic item
+ *
+ * @param item A schematic item
+ * @param user_data A hash table (used as a set)
+ * @return TRUE to continue iterating and FALSE to stop iterating
+ */
 static gboolean
 bb_color_editor_update_lambda(BbSchematicItem *item, gpointer user_data)
 {
-    //if (BB_IS_ADJUSTABLE_ITEM_COLOR(item))
-    //{
-    //    g_hash_table_add(
-    //        (GHashTable*) user_data,
-    //        GINT_TO_POINTER(bb_adjustable_item_color_get_color(BB_ADJUSTABLE_COLOR(item)))
-    //        );
-    //}
+    GHashTable *table = (GHashTable*) user_data;
 
-    return g_hash_table_size((GHashTable*) user_data) < BB_VALUE_COUNT_MANY;
+    g_return_val_if_fail(table != NULL, FALSE);
+
+    if (BB_IS_ADJUSTABLE_ITEM_COLOR(item))
+    {
+        g_hash_table_add(
+            table,
+            GINT_TO_POINTER(bb_adjustable_item_color_get_color(BB_ADJUSTABLE_ITEM_COLOR(item)))
+            );
+    }
+
+    return g_hash_table_size(table) < BB_VALUE_COUNT_MANY;
 }

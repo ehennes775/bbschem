@@ -17,6 +17,7 @@
  */
 
 #include <gtk/gtk.h>
+#include <src/lib/bbvaluecount.h>
 #include "bbmainwindow.h"
 #include "bbpinpropertyeditor.h"
 #include "bbpropertycombobox.h"
@@ -35,9 +36,12 @@ struct _BbPinPropertyEditor
     GtkExpander parent;
 
     BbMainWindow *main_window;
+
+    BbPropertyComboBox *pin_type_combo;
 };
 
-G_DEFINE_TYPE(BbPinPropertyEditor, bb_pin_property_editor, GTK_TYPE_EXPANDER);
+
+G_DEFINE_TYPE(BbPinPropertyEditor, bb_pin_property_editor, GTK_TYPE_EXPANDER)
 
 
 static void
@@ -47,8 +51,10 @@ static void
 bb_pin_property_editor_set_property(GObject *object, guint param_id, const GValue* value, GParamSpec* pspec);
 
 static void
-bb_pin_property_editor_update(BbPinPropertyEditor *editor);
+bb_pin_property_editor_update(BbMainWindow *main_window, BbPinPropertyEditor *editor);
 
+static gboolean
+bb_pin_property_editor_update_lambda(BbSchematicItem *item, gpointer user_data);
 
 static void
 bb_pin_property_editor_apply(BbPropertyComboBox *combo, BbPinPropertyEditor *editor)
@@ -94,6 +100,12 @@ bb_pin_property_editor_class_init(BbPinPropertyEditorClass *class)
     gtk_widget_class_bind_template_callback(
         GTK_WIDGET_CLASS(class),
         bb_pin_property_editor_apply
+        );
+
+    gtk_widget_class_bind_template_child(
+        GTK_WIDGET_CLASS(class),
+        BbPinPropertyEditor,
+        pin_type_combo
         );
 }
 
@@ -184,8 +196,65 @@ bb_pin_property_editor_set_property(GObject *object, guint param_id, const GValu
 
 
 static void
-bb_pin_property_editor_update(BbPinPropertyEditor *editor)
+bb_pin_property_editor_update(BbMainWindow *main_window, BbPinPropertyEditor *editor)
 {
-    g_message("Update pin properties");
+    BbValueCount count;
+    GHashTable *table;
+    GtkWidget *window;
+
+    g_message("Update pin type property");
+
+    g_return_if_fail(editor != NULL);
+    g_return_if_fail(main_window != NULL);
+    g_return_if_fail(editor->main_window == main_window);
+
+    table = g_hash_table_new(NULL, NULL);
+    window = bb_main_window_get_current_document_window(main_window);
+
+    if (BB_IS_SCHEMATIC_WINDOW(window))
+    {
+        bb_schematic_window_query_selection(
+            BB_SCHEMATIC_WINDOW(window),
+            bb_pin_property_editor_update_lambda,
+            table
+            );
+    }
+
+    count = bb_value_count_from_count(g_hash_table_size(table));
+
+    if (bb_value_count_inconsistent(count))
+    {
+        // bb_pin_type_combo_set_pin_type(editor->pin_type_combo, -1);
+    }
+    else
+    {
+        // bb_pin_type_combo_set_pin_type(
+        //     editor->pin_type_combo,
+        //     GPOINTER_TO_INT(g_hash_table_find(table, always, NULL))
+        //     );
+    }
+
+    gtk_widget_set_sensitive(
+        GTK_WIDGET(editor->pin_type_combo),
+        bb_value_count_sensitive(count)
+        );
 }
 
+
+static gboolean
+bb_pin_property_editor_update_lambda(BbSchematicItem *item, gpointer user_data)
+{
+    GHashTable *table = (GHashTable*) user_data;
+
+    g_return_val_if_fail(table != NULL, FALSE);
+
+    //if (BB_IS_PIN(item))
+    //{
+    //    g_hash_table_add(
+    //        table,
+    //        GINT_TO_POINTER(bb_pin_get_pin_type(BB_PIN(item)))
+    //    );
+    //}
+
+    return g_hash_table_size(table) < BB_VALUE_COUNT_MANY;
+}

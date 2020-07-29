@@ -24,10 +24,25 @@
 #define BB_TYPE_COLOR_COMBO_BOX bb_color_combo_box_get_type()
 G_DECLARE_FINAL_TYPE(BbColorComboBox, bb_color_combo_box, BB, COLOR_COMBO_BOX, BbPropertyComboBox)
 
+
+/**
+ *
+ *
+ * @param combo
+ * @return
+ */
 int
 bb_color_combo_box_get_color(BbColorComboBox *combo);
 
+
+/**
+ *
+ *
+ * @param combo
+ * @param index
+ */
 void
 bb_color_combo_box_set_color(BbColorComboBox *combo, int index);
+
 
 #endif

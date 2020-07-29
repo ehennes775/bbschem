@@ -17,31 +17,10 @@
  */
 
 #include <gtk/gtk.h>
-#include "bbvaluecount.h"
-
-
-BbValueCount
-bb_value_count_from_count(int count)
-{
-    return CLAMP(count, BB_VALUE_COUNT_NONE, BB_VALUE_COUNT_MANY);
-}
-
+#include "bbhashtable.h"
 
 gboolean
-bb_value_count_inconsistent(BbValueCount count)
+bb_hash_table_always(gpointer key, gpointer value, gpointer user_data)
 {
-    g_return_val_if_fail(count >= BB_VALUE_COUNT_NONE, FALSE);
-    g_return_val_if_fail(count <= BB_VALUE_COUNT_MANY, FALSE);
-
-    return (count != BB_VALUE_COUNT_ONE);
-}
-
-
-gboolean
-bb_value_count_sensitive(BbValueCount count)
-{
-    g_return_val_if_fail(count >= BB_VALUE_COUNT_NONE, FALSE);
-    g_return_val_if_fail(count <= BB_VALUE_COUNT_MANY, FALSE);
-
-    return (count != BB_VALUE_COUNT_NONE);
+    return TRUE;
 }

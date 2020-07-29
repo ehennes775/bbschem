@@ -58,7 +58,7 @@ bb_component_selector_plugin_set_property(GObject *object, guint property_id, co
 G_DEFINE_TYPE_EXTENDED(
     BbComponentSelectorPlugin,
     bb_component_selector_plugin,
-    G_TYPE_OBJECT,
+    PEAS_TYPE_EXTENSION_BASE,
     0,
     G_IMPLEMENT_INTERFACE(PEAS_TYPE_ACTIVATABLE, bb_component_selector_plugin_activatable_init)
     )
