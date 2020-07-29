@@ -24,6 +24,7 @@
                 </child>
                 <child>
                     <object class="BbColorComboBox" id="color_combo">
+                        <signal name="apply" handler="bb_color_editor_apply"/>
                         <property name="hexpand">true</property>
                         <style>
                             <class name="propedit"/>

@@ -39,9 +39,6 @@ G_DEFINE_TYPE(BbColorComboBox, bb_color_combo_box, BB_TYPE_PROPERTY_COMBO_BOX);
 
 
 static void
-bb_color_combo_box_apply_cb(BbPropertyComboBox *unused, BbColorComboBox *combo);
-
-static void
 bb_color_combo_box_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
 
 static void
@@ -49,29 +46,6 @@ bb_color_combo_box_set_property(GObject *object, guint property_id, const GValue
 
 static void
 bb_color_combo_box_update_cb(BbPropertyComboBox *unused, GVariant *value, BbColorComboBox *combo);
-
-
-static void
-bb_color_combo_box_apply_cb(BbPropertyComboBox *property_combo, BbColorComboBox *color_combo)
-{
-    g_return_if_fail(BB_IS_COLOR_COMBO_BOX(color_combo));
-    g_return_if_fail(BB_IS_PROPERTY_COMBO_BOX(property_combo));
-
-    GActionGroup *group = bb_property_combo_box_get_action_group(property_combo);
-
-    if (group != NULL)
-    {
-        GVariant *color = g_variant_new_int32(
-            bb_color_combo_box_get_color(color_combo)
-            );
-
-        g_action_group_activate_action(
-            group,
-            bb_property_combo_box_get_action_name(property_combo),
-            color
-            );
-    }
-}
 
 
 static void
@@ -130,13 +104,6 @@ static void
 bb_color_combo_box_init(BbColorComboBox *combo)
 {
     gtk_widget_init_template(GTK_WIDGET(combo));
-
-    combo->apply_handler_id = g_signal_connect(
-        combo,
-        "apply",
-        G_CALLBACK(bb_color_combo_box_apply_cb),
-        combo
-        );
 
     combo->update_handler_id = g_signal_connect(
         combo,
