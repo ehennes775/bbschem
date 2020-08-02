@@ -1,5 +1,5 @@
-#ifndef __BBFILLTYPE__
-#define __BBFILLTYPE__
+#ifndef __BBLINESTYLE__
+#define __BBLINESTYLE__
 /*
  * bbsch
  * Copyright (C) 2020 Edward C. Hennessy
@@ -18,15 +18,33 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-typedef enum _BbFillType BbFillType;
+#include <gtk/gtk.h>
+#include "bbcaptype.h"
+#include "bbdashtype.h"
 
-enum _BbFillType
+
+typedef struct _BbLineStyle BbLineStyle;
+
+struct _BbLineStyle
 {
-    BB_FILL_TYPE_HOLLOW,
-    BB_FILL_TYPE_SOLID,
-    BB_FILL_TYPE_MESH,
-    BB_FILL_TYPE_HATCH
+    int line_width;
+    BbCapType cap_type;
+    BbDashType dash_type;
+    int dash_length;
+    int dash_space;
 };
+
+
+BbLineStyle*
+bb_line_style_copy(BbLineStyle* style);
+
+
+void
+bb_line_style_free(BbLineStyle* style);
+
+
+BbLineStyle*
+bb_line_style_new();
 
 
 #endif

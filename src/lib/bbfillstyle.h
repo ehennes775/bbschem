@@ -1,5 +1,5 @@
-#ifndef __BBFILLTYPE__
-#define __BBFILLTYPE__
+#ifndef __BBFILLSTYLE__
+#define __BBFILLSTYLE__
 /*
  * bbsch
  * Copyright (C) 2020 Edward C. Hennessy
@@ -18,15 +18,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-typedef enum _BbFillType BbFillType;
+#include <gtk/gtk.h>
+#include "bbfilltype.h"
 
-enum _BbFillType
+
+typedef struct _BbFillStyle BbFillStyle;
+
+struct _BbFillStyle
 {
-    BB_FILL_TYPE_HOLLOW,
-    BB_FILL_TYPE_SOLID,
-    BB_FILL_TYPE_MESH,
-    BB_FILL_TYPE_HATCH
+    BbFillType type;
+    int width;
+    int angle[2];
+    int pitch[2];
 };
+
+
+BbFillStyle*
+bb_fill_style_copy(BbFillStyle* style);
+
+
+void
+bb_fill_style_free(BbFillStyle* style);
+
+
+BbFillStyle*
+bb_fill_style_new();
 
 
 #endif

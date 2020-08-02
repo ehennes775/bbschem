@@ -44,7 +44,10 @@ struct _BbGraphicCircle
 
     int radius;
 
-    int width;
+    int color;
+
+    BbLineStyle *line_style;
+    BbFillStyle *fill_style;
 };
 
 
@@ -107,7 +110,7 @@ bb_graphic_circle_calculate_bounds(BbSchematicItem *item, BbBoundsCalculator *ca
         circle->center_y - circle->radius,
         circle->center_x + circle->radius,
         circle->center_y + circle->radius,
-        circle->width
+        circle->line_style->line_width
         );
 }
 
@@ -186,6 +189,12 @@ bb_graphic_circle_dispose(GObject *object)
 static void
 bb_graphic_circle_finalize(GObject *object)
 {
+    BbGraphicCircle *circle = BB_GRAPHIC_CIRCLE(object);
+
+    g_return_if_fail(circle != NULL);
+
+    bb_fill_style_free(circle->fill_style);
+    bb_line_style_free(circle->line_style);
 }
 
 
@@ -247,14 +256,19 @@ int
 bb_graphic_circle_get_width(BbGraphicCircle *circle)
 {
     g_return_val_if_fail(circle != NULL, 0);
+    g_return_val_if_fail(circle->line_style != NULL, 0);
 
-    return circle->width;
+    return circle->line_style->line_width;
 }
 
 
 static void
-bb_graphic_circle_init(BbGraphicCircle *window)
+bb_graphic_circle_init(BbGraphicCircle *circle)
 {
+    g_return_if_fail(circle != NULL);
+
+    circle->fill_style = bb_fill_style_new();
+    circle->line_style = bb_line_style_new();
 }
 
 
@@ -275,7 +289,15 @@ bb_graphic_circle_register()
 static void
 bb_graphic_circle_render(BbSchematicItem *item, BbItemRenderer *renderer)
 {
-    bb_item_renderer_render_graphic_circle(renderer, BB_GRAPHIC_CIRCLE(item));
+    BbGraphicCircle *circle = BB_GRAPHIC_CIRCLE(item);
+
+    g_return_if_fail(circle != NULL);
+
+    bb_item_renderer_set_color(renderer, circle->color);
+    bb_item_renderer_set_fill_style(renderer, circle->fill_style);
+    bb_item_renderer_set_line_style(renderer, circle->line_style);
+
+    bb_item_renderer_render_graphic_circle(renderer, circle);
 }
 
 
@@ -352,10 +374,11 @@ void
 bb_graphic_circle_set_width(BbGraphicCircle *circle, int width)
 {
     g_return_if_fail(circle != NULL);
+    g_return_if_fail(circle->line_style != NULL);
 
-    if (circle->width != width)
+    if (circle->line_style->line_width != width)
     {
-        circle->width = width;
+        circle->line_style->line_width = width;
 
         g_object_notify_by_pspec(G_OBJECT(circle), properties[PROP_WIDTH]);
     }

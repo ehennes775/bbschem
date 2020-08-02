@@ -49,7 +49,9 @@ struct _BbGraphicArc
     int start_angle;
     int sweep_angle;
 
-    int width;
+    int color;
+
+    BbLineStyle *line_style;
 };
 
 
@@ -108,6 +110,7 @@ bb_graphic_arc_calculate_bounds(BbSchematicItem *item, BbBoundsCalculator *calcu
     BbGraphicArc *arc = BB_GRAPHIC_ARC(item);
 
     g_return_val_if_fail(arc != NULL, NULL);
+    g_return_val_if_fail(arc->line_style != NULL, NULL);
 
     return bb_bounds_calculator_calculate_from_corners(
         calculator,
@@ -115,7 +118,7 @@ bb_graphic_arc_calculate_bounds(BbSchematicItem *item, BbBoundsCalculator *calcu
         arc->center_y - arc->radius,
         arc->center_x + arc->radius,
         arc->center_y + arc->radius,
-        arc->width
+        arc->line_style->line_width
         );
 }
 
@@ -215,6 +218,11 @@ bb_graphic_arc_dispose(GObject *object)
 static void
 bb_graphic_arc_finalize(GObject *object)
 {
+    BbGraphicArc *arc = BB_GRAPHIC_ARC(object);
+
+    g_return_if_fail(arc != NULL);
+
+    bb_line_style_free(arc->line_style);
 }
 
 
@@ -302,14 +310,18 @@ int
 bb_graphic_arc_get_width(BbGraphicArc *arc)
 {
     g_return_val_if_fail(arc != NULL, 0);
+    g_return_val_if_fail(arc->line_style != NULL, 0);
 
-    return arc->width;
+    return arc->line_style->line_width;
 }
 
 
 static void
-bb_graphic_arc_init(BbGraphicArc *window)
+bb_graphic_arc_init(BbGraphicArc *arc)
 {
+    g_return_if_fail(arc != NULL);
+
+    arc->line_style = bb_line_style_new();
 }
 
 
@@ -323,7 +335,12 @@ bb_graphic_arc_register()
 static void
 bb_graphic_arc_render(BbSchematicItem *item, BbItemRenderer *renderer)
 {
-    bb_item_renderer_render_graphic_arc(renderer, BB_GRAPHIC_ARC(item));
+    BbGraphicArc *arc = BB_GRAPHIC_ARC(item);
+
+    bb_item_renderer_set_color(renderer, arc->color);
+    bb_item_renderer_set_line_style(renderer, arc->line_style);
+
+    bb_item_renderer_render_graphic_arc(renderer, arc);
 }
 
 
@@ -436,10 +453,11 @@ void
 bb_graphic_arc_set_width(BbGraphicArc *arc, int width)
 {
     g_return_if_fail(arc != NULL);
+    g_return_if_fail(arc->line_style != NULL);
 
-    if (arc->width != width)
+    if (arc->line_style->line_width != width)
     {
-        arc->width = width;
+        arc->line_style->line_width = width;
 
         g_object_notify_by_pspec(G_OBJECT(arc), properties[PROP_WIDTH]);
     }
@@ -463,7 +481,7 @@ static gboolean
 bb_graphic_arc_write(BbSchematicItem *item, GOutputStream *stream, GCancellable *cancellable, GError **error)
 {
     BbGraphicArc *arc = BB_GRAPHIC_ARC(item);
-    g_return_val_if_fail(arc != NULL, NULL);
+    g_return_val_if_fail(arc != NULL, FALSE);
 
     bb_item_params_write(
         arc->params,

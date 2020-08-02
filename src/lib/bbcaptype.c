@@ -1,5 +1,3 @@
-#ifndef __BBFILLTYPE__
-#define __BBFILLTYPE__
 /*
  * bbsch
  * Copyright (C) 2020 Edward C. Hennessy
@@ -18,15 +16,5 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-typedef enum _BbFillType BbFillType;
-
-enum _BbFillType
-{
-    BB_FILL_TYPE_HOLLOW,
-    BB_FILL_TYPE_SOLID,
-    BB_FILL_TYPE_MESH,
-    BB_FILL_TYPE_HATCH
-};
-
-
-#endif
+#include <gtk/gtk.h>
+#include "bbcaptype.h"

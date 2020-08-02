@@ -19,13 +19,63 @@
  */
 
 #include <gtk/gtk.h>
+#include "bbfilltype.h"
 
 #define BB_TYPE_ADJUSTABLE_FILL_STYLE bb_adjustable_fill_style_get_type()
 G_DECLARE_INTERFACE(BbAdjustableFillStyle, bb_adjustable_fill_style, BB, ADJUSTABLE_FILL_STYLE, GObject)
 
 struct _BbAdjustableFillStyleInterface
 {
-    GTypeInterface g_iface;
+    GTypeInterface parent;
 };
+
+
+int
+bb_adjustable_fill_style_get_fill_angle_1(BbAdjustableFillStyle *item);
+
+
+int
+bb_adjustable_fill_style_get_fill_angle_2(BbAdjustableFillStyle *item);
+
+
+int
+bb_adjustable_fill_style_get_fill_pitch_1(BbAdjustableFillStyle *item);
+
+
+int
+bb_adjustable_fill_style_get_fill_pitch_2(BbAdjustableFillStyle *item);
+
+
+BbFillType
+bb_adjustable_fill_style_get_fill_type(BbAdjustableFillStyle *item);
+
+
+int
+bb_adjustable_fill_style_get_fill_width(BbAdjustableFillStyle *item);
+
+
+void
+bb_adjustable_fill_style_set_fill_angle_1(BbAdjustableFillStyle *item, int angle);
+
+
+void
+bb_adjustable_fill_style_set_fill_angle_2(BbAdjustableFillStyle *item, int angle);
+
+
+void
+bb_adjustable_fill_style_set_fill_pitch_1(BbAdjustableFillStyle *item, int pitch);
+
+
+void
+bb_adjustable_fill_style_set_fill_pitch_2(BbAdjustableFillStyle *item, int pitch);
+
+
+void
+bb_adjustable_fill_style_set_fill_type(BbAdjustableFillStyle *item, BbFillType type);
+
+
+void
+bb_adjustable_fill_style_set_fill_width(BbAdjustableFillStyle *item, int width);
+
 
 #endif

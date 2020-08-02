@@ -17,14 +17,14 @@
  */
 
 #include <gtk/gtk.h>
+#include <bbadjustableitemcolor.h>
+#include <bbhashtable.h>
 #include <bbvaluecount.h>
 #include "bbmainwindow.h"
 #include "bbcolorcombobox.h"
 #include "bbcoloreditor.h"
 #include "bbpropertycombobox.h"
 #include "bbschematicwindow.h"
-#include "bbadjustableitemcolor.h"
-#include "bbhashtable.h"
 
 
 enum

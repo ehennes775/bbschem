@@ -106,3 +106,183 @@ bb_adjustable_fill_style_default_init(BbAdjustableFillStyleInterface *class)
             )
         );
 }
+
+
+int
+bb_adjustable_fill_style_get_fill_angle_1(BbAdjustableFillStyle *item)
+{
+    int angle;
+
+    g_return_val_if_fail(item != NULL, 0);
+
+    g_object_get(
+        G_OBJECT(item),
+        "angle-1", &angle,
+        NULL
+        );
+
+    return angle;
+}
+
+
+int
+bb_adjustable_fill_style_get_fill_angle_2(BbAdjustableFillStyle *item)
+{
+    int angle;
+
+    g_return_val_if_fail(item != NULL, 0);
+
+    g_object_get(
+        G_OBJECT(item),
+        "angle-2", &angle,
+        NULL
+        );
+
+    return angle;
+}
+
+
+int
+bb_adjustable_fill_style_get_fill_pitch_1(BbAdjustableFillStyle *item)
+{
+    int pitch;
+
+    g_return_val_if_fail(item != NULL, 0);
+
+    g_object_get(
+        G_OBJECT(item),
+        "pitch-1", &pitch,
+        NULL
+        );
+
+    return pitch;
+}
+
+
+int
+bb_adjustable_fill_style_get_fill_pitch_2(BbAdjustableFillStyle *item)
+{
+    int pitch;
+
+    g_return_val_if_fail(item != NULL, 0);
+
+    g_object_get(
+        G_OBJECT(item),
+        "pitch-2", &pitch,
+        NULL
+        );
+
+    return pitch;
+}
+
+
+BbFillType
+bb_adjustable_fill_style_get_fill_type(BbAdjustableFillStyle *item)
+{
+    BbFillType type;
+
+    g_return_val_if_fail(item != NULL, 0);
+
+    g_object_get(
+        G_OBJECT(item),
+        "fill-type", &type,
+        NULL
+        );
+
+    return type;
+}
+
+
+int
+bb_adjustable_fill_style_get_fill_width(BbAdjustableFillStyle *item)
+{
+    int width;
+
+    g_return_val_if_fail(item != NULL, 0);
+
+    g_object_get(
+        G_OBJECT(item),
+        "fill-width", &width,
+        NULL
+        );
+
+    return width;
+}
+
+
+void
+bb_adjustable_fill_style_set_fill_angle_1(BbAdjustableFillStyle *item, int angle)
+{
+    g_return_if_fail(item != NULL);
+
+    g_object_set(
+        G_OBJECT(item),
+        "angle-1", angle,
+        NULL
+        );
+}
+
+
+void
+bb_adjustable_fill_style_set_fill_angle_2(BbAdjustableFillStyle *item, int angle)
+{
+    g_return_if_fail(item != NULL);
+
+    g_object_set(
+        G_OBJECT(item),
+        "angle-2", angle,
+        NULL
+        );
+}
+
+
+void
+bb_adjustable_fill_style_set_fill_pitch_1(BbAdjustableFillStyle *item, int pitch)
+{
+    g_return_if_fail(item != NULL);
+
+    g_object_set(
+        G_OBJECT(item),
+        "pitch-1", pitch,
+        NULL
+        );
+}
+
+
+void
+bb_adjustable_fill_style_set_fill_pitch_2(BbAdjustableFillStyle *item, int pitch)
+{
+    g_return_if_fail(item != NULL);
+
+    g_object_set(
+        G_OBJECT(item),
+        "pitch-2", pitch,
+        NULL
+        );
+}
+
+
+void
+bb_adjustable_fill_style_set_fill_type(BbAdjustableFillStyle *item, BbFillType type)
+{
+    g_return_if_fail(item != NULL);
+
+    g_object_set(
+        G_OBJECT(item),
+        "fill-type", type,
+        NULL
+        );
+}
+
+
+void
+bb_adjustable_fill_style_set_fill_width(BbAdjustableFillStyle *item, int width)
+{
+    g_return_if_fail(item != NULL);
+
+    g_object_set(
+        G_OBJECT(item),
+        "fill-width", width,
+        NULL
+        );
+}

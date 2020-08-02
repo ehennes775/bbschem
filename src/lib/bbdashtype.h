@@ -1,5 +1,5 @@
-#ifndef __BBFILLTYPE__
-#define __BBFILLTYPE__
+#ifndef __BBDASHTYPE__
+#define __BBDASHTYPE__
 /*
  * bbsch
  * Copyright (C) 2020 Edward C. Hennessy
@@ -18,14 +18,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-typedef enum _BbFillType BbFillType;
+#include <gtk/gtk.h>
 
-enum _BbFillType
+
+typedef enum _BbDashType BbDashType;
+
+enum _BbDashType
 {
-    BB_FILL_TYPE_HOLLOW,
-    BB_FILL_TYPE_SOLID,
-    BB_FILL_TYPE_MESH,
-    BB_FILL_TYPE_HATCH
+    BB_DASH_TYPE_SOLID,
+    BB_DASH_TYPE_DOTTED,
+    BB_DASH_TYPE_DASHED,
+    BB_DASH_TYPE_CENTER,
+    BB_DASH_TYPE_PHANTOM
 };
 
 

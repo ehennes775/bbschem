@@ -100,8 +100,14 @@ add_executable(bbsch
         src/lib/bbbounds.h
         src/lib/bbboundscalculator.c
         src/lib/bbboundscalculator.h
+        src/lib/bbcaptype.c
+        src/lib/bbcaptype.h
         src/lib/bbcoord.c
         src/lib/bbcoord.h
+        src/lib/bbdashtype.c
+        src/lib/bbdashtype.h
+        src/lib/bbfillstyle.c
+        src/lib/bbfillstyle.h
         src/lib/bbfilltype.c
         src/lib/bbfilltype.h
         src/lib/bbgraphicarc.c
@@ -120,6 +126,8 @@ add_executable(bbsch
         src/lib/bbitemparams.h
         src/lib/bbitemrenderer.c
         src/lib/bbitemrenderer.h
+        src/lib/bblinestyle.c
+        src/lib/bblinestyle.h
         src/lib/bbpathcommand.c
         src/lib/bbpathcommand.h
         src/lib/bbpred.c

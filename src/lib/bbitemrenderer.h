@@ -19,6 +19,8 @@
  */
 
 #include <gtk/gtk.h>
+#include "bbfillstyle.h"
+#include "bblinestyle.h"
 
 /* forward declarations */
 
@@ -34,45 +36,59 @@ G_DECLARE_INTERFACE(BbItemRenderer, bb_item_renderer, BB, ITEM_RENDERER, GObject
 
 struct _BbItemRendererInterface
 {
-    GTypeInterface g_iface;
+    GTypeInterface parent;
 
     void (*render_absolute_line_to)(BbItemRenderer *renderer, int x, int y);
     void (*render_absolute_move_to)(BbItemRenderer *renderer, int x, int y);
     void (*render_graphic_arc)(BbItemRenderer *renderer, struct _BbGraphicArc *arc);
     void (*render_graphic_box)(BbItemRenderer *renderer, struct _BbGraphicBox *box);
     void (*render_graphic_circle)(BbItemRenderer *renderer, struct _BbGraphicCircle *circle);
-    void (*render_graphic_line)(BbItemRenderer *renderer, struct _BbGraphicLine *line);
-    void (*render_graphic_path)(BbItemRenderer *renderer, struct _BbGraphicPath *path);
     void (*render_relative_line_to)(BbItemRenderer *renderer, int dx, int dy);
     void (*render_relative_move_to)(BbItemRenderer *renderer, int dx, int dy);
+    void (*set_color)(BbItemRenderer *renderer, int color);
+    void (*set_fill_style)(BbItemRenderer *renderer, BbFillStyle *style);
+    void (*set_line_style)(BbItemRenderer *renderer, BbLineStyle *style);
 };
 
 
 void
 bb_item_renderer_render_absolute_line_to(BbItemRenderer *renderer, int x, int y);
 
+
 void
 bb_item_renderer_render_absolute_move_to(BbItemRenderer *renderer, int x, int y);
+
 
 void
 bb_item_renderer_render_graphic_arc(BbItemRenderer *renderer, struct _BbGraphicArc *arc);
 
+
 void
 bb_item_renderer_render_graphic_box(BbItemRenderer *renderer, struct _BbGraphicBox *box);
+
 
 void
 bb_item_renderer_render_graphic_circle(BbItemRenderer *renderer, struct _BbGraphicCircle *circle);
 
-void
-bb_item_renderer_render_graphic_line(BbItemRenderer *renderer, struct _BbGraphicLine *line);
-
-void
-bb_item_renderer_render_graphic_path(BbItemRenderer *renderer, struct _BbGraphicPath *path);
 
 void
 bb_item_renderer_render_relative_line_to(BbItemRenderer *renderer, int dx, int dy);
 
+
 void
 bb_item_renderer_render_relative_move_to(BbItemRenderer *renderer, int dx, int dy);
+
+
+void
+bb_item_renderer_set_color(BbItemRenderer *renderer, int color);
+
+
+void
+bb_item_renderer_set_fill_style(BbItemRenderer *renderer, BbFillStyle *style);
+
+
+void
+bb_item_renderer_set_line_style(BbItemRenderer *renderer, BbLineStyle *style);
+
 
 #endif

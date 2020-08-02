@@ -43,7 +43,7 @@ struct _BbGraphicLine
 
     int color;
 
-    int width;
+    BbLineStyle *line_style;
 
     int x[2];
     int y[2];
@@ -109,7 +109,7 @@ bb_graphic_line_calculate_bounds(BbSchematicItem *item, BbBoundsCalculator *calc
         line->y[0],
         line->x[1],
         line->y[1],
-        line->width
+        line->line_style->line_width
         );
 }
 
@@ -208,6 +208,12 @@ bb_graphic_line_dispose(GObject *object)
 static void
 bb_graphic_line_finalize(GObject *object)
 {
+    BbGraphicLine *line = BB_GRAPHIC_LINE(object);
+
+    g_return_if_fail(line != NULL);
+
+    bb_line_style_free(line->line_style);
+
 }
 
 
@@ -259,8 +265,9 @@ int
 bb_graphic_line_get_width(BbGraphicLine *line)
 {
     g_return_val_if_fail(line != NULL, 0);
+    g_return_val_if_fail(line->line_style != NULL, 0);
 
-    return line->width;
+    return line->line_style->line_width;
 }
 
 
@@ -301,8 +308,11 @@ bb_graphic_line_get_y1(BbGraphicLine *line)
 
 
 static void
-bb_graphic_line_init(BbGraphicLine *window)
+bb_graphic_line_init(BbGraphicLine *line)
 {
+    g_return_if_fail(line != NULL);
+
+    line->line_style = bb_line_style_new();
 }
 
 
@@ -323,7 +333,24 @@ bb_graphic_line_register()
 static void
 bb_graphic_line_render(BbSchematicItem *item, BbItemRenderer *renderer)
 {
-    bb_item_renderer_render_graphic_line(renderer, BB_GRAPHIC_LINE(item));
+    BbGraphicLine *line = BB_GRAPHIC_LINE(item);
+
+    g_return_if_fail(line != NULL);
+
+    bb_item_renderer_set_color(renderer, line->color);
+    bb_item_renderer_set_line_style(renderer, line->line_style);
+
+    bb_item_renderer_render_absolute_move_to(
+        renderer,
+        line->x[0],
+        line->y[0]
+        );
+
+    bb_item_renderer_render_absolute_line_to(
+        renderer,
+        line->x[1],
+        line->y[1]
+        );
 }
 
 
@@ -380,10 +407,11 @@ void
 bb_graphic_line_set_width(BbGraphicLine *line, int width)
 {
     g_return_if_fail(line != NULL);
+    g_return_if_fail(line->line_style != NULL);
 
-    if (line->width != width)
+    if (line->line_style->line_width != width)
     {
-        line->width = width;
+        line->line_style->line_width = width;
 
         g_object_notify_by_pspec(G_OBJECT(line), properties[PROP_WIDTH]);
     }

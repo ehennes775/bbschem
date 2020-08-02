@@ -23,6 +23,8 @@
 BbValueCount
 bb_value_count_from_count(int count)
 {
+    g_return_val_if_fail(count >= 0, 0);
+
     return CLAMP(count, BB_VALUE_COUNT_NONE, BB_VALUE_COUNT_MANY);
 }
 

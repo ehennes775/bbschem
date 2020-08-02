@@ -53,5 +53,154 @@ bb_adjustable_line_style_default_init(BbAdjustableLineStyleInterface *class)
             G_PARAM_READWRITE
             )
         );
+}
 
+
+int
+bb_adjustable_line_style_get_cap_type(BbAdjustableLineStyle *item)
+{
+    int type;
+
+    g_return_val_if_fail(item != NULL, 0);
+
+    g_object_get(
+        G_OBJECT(item),
+        "cap-type", &type,
+        NULL
+        );
+
+    return type;
+}
+
+
+int
+bb_adjustable_line_style_get_dash_length(BbAdjustableLineStyle *item)
+{
+    int length;
+
+    g_return_val_if_fail(item != NULL, 0);
+
+    g_object_get(
+        G_OBJECT(item),
+        "dash-length", &length,
+        NULL
+        );
+
+    return length;
+}
+
+
+int
+bb_adjustable_line_style_get_dash_space(BbAdjustableLineStyle *item)
+{
+    int space;
+
+    g_return_val_if_fail(item != NULL, 0);
+
+    g_object_get(
+        G_OBJECT(item),
+        "dash-space", &space,
+        NULL
+        );
+
+    return space;
+}
+
+
+int
+bb_adjustable_line_style_get_dash_type(BbAdjustableLineStyle *item)
+{
+    int type;
+
+    g_return_val_if_fail(item != NULL, 0);
+
+    g_object_get(
+        G_OBJECT(item),
+        "dash-type", &type,
+        NULL
+        );
+
+    return type;
+}
+
+
+int
+bb_adjustable_line_style_get_line_width(BbAdjustableLineStyle *item)
+{
+    int width;
+
+    g_return_val_if_fail(item != NULL, 0);
+
+    g_object_get(
+        G_OBJECT(item),
+        "line-width", &width,
+        NULL
+        );
+
+    return width;
+}
+
+
+void
+bb_adjustable_line_style_set_cap_type(BbAdjustableLineStyle *item, int type)
+{
+    g_return_if_fail(item != NULL);
+
+    g_object_set(
+        G_OBJECT(item),
+        "cap-type", type,
+        NULL
+        );
+}
+
+
+void
+bb_adjustable_line_style_set_dash_length(BbAdjustableLineStyle *item, int length)
+{
+    g_return_if_fail(item != NULL);
+
+    g_object_set(
+        G_OBJECT(item),
+        "dash-length", length,
+        NULL
+        );
+}
+
+
+void
+bb_adjustable_line_style_set_dash_space(BbAdjustableLineStyle *item, int space)
+{
+    g_return_if_fail(item != NULL);
+
+    g_object_set(
+        G_OBJECT(item),
+        "dash-space", space,
+        NULL
+        );
+}
+
+
+void
+bb_adjustable_line_style_set_dash_type(BbAdjustableLineStyle *item, int type)
+{
+    g_return_if_fail(item != NULL);
+
+    g_object_set(
+        G_OBJECT(item),
+        "dash-type", type,
+        NULL
+        );
+}
+
+
+void
+bb_adjustable_line_style_set_line_width(BbAdjustableLineStyle *item, int width)
+{
+    g_return_if_fail(item != NULL);
+
+    g_object_set(
+        G_OBJECT(item),
+        "line-width", width,
+        NULL
+        );
 }

@@ -26,7 +26,48 @@ G_DECLARE_INTERFACE(BbAdjustableLineStyle, bb_adjustable_line_style, BB, ADJUSTA
 
 struct _BbAdjustableLineStyleInterface
 {
-    GTypeInterface g_iface;
+    GTypeInterface parent;
 };
+
+
+int
+bb_adjustable_line_style_get_cap_type(BbAdjustableLineStyle *item);
+
+
+int
+bb_adjustable_line_style_get_dash_length(BbAdjustableLineStyle *item);
+
+
+int
+bb_adjustable_line_style_get_dash_space(BbAdjustableLineStyle *item);
+
+
+int
+bb_adjustable_line_style_get_dash_type(BbAdjustableLineStyle *item);
+
+
+int
+bb_adjustable_line_style_get_line_width(BbAdjustableLineStyle *item);
+
+
+void
+bb_adjustable_line_style_set_cap_type(BbAdjustableLineStyle *item, int type);
+
+
+void
+bb_adjustable_line_style_set_dash_length(BbAdjustableLineStyle *item, int length);
+
+
+void
+bb_adjustable_line_style_set_dash_space(BbAdjustableLineStyle *item, int space);
+
+
+void
+bb_adjustable_line_style_set_dash_type(BbAdjustableLineStyle *item, int type);
+
+
+void
+bb_adjustable_line_style_set_line_width(BbAdjustableLineStyle *item, int width);
+
 
 #endif

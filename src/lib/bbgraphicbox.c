@@ -40,7 +40,10 @@ struct _BbGraphicBox
 
     BbItemParams *params;
 
-    int width;
+    int color;
+
+    BbFillStyle *fill_style;
+    BbLineStyle *line_style;
 
     int x[2];
     int y[2];
@@ -99,6 +102,7 @@ bb_graphic_box_calculate_bounds(BbSchematicItem *item, BbBoundsCalculator *calcu
     BbGraphicBox *box = BB_GRAPHIC_BOX(item);
 
     g_return_val_if_fail(box != NULL, NULL);
+    g_return_val_if_fail(box->line_style != NULL, NULL);
 
     return bb_bounds_calculator_calculate_from_corners(
         calculator,
@@ -106,7 +110,7 @@ bb_graphic_box_calculate_bounds(BbSchematicItem *item, BbBoundsCalculator *calcu
         box->y[0],
         box->x[1],
         box->y[1],
-        box->width
+        box->line_style->line_width
         );
 }
 
@@ -195,6 +199,12 @@ bb_graphic_box_dispose(GObject *object)
 static void
 bb_graphic_box_finalize(GObject *object)
 {
+    BbGraphicBox *box = BB_GRAPHIC_BOX(object);
+
+    g_return_if_fail(box != NULL);
+
+    bb_fill_style_free(box->fill_style);
+    bb_line_style_free(box->line_style);
 }
 
 
@@ -233,8 +243,9 @@ int
 bb_graphic_box_get_width(BbGraphicBox *box)
 {
     g_return_val_if_fail(box != NULL, 0);
+    g_return_val_if_fail(box->line_style != NULL, 0);
 
-    return box->width;
+    return box->line_style->line_width;
 }
 
 
@@ -275,8 +286,12 @@ bb_graphic_box_get_y1(BbGraphicBox *box)
 
 
 static void
-bb_graphic_box_init(BbGraphicBox *window)
+bb_graphic_box_init(BbGraphicBox *box)
 {
+    g_return_if_fail(box != NULL);
+
+    box->fill_style = bb_fill_style_new();
+    box->line_style = bb_line_style_new();
 }
 
 
@@ -297,7 +312,15 @@ bb_graphic_box_register()
 static void
 bb_graphic_box_render(BbSchematicItem *item, BbItemRenderer *renderer)
 {
-    bb_item_renderer_render_graphic_box(renderer, BB_GRAPHIC_BOX(item));
+    BbGraphicBox *box = BB_GRAPHIC_BOX(item);
+
+    g_return_if_fail(box != NULL);
+
+    bb_item_renderer_set_color(renderer, box->color);
+    bb_item_renderer_set_fill_style(renderer, box->fill_style);
+    bb_item_renderer_set_line_style(renderer, box->line_style);
+
+    bb_item_renderer_render_graphic_box(renderer, box);
 }
 
 
@@ -336,10 +359,11 @@ void
 bb_graphic_box_set_width(BbGraphicBox *box, int width)
 {
     g_return_if_fail(box != NULL);
+    g_return_if_fail(box->line_style != NULL);
 
-    if (box->width != width)
+    if (box->line_style->line_width != width)
     {
-        box->width = width;
+        box->line_style->line_width = width;
 
         g_object_notify_by_pspec(G_OBJECT(box), properties[PROP_WIDTH]);
     }

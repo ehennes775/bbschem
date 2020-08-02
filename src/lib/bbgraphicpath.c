@@ -36,7 +36,10 @@ struct _BbGraphicPath
 
     BbItemParams *params;
 
-    int width;
+    int color;
+
+    BbFillStyle *fill_style;
+    BbLineStyle *line_style;
 
     GSList *commands;
 };
@@ -106,6 +109,9 @@ bb_graphic_path_mirror_y_lambda(BbPathCommand *command, MirrorYCapture *capture)
 
 static void
 bb_graphic_path_render(BbSchematicItem *item, BbItemRenderer *renderer);
+
+static void
+bb_graphic_path_render_lambda(gpointer command, gpointer renderer);
 
 static void
 bb_graphic_path_rotate(BbSchematicItem *item, int cx, int cy, int angle);
@@ -202,6 +208,12 @@ bb_graphic_path_dispose(GObject *object)
 static void
 bb_graphic_path_finalize(GObject *object)
 {
+    BbGraphicPath *path = BB_GRAPHIC_PATH(object);
+
+    g_return_if_fail(path != NULL);
+
+    bb_fill_style_free(path->fill_style);
+    bb_line_style_free(path->line_style);
 }
 
 
@@ -224,14 +236,19 @@ int
 bb_graphic_path_get_width(BbGraphicPath *path)
 {
     g_return_val_if_fail(path != NULL, 0);
+    g_return_val_if_fail(path->line_style != NULL, 0);
 
-    return path->width;
+    return path->line_style->line_width;
 }
 
 
 static void
-bb_graphic_path_init(BbGraphicPath *window)
+bb_graphic_path_init(BbGraphicPath *path)
 {
+    g_return_if_fail(path != NULL);
+
+    path->fill_style = bb_fill_style_new();
+    path->line_style = bb_line_style_new();
 }
 
 
@@ -328,7 +345,29 @@ bb_graphic_path_register()
 static void
 bb_graphic_path_render(BbSchematicItem *item, BbItemRenderer *renderer)
 {
-    bb_item_renderer_render_graphic_path(renderer, BB_GRAPHIC_PATH(item));
+    BbGraphicPath *path = BB_GRAPHIC_PATH(item);
+
+    g_return_if_fail(path != NULL);
+
+    bb_item_renderer_set_color(renderer, path->color);
+    bb_item_renderer_set_fill_style(renderer, path->fill_style);
+    bb_item_renderer_set_line_style(renderer, path->line_style);
+
+    g_slist_foreach(
+        path->commands,
+        bb_graphic_path_render_lambda,
+        renderer
+        );
+}
+
+
+static void
+bb_graphic_path_render_lambda(gpointer command, gpointer renderer)
+{
+    bb_graphic_path_render(
+        BB_PATH_COMMAND(command),
+        BB_ITEM_RENDERER(renderer)
+        );
 }
 
 
@@ -351,10 +390,11 @@ void
 bb_graphic_path_set_width(BbGraphicPath *path, int width)
 {
     g_return_if_fail(path != NULL);
+    g_return_if_fail(path->line_style != NULL);
 
-    if (path->width != width)
+    if (path->line_style->line_width != width)
     {
-        path->width = width;
+        path->line_style->line_width = width;
 
         g_object_notify_by_pspec(G_OBJECT(path), properties[PROP_WIDTH]);
     }

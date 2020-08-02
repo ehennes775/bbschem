@@ -39,10 +39,13 @@ static void
 bb_item_renderer_render_graphic_circle_missing(BbItemRenderer *renderer, struct _BbGraphicCircle *circle);
 
 static void
-bb_item_renderer_render_graphic_line_missing(BbItemRenderer *renderer, struct _BbGraphicLine *line);
+bb_item_renderer_set_color_missing(BbItemRenderer *renderer, int color);
 
 static void
-bb_item_renderer_render_graphic_path_missing(BbItemRenderer *renderer, struct _BbGraphicPath *path);
+bb_item_renderer_set_fill_style_missing(BbItemRenderer *renderer, BbFillStyle *style);
+
+static void
+bb_item_renderer_set_line_style_missing(BbItemRenderer *renderer, BbLineStyle *style);
 
 
 G_DEFINE_INTERFACE(BbItemRenderer, bb_item_renderer, G_TYPE_OBJECT)
@@ -58,8 +61,9 @@ bb_item_renderer_default_init(BbItemRendererInterface *class)
     class->render_graphic_arc = bb_item_renderer_render_graphic_arc_missing;
     class->render_graphic_box = bb_item_renderer_render_graphic_box_missing;
     class->render_graphic_circle = bb_item_renderer_render_graphic_circle_missing;
-    class->render_graphic_line = bb_item_renderer_render_graphic_line_missing;
-    class->render_graphic_path = bb_item_renderer_render_graphic_path_missing;
+    class->set_color = bb_item_renderer_set_color_missing;
+    class->set_fill_style = bb_item_renderer_set_fill_style_missing;
+    class->set_line_style = bb_item_renderer_set_line_style_missing;
 }
 
 
@@ -159,44 +163,6 @@ bb_item_renderer_render_graphic_circle_missing(BbItemRenderer *renderer, struct 
 
 
 void
-bb_item_renderer_render_graphic_line(BbItemRenderer *renderer, struct _BbGraphicLine *line)
-{
-    BbItemRendererInterface *iface = BB_ITEM_RENDERER_GET_IFACE(renderer);
-
-    g_return_if_fail(iface != NULL);
-    g_return_if_fail(iface->render_graphic_line != NULL);
-
-    return iface->render_graphic_line(renderer, line);
-}
-
-
-static void
-bb_item_renderer_render_graphic_line_missing(BbItemRenderer *renderer, struct _BbGraphicLine *line)
-{
-    g_error("bb_item_renderer_render_graphic_line() not overridden");
-}
-
-
-void
-bb_item_renderer_render_graphic_path(BbItemRenderer *renderer, struct _BbGraphicPath *path)
-{
-    BbItemRendererInterface *iface = BB_ITEM_RENDERER_GET_IFACE(renderer);
-
-    g_return_if_fail(iface != NULL);
-    g_return_if_fail(iface->render_graphic_path != NULL);
-
-    return iface->render_graphic_path(renderer, path);
-}
-
-
-static void
-bb_item_renderer_render_graphic_path_missing(BbItemRenderer *renderer, struct _BbGraphicPath *path)
-{
-    g_error("bb_item_renderer_render_graphic_path() not overridden");
-}
-
-
-void
 bb_item_renderer_render_relative_line_to(BbItemRenderer *renderer, int dx, int dy)
 {
     BbItemRendererInterface *iface = BB_ITEM_RENDERER_GET_IFACE(renderer);
@@ -231,4 +197,61 @@ void
 bb_item_renderer_render_relative_move_to_missing(BbItemRenderer *renderer, int dx, int dy)
 {
     g_error("bb_item_renderer_render_relative_move_to() not overridden");
+}
+
+
+void
+bb_item_renderer_set_color(BbItemRenderer *renderer, int color)
+{
+    BbItemRendererInterface *iface = BB_ITEM_RENDERER_GET_IFACE(renderer);
+
+    g_return_if_fail(iface != NULL);
+    g_return_if_fail(iface->set_color != NULL);
+
+    return iface->set_color(renderer, color);
+}
+
+
+static void
+bb_item_renderer_set_color_missing(BbItemRenderer *renderer, int color)
+{
+    g_error("bb_item_renderer_set_color() not overridden");
+}
+
+
+void
+bb_item_renderer_set_fill_style(BbItemRenderer *renderer, BbFillStyle *style)
+{
+    BbItemRendererInterface *iface = BB_ITEM_RENDERER_GET_IFACE(renderer);
+
+    g_return_if_fail(iface != NULL);
+    g_return_if_fail(iface->set_fill_style != NULL);
+
+    return iface->set_fill_style(renderer, style);
+}
+
+
+static void
+bb_item_renderer_set_fill_style_missing(BbItemRenderer *renderer, BbFillStyle *style)
+{
+    g_error("bb_item_renderer_set_fill_style() not overridden");
+}
+
+
+void
+bb_item_renderer_set_line_style(BbItemRenderer *renderer, BbLineStyle *style)
+{
+    BbItemRendererInterface *iface = BB_ITEM_RENDERER_GET_IFACE(renderer);
+
+    g_return_if_fail(iface != NULL);
+    g_return_if_fail(iface->set_line_style != NULL);
+
+    return iface->set_line_style(renderer, style);
+}
+
+
+static void
+bb_item_renderer_set_line_style_missing(BbItemRenderer *renderer, BbLineStyle *style)
+{
+    g_error("bb_item_renderer_set_line_style() not overridden");
 }
