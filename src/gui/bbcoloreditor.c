@@ -48,6 +48,9 @@ G_DEFINE_TYPE(BbColorEditor, bb_color_editor, GTK_TYPE_EXPANDER)
 
 
 static void
+bb_color_editor_apply(BbColorComboBox *combo, BbColorEditor *editor);
+
+static void
 bb_color_editor_apply_lambda(BbSchematicItem *item, gpointer user_data);
 
 static void
@@ -80,14 +83,13 @@ bb_color_editor_apply(BbColorComboBox *combo, BbColorEditor *editor)
 
     window = bb_main_window_get_current_document_window(editor->main_window);
 
-    if (BB_IS_SCHEMATIC_WINDOW(window))
-    {
-        bb_schematic_window_apply_selection(
-            BB_SCHEMATIC_WINDOW(window),
-            bb_color_editor_apply_lambda,
-            GINT_TO_POINTER(bb_color_combo_box_get_color(combo))
-            );
-    }
+    g_return_if_fail(BB_IS_SCHEMATIC_WINDOW(window));
+
+    bb_schematic_window_apply_selection(
+        BB_SCHEMATIC_WINDOW(window),
+        bb_color_editor_apply_lambda,
+        GINT_TO_POINTER(bb_color_combo_box_get_color(combo))
+        );
 }
 
 
