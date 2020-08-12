@@ -93,12 +93,13 @@ bb_schematic_item_write_async_missing(
 static gboolean
 bb_schematic_item_write_finish_missing(
     BbSchematicItem *item,
+    GOutputStream *stream,
     GAsyncResult *result,
     GError **error
     );
 
 
-GParamSpec *properties[N_PROPERTIES];
+static GParamSpec *properties[N_PROPERTIES];
 
 
 BbBounds*
@@ -334,6 +335,7 @@ bb_schematic_item_write_async_missing(
 gboolean
 bb_schematic_item_write_finish(
     BbSchematicItem *item,
+    GOutputStream *stream,
     GAsyncResult *result,
     GError **error
     )
@@ -343,13 +345,14 @@ bb_schematic_item_write_finish(
     g_return_val_if_fail(class != NULL, FALSE);
     g_return_val_if_fail(class->write_finish != NULL, FALSE);
 
-    return class->write_finish(item, result, error);
+    return class->write_finish(item, stream, result, error);
 }
 
 
 static gboolean
 bb_schematic_item_write_finish_missing(
     BbSchematicItem *item,
+    GOutputStream *stream,
     GAsyncResult *result,
     GError **error
     )

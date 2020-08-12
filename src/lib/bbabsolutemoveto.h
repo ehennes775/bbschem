@@ -31,11 +31,11 @@ struct _BbAbsoluteMoveToClass
 
 
 int
-bb_absolute_move_to_get_x(const BbAbsoluteMoveTo *command);
+bb_absolute_move_to_get_x(BbAbsoluteMoveTo *command);
 
 
 int
-bb_absolute_move_to_get_y(const BbAbsoluteMoveTo *command);
+bb_absolute_move_to_get_y(BbAbsoluteMoveTo *command);
 
 
 BbAbsoluteMoveTo*

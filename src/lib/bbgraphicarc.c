@@ -25,12 +25,21 @@
 enum
 {
     PROP_0,
+
     PROP_CENTER_X,
     PROP_CENTER_Y,
     PROP_RADIUS,
     PROP_START_ANGLE,
     PROP_SWEEP_ANGLE,
-    PROP_WIDTH,
+
+    PROP_ITEM_COLOR,
+
+    PROP_CAP_TYPE,
+    PROP_DASH_LENGTH,
+    PROP_DASH_SPACE,
+    PROP_DASH_TYPE,
+    PROP_LINE_WIDTH,
+
     N_PROPERTIES
 };
 
@@ -70,11 +79,17 @@ bb_graphic_arc_finalize(GObject *object);
 static void
 bb_graphic_arc_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
 
+static int
+bb_graphic_arc_get_width(BbGraphicArc *arc);
+
 static void
 bb_graphic_arc_render(BbSchematicItem *item, BbItemRenderer *renderer);
 
 static void
 bb_graphic_arc_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
+
+static void
+bb_graphic_arc_set_width(BbGraphicArc *arc, int width);
 
 static void
 bb_graphic_arc_translate(BbSchematicItem *item, int dx, int dy);
@@ -101,7 +116,7 @@ bb_graphic_arc_write_finish(
     );
 
 
-GParamSpec *properties[N_PROPERTIES];
+static GParamSpec *properties[N_PROPERTIES];
 
 
 static BbBounds*
@@ -188,7 +203,7 @@ bb_graphic_arc_class_init(BbGraphicArcClass *klasse)
         G_PARAM_READWRITE
         );
 
-    properties[PROP_WIDTH] = g_param_spec_int(
+    properties[PROP_LINE_WIDTH] = g_param_spec_int(
         "width",
         "Line Width",
         "The line width",
@@ -269,7 +284,7 @@ bb_graphic_arc_get_property(GObject *object, guint property_id, GValue *value, G
             g_value_set_int(value, bb_graphic_arc_get_sweep_angle(BB_GRAPHIC_ARC(object)));
             break;
 
-        case PROP_WIDTH:
+        case PROP_LINE_WIDTH:
             g_value_set_int(value, bb_graphic_arc_get_width(BB_GRAPHIC_ARC(object)));
             break;
 
@@ -306,7 +321,7 @@ bb_graphic_arc_get_sweep_angle(BbGraphicArc *arc)
 }
 
 
-int
+static int
 bb_graphic_arc_get_width(BbGraphicArc *arc)
 {
     g_return_val_if_fail(arc != NULL, 0);
@@ -397,7 +412,7 @@ bb_graphic_arc_set_property(GObject *object, guint property_id, const GValue *va
             bb_graphic_arc_set_sweep_angle(BB_GRAPHIC_ARC(object), g_value_get_int(value));
             break;
 
-        case PROP_WIDTH:
+        case PROP_LINE_WIDTH:
             bb_graphic_arc_set_width(BB_GRAPHIC_ARC(object), g_value_get_int(value));
             break;
 
@@ -449,7 +464,7 @@ bb_graphic_arc_set_sweep_angle(BbGraphicArc *arc, int angle)
 }
 
 
-void
+static void
 bb_graphic_arc_set_width(BbGraphicArc *arc, int width)
 {
     g_return_if_fail(arc != NULL);
@@ -459,7 +474,7 @@ bb_graphic_arc_set_width(BbGraphicArc *arc, int width)
     {
         arc->line_style->line_width = width;
 
-        g_object_notify_by_pspec(G_OBJECT(arc), properties[PROP_WIDTH]);
+        g_object_notify_by_pspec(G_OBJECT(arc), properties[PROP_LINE_WIDTH]);
     }
 }
 

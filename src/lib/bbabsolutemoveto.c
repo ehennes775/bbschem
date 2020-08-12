@@ -44,7 +44,7 @@ G_DEFINE_TYPE(BbAbsoluteMoveTo, bb_absolute_move_to, BB_TYPE_PATH_COMMAND);
 
 
 static BbPathCommand*
-bb_absolute_move_to_clone(const BbPathCommand *command);
+bb_absolute_move_to_clone(BbPathCommand *command);
 
 static void
 bb_absolute_move_to_dispose(GObject *object);
@@ -74,7 +74,7 @@ static void
 bb_absolute_move_to_translate(BbPathCommand *command, int dx, int dy);
 
 
-GParamSpec *properties[N_PROPERTIES];
+static GParamSpec *properties[N_PROPERTIES];
 
 
 static void
@@ -125,12 +125,14 @@ bb_absolute_move_to_class_init(BbAbsoluteMoveToClass *klasse)
 
 
 static BbPathCommand*
-bb_absolute_move_to_clone(const BbPathCommand *command)
+bb_absolute_move_to_clone(BbPathCommand *command)
 {
-    return bb_absolute_move_to_new(
-        bb_absolute_move_to_get_x(command),
-        bb_absolute_move_to_get_y(command)
-        );
+    BbAbsoluteMoveTo *move_to = BB_ABSOLUTE_MOVE_TO(command);
+
+    return BB_PATH_COMMAND(bb_absolute_move_to_new(
+        bb_absolute_move_to_get_x(move_to),
+        bb_absolute_move_to_get_y(move_to)
+        ));
 }
 
 
@@ -166,7 +168,7 @@ bb_absolute_move_to_get_property(GObject *object, guint property_id, GValue *val
 
 
 int
-bb_absolute_move_to_get_x(const BbAbsoluteMoveTo *command)
+bb_absolute_move_to_get_x(BbAbsoluteMoveTo *command)
 {
     g_return_val_if_fail(command != NULL, 0);
 
@@ -175,7 +177,7 @@ bb_absolute_move_to_get_x(const BbAbsoluteMoveTo *command)
 
 
 int
-bb_absolute_move_to_get_y(const BbAbsoluteMoveTo *command)
+bb_absolute_move_to_get_y(BbAbsoluteMoveTo *command)
 {
     g_return_val_if_fail(command != NULL, 0);
 
@@ -205,9 +207,11 @@ bb_absolute_move_to_new(int x, int y)
 static void
 bb_absolute_move_to_mirror_x(BbPathCommand *command, int cx)
 {
+    BbAbsoluteMoveTo *move_to = BB_ABSOLUTE_MOVE_TO(command);
+
     bb_absolute_move_to_set_x(
-        command,
-        2 * cx - bb_absolute_move_to_get_x(command)
+        move_to,
+        2 * cx - bb_absolute_move_to_get_x(move_to)
         );
 }
 
@@ -215,9 +219,11 @@ bb_absolute_move_to_mirror_x(BbPathCommand *command, int cx)
 static void
 bb_absolute_move_to_mirror_y(BbPathCommand *command, int cy)
 {
+    BbAbsoluteMoveTo *move_to = BB_ABSOLUTE_MOVE_TO(command);
+
     bb_absolute_move_to_set_y(
-        command,
-        2 * cy - bb_absolute_move_to_get_y(command)
+        move_to,
+        2 * cy - bb_absolute_move_to_get_y(move_to)
         );
 }
 
@@ -232,10 +238,12 @@ bb_absolute_move_to_register()
 static void
 bb_absolute_move_to_render(BbPathCommand *command, BbItemRenderer *renderer)
 {
+    BbAbsoluteMoveTo *move_to = BB_ABSOLUTE_MOVE_TO(command);
+
     bb_item_renderer_render_absolute_move_to(
         renderer,
-        bb_absolute_move_to_get_x(command),
-        bb_absolute_move_to_get_y(command)
+        bb_absolute_move_to_get_x(move_to),
+        bb_absolute_move_to_get_y(move_to)
         );
 }
 
@@ -280,7 +288,7 @@ bb_absolute_move_to_set_x(BbAbsoluteMoveTo *command, int x)
 
     command->x = x;
 
-    g_object_notify_by_pspec(command, properties[PROP_X]);
+    g_object_notify_by_pspec(G_OBJECT(command), properties[PROP_X]);
 }
 
 
@@ -291,7 +299,7 @@ bb_absolute_move_to_set_y(BbAbsoluteMoveTo *command, int y)
 
     command->y = y;
 
-    g_object_notify_by_pspec(command, properties[PROP_Y]);
+    g_object_notify_by_pspec(G_OBJECT(command), properties[PROP_Y]);
 }
 
 

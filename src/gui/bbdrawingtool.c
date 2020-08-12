@@ -51,7 +51,7 @@ static void
 bb_drawing_tool_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
 
 
-GParamSpec *properties[N_PROPERTIES];
+static GParamSpec *properties[N_PROPERTIES];
 
 
 static void
@@ -84,7 +84,7 @@ bb_drawing_tool_class_init(BbDrawingToolClass *klasse)
 static void
 bb_drawing_tool_dispose(GObject *object)
 {
-    BbDrawingToolPrivate* privat = bb_drawing_tool_get_instance_private(object);
+    BbDrawingToolPrivate* privat = bb_drawing_tool_get_instance_private(BB_DRAWING_TOOL(object));
     g_return_if_fail(privat != NULL);
 
     g_clear_object(&privat->window);

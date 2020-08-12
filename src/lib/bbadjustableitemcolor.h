@@ -26,7 +26,7 @@ G_DECLARE_INTERFACE(BbAdjustableItemColor, bb_adjustable_item_color, BB, ADJUSTA
 
 struct _BbAdjustableItemColorInterface
 {
-    GTypeInterface g_iface;
+    GTypeInterface parent;
 };
 
 

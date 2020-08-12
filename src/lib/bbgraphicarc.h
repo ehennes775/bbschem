@@ -28,37 +28,41 @@ G_DECLARE_FINAL_TYPE(BbGraphicArc, bb_graphic_arc, BB, GRAPHIC_ARC, BbSchematicI
 int
 bb_graphic_arc_get_center_x(BbGraphicArc *arc);
 
+
 int
 bb_graphic_arc_get_center_y(BbGraphicArc *arc);
+
 
 int
 bb_graphic_arc_get_radius(BbGraphicArc *arc);
 
+
 int
 bb_graphic_arc_get_start_angle(BbGraphicArc *arc);
+
 
 int
 bb_graphic_arc_get_sweep_angle(BbGraphicArc *arc);
 
-int
-bb_graphic_arc_get_width(BbGraphicArc *arc);
 
 void
 bb_graphic_arc_set_center_x(BbGraphicArc *arc, int x);
 
+
 void
 bb_graphic_arc_set_center_y(BbGraphicArc *arc, int y);
+
 
 void
 bb_graphic_arc_set_radius(BbGraphicArc *arc, int radius);
 
+
 void
 bb_graphic_arc_set_start_angle(BbGraphicArc *arc, int angle);
+
 
 void
 bb_graphic_arc_set_sweep_angle(BbGraphicArc *arc, int angle);
 
-void
-bb_graphic_arc_set_width(BbGraphicArc *arc, int width);
 
 #endif

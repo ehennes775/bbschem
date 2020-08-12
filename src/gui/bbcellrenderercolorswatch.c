@@ -23,7 +23,7 @@
 enum
 {
     PROP_0,
-    PROP_COLOR
+    PROP_ITEM_COLOR
 };
 
 
@@ -65,7 +65,7 @@ bb_cell_renderer_color_swatch_class_init(BbCellRendererColorSwatchClass *klasse)
 
     g_object_class_install_property(
         G_OBJECT_CLASS(klasse),
-        PROP_COLOR,
+        PROP_ITEM_COLOR,
         g_param_spec_boxed(
             "color",
             "",
@@ -91,7 +91,7 @@ bb_cell_renderer_color_swatch_get_property(GObject *object, guint property_id, G
 {
     switch (property_id)
     {
-        case PROP_COLOR:
+        case PROP_ITEM_COLOR:
             g_value_set_boxed(
                 value,
                 bb_cell_renderer_color_swatch_get_color(BB_CELL_RENDERER_COLOR_SWATCH(object))
@@ -209,7 +209,7 @@ bb_cell_renderer_color_swatch_set_property(GObject *object, guint property_id, c
 {
     switch (property_id)
     {
-        case PROP_COLOR:
+        case PROP_ITEM_COLOR:
             bb_cell_renderer_color_swatch_set_color(
                 BB_CELL_RENDERER_COLOR_SWATCH(object),
                 g_value_get_boxed(value)

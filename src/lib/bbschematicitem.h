@@ -51,6 +51,7 @@ struct _BbSchematicItemClass
 
     gboolean (*write_finish)(
         BbSchematicItem *item,
+        GOutputStream *stream,
         GAsyncResult *result,
         GError **error
         );
@@ -97,6 +98,7 @@ bb_schematic_item_write_async(
 gboolean
 bb_schematic_item_write_finish(
     BbSchematicItem *item,
+    GOutputStream *stream,
     GAsyncResult *result,
     GError **error
     );

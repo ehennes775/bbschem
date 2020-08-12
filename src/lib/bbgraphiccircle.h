@@ -28,28 +28,29 @@ G_DECLARE_FINAL_TYPE(BbGraphicCircle, bb_graphic_circle, BB, GRAPHIC_CIRCLE, BbS
 int
 bb_graphic_circle_get_center_x(BbGraphicCircle *circle);
 
+
 int
 bb_graphic_circle_get_center_y(BbGraphicCircle *circle);
+
 
 int
 bb_graphic_circle_get_radius(BbGraphicCircle *circle);
 
-int
-bb_graphic_circle_get_width(BbGraphicCircle *circle);
 
 BbGraphicCircle*
 bb_graphic_circle_new();
 
+
 void
 bb_graphic_circle_set_center_x(BbGraphicCircle *circle, int x);
+
 
 void
 bb_graphic_circle_set_center_y(BbGraphicCircle *circle, int y);
 
+
 void
 bb_graphic_circle_set_radius(BbGraphicCircle *circle, int radius);
 
-void
-bb_graphic_circle_set_width(BbGraphicCircle *circle, int width);
 
 #endif

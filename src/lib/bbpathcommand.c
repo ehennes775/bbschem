@@ -34,7 +34,7 @@ G_DEFINE_TYPE(BbPathCommand, bb_path_command, G_TYPE_OBJECT)
 
 
 static BbPathCommand*
-bb_path_command_clone_missing(const BbPathCommand *command);
+bb_path_command_clone_missing(BbPathCommand *command);
 
 static void
 bb_path_command_dispose(GObject *object);
@@ -67,7 +67,7 @@ static void
 bb_path_command_translate_missing(BbPathCommand *command, int dx, int dy);
 
 
-GParamSpec *properties[N_PROPERTIES];
+static GParamSpec *properties[N_PROPERTIES];
 
 
 static void
@@ -94,7 +94,7 @@ bb_path_command_class_init(BbPathCommandClass *klasse)
 
 
 BbPathCommand*
-bb_path_command_clone(const BbPathCommand *command)
+bb_path_command_clone(BbPathCommand *command)
 {
     BbPathCommandClass *class = BB_PATH_COMMAND_GET_CLASS(command);
 
@@ -106,7 +106,7 @@ bb_path_command_clone(const BbPathCommand *command)
 
 
 static BbPathCommand*
-bb_path_command_clone_missing(const BbPathCommand *command)
+bb_path_command_clone_missing(BbPathCommand *command)
 {
     g_error("bb_path_command_clone() not overridden");
 }

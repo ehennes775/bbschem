@@ -44,7 +44,7 @@ G_DEFINE_TYPE(BbRelativeMoveTo, bb_relative_move_to, BB_TYPE_PATH_COMMAND);
 
 
 static BbPathCommand*
-bb_relative_move_to_clone(const BbPathCommand *command);
+bb_relative_move_to_clone(BbPathCommand *command);
 
 static void
 bb_relative_move_to_dispose(GObject *object);
@@ -74,7 +74,7 @@ static void
 bb_relative_move_to_translate(BbPathCommand *command, int dx, int dy);
 
 
-GParamSpec *properties[N_PROPERTIES];
+static GParamSpec *properties[N_PROPERTIES];
 
 
 static void
@@ -125,12 +125,14 @@ bb_relative_move_to_class_init(BbRelativeMoveToClass *klasse)
 
 
 static BbPathCommand*
-bb_relative_move_to_clone(const BbPathCommand *command)
+bb_relative_move_to_clone(BbPathCommand *command)
 {
-    return bb_relative_move_to_new(
-        bb_relative_move_to_get_dx(command),
-        bb_relative_move_to_get_dy(command)
-        );
+    BbRelativeMoveTo *move_to = BB_RELATIVE_MOVE_TO(command);
+
+    return BB_PATH_COMMAND(bb_relative_move_to_new(
+        bb_relative_move_to_get_dx(move_to),
+        bb_relative_move_to_get_dy(move_to)
+        ));
 }
 
 
@@ -232,10 +234,12 @@ bb_relative_move_to_register()
 static void
 bb_relative_move_to_render(BbPathCommand *command, BbItemRenderer *renderer)
 {
+    BbRelativeMoveTo *move_to = BB_RELATIVE_MOVE_TO(command);
+
     bb_item_renderer_render_relative_move_to(
         renderer,
-        bb_relative_move_to_get_dx(command),
-        bb_relative_move_to_get_dy(command)
+        bb_relative_move_to_get_dx(move_to),
+        bb_relative_move_to_get_dy(move_to)
         );
 }
 

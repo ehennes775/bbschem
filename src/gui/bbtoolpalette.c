@@ -74,7 +74,7 @@ static void
 bb_tool_palette_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
 
 
-GParamSpec *properties[N_PROPERTIES];
+static GParamSpec *properties[N_PROPERTIES];
 
 
 static void

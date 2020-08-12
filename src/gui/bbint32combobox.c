@@ -180,7 +180,7 @@ bb_int32_combo_box_parse_value(BbInt32ComboBox *combo, GError **error)
             temp_error = g_error_new(
                 g_quark_from_string("bbsch"),
                 0,
-                ""
+                "TODO"
                 );
         }
     }
@@ -189,7 +189,7 @@ bb_int32_combo_box_parse_value(BbInt32ComboBox *combo, GError **error)
         temp_error = g_error_new(
             g_quark_from_string("bbsch"),
             0,
-            ""
+            "TODO"
             );
     }
 

@@ -44,7 +44,7 @@ G_DEFINE_TYPE(BbRelativeLineTo, bb_relative_line_to, BB_TYPE_PATH_COMMAND);
 
 
 static BbPathCommand*
-bb_relative_line_to_clone(const BbPathCommand *command);
+bb_relative_line_to_clone(BbPathCommand *command);
 
 static void
 bb_relative_line_to_dispose(GObject *object);
@@ -74,7 +74,7 @@ static void
 bb_relative_line_to_translate(BbPathCommand *command, int dx, int dy);
 
 
-GParamSpec *properties[N_PROPERTIES];
+static GParamSpec *properties[N_PROPERTIES];
 
 
 static void
@@ -125,12 +125,14 @@ bb_relative_line_to_class_init(BbRelativeLineToClass *klasse)
 
 
 static BbPathCommand*
-bb_relative_line_to_clone(const BbPathCommand *command)
+bb_relative_line_to_clone(BbPathCommand *command)
 {
-    return bb_relative_line_to_new(
-        bb_relative_line_to_get_dx(command),
-        bb_relative_line_to_get_dy(command)
-        );
+    BbRelativeLineTo *line_to = BB_RELATIVE_LINE_TO(command);
+
+    return BB_PATH_COMMAND(bb_relative_line_to_new(
+        bb_relative_line_to_get_dx(line_to),
+        bb_relative_line_to_get_dy(line_to)
+        ));
 }
 
 
@@ -232,10 +234,12 @@ bb_relative_line_to_register()
 static void
 bb_relative_line_to_render(BbPathCommand *command, BbItemRenderer *renderer)
 {
+    BbRelativeLineTo *line_to = BB_RELATIVE_LINE_TO(command);
+
     bb_item_renderer_render_relative_line_to(
         renderer,
-        bb_relative_line_to_get_dx(command),
-        bb_relative_line_to_get_dy(command)
+        bb_relative_line_to_get_dx(line_to),
+        bb_relative_line_to_get_dy(line_to)
         );
 }
 
@@ -280,7 +284,7 @@ bb_relative_line_to_set_dx(BbRelativeLineTo *command, int dx)
 
     command->dx = dx;
 
-    g_object_notify_by_pspec(command, properties[PROP_DX]);
+    g_object_notify_by_pspec(G_OBJECT(command), properties[PROP_DX]);
 }
 
 
@@ -291,7 +295,7 @@ bb_relative_line_to_set_dy(BbRelativeLineTo *command, int dy)
 
     command->dy = dy;
 
-    g_object_notify_by_pspec(command, properties[PROP_DY]);
+    g_object_notify_by_pspec(G_OBJECT(command), properties[PROP_DY]);
 }
 
 

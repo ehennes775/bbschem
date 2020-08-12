@@ -25,7 +25,22 @@
 enum
 {
     PROP_0,
-    PROP_WIDTH,
+
+    PROP_ITEM_COLOR,
+
+    PROP_CAP_TYPE,
+    PROP_DASH_LENGTH,
+    PROP_DASH_SPACE,
+    PROP_DASH_TYPE,
+    PROP_LINE_WIDTH,
+
+    PROP_FILL_TYPE,
+    PROP_FILL_WIDTH,
+    PROP_ANGLE_1,
+    PROP_ANGLE_2,
+    PROP_PITCH_1,
+    PROP_PITCH_2,
+
     N_PROPERTIES
 };
 
@@ -36,12 +51,12 @@ struct _BbGraphicPath
 
     BbItemParams *params;
 
+    GSList *commands;
+
     int color;
 
     BbFillStyle *fill_style;
     BbLineStyle *line_style;
-
-    GSList *commands;
 };
 
 
@@ -92,6 +107,24 @@ bb_graphic_path_dispose(GObject *object);
 static void
 bb_graphic_path_finalize(GObject *object);
 
+static int
+bb_graphic_path_get_cap_type(BbGraphicPath *path);
+
+static int
+bb_graphic_path_get_dash_length(BbGraphicPath *path);
+
+static int
+bb_graphic_path_get_dash_space(BbGraphicPath *path);
+
+static int
+bb_graphic_path_get_dash_type(BbGraphicPath *path);
+
+static int
+bb_graphic_path_get_item_color(BbGraphicPath *path);
+
+static int
+bb_graphic_path_get_line_width(BbGraphicPath *path);
+
 static void
 bb_graphic_path_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
 
@@ -118,6 +151,24 @@ bb_graphic_path_rotate(BbSchematicItem *item, int cx, int cy, int angle);
 
 static void
 bb_graphic_path_rotate_lambda(BbPathCommand *command, RotateCapture *capture);
+
+static void
+bb_graphic_path_set_cap_type(BbGraphicPath *path, int type);
+
+static void
+bb_graphic_path_set_dash_length(BbGraphicPath *path, int length);
+
+static void
+bb_graphic_path_set_dash_space(BbGraphicPath *path, int space);
+
+static void
+bb_graphic_path_set_dash_type(BbGraphicPath *path, int type);
+
+static void
+bb_graphic_path_set_item_color(BbGraphicPath *path, int color);
+
+static void
+bb_graphic_path_set_line_width(BbGraphicPath *path, int width);
 
 static void
 bb_graphic_path_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
@@ -147,7 +198,7 @@ bb_graphic_path_write_finish(
     );
 
 
-GParamSpec *properties[N_PROPERTIES];
+static GParamSpec *properties[N_PROPERTIES];
 
 
 static BbBounds*
@@ -178,23 +229,48 @@ bb_graphic_path_class_init(BbGraphicPathClass *klasse)
     BB_SCHEMATIC_ITEM_CLASS(klasse)->write_async = bb_graphic_path_write_async;
     BB_SCHEMATIC_ITEM_CLASS(klasse)->write_finish = bb_graphic_path_write_finish;
 
-    properties[PROP_WIDTH] = g_param_spec_int(
-        "width",
-        "Line Width",
-        "The line width",
-        0,
-        INT_MAX,
-        0,
-        G_PARAM_READWRITE
+    g_object_class_override_property(
+        G_OBJECT_CLASS(klasse),
+        PROP_CAP_TYPE,
+        "cap-type"
+        );
+
+    g_object_class_override_property(
+        G_OBJECT_CLASS(klasse),
+        PROP_DASH_LENGTH,
+        "dash-length"
+        );
+
+    g_object_class_override_property(
+        G_OBJECT_CLASS(klasse),
+        PROP_DASH_SPACE,
+        "dash-space"
+        );
+
+    g_object_class_override_property(
+        G_OBJECT_CLASS(klasse),
+        PROP_DASH_TYPE,
+        "dash-type"
+        );
+
+    g_object_class_override_property(
+        G_OBJECT_CLASS(klasse),
+        PROP_ITEM_COLOR,
+        "item-color"
+        );
+
+    g_object_class_override_property(
+        G_OBJECT_CLASS(klasse),
+        PROP_LINE_WIDTH,
+        "line-width"
         );
 
     for (int index = PROP_0 + 1; index < N_PROPERTIES; ++index)
     {
-        g_object_class_install_property(
+        properties[index] = g_object_class_find_property(
             G_OBJECT_CLASS(klasse),
-            index,
-            properties[index]
-            );
+            index
+        );
     }
 }
 
@@ -202,6 +278,14 @@ bb_graphic_path_class_init(BbGraphicPathClass *klasse)
 static void
 bb_graphic_path_dispose(GObject *object)
 {
+    BbGraphicPath *path = BB_GRAPHIC_PATH(object);
+
+    g_return_if_fail(path != NULL);
+
+    g_slist_free_full(
+        g_steal_pointer(&path->commands),
+        g_object_unref
+        );
 }
 
 
@@ -217,28 +301,97 @@ bb_graphic_path_finalize(GObject *object)
 }
 
 
-static void
-bb_graphic_path_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec)
+static int
+bb_graphic_path_get_cap_type(BbGraphicPath *path)
 {
-    switch (property_id)
-    {
-        case PROP_WIDTH:
-            g_value_set_int(value, bb_graphic_path_get_width(BB_GRAPHIC_PATH(object)));
-            break;
+    g_return_val_if_fail(path != NULL, 0);
+    g_return_val_if_fail(path->line_style != NULL, 0);
 
-        default:
-            G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
-    }
+    return path->line_style->cap_type;
 }
 
 
-int
-bb_graphic_path_get_width(BbGraphicPath *path)
+static int
+bb_graphic_path_get_dash_length(BbGraphicPath *path)
+{
+    g_return_val_if_fail(path != NULL, 0);
+    g_return_val_if_fail(path->line_style != NULL, 0);
+
+    return path->line_style->dash_length;
+}
+
+
+static int
+bb_graphic_path_get_dash_space(BbGraphicPath *path)
+{
+    g_return_val_if_fail(path != NULL, 0);
+    g_return_val_if_fail(path->line_style != NULL, 0);
+
+    return path->line_style->dash_space;
+}
+
+
+static int
+bb_graphic_path_get_dash_type(BbGraphicPath *path)
+{
+    g_return_val_if_fail(path != NULL, 0);
+    g_return_val_if_fail(path->line_style != NULL, 0);
+
+    return path->line_style->dash_type;
+}
+
+
+static int
+bb_graphic_path_get_item_color(BbGraphicPath *path)
+{
+    g_return_val_if_fail(path != NULL, 0);
+
+    return path->color;
+}
+
+
+static int
+bb_graphic_path_get_line_width(BbGraphicPath *path)
 {
     g_return_val_if_fail(path != NULL, 0);
     g_return_val_if_fail(path->line_style != NULL, 0);
 
     return path->line_style->line_width;
+}
+
+
+static void
+bb_graphic_path_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec)
+{
+    switch (property_id)
+    {
+        case PROP_CAP_TYPE:
+            g_value_set_int(value, bb_graphic_path_get_cap_type(BB_GRAPHIC_PATH(object)));
+            break;
+
+        case PROP_ITEM_COLOR:
+            g_value_set_int(value, bb_graphic_path_get_item_color(BB_GRAPHIC_PATH(object)));
+            break;
+
+        case PROP_DASH_LENGTH:
+            g_value_set_int(value, bb_graphic_path_get_dash_length(BB_GRAPHIC_PATH(object)));
+            break;
+
+        case PROP_DASH_SPACE:
+            g_value_set_int(value, bb_graphic_path_get_dash_space(BB_GRAPHIC_PATH(object)));
+            break;
+
+        case PROP_DASH_TYPE:
+            g_value_set_int(value, bb_graphic_path_get_dash_type(BB_GRAPHIC_PATH(object)));
+            break;
+
+        case PROP_LINE_WIDTH:
+            g_value_set_int(value, bb_graphic_path_get_line_width(BB_GRAPHIC_PATH(object)));
+            break;
+
+        default:
+            G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
+    }
 }
 
 
@@ -372,22 +525,81 @@ bb_graphic_path_render_lambda(gpointer command, gpointer renderer)
 
 
 static void
-bb_graphic_path_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec)
+bb_graphic_path_set_cap_type(BbGraphicPath *path, int type)
 {
-    switch (property_id)
-    {
-        case PROP_WIDTH:
-            bb_graphic_path_set_width(BB_GRAPHIC_PATH(object), g_value_get_int(value));
-            break;
+    g_return_if_fail(path != NULL);
+    g_return_if_fail(path->line_style != NULL);
 
-        default:
-            G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
+    if (path->line_style->cap_type != type)
+    {
+        path->line_style->cap_type = type;
+
+        g_object_notify_by_pspec(G_OBJECT(path), properties[PROP_CAP_TYPE]);
     }
 }
 
 
-void
-bb_graphic_path_set_width(BbGraphicPath *path, int width)
+static void
+bb_graphic_path_set_dash_length(BbGraphicPath *path, int length)
+{
+    g_return_if_fail(path != NULL);
+    g_return_if_fail(path->line_style != NULL);
+
+    if (path->line_style->dash_length != length)
+    {
+        path->line_style->dash_length = length;
+
+        g_object_notify_by_pspec(G_OBJECT(path), properties[PROP_DASH_LENGTH]);
+    }
+}
+
+
+static void
+bb_graphic_path_set_dash_space(BbGraphicPath *path, int space)
+{
+    g_return_if_fail(path != NULL);
+    g_return_if_fail(path->line_style != NULL);
+
+    if (path->line_style->dash_space != space)
+    {
+        path->line_style->dash_space = space;
+
+        g_object_notify_by_pspec(G_OBJECT(path), properties[PROP_DASH_SPACE]);
+    }
+}
+
+
+static void
+bb_graphic_path_set_dash_type(BbGraphicPath *path, int type)
+{
+    g_return_if_fail(path != NULL);
+    g_return_if_fail(path->line_style != NULL);
+
+    if (path->line_style->dash_type != type)
+    {
+        path->line_style->dash_type = type;
+
+        g_object_notify_by_pspec(G_OBJECT(path), properties[PROP_DASH_TYPE]);
+    }
+}
+
+
+static void
+bb_graphic_path_set_item_color(BbGraphicPath *path, int color)
+{
+    g_return_if_fail(path != NULL);
+
+    if (path->color != color)
+    {
+        path->color = color;
+
+        g_object_notify_by_pspec(G_OBJECT(path), properties[PROP_ITEM_COLOR]);
+    }
+}
+
+
+static void
+bb_graphic_path_set_line_width(BbGraphicPath *path, int width)
 {
     g_return_if_fail(path != NULL);
     g_return_if_fail(path->line_style != NULL);
@@ -396,7 +608,42 @@ bb_graphic_path_set_width(BbGraphicPath *path, int width)
     {
         path->line_style->line_width = width;
 
-        g_object_notify_by_pspec(G_OBJECT(path), properties[PROP_WIDTH]);
+        g_object_notify_by_pspec(G_OBJECT(path), properties[PROP_LINE_WIDTH]);
+    }
+}
+
+
+static void
+bb_graphic_path_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec)
+{
+    switch (property_id)
+    {
+        case PROP_CAP_TYPE:
+            bb_graphic_path_set_cap_type(BB_GRAPHIC_PATH(object), g_value_get_int(value));
+            break;
+
+        case PROP_ITEM_COLOR:
+            bb_graphic_path_set_item_color(BB_GRAPHIC_PATH(object), g_value_get_int(value));
+            break;
+
+        case PROP_DASH_LENGTH:
+            bb_graphic_path_set_dash_length(BB_GRAPHIC_PATH(object), g_value_get_int(value));
+            break;
+
+        case PROP_DASH_SPACE:
+            bb_graphic_path_set_dash_space(BB_GRAPHIC_PATH(object), g_value_get_int(value));
+            break;
+
+        case PROP_DASH_TYPE:
+            bb_graphic_path_set_dash_type(BB_GRAPHIC_PATH(object), g_value_get_int(value));
+            break;
+
+        case PROP_LINE_WIDTH:
+            bb_graphic_path_set_line_width(BB_GRAPHIC_PATH(object), g_value_get_int(value));
+            break;
+
+        default:
+            G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
     }
 }
 

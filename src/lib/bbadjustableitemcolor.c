@@ -31,9 +31,9 @@ bb_adjustable_item_color_default_init(BbAdjustableItemColorInterface *class)
     g_object_interface_install_property(
         class,
         g_param_spec_int(
-            "color",
-            "Color",
-            "Color",
+            "item-color",
+            "Item Color",
+            "The Color of this Item",
             0,
             G_MAXINT,
             0,
@@ -52,7 +52,7 @@ bb_adjustable_item_color_get_color(BbAdjustableItemColor *item)
 
     g_object_get(
         G_OBJECT(item),
-        "color", &color,
+        "item-color", &color,
         NULL
         );
 
@@ -67,7 +67,7 @@ bb_adjustable_item_color_set_color(BbAdjustableItemColor *item, int color)
 
     g_object_set(
         G_OBJECT(item),
-        "color", color,
+        "item-color", color,
         NULL
         );
 }

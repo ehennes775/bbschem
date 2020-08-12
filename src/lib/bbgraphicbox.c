@@ -20,16 +20,35 @@
 #include "bbgraphicbox.h"
 #include "bbcoord.h"
 #include "bbitemparams.h"
+#include "bbadjustablefillstyle.h"
+#include "bbadjustableitemcolor.h"
+#include "bbadjustablelinestyle.h"
 
 
 enum
 {
     PROP_0,
-    PROP_WIDTH,
+
     PROP_X0,
     PROP_X1,
     PROP_Y0,
     PROP_Y1,
+
+    PROP_ITEM_COLOR,
+
+    PROP_CAP_TYPE,
+    PROP_DASH_LENGTH,
+    PROP_DASH_SPACE,
+    PROP_DASH_TYPE,
+    PROP_LINE_WIDTH,
+
+    PROP_FILL_TYPE,
+    PROP_FILL_WIDTH,
+    PROP_ANGLE_1,
+    PROP_ANGLE_2,
+    PROP_PITCH_1,
+    PROP_PITCH_2,
+
     N_PROPERTIES
 };
 
@@ -50,7 +69,24 @@ struct _BbGraphicBox
 };
 
 
-G_DEFINE_TYPE(BbGraphicBox, bb_graphic_box, BB_TYPE_SCHEMATIC_ITEM)
+static void
+bb_graphic_box_adjustable_fill_style_init(BbAdjustableFillStyleInterface *iface);
+
+static void
+bb_graphic_box_adjustable_item_color_init(BbAdjustableItemColorInterface *iface);
+
+static void
+bb_graphic_box_adjustable_line_style_init(BbAdjustableLineStyleInterface *iface);
+
+
+G_DEFINE_TYPE_WITH_CODE(
+    BbGraphicBox,
+    bb_graphic_box,
+    BB_TYPE_SCHEMATIC_ITEM,
+    G_IMPLEMENT_INTERFACE(BB_TYPE_ADJUSTABLE_FILL_STYLE, bb_graphic_box_adjustable_fill_style_init)
+    G_IMPLEMENT_INTERFACE(BB_TYPE_ADJUSTABLE_ITEM_COLOR, bb_graphic_box_adjustable_item_color_init)
+    G_IMPLEMENT_INTERFACE(BB_TYPE_ADJUSTABLE_LINE_STYLE, bb_graphic_box_adjustable_line_style_init)
+    )
 
 
 static BbBounds*
@@ -93,7 +129,25 @@ bb_graphic_box_write_finish(
     );
 
 
-GParamSpec *properties[N_PROPERTIES];
+static GParamSpec *properties[N_PROPERTIES];
+
+
+static void
+bb_graphic_box_adjustable_fill_style_init(BbAdjustableFillStyleInterface *iface)
+{
+}
+
+
+static void
+bb_graphic_box_adjustable_item_color_init(BbAdjustableItemColorInterface *iface)
+{
+}
+
+
+static void
+bb_graphic_box_adjustable_line_style_init(BbAdjustableLineStyleInterface *iface)
+{
+}
 
 
 static BbBounds*
@@ -129,62 +183,103 @@ bb_graphic_box_class_init(BbGraphicBoxClass *klasse)
     BB_SCHEMATIC_ITEM_CLASS(klasse)->write_async = bb_graphic_box_write_async;
     BB_SCHEMATIC_ITEM_CLASS(klasse)->write_finish = bb_graphic_box_write_finish;
 
-    properties[PROP_WIDTH] = g_param_spec_int(
-        "width",
-        "Line Width",
-        "The line width",
-        0,
-        INT_MAX,
-        0,
-        G_PARAM_READWRITE
+    g_object_class_override_property(
+        G_OBJECT_CLASS(klasse),
+        PROP_CAP_TYPE,
+        "cap-type"
         );
 
-    properties[PROP_X0] = g_param_spec_int(
-        "x0",
-        "x0",
-        "The x coordinate of the first endpoint",
-        INT_MIN,
-        INT_MAX,
-        0,
-        G_PARAM_READWRITE
+    g_object_class_override_property(
+        G_OBJECT_CLASS(klasse),
+        PROP_DASH_LENGTH,
+        "dash-length"
         );
 
-    properties[PROP_X1] = g_param_spec_int(
-        "x1",
-        "x1",
-        "The x coordinate of the second endpoint",
-        INT_MIN,
-        INT_MAX,
-        0,
-        G_PARAM_READWRITE
+    g_object_class_override_property(
+        G_OBJECT_CLASS(klasse),
+        PROP_DASH_SPACE,
+        "dash-space"
         );
 
-    properties[PROP_Y0] = g_param_spec_int(
-        "y0",
-        "y0",
-        "The y coordinate of the first endpoint",
-        INT_MIN,
-        INT_MAX,
-        0,
-        G_PARAM_READWRITE
+    g_object_class_override_property(
+        G_OBJECT_CLASS(klasse),
+        PROP_DASH_TYPE,
+        "dash-type"
         );
 
-    properties[PROP_Y1] = g_param_spec_int(
-        "y1",
-        "y1",
-        "The y coordinate of the second endpoint",
-        INT_MIN,
-        INT_MAX,
-        0,
-        G_PARAM_READWRITE
+    g_object_class_override_property(
+        G_OBJECT_CLASS(klasse),
+        PROP_ITEM_COLOR,
+        "item-color"
+        );
+
+    g_object_class_override_property(
+        G_OBJECT_CLASS(klasse),
+        PROP_LINE_WIDTH,
+        "line-width"
+        );
+
+    g_object_class_install_property(
+        G_OBJECT_CLASS(klasse),
+        PROP_X0,
+        g_param_spec_int(
+            "x0",
+            "x0",
+            "The x coordinate of the first endpoint",
+            INT_MIN,
+            INT_MAX,
+            0,
+            G_PARAM_READWRITE
+            )
+        );
+
+    g_object_class_install_property(
+        G_OBJECT_CLASS(klasse),
+        PROP_X1,
+        g_param_spec_int(
+            "x1",
+            "x1",
+            "The x coordinate of the second endpoint",
+            INT_MIN,
+            INT_MAX,
+            0,
+            G_PARAM_READWRITE
+            )
+        );
+
+    g_object_class_install_property(
+        G_OBJECT_CLASS(klasse),
+        PROP_Y0,  
+        g_param_spec_int(
+            "y0",
+            "y0",
+            "The y coordinate of the first endpoint",
+            INT_MIN,
+            INT_MAX,
+            0,
+            G_PARAM_READWRITE
+            )
+        );
+
+    g_object_class_install_property(
+        G_OBJECT_CLASS(klasse),
+        PROP_Y1,
+        g_param_spec_int(
+            "y1",
+            "y1",
+            "The y coordinate of the second endpoint",
+            INT_MIN,
+            INT_MAX,
+            0,
+            G_PARAM_READWRITE
+            )
         );
 
     for (int index = PROP_0 + 1; index < N_PROPERTIES; ++index)
     {
-        g_object_class_install_property(
+        properties[index] = g_object_class_find_property(
             G_OBJECT_CLASS(klasse),
-            index,
-            properties[index]
+            index
             );
     }
 }
@@ -207,14 +302,92 @@ bb_graphic_box_finalize(GObject *object)
     bb_line_style_free(box->line_style);
 }
 
+static int
+bb_graphic_box_get_cap_type(BbGraphicBox *box)
+{
+    g_return_val_if_fail(box != NULL, 0);
+    g_return_val_if_fail(box->line_style != NULL, 0);
+
+    return box->line_style->cap_type;
+}
+
+
+static int
+bb_graphic_box_get_dash_length(BbGraphicBox *box)
+{
+    g_return_val_if_fail(box != NULL, 0);
+    g_return_val_if_fail(box->line_style != NULL, 0);
+
+    return box->line_style->dash_length;
+}
+
+
+static int
+bb_graphic_box_get_dash_space(BbGraphicBox *box)
+{
+    g_return_val_if_fail(box != NULL, 0);
+    g_return_val_if_fail(box->line_style != NULL, 0);
+
+    return box->line_style->dash_space;
+}
+
+
+static int
+bb_graphic_box_get_dash_type(BbGraphicBox *box)
+{
+    g_return_val_if_fail(box != NULL, 0);
+    g_return_val_if_fail(box->line_style != NULL, 0);
+
+    return box->line_style->dash_type;
+}
+
+
+static int
+bb_graphic_box_get_item_color(BbGraphicBox *box)
+{
+    g_return_val_if_fail(box != NULL, 0);
+
+    return box->color;
+}
+
+
+static int
+bb_graphic_box_get_line_width(BbGraphicBox *box)
+{
+    g_return_val_if_fail(box != NULL, 0);
+    g_return_val_if_fail(box->line_style != NULL, 0);
+
+    return box->line_style->line_width;
+}
+
 
 static void
 bb_graphic_box_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec)
 {
     switch (property_id)
     {
-        case PROP_WIDTH:
-            g_value_set_int(value, bb_graphic_box_get_width(BB_GRAPHIC_BOX(object)));
+        case PROP_CAP_TYPE:
+            g_value_set_int(value, bb_graphic_box_get_cap_type(BB_GRAPHIC_BOX(object)));
+            break;
+
+        case PROP_ITEM_COLOR:
+            g_value_set_int(value, bb_graphic_box_get_item_color(BB_GRAPHIC_BOX(object)));
+            break;
+
+        case PROP_DASH_LENGTH:
+            g_value_set_int(value, bb_graphic_box_get_dash_length(BB_GRAPHIC_BOX(object)));
+            break;
+
+        case PROP_DASH_SPACE:
+            g_value_set_int(value, bb_graphic_box_get_dash_space(BB_GRAPHIC_BOX(object)));
+            break;
+
+        case PROP_DASH_TYPE:
+            g_value_set_int(value, bb_graphic_box_get_dash_type(BB_GRAPHIC_BOX(object)));
+            break;
+
+        case PROP_LINE_WIDTH:
+            g_value_set_int(value, bb_graphic_box_get_line_width(BB_GRAPHIC_BOX(object)));
             break;
 
         case PROP_X0:
@@ -236,16 +409,6 @@ bb_graphic_box_get_property(GObject *object, guint property_id, GValue *value, G
         default:
             G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
     }
-}
-
-
-int
-bb_graphic_box_get_width(BbGraphicBox *box)
-{
-    g_return_val_if_fail(box != NULL, 0);
-    g_return_val_if_fail(box->line_style != NULL, 0);
-
-    return box->line_style->line_width;
 }
 
 
@@ -323,16 +486,124 @@ bb_graphic_box_render(BbSchematicItem *item, BbItemRenderer *renderer)
     bb_item_renderer_render_graphic_box(renderer, box);
 }
 
+static void
+bb_graphic_box_set_cap_type(BbGraphicBox *box, int type)
+{
+    g_return_if_fail(box != NULL);
+    g_return_if_fail(box->line_style != NULL);
+
+    if (box->line_style->cap_type != type)
+    {
+        box->line_style->cap_type = type;
+
+        g_object_notify_by_pspec(G_OBJECT(box), properties[PROP_CAP_TYPE]);
+    }
+}
+
+
+static void
+bb_graphic_box_set_dash_length(BbGraphicBox *box, int length)
+{
+    g_return_if_fail(box != NULL);
+    g_return_if_fail(box->line_style != NULL);
+
+    if (box->line_style->dash_length != length)
+    {
+        box->line_style->dash_length = length;
+
+        g_object_notify_by_pspec(G_OBJECT(box), properties[PROP_DASH_LENGTH]);
+    }
+}
+
+
+static void
+bb_graphic_box_set_dash_space(BbGraphicBox *box, int space)
+{
+    g_return_if_fail(box != NULL);
+    g_return_if_fail(box->line_style != NULL);
+
+    if (box->line_style->dash_space != space)
+    {
+        box->line_style->dash_space = space;
+
+        g_object_notify_by_pspec(G_OBJECT(box), properties[PROP_DASH_SPACE]);
+    }
+}
+
+
+static void
+bb_graphic_box_set_dash_type(BbGraphicBox *box, int type)
+{
+    g_return_if_fail(box != NULL);
+    g_return_if_fail(box->line_style != NULL);
+
+    if (box->line_style->dash_type != type)
+    {
+        box->line_style->dash_type = type;
+
+        g_object_notify_by_pspec(G_OBJECT(box), properties[PROP_DASH_TYPE]);
+    }
+}
+
+
+static void
+bb_graphic_box_set_item_color(BbGraphicBox *box, int color)
+{
+    g_return_if_fail(box != NULL);
+
+    if (box->color != color)
+    {
+        box->color = color;
+
+        g_object_notify_by_pspec(G_OBJECT(box), properties[PROP_ITEM_COLOR]);
+    }
+}
+
+
+static void
+bb_graphic_box_set_line_width(BbGraphicBox *box, int width)
+{
+    g_return_if_fail(box != NULL);
+    g_return_if_fail(box->line_style != NULL);
+
+    if (box->line_style->line_width != width)
+    {
+        box->line_style->line_width = width;
+
+        g_object_notify_by_pspec(G_OBJECT(box), properties[PROP_LINE_WIDTH]);
+    }
+}
+
 
 static void
 bb_graphic_box_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec)
 {
     switch (property_id)
     {
-        case PROP_WIDTH:
-            bb_graphic_box_set_width(BB_GRAPHIC_BOX(object), g_value_get_int(value));
+        case PROP_CAP_TYPE:
+            bb_graphic_box_set_cap_type(BB_GRAPHIC_BOX(object), g_value_get_int(value));
             break;
 
+        case PROP_ITEM_COLOR:
+            bb_graphic_box_set_item_color(BB_GRAPHIC_BOX(object), g_value_get_int(value));
+            break;
+
+        case PROP_DASH_LENGTH:
+            bb_graphic_box_set_dash_length(BB_GRAPHIC_BOX(object), g_value_get_int(value));
+            break;
+
+        case PROP_DASH_SPACE:
+            bb_graphic_box_set_dash_space(BB_GRAPHIC_BOX(object), g_value_get_int(value));
+            break;
+
+        case PROP_DASH_TYPE:
+            bb_graphic_box_set_dash_type(BB_GRAPHIC_BOX(object), g_value_get_int(value));
+            break;
+
+        case PROP_LINE_WIDTH:
+            bb_graphic_box_set_line_width(BB_GRAPHIC_BOX(object), g_value_get_int(value));
+            break;
+            
         case PROP_X0:
             bb_graphic_box_set_x0(BB_GRAPHIC_BOX(object), g_value_get_int(value));
             break;
@@ -351,21 +622,6 @@ bb_graphic_box_set_property(GObject *object, guint property_id, const GValue *va
 
         default:
             G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
-    }
-}
-
-
-void
-bb_graphic_box_set_width(BbGraphicBox *box, int width)
-{
-    g_return_if_fail(box != NULL);
-    g_return_if_fail(box->line_style != NULL);
-
-    if (box->line_style->line_width != width)
-    {
-        box->line_style->line_width = width;
-
-        g_object_notify_by_pspec(G_OBJECT(box), properties[PROP_WIDTH]);
     }
 }
 

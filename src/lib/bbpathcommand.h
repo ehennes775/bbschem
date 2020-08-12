@@ -45,7 +45,7 @@ struct _BbPathCommandClass
  * @return The clone of the path command
  */
 BbPathCommand*
-bb_path_command_clone(const BbPathCommand *command);
+bb_path_command_clone(BbPathCommand *command);
 
 
 /**

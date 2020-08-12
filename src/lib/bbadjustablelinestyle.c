@@ -31,9 +31,9 @@ bb_adjustable_line_style_default_init(BbAdjustableLineStyleInterface *class)
     g_object_interface_install_property(
         class,
         g_param_spec_int(
-            "width",
-            "Width",
-            "Width",
+            "cap-type",
+            "Cap Type",
+            "Cap Type",
             0,
             G_MAXINT,
             0,
@@ -44,9 +44,48 @@ bb_adjustable_line_style_default_init(BbAdjustableLineStyleInterface *class)
     g_object_interface_install_property(
         class,
         g_param_spec_int(
-            "line-type",
-            "Line Type",
-            "Line Type",
+            "dash-length",
+            "Dash Length",
+            "Dash Length",
+            0,
+            G_MAXINT,
+            0,
+            G_PARAM_READWRITE
+            )
+        );
+
+    g_object_interface_install_property(
+        class,
+        g_param_spec_int(
+            "dash-space",
+            "Dash Space",
+            "Dash Space",
+            0,
+            G_MAXINT,
+            0,
+            G_PARAM_READWRITE
+            )
+        );
+
+    g_object_interface_install_property(
+        class,
+        g_param_spec_int(
+            "dash-type",
+            "Dash Type",
+            "Dash Type",
+            0,
+            G_MAXINT,
+            0,
+            G_PARAM_READWRITE
+            )
+        );
+
+    g_object_interface_install_property(
+        class,
+        g_param_spec_int(
+            "line-width",
+            "Line Width",
+            "Line Width",
             0,
             G_MAXINT,
             0,

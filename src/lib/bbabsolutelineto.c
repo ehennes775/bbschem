@@ -44,7 +44,7 @@ G_DEFINE_TYPE(BbAbsoluteLineTo, bb_absolute_line_to, BB_TYPE_PATH_COMMAND)
 
 
 static BbPathCommand*
-bb_absolute_line_to_clone(const BbPathCommand *command);
+bb_absolute_line_to_clone(BbPathCommand *command);
 
 static void
 bb_absolute_line_to_dispose(GObject *object);
@@ -74,7 +74,7 @@ static void
 bb_absolute_line_to_translate(BbPathCommand *command, int dx, int dy);
 
 
-GParamSpec *properties[N_PROPERTIES];
+static GParamSpec *properties[N_PROPERTIES];
 
 
 static void
@@ -125,7 +125,7 @@ bb_absolute_line_to_class_init(BbAbsoluteLineToClass *klasse)
 
 
 static BbPathCommand*
-bb_absolute_line_to_clone(const BbPathCommand *command)
+bb_absolute_line_to_clone(BbPathCommand *command)
 {
     return BB_PATH_COMMAND(bb_absolute_line_to_new(
         bb_absolute_line_to_get_x(BB_ABSOLUTE_LINE_TO(command)),

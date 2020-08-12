@@ -20,17 +20,27 @@
 #include "bbgraphicline.h"
 #include "bbcoord.h"
 #include "bbitemparams.h"
+#include "bbadjustablelinestyle.h"
+#include "bbadjustableitemcolor.h"
 
 
 enum
 {
     PROP_0,
-    PROP_COLOR,
-    PROP_WIDTH,
+
     PROP_X0,
     PROP_X1,
     PROP_Y0,
     PROP_Y1,
+
+    PROP_ITEM_COLOR,
+
+    PROP_CAP_TYPE,
+    PROP_DASH_LENGTH,
+    PROP_DASH_SPACE,
+    PROP_DASH_TYPE,
+    PROP_LINE_WIDTH,
+
     N_PROPERTIES
 };
 
@@ -41,17 +51,20 @@ struct _BbGraphicLine
 
     BbItemParams *params;
 
+    int x[2];
+    int y[2];
+
     int color;
 
     BbLineStyle *line_style;
-
-    int x[2];
-    int y[2];
 };
 
 
-G_DEFINE_TYPE(BbGraphicLine, bb_graphic_line, BB_TYPE_SCHEMATIC_ITEM)
+static void
+bb_graphical_line_adjustable_item_color_init(BbAdjustableLineStyleInterface *iface);
 
+static void
+bb_graphical_line_adjustable_line_style_init(BbAdjustableLineStyleInterface *iface);
 
 static BbBounds*
 bb_graphic_line_calculate_bounds(BbSchematicItem *item, BbBoundsCalculator *calculator);
@@ -62,11 +75,47 @@ bb_graphic_line_dispose(GObject *object);
 static void
 bb_graphic_line_finalize(GObject *object);
 
+static int
+bb_graphic_line_get_cap_type(BbGraphicLine *line);
+
+static int
+bb_graphic_line_get_dash_length(BbGraphicLine *line);
+
+static int
+bb_graphic_line_get_dash_space(BbGraphicLine *line);
+
+static int
+bb_graphic_line_get_dash_type(BbGraphicLine *line);
+
+static int
+bb_graphic_line_get_item_color(BbGraphicLine *line);
+
+static int
+bb_graphic_line_get_line_width(BbGraphicLine *line);
+
 static void
 bb_graphic_line_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
 
 static void
 bb_graphic_line_render(BbSchematicItem *item, BbItemRenderer *renderer);
+
+static void
+bb_graphic_line_set_cap_type(BbGraphicLine *line, int type);
+
+static void
+bb_graphic_line_set_dash_length(BbGraphicLine *line, int length);
+
+static void
+bb_graphic_line_set_dash_space(BbGraphicLine *line, int space);
+
+static void
+bb_graphic_line_set_dash_type(BbGraphicLine *line, int type);
+
+static void
+bb_graphic_line_set_item_color(BbGraphicLine *line, int color);
+
+static void
+bb_graphic_line_set_line_width(BbGraphicLine *line, int width);
 
 static void
 bb_graphic_line_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
@@ -93,7 +142,30 @@ bb_graphic_line_write_finish(
     );
 
 
-GParamSpec *properties[N_PROPERTIES];
+static GParamSpec *properties[N_PROPERTIES];
+
+
+G_DEFINE_TYPE_WITH_CODE(
+    BbGraphicLine,
+    bb_graphic_line,
+    BB_TYPE_SCHEMATIC_ITEM,
+    G_IMPLEMENT_INTERFACE(BB_TYPE_ADJUSTABLE_ITEM_COLOR, bb_graphical_line_adjustable_item_color_init)
+    G_IMPLEMENT_INTERFACE(BB_TYPE_ADJUSTABLE_LINE_STYLE, bb_graphical_line_adjustable_line_style_init)
+    )
+
+
+static void
+bb_graphical_line_adjustable_item_color_init(BbAdjustableLineStyleInterface *iface)
+{
+    g_return_if_fail(iface != NULL);
+}
+
+
+static void
+bb_graphical_line_adjustable_line_style_init(BbAdjustableLineStyleInterface *iface)
+{
+    g_return_if_fail(iface != NULL);
+}
 
 
 static BbBounds*
@@ -128,72 +200,103 @@ bb_graphic_line_class_init(BbGraphicLineClass *klasse)
     BB_SCHEMATIC_ITEM_CLASS(klasse)->write_async = bb_graphic_line_write_async;
     BB_SCHEMATIC_ITEM_CLASS(klasse)->write_finish = bb_graphic_line_write_finish;
 
-    properties[PROP_COLOR] = g_param_spec_int(
-        "color",
-        "Color",
-        "The item color",
-        0,
-        INT_MAX,
-        0,
-        G_PARAM_READWRITE
+    g_object_class_override_property(
+        G_OBJECT_CLASS(klasse),
+        PROP_CAP_TYPE,
+        "cap-type"
         );
 
-    properties[PROP_WIDTH] = g_param_spec_int(
-        "width",
-        "Line Width",
-        "The line width",
-        0,
-        INT_MAX,
-        0,
-        G_PARAM_READWRITE
+    g_object_class_override_property(
+        G_OBJECT_CLASS(klasse),
+        PROP_DASH_LENGTH,
+        "dash-length"
         );
 
-    properties[PROP_X0] = g_param_spec_int(
-        "x0",
-        "x0",
-        "The x coordinate of the first endpoint",
-        INT_MIN,
-        INT_MAX,
-        0,
-        G_PARAM_READWRITE
+    g_object_class_override_property(
+        G_OBJECT_CLASS(klasse),
+        PROP_DASH_SPACE,
+        "dash-space"
         );
 
-    properties[PROP_X1] = g_param_spec_int(
-        "x1",
-        "x1",
-        "The x coordinate of the second endpoint",
-        INT_MIN,
-        INT_MAX,
-        0,
-        G_PARAM_READWRITE
+    g_object_class_override_property(
+        G_OBJECT_CLASS(klasse),
+        PROP_DASH_TYPE,
+        "dash-type"
         );
 
-    properties[PROP_Y0] = g_param_spec_int(
-        "y0",
-        "y0",
-        "The y coordinate of the first endpoint",
-        INT_MIN,
-        INT_MAX,
-        0,
-        G_PARAM_READWRITE
+    g_object_class_override_property(
+        G_OBJECT_CLASS(klasse),
+        PROP_ITEM_COLOR,
+        "item-color"
         );
 
-    properties[PROP_Y1] = g_param_spec_int(
-        "y1",
-        "y1",
-        "The y coordinate of the second endpoint",
-        INT_MIN,
-        INT_MAX,
-        0,
-        G_PARAM_READWRITE
+    g_object_class_override_property(
+        G_OBJECT_CLASS(klasse),
+        PROP_LINE_WIDTH,
+        "line-width"
+        );
+
+    g_object_class_install_property(
+        G_OBJECT_CLASS(klasse),
+        PROP_X0,
+        g_param_spec_int(
+            "x0",
+            "x0",
+            "The x coordinate of the first endpoint",
+            INT_MIN,
+            INT_MAX,
+            0,
+            G_PARAM_READWRITE
+            )
+        );
+
+    g_object_class_install_property(
+        G_OBJECT_CLASS(klasse),
+        PROP_X1,
+        g_param_spec_int(
+            "x1",
+            "x1",
+            "The x coordinate of the second endpoint",
+            INT_MIN,
+            INT_MAX,
+            0,
+            G_PARAM_READWRITE
+            )
+        );
+
+    g_object_class_install_property(
+        G_OBJECT_CLASS(klasse),
+        PROP_Y0,
+        g_param_spec_int(
+            "y0",
+            "y0",
+            "The y coordinate of the first endpoint",
+            INT_MIN,
+            INT_MAX,
+            0,
+            G_PARAM_READWRITE
+            )
+        );
+
+    g_object_class_install_property(
+        G_OBJECT_CLASS(klasse),
+        PROP_Y1,
+        g_param_spec_int(
+            "y1",
+            "y1",
+            "The y coordinate of the second endpoint",
+            INT_MIN,
+            INT_MAX,
+            0,
+            G_PARAM_READWRITE
+            )
         );
 
     for (int index = PROP_0 + 1; index < N_PROPERTIES; ++index)
     {
-        g_object_class_install_property(
+        properties[index] = g_object_class_find_property(
             G_OBJECT_CLASS(klasse),
-            index,
-            properties[index]
+            index
             );
     }
 }
@@ -213,16 +316,65 @@ bb_graphic_line_finalize(GObject *object)
     g_return_if_fail(line != NULL);
 
     bb_line_style_free(line->line_style);
-
 }
 
 
-int
-bb_graphic_line_get_color(BbGraphicLine *line)
+static int
+bb_graphic_line_get_cap_type(BbGraphicLine *line)
+{
+    g_return_val_if_fail(line != NULL, 0);
+    g_return_val_if_fail(line->line_style != NULL, 0);
+
+    return line->line_style->cap_type;
+}
+
+
+static int
+bb_graphic_line_get_dash_length(BbGraphicLine *line)
+{
+    g_return_val_if_fail(line != NULL, 0);
+    g_return_val_if_fail(line->line_style != NULL, 0);
+
+    return line->line_style->dash_length;
+}
+
+
+static int
+bb_graphic_line_get_dash_space(BbGraphicLine *line)
+{
+    g_return_val_if_fail(line != NULL, 0);
+    g_return_val_if_fail(line->line_style != NULL, 0);
+
+    return line->line_style->dash_space;
+}
+
+
+static int
+bb_graphic_line_get_dash_type(BbGraphicLine *line)
+{
+    g_return_val_if_fail(line != NULL, 0);
+    g_return_val_if_fail(line->line_style != NULL, 0);
+
+    return line->line_style->dash_type;
+}
+
+
+static int
+bb_graphic_line_get_item_color(BbGraphicLine *line)
 {
     g_return_val_if_fail(line != NULL, 0);
 
     return line->color;
+}
+
+
+static int
+bb_graphic_line_get_line_width(BbGraphicLine *line)
+{
+    g_return_val_if_fail(line != NULL, 0);
+    g_return_val_if_fail(line->line_style != NULL, 0);
+
+    return line->line_style->line_width;
 }
 
 
@@ -231,12 +383,28 @@ bb_graphic_line_get_property(GObject *object, guint property_id, GValue *value, 
 {
     switch (property_id)
     {
-        case PROP_COLOR:
-            g_value_set_int(value, bb_graphic_line_get_color(BB_GRAPHIC_LINE(object)));
+        case PROP_CAP_TYPE:
+            g_value_set_int(value, bb_graphic_line_get_cap_type(BB_GRAPHIC_LINE(object)));
             break;
 
-        case PROP_WIDTH:
-            g_value_set_int(value, bb_graphic_line_get_width(BB_GRAPHIC_LINE(object)));
+        case PROP_ITEM_COLOR:
+            g_value_set_int(value, bb_graphic_line_get_item_color(BB_GRAPHIC_LINE(object)));
+            break;
+
+        case PROP_DASH_LENGTH:
+            g_value_set_int(value, bb_graphic_line_get_dash_length(BB_GRAPHIC_LINE(object)));
+            break;
+
+        case PROP_DASH_SPACE:
+            g_value_set_int(value, bb_graphic_line_get_dash_space(BB_GRAPHIC_LINE(object)));
+            break;
+
+        case PROP_DASH_TYPE:
+            g_value_set_int(value, bb_graphic_line_get_dash_type(BB_GRAPHIC_LINE(object)));
+            break;
+
+        case PROP_LINE_WIDTH:
+            g_value_set_int(value, bb_graphic_line_get_line_width(BB_GRAPHIC_LINE(object)));
             break;
 
         case PROP_X0:
@@ -258,16 +426,6 @@ bb_graphic_line_get_property(GObject *object, guint property_id, GValue *value, 
         default:
             G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
     }
-}
-
-
-int
-bb_graphic_line_get_width(BbGraphicLine *line)
-{
-    g_return_val_if_fail(line != NULL, 0);
-    g_return_val_if_fail(line->line_style != NULL, 0);
-
-    return line->line_style->line_width;
 }
 
 
@@ -354,8 +512,68 @@ bb_graphic_line_render(BbSchematicItem *item, BbItemRenderer *renderer)
 }
 
 
-void
-bb_graphic_line_set_color(BbGraphicLine *line, int color)
+static void
+bb_graphic_line_set_cap_type(BbGraphicLine *line, int type)
+{
+    g_return_if_fail(line != NULL);
+    g_return_if_fail(line->line_style != NULL);
+
+    if (line->line_style->cap_type != type)
+    {
+        line->line_style->cap_type = type;
+
+        g_object_notify_by_pspec(G_OBJECT(line), properties[PROP_CAP_TYPE]);
+    }
+}
+
+
+static void
+bb_graphic_line_set_dash_length(BbGraphicLine *line, int length)
+{
+    g_return_if_fail(line != NULL);
+    g_return_if_fail(line->line_style != NULL);
+
+    if (line->line_style->dash_length != length)
+    {
+        line->line_style->dash_length = length;
+
+        g_object_notify_by_pspec(G_OBJECT(line), properties[PROP_DASH_LENGTH]);
+    }
+}
+
+
+static void
+bb_graphic_line_set_dash_space(BbGraphicLine *line, int space)
+{
+    g_return_if_fail(line != NULL);
+    g_return_if_fail(line->line_style != NULL);
+
+    if (line->line_style->dash_space != space)
+    {
+        line->line_style->dash_space = space;
+
+        g_object_notify_by_pspec(G_OBJECT(line), properties[PROP_DASH_SPACE]);
+    }
+}
+
+
+static void
+bb_graphic_line_set_dash_type(BbGraphicLine *line, int type)
+{
+    g_return_if_fail(line != NULL);
+    g_return_if_fail(line->line_style != NULL);
+
+    if (line->line_style->dash_type != type)
+    {
+        line->line_style->dash_type = type;
+
+        g_object_notify_by_pspec(G_OBJECT(line), properties[PROP_DASH_TYPE]);
+    }
+}
+
+
+static void
+bb_graphic_line_set_item_color(BbGraphicLine *line, int color)
 {
     g_return_if_fail(line != NULL);
 
@@ -363,7 +581,22 @@ bb_graphic_line_set_color(BbGraphicLine *line, int color)
     {
         line->color = color;
 
-        g_object_notify_by_pspec(G_OBJECT(line), properties[PROP_COLOR]);
+        g_object_notify_by_pspec(G_OBJECT(line), properties[PROP_ITEM_COLOR]);
+    }
+}
+
+
+static void
+bb_graphic_line_set_line_width(BbGraphicLine *line, int width)
+{
+    g_return_if_fail(line != NULL);
+    g_return_if_fail(line->line_style != NULL);
+
+    if (line->line_style->line_width != width)
+    {
+        line->line_style->line_width = width;
+
+        g_object_notify_by_pspec(G_OBJECT(line), properties[PROP_LINE_WIDTH]);
     }
 }
 
@@ -373,12 +606,28 @@ bb_graphic_line_set_property(GObject *object, guint property_id, const GValue *v
 {
     switch (property_id)
     {
-        case PROP_COLOR:
-            bb_graphic_line_set_color(BB_GRAPHIC_LINE(object), g_value_get_int(value));
+        case PROP_CAP_TYPE:
+            bb_graphic_line_set_cap_type(BB_GRAPHIC_LINE(object), g_value_get_int(value));
             break;
 
-        case PROP_WIDTH:
-            bb_graphic_line_set_width(BB_GRAPHIC_LINE(object), g_value_get_int(value));
+        case PROP_ITEM_COLOR:
+            bb_graphic_line_set_item_color(BB_GRAPHIC_LINE(object), g_value_get_int(value));
+            break;
+
+        case PROP_DASH_LENGTH:
+            bb_graphic_line_set_dash_length(BB_GRAPHIC_LINE(object), g_value_get_int(value));
+            break;
+
+        case PROP_DASH_SPACE:
+            bb_graphic_line_set_dash_space(BB_GRAPHIC_LINE(object), g_value_get_int(value));
+            break;
+
+        case PROP_DASH_TYPE:
+            bb_graphic_line_set_dash_type(BB_GRAPHIC_LINE(object), g_value_get_int(value));
+            break;
+
+        case PROP_LINE_WIDTH:
+            bb_graphic_line_set_line_width(BB_GRAPHIC_LINE(object), g_value_get_int(value));
             break;
 
         case PROP_X0:
@@ -399,21 +648,6 @@ bb_graphic_line_set_property(GObject *object, guint property_id, const GValue *v
 
         default:
             G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
-    }
-}
-
-
-void
-bb_graphic_line_set_width(BbGraphicLine *line, int width)
-{
-    g_return_if_fail(line != NULL);
-    g_return_if_fail(line->line_style != NULL);
-
-    if (line->line_style->line_width != width)
-    {
-        line->line_style->line_width = width;
-
-        g_object_notify_by_pspec(G_OBJECT(line), properties[PROP_WIDTH]);
     }
 }
 

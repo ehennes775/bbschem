@@ -24,37 +24,41 @@
 #define BB_TYPE_GRAPHIC_BOX bb_graphic_box_get_type()
 G_DECLARE_FINAL_TYPE(BbGraphicBox, bb_graphic_box, BB, GRAPHIC_BOX, BbSchematicItem)
 
-int
-bb_graphic_box_get_width(BbGraphicBox *box);
 
 int
 bb_graphic_box_get_x0(BbGraphicBox *box);
 
+
 int
 bb_graphic_box_get_x1(BbGraphicBox *box);
+
 
 int
 bb_graphic_box_get_y0(BbGraphicBox *box);
 
+
 int
 bb_graphic_box_get_y1(BbGraphicBox *box);
+
 
 BbGraphicBox*
 bb_graphic_box_new();
 
-void
-bb_graphic_box_set_width(BbGraphicBox *box, int width);
 
 void
 bb_graphic_box_set_x0(BbGraphicBox *box, int x);
 
+
 void
 bb_graphic_box_set_x1(BbGraphicBox *box, int x);
+
 
 void
 bb_graphic_box_set_y0(BbGraphicBox *box, int y);
 
+
 void
 bb_graphic_box_set_y1(BbGraphicBox *box, int y);
+
 
 #endif

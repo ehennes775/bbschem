@@ -69,7 +69,7 @@ struct _WriteCapture
 {
     GOutputStream *stream;
     GCancellable *cancellable;
-    GError ***error;
+    GError **error;
 };
 
 static void
@@ -152,7 +152,7 @@ bb_schematic_modify_item_color_lambda(
     );
 
 
-GParamSpec *properties[N_PROPERTIES];
+static GParamSpec *properties[N_PROPERTIES];
 
 
 void
@@ -660,6 +660,7 @@ bb_schematic_write_callback(GObject *source, GAsyncResult *result, gpointer call
 
     bb_schematic_item_write_finish(
         BB_SCHEMATIC_ITEM(data->item->data),
+        data->stream,
         result,
         &error
         );

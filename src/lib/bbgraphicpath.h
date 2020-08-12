@@ -24,10 +24,4 @@
 #define BB_TYPE_GRAPHIC_PATH bb_graphic_path_get_type()
 G_DECLARE_FINAL_TYPE(BbGraphicPath, bb_graphic_path, BB, GRAPHIC_PATH, BbSchematicItem)
 
-int
-bb_graphic_path_get_width(BbGraphicPath *path);
-
-void
-bb_graphic_path_set_width(BbGraphicPath *path, int width);
-
 #endif
