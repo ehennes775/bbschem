@@ -17,10 +17,12 @@
  */
 
 #include <gtk/gtk.h>
+#include <src/lib/bbadjustablelinestyle.h>
 #include "bbmainwindow.h"
 #include "bblinestyleeditor.h"
 #include "bbpropertycombobox.h"
 #include "bbschematicwindow.h"
+#include "bbint32combobox.h"
 
 
 enum
@@ -35,10 +37,47 @@ struct _BbLineStyleEditor
     GtkExpander parent;
 
     BbMainWindow *main_window;
+
+    BbPropertyComboBox *cap_type_combo;
+    BbInt32ComboBox *dash_length_combo;
+    BbInt32ComboBox *dash_space_combo;
+    BbPropertyComboBox *dash_type_combo;
+    BbInt32ComboBox *line_width_combo;
 };
 
-G_DEFINE_TYPE(BbLineStyleEditor, bb_line_style_editor, GTK_TYPE_EXPANDER);
 
+G_DEFINE_TYPE(BbLineStyleEditor, bb_line_style_editor, GTK_TYPE_EXPANDER)
+
+
+static void
+bb_color_editor_apply_cap_type(BbPropertyComboBox *combo, BbLineStyleEditor *editor);
+
+static void
+bb_color_editor_apply_cap_type_lambda(BbSchematicItem *item, gpointer user_data);
+
+static void
+bb_color_editor_apply_dash_length(BbInt32ComboBox *combo, BbLineStyleEditor *editor);
+
+static void
+bb_color_editor_apply_dash_length_lambda(BbSchematicItem *item, gpointer user_data);
+
+static void
+bb_color_editor_apply_dash_space(BbInt32ComboBox *combo, BbLineStyleEditor *editor);
+
+static void
+bb_color_editor_apply_dash_space_lambda(BbSchematicItem *item, gpointer user_data);
+
+static void
+bb_color_editor_apply_dash_type(BbPropertyComboBox *combo, BbLineStyleEditor *editor);
+
+static void
+bb_color_editor_apply_dash_type_lambda(BbSchematicItem *item, gpointer user_data);
+
+static void
+bb_color_editor_apply_line_width(BbInt32ComboBox *combo, BbLineStyleEditor *editor);
+
+static void
+bb_color_editor_apply_line_width_lambda(BbSchematicItem *item, gpointer user_data);
 
 static void
 bb_line_style_editor_get_property(GObject *object, guint param_id, GValue* value, GParamSpec* pspec);
@@ -50,19 +89,229 @@ static void
 bb_line_style_editor_update(BbLineStyleEditor *editor);
 
 
+/**
+ * Apply a cap type to the selection
+ *
+ * @param combo The cap type combo box widget
+ * @param editor A fill style editor
+ */
 static void
-bb_line_style_editor_apply(BbPropertyComboBox *combo, BbLineStyleEditor *editor)
+bb_color_editor_apply_cap_type(BbPropertyComboBox *combo, BbLineStyleEditor *editor)
 {
+    GtkWidget *window;
+
+    g_return_if_fail(combo != NULL);
     g_return_if_fail(editor != NULL);
+    g_return_if_fail(combo == editor->cap_type_combo);
 
-    if (editor->main_window != NULL)
+    window = bb_main_window_get_current_document_window(editor->main_window);
+
+    g_return_if_fail(BB_IS_SCHEMATIC_WINDOW(window));
+
+    bb_schematic_window_apply_selection(
+        BB_SCHEMATIC_WINDOW(window),
+        bb_color_editor_apply_cap_type_lambda,
+        GINT_TO_POINTER(bb_int32_combo_box_get_value(combo))  // FIX ME
+        );
+}
+
+
+/**
+ * Apply a new cap type to an individual item
+ *
+ * @param item A schematic item
+ * @param user_data The cap type
+ */
+static void
+bb_color_editor_apply_cap_type_lambda(BbSchematicItem *item, gpointer user_data)
+{
+    if (BB_IS_ADJUSTABLE_LINE_STYLE(item))
     {
-        GVariant *color = g_variant_new_int32(10);
+        bb_adjustable_line_style_set_cap_type(
+            BB_ADJUSTABLE_LINE_STYLE(item),
+            GPOINTER_TO_INT(user_data)
+            );
+    }
+}
 
-        g_action_group_activate_action(
-            G_ACTION_GROUP(editor->main_window),
-            "apply-line-type",
-            color
+
+/**
+ * Apply a dash length to the selection
+ *
+ * @param combo The dash length combo box widget
+ * @param editor A fill style editor
+ */
+static void
+bb_color_editor_apply_dash_length(BbInt32ComboBox *combo, BbLineStyleEditor *editor)
+{
+    GtkWidget *window;
+
+    g_return_if_fail(combo != NULL);
+    g_return_if_fail(editor != NULL);
+    g_return_if_fail(combo == editor->dash_length_combo);
+
+    window = bb_main_window_get_current_document_window(editor->main_window);
+
+    g_return_if_fail(BB_IS_SCHEMATIC_WINDOW(window));
+
+    bb_schematic_window_apply_selection(
+        BB_SCHEMATIC_WINDOW(window),
+        bb_color_editor_apply_dash_length_lambda,
+        GINT_TO_POINTER(bb_int32_combo_box_get_value(combo))
+        );
+}
+
+
+/**
+ * Apply a new dash length to an individual item
+ *
+ * @param item A schematic item
+ * @param user_data The dash length
+ */
+static void
+bb_color_editor_apply_dash_length_lambda(BbSchematicItem *item, gpointer user_data)
+{
+    if (BB_IS_ADJUSTABLE_LINE_STYLE(item))
+    {
+        bb_adjustable_line_style_set_dash_length(
+            BB_ADJUSTABLE_LINE_STYLE(item),
+            GPOINTER_TO_INT(user_data)
+            );
+    }
+}
+/**
+ * Apply a dash space to the selection
+ *
+ * @param combo The dash space combo box widget
+ * @param editor A fill style editor
+ */
+static void
+bb_color_editor_apply_dash_space(BbInt32ComboBox *combo, BbLineStyleEditor *editor)
+{
+    GtkWidget *window;
+
+    g_return_if_fail(combo != NULL);
+    g_return_if_fail(editor != NULL);
+    g_return_if_fail(combo == editor->dash_space_combo);
+
+    window = bb_main_window_get_current_document_window(editor->main_window);
+
+    g_return_if_fail(BB_IS_SCHEMATIC_WINDOW(window));
+
+    bb_schematic_window_apply_selection(
+        BB_SCHEMATIC_WINDOW(window),
+        bb_color_editor_apply_dash_space_lambda,
+        GINT_TO_POINTER(bb_int32_combo_box_get_value(combo))
+        );
+}
+
+
+/**
+ * Apply a new dash space to an individual item
+ *
+ * @param item A schematic item
+ * @param user_data The dash space
+ */
+static void
+bb_color_editor_apply_dash_space_lambda(BbSchematicItem *item, gpointer user_data)
+{
+    if (BB_IS_ADJUSTABLE_LINE_STYLE(item))
+    {
+        bb_adjustable_line_style_set_dash_space(
+            BB_ADJUSTABLE_LINE_STYLE(item),
+            GPOINTER_TO_INT(user_data)
+            );
+    }
+}
+
+
+/**
+ * Apply a dash type to the selection
+ *
+ * @param combo The dash type combo box widget
+ * @param editor A fill style editor
+ */
+static void
+bb_color_editor_apply_dash_type(BbPropertyComboBox *combo, BbLineStyleEditor *editor)
+{
+    GtkWidget *window;
+
+    g_return_if_fail(combo != NULL);
+    g_return_if_fail(editor != NULL);
+    g_return_if_fail(combo == editor->dash_type_combo);
+
+    window = bb_main_window_get_current_document_window(editor->main_window);
+
+    g_return_if_fail(BB_IS_SCHEMATIC_WINDOW(window));
+
+    bb_schematic_window_apply_selection(
+        BB_SCHEMATIC_WINDOW(window),
+        bb_color_editor_apply_dash_type_lambda,
+        GINT_TO_POINTER(bb_int32_combo_box_get_value(combo))  // FIXME
+        );
+}
+
+
+/**
+ * Apply a new dash type to an individual item
+ *
+ * @param item A schematic item
+ * @param user_data The dash type
+ */
+static void
+bb_color_editor_apply_dash_type_lambda(BbSchematicItem *item, gpointer user_data)
+{
+    if (BB_IS_ADJUSTABLE_LINE_STYLE(item))
+    {
+        bb_adjustable_line_style_set_dash_type(
+            BB_ADJUSTABLE_LINE_STYLE(item),
+            GPOINTER_TO_INT(user_data)
+            );
+    }
+}
+
+
+/**
+ * Apply a line width to the selection
+ *
+ * @param combo The line width combo box widget
+ * @param editor A fill style editor
+ */
+static void
+bb_color_editor_apply_line_width(BbInt32ComboBox *combo, BbLineStyleEditor *editor)
+{
+    GtkWidget *window;
+
+    g_return_if_fail(combo != NULL);
+    g_return_if_fail(editor != NULL);
+    g_return_if_fail(combo == editor->line_width_combo);
+
+    window = bb_main_window_get_current_document_window(editor->main_window);
+
+    g_return_if_fail(BB_IS_SCHEMATIC_WINDOW(window));
+
+    bb_schematic_window_apply_selection(
+        BB_SCHEMATIC_WINDOW(window),
+        bb_color_editor_apply_line_width_lambda,
+        GINT_TO_POINTER(bb_int32_combo_box_get_value(combo))
+        );
+}
+
+
+/**
+ * Apply a new line width to an individual item
+ *
+ * @param item A schematic item
+ * @param user_data The line width
+ */
+static void
+bb_color_editor_apply_line_width_lambda(BbSchematicItem *item, gpointer user_data)
+{
+    if (BB_IS_ADJUSTABLE_LINE_STYLE(item))
+    {
+        bb_adjustable_line_style_set_line_width(
+            BB_ADJUSTABLE_LINE_STYLE(item),
+            GPOINTER_TO_INT(user_data)
             );
     }
 }
@@ -93,7 +342,27 @@ bb_line_style_editor_class_init(BbLineStyleEditorClass *class)
 
     gtk_widget_class_bind_template_callback(
         GTK_WIDGET_CLASS(class),
-        bb_line_style_editor_apply
+        bb_color_editor_apply_cap_type
+        );
+
+    gtk_widget_class_bind_template_callback(
+        GTK_WIDGET_CLASS(class),
+        bb_color_editor_apply_dash_length
+        );
+
+    gtk_widget_class_bind_template_callback(
+        GTK_WIDGET_CLASS(class),
+        bb_color_editor_apply_dash_space
+        );
+
+    gtk_widget_class_bind_template_callback(
+        GTK_WIDGET_CLASS(class),
+        bb_color_editor_apply_dash_type
+        );
+
+    gtk_widget_class_bind_template_callback(
+        GTK_WIDGET_CLASS(class),
+        bb_color_editor_apply_line_width
         );
 }
 
