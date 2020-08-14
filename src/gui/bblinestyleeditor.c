@@ -50,34 +50,34 @@ G_DEFINE_TYPE(BbLineStyleEditor, bb_line_style_editor, GTK_TYPE_EXPANDER)
 
 
 static void
-bb_color_editor_apply_cap_type(BbPropertyComboBox *combo, BbLineStyleEditor *editor);
+bb_line_style_editor_apply_cap_type(BbPropertyComboBox *combo, BbLineStyleEditor *editor);
 
 static void
-bb_color_editor_apply_cap_type_lambda(BbSchematicItem *item, gpointer user_data);
+bb_line_style_editor_apply_cap_type_lambda(BbSchematicItem *item, gpointer user_data);
 
 static void
-bb_color_editor_apply_dash_length(BbInt32ComboBox *combo, BbLineStyleEditor *editor);
+bb_line_style_editor_apply_dash_length(BbInt32ComboBox *combo, BbLineStyleEditor *editor);
 
 static void
-bb_color_editor_apply_dash_length_lambda(BbSchematicItem *item, gpointer user_data);
+bb_line_style_editor_apply_dash_length_lambda(BbSchematicItem *item, gpointer user_data);
 
 static void
-bb_color_editor_apply_dash_space(BbInt32ComboBox *combo, BbLineStyleEditor *editor);
+bb_line_style_editor_apply_dash_space(BbInt32ComboBox *combo, BbLineStyleEditor *editor);
 
 static void
-bb_color_editor_apply_dash_space_lambda(BbSchematicItem *item, gpointer user_data);
+bb_line_style_editor_apply_dash_space_lambda(BbSchematicItem *item, gpointer user_data);
 
 static void
-bb_color_editor_apply_dash_type(BbPropertyComboBox *combo, BbLineStyleEditor *editor);
+bb_line_style_editor_apply_dash_type(BbPropertyComboBox *combo, BbLineStyleEditor *editor);
 
 static void
-bb_color_editor_apply_dash_type_lambda(BbSchematicItem *item, gpointer user_data);
+bb_line_style_editor_apply_dash_type_lambda(BbSchematicItem *item, gpointer user_data);
 
 static void
-bb_color_editor_apply_line_width(BbInt32ComboBox *combo, BbLineStyleEditor *editor);
+bb_line_style_editor_apply_line_width(BbInt32ComboBox *combo, BbLineStyleEditor *editor);
 
 static void
-bb_color_editor_apply_line_width_lambda(BbSchematicItem *item, gpointer user_data);
+bb_line_style_editor_apply_line_width_lambda(BbSchematicItem *item, gpointer user_data);
 
 static void
 bb_line_style_editor_get_property(GObject *object, guint param_id, GValue* value, GParamSpec* pspec);
@@ -96,7 +96,7 @@ bb_line_style_editor_update(BbLineStyleEditor *editor);
  * @param editor A fill style editor
  */
 static void
-bb_color_editor_apply_cap_type(BbPropertyComboBox *combo, BbLineStyleEditor *editor)
+bb_line_style_editor_apply_cap_type(BbPropertyComboBox *combo, BbLineStyleEditor *editor)
 {
     GtkWidget *window;
 
@@ -110,7 +110,7 @@ bb_color_editor_apply_cap_type(BbPropertyComboBox *combo, BbLineStyleEditor *edi
 
     bb_schematic_window_apply_selection(
         BB_SCHEMATIC_WINDOW(window),
-        bb_color_editor_apply_cap_type_lambda,
+        bb_line_style_editor_apply_cap_type_lambda,
         GINT_TO_POINTER(bb_int32_combo_box_get_value(combo))  // FIX ME
         );
 }
@@ -123,7 +123,7 @@ bb_color_editor_apply_cap_type(BbPropertyComboBox *combo, BbLineStyleEditor *edi
  * @param user_data The cap type
  */
 static void
-bb_color_editor_apply_cap_type_lambda(BbSchematicItem *item, gpointer user_data)
+bb_line_style_editor_apply_cap_type_lambda(BbSchematicItem *item, gpointer user_data)
 {
     if (BB_IS_ADJUSTABLE_LINE_STYLE(item))
     {
@@ -142,7 +142,7 @@ bb_color_editor_apply_cap_type_lambda(BbSchematicItem *item, gpointer user_data)
  * @param editor A fill style editor
  */
 static void
-bb_color_editor_apply_dash_length(BbInt32ComboBox *combo, BbLineStyleEditor *editor)
+bb_line_style_editor_apply_dash_length(BbInt32ComboBox *combo, BbLineStyleEditor *editor)
 {
     GtkWidget *window;
 
@@ -156,7 +156,7 @@ bb_color_editor_apply_dash_length(BbInt32ComboBox *combo, BbLineStyleEditor *edi
 
     bb_schematic_window_apply_selection(
         BB_SCHEMATIC_WINDOW(window),
-        bb_color_editor_apply_dash_length_lambda,
+        bb_line_style_editor_apply_dash_length_lambda,
         GINT_TO_POINTER(bb_int32_combo_box_get_value(combo))
         );
 }
@@ -169,7 +169,7 @@ bb_color_editor_apply_dash_length(BbInt32ComboBox *combo, BbLineStyleEditor *edi
  * @param user_data The dash length
  */
 static void
-bb_color_editor_apply_dash_length_lambda(BbSchematicItem *item, gpointer user_data)
+bb_line_style_editor_apply_dash_length_lambda(BbSchematicItem *item, gpointer user_data)
 {
     if (BB_IS_ADJUSTABLE_LINE_STYLE(item))
     {
@@ -186,7 +186,7 @@ bb_color_editor_apply_dash_length_lambda(BbSchematicItem *item, gpointer user_da
  * @param editor A fill style editor
  */
 static void
-bb_color_editor_apply_dash_space(BbInt32ComboBox *combo, BbLineStyleEditor *editor)
+bb_line_style_editor_apply_dash_space(BbInt32ComboBox *combo, BbLineStyleEditor *editor)
 {
     GtkWidget *window;
 
@@ -200,7 +200,7 @@ bb_color_editor_apply_dash_space(BbInt32ComboBox *combo, BbLineStyleEditor *edit
 
     bb_schematic_window_apply_selection(
         BB_SCHEMATIC_WINDOW(window),
-        bb_color_editor_apply_dash_space_lambda,
+        bb_line_style_editor_apply_dash_space_lambda,
         GINT_TO_POINTER(bb_int32_combo_box_get_value(combo))
         );
 }
@@ -213,7 +213,7 @@ bb_color_editor_apply_dash_space(BbInt32ComboBox *combo, BbLineStyleEditor *edit
  * @param user_data The dash space
  */
 static void
-bb_color_editor_apply_dash_space_lambda(BbSchematicItem *item, gpointer user_data)
+bb_line_style_editor_apply_dash_space_lambda(BbSchematicItem *item, gpointer user_data)
 {
     if (BB_IS_ADJUSTABLE_LINE_STYLE(item))
     {
@@ -232,7 +232,7 @@ bb_color_editor_apply_dash_space_lambda(BbSchematicItem *item, gpointer user_dat
  * @param editor A fill style editor
  */
 static void
-bb_color_editor_apply_dash_type(BbPropertyComboBox *combo, BbLineStyleEditor *editor)
+bb_line_style_editor_apply_dash_type(BbPropertyComboBox *combo, BbLineStyleEditor *editor)
 {
     GtkWidget *window;
 
@@ -246,7 +246,7 @@ bb_color_editor_apply_dash_type(BbPropertyComboBox *combo, BbLineStyleEditor *ed
 
     bb_schematic_window_apply_selection(
         BB_SCHEMATIC_WINDOW(window),
-        bb_color_editor_apply_dash_type_lambda,
+        bb_line_style_editor_apply_dash_type_lambda,
         GINT_TO_POINTER(bb_int32_combo_box_get_value(combo))  // FIXME
         );
 }
@@ -259,7 +259,7 @@ bb_color_editor_apply_dash_type(BbPropertyComboBox *combo, BbLineStyleEditor *ed
  * @param user_data The dash type
  */
 static void
-bb_color_editor_apply_dash_type_lambda(BbSchematicItem *item, gpointer user_data)
+bb_line_style_editor_apply_dash_type_lambda(BbSchematicItem *item, gpointer user_data)
 {
     if (BB_IS_ADJUSTABLE_LINE_STYLE(item))
     {
@@ -278,7 +278,7 @@ bb_color_editor_apply_dash_type_lambda(BbSchematicItem *item, gpointer user_data
  * @param editor A fill style editor
  */
 static void
-bb_color_editor_apply_line_width(BbInt32ComboBox *combo, BbLineStyleEditor *editor)
+bb_line_style_editor_apply_line_width(BbInt32ComboBox *combo, BbLineStyleEditor *editor)
 {
     GtkWidget *window;
 
@@ -292,7 +292,7 @@ bb_color_editor_apply_line_width(BbInt32ComboBox *combo, BbLineStyleEditor *edit
 
     bb_schematic_window_apply_selection(
         BB_SCHEMATIC_WINDOW(window),
-        bb_color_editor_apply_line_width_lambda,
+        bb_line_style_editor_apply_line_width_lambda,
         GINT_TO_POINTER(bb_int32_combo_box_get_value(combo))
         );
 }
@@ -305,7 +305,7 @@ bb_color_editor_apply_line_width(BbInt32ComboBox *combo, BbLineStyleEditor *edit
  * @param user_data The line width
  */
 static void
-bb_color_editor_apply_line_width_lambda(BbSchematicItem *item, gpointer user_data)
+bb_line_style_editor_apply_line_width_lambda(BbSchematicItem *item, gpointer user_data)
 {
     if (BB_IS_ADJUSTABLE_LINE_STYLE(item))
     {
@@ -342,27 +342,27 @@ bb_line_style_editor_class_init(BbLineStyleEditorClass *class)
 
     gtk_widget_class_bind_template_callback(
         GTK_WIDGET_CLASS(class),
-        bb_color_editor_apply_cap_type
+        bb_line_style_editor_apply_cap_type
         );
 
     gtk_widget_class_bind_template_callback(
         GTK_WIDGET_CLASS(class),
-        bb_color_editor_apply_dash_length
+        bb_line_style_editor_apply_dash_length
         );
 
     gtk_widget_class_bind_template_callback(
         GTK_WIDGET_CLASS(class),
-        bb_color_editor_apply_dash_space
+        bb_line_style_editor_apply_dash_space
         );
 
     gtk_widget_class_bind_template_callback(
         GTK_WIDGET_CLASS(class),
-        bb_color_editor_apply_dash_type
+        bb_line_style_editor_apply_dash_type
         );
 
     gtk_widget_class_bind_template_callback(
         GTK_WIDGET_CLASS(class),
-        bb_color_editor_apply_line_width
+        bb_line_style_editor_apply_line_width
         );
 }
 

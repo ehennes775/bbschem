@@ -40,36 +40,48 @@ struct _BbFillStyleEditor
 
     BbInt32ComboBox *fill_angle1_combo;
     BbInt32ComboBox *fill_pitch1_combo;
+    BbPropertyComboBox *fill_type_combo;
+    BbInt32ComboBox *fill_width_combo;
     BbInt32ComboBox *fill_angle2_combo;
     BbInt32ComboBox *fill_pitch2_combo;
 };
 
-G_DEFINE_TYPE(BbFillStyleEditor, bb_fill_style_editor, GTK_TYPE_EXPANDER)
-
 
 static void
-bb_color_editor_apply_angle_1(BbInt32ComboBox *combo, BbFillStyleEditor *editor);
+bb_fill_style_editor_apply_angle_1(BbInt32ComboBox *combo, BbFillStyleEditor *editor);
 
 static void
-bb_color_editor_apply_angle_1_lambda(BbSchematicItem *item, gpointer user_data);
+bb_fill_style_editor_apply_angle_1_lambda(BbSchematicItem *item, gpointer user_data);
 
 static void
-bb_color_editor_apply_angle_2(BbInt32ComboBox *combo, BbFillStyleEditor *editor);
+bb_fill_style_editor_apply_angle_2(BbInt32ComboBox *combo, BbFillStyleEditor *editor);
 
 static void
-bb_color_editor_apply_angle_2_lambda(BbSchematicItem *item, gpointer user_data);
+bb_fill_style_editor_apply_angle_2_lambda(BbSchematicItem *item, gpointer user_data);
 
 static void
-bb_color_editor_apply_pitch_1(BbInt32ComboBox *combo, BbFillStyleEditor *editor);
+bb_fill_style_editor_apply_fill_type(BbPropertyComboBox *combo, BbFillStyleEditor *editor);
 
 static void
-bb_color_editor_apply_pitch_1_lambda(BbSchematicItem *item, gpointer user_data);
+bb_fill_style_editor_apply_fill_type_lambda(BbSchematicItem *item, gpointer user_data);
 
 static void
-bb_color_editor_apply_pitch_2(BbInt32ComboBox *combo, BbFillStyleEditor *editor);
+bb_fill_style_editor_apply_fill_width(BbInt32ComboBox *combo, BbFillStyleEditor *editor);
 
 static void
-bb_color_editor_apply_pitch_2_lambda(BbSchematicItem *item, gpointer user_data);
+bb_fill_style_editor_apply_fill_width_lambda(BbSchematicItem *item, gpointer user_data);
+
+static void
+bb_fill_style_editor_apply_pitch_1(BbInt32ComboBox *combo, BbFillStyleEditor *editor);
+
+static void
+bb_fill_style_editor_apply_pitch_1_lambda(BbSchematicItem *item, gpointer user_data);
+
+static void
+bb_fill_style_editor_apply_pitch_2(BbInt32ComboBox *combo, BbFillStyleEditor *editor);
+
+static void
+bb_fill_style_editor_apply_pitch_2_lambda(BbSchematicItem *item, gpointer user_data);
 
 static void
 bb_fill_style_editor_get_property(GObject *object, guint param_id, GValue* value, GParamSpec* pspec);
@@ -81,6 +93,9 @@ static void
 bb_fill_style_editor_update(BbFillStyleEditor *editor);
 
 
+G_DEFINE_TYPE(BbFillStyleEditor, bb_fill_style_editor, GTK_TYPE_EXPANDER)
+
+
 /**
  * Apply a fill angle to the selection
  *
@@ -88,7 +103,7 @@ bb_fill_style_editor_update(BbFillStyleEditor *editor);
  * @param editor A fill style editor
  */
 static void
-bb_color_editor_apply_angle_1(BbInt32ComboBox *combo, BbFillStyleEditor *editor)
+bb_fill_style_editor_apply_angle_1(BbInt32ComboBox *combo, BbFillStyleEditor *editor)
 {
     GtkWidget *window;
 
@@ -102,7 +117,7 @@ bb_color_editor_apply_angle_1(BbInt32ComboBox *combo, BbFillStyleEditor *editor)
 
     bb_schematic_window_apply_selection(
         BB_SCHEMATIC_WINDOW(window),
-        bb_color_editor_apply_angle_1_lambda,
+        bb_fill_style_editor_apply_angle_1_lambda,
         GINT_TO_POINTER(bb_int32_combo_box_get_value(combo))
         );
 }
@@ -115,7 +130,7 @@ bb_color_editor_apply_angle_1(BbInt32ComboBox *combo, BbFillStyleEditor *editor)
  * @param user_data The angle
  */
 static void
-bb_color_editor_apply_angle_1_lambda(BbSchematicItem *item, gpointer user_data)
+bb_fill_style_editor_apply_angle_1_lambda(BbSchematicItem *item, gpointer user_data)
 {
     if (BB_IS_ADJUSTABLE_FILL_STYLE(item))
     {
@@ -134,7 +149,7 @@ bb_color_editor_apply_angle_1_lambda(BbSchematicItem *item, gpointer user_data)
  * @param editor A fill style editor
  */
 static void
-bb_color_editor_apply_angle_2(BbInt32ComboBox *combo, BbFillStyleEditor *editor)
+bb_fill_style_editor_apply_angle_2(BbInt32ComboBox *combo, BbFillStyleEditor *editor)
 {
     GtkWidget *window;
 
@@ -148,7 +163,7 @@ bb_color_editor_apply_angle_2(BbInt32ComboBox *combo, BbFillStyleEditor *editor)
 
     bb_schematic_window_apply_selection(
         BB_SCHEMATIC_WINDOW(window),
-        bb_color_editor_apply_angle_2_lambda,
+        bb_fill_style_editor_apply_angle_2_lambda,
         GINT_TO_POINTER(bb_int32_combo_box_get_value(combo))
         );
 }
@@ -161,7 +176,7 @@ bb_color_editor_apply_angle_2(BbInt32ComboBox *combo, BbFillStyleEditor *editor)
  * @param user_data The angle
  */
 static void
-bb_color_editor_apply_angle_2_lambda(BbSchematicItem *item, gpointer user_data)
+bb_fill_style_editor_apply_angle_2_lambda(BbSchematicItem *item, gpointer user_data)
 {
     if (BB_IS_ADJUSTABLE_FILL_STYLE(item))
     {
@@ -174,13 +189,104 @@ bb_color_editor_apply_angle_2_lambda(BbSchematicItem *item, gpointer user_data)
 
 
 /**
+ * Apply a fill type to the selection
+ *
+ * @param combo The fill type combo box widget
+ * @param editor A fill style editor
+ */
+static void
+bb_fill_style_editor_apply_fill_type(BbPropertyComboBox *combo, BbFillStyleEditor *editor)
+{
+    GtkWidget *window;
+
+    g_return_if_fail(combo != NULL);
+    g_return_if_fail(editor != NULL);
+    g_return_if_fail(combo == editor->fill_type_combo);
+
+    window = bb_main_window_get_current_document_window(editor->main_window);
+
+    g_return_if_fail(BB_IS_SCHEMATIC_WINDOW(window));
+
+    bb_schematic_window_apply_selection(
+        BB_SCHEMATIC_WINDOW(window),
+        bb_fill_style_editor_apply_fill_type_lambda,
+        GINT_TO_POINTER(bb_int32_combo_box_get_value(combo))
+        );
+}
+
+
+/**
+ * Apply a new fill pitch to an individual item
+ *
+ * @param item A schematic item
+ * @param user_data The pitch
+ */
+static void
+bb_fill_style_editor_apply_fill_type_lambda(BbSchematicItem *item, gpointer user_data)
+{
+    if (BB_IS_ADJUSTABLE_FILL_STYLE(item))
+    {
+        bb_adjustable_fill_style_set_fill_type(
+            BB_ADJUSTABLE_FILL_STYLE(item),
+            GPOINTER_TO_INT(user_data)
+            );
+    }
+}
+
+
+/**
+ * Apply a fill width to the selection
+ *
+ * @param combo The width combo box widget
+ * @param editor A fill style editor
+ */
+static void
+bb_fill_style_editor_apply_fill_width(BbInt32ComboBox *combo, BbFillStyleEditor *editor)
+{
+    GtkWidget *window;
+
+    g_return_if_fail(combo != NULL);
+    g_return_if_fail(editor != NULL);
+    g_return_if_fail(combo == editor->fill_width_combo);
+
+    window = bb_main_window_get_current_document_window(editor->main_window);
+
+    g_return_if_fail(BB_IS_SCHEMATIC_WINDOW(window));
+
+    bb_schematic_window_apply_selection(
+        BB_SCHEMATIC_WINDOW(window),
+        bb_fill_style_editor_apply_fill_width_lambda,
+        GINT_TO_POINTER(bb_int32_combo_box_get_value(combo))
+    );
+}
+
+
+/**
+ * Apply a new fill pitch to an individual item
+ *
+ * @param item A schematic item
+ * @param user_data The pitch
+ */
+static void
+bb_fill_style_editor_apply_fill_width_lambda(BbSchematicItem *item, gpointer user_data)
+{
+    if (BB_IS_ADJUSTABLE_FILL_STYLE(item))
+    {
+        bb_adjustable_fill_style_set_fill_width(
+            BB_ADJUSTABLE_FILL_STYLE(item),
+            GPOINTER_TO_INT(user_data)
+            );
+    }
+}
+
+/**
  * Apply a fill pitch to the selection
  *
  * @param combo The pitch combo box widget
  * @param editor A fill style editor
  */
 static void
-bb_color_editor_apply_pitch_1(BbInt32ComboBox *combo, BbFillStyleEditor *editor)
+bb_fill_style_editor_apply_pitch_1(BbInt32ComboBox *combo, BbFillStyleEditor *editor)
 {
     GtkWidget *window;
 
@@ -194,9 +300,9 @@ bb_color_editor_apply_pitch_1(BbInt32ComboBox *combo, BbFillStyleEditor *editor)
 
     bb_schematic_window_apply_selection(
         BB_SCHEMATIC_WINDOW(window),
-        bb_color_editor_apply_pitch_1_lambda,
+        bb_fill_style_editor_apply_pitch_1_lambda,
         GINT_TO_POINTER(bb_int32_combo_box_get_value(combo))
-        );
+    );
 }
 
 
@@ -207,14 +313,14 @@ bb_color_editor_apply_pitch_1(BbInt32ComboBox *combo, BbFillStyleEditor *editor)
  * @param user_data The pitch
  */
 static void
-bb_color_editor_apply_pitch_1_lambda(BbSchematicItem *item, gpointer user_data)
+bb_fill_style_editor_apply_pitch_1_lambda(BbSchematicItem *item, gpointer user_data)
 {
     if (BB_IS_ADJUSTABLE_FILL_STYLE(item))
     {
         bb_adjustable_fill_style_set_fill_angle_1(
             BB_ADJUSTABLE_FILL_STYLE(item),
             GPOINTER_TO_INT(user_data)
-            );
+        );
     }
 }
 
@@ -226,7 +332,7 @@ bb_color_editor_apply_pitch_1_lambda(BbSchematicItem *item, gpointer user_data)
  * @param editor A fill style editor
  */
 static void
-bb_color_editor_apply_pitch_2(BbInt32ComboBox *combo, BbFillStyleEditor *editor)
+bb_fill_style_editor_apply_pitch_2(BbInt32ComboBox *combo, BbFillStyleEditor *editor)
 {
     GtkWidget *window;
 
@@ -240,7 +346,7 @@ bb_color_editor_apply_pitch_2(BbInt32ComboBox *combo, BbFillStyleEditor *editor)
 
     bb_schematic_window_apply_selection(
         BB_SCHEMATIC_WINDOW(window),
-        bb_color_editor_apply_pitch_2_lambda,
+        bb_fill_style_editor_apply_pitch_2_lambda,
         GINT_TO_POINTER(bb_int32_combo_box_get_value(combo))
     );
 }
@@ -253,14 +359,14 @@ bb_color_editor_apply_pitch_2(BbInt32ComboBox *combo, BbFillStyleEditor *editor)
  * @param user_data The pitch
  */
 static void
-bb_color_editor_apply_pitch_2_lambda(BbSchematicItem *item, gpointer user_data)
+bb_fill_style_editor_apply_pitch_2_lambda(BbSchematicItem *item, gpointer user_data)
 {
     if (BB_IS_ADJUSTABLE_FILL_STYLE(item))
     {
         bb_adjustable_fill_style_set_fill_pitch_2(
             BB_ADJUSTABLE_FILL_STYLE(item),
             GPOINTER_TO_INT(user_data)
-            );
+        );
     }
 }
 
@@ -290,22 +396,32 @@ bb_fill_style_editor_class_init(BbFillStyleEditorClass *class)
 
     gtk_widget_class_bind_template_callback(
         GTK_WIDGET_CLASS(class),
-        bb_color_editor_apply_angle_1
+        bb_fill_style_editor_apply_angle_1
         );
 
     gtk_widget_class_bind_template_callback(
         GTK_WIDGET_CLASS(class),
-        bb_color_editor_apply_angle_2
+        bb_fill_style_editor_apply_angle_2
         );
 
     gtk_widget_class_bind_template_callback(
         GTK_WIDGET_CLASS(class),
-        bb_color_editor_apply_pitch_1
+        bb_fill_style_editor_apply_fill_type
         );
 
     gtk_widget_class_bind_template_callback(
         GTK_WIDGET_CLASS(class),
-        bb_color_editor_apply_pitch_2
+        bb_fill_style_editor_apply_fill_width
+        );
+
+    gtk_widget_class_bind_template_callback(
+        GTK_WIDGET_CLASS(class),
+        bb_fill_style_editor_apply_pitch_1
+        );
+
+    gtk_widget_class_bind_template_callback(
+        GTK_WIDGET_CLASS(class),
+        bb_fill_style_editor_apply_pitch_2
         );
 
     gtk_widget_class_bind_template_child(
@@ -318,6 +434,18 @@ bb_fill_style_editor_class_init(BbFillStyleEditorClass *class)
         GTK_WIDGET_CLASS(class),
         BbFillStyleEditor,
         fill_angle2_combo
+        );
+
+    gtk_widget_class_bind_template_child(
+        GTK_WIDGET_CLASS(class),
+        BbFillStyleEditor,
+        fill_type_combo
+        );
+
+    gtk_widget_class_bind_template_child(
+        GTK_WIDGET_CLASS(class),
+        BbFillStyleEditor,
+        fill_width_combo
         );
 
     gtk_widget_class_bind_template_child(
