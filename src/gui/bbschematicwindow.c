@@ -17,6 +17,7 @@
  */
 
 #include <gtk/gtk.h>
+#include <src/lib/bbschematic.h>
 #include "bbschematicwrapper.h"
 #include "bbschematicwindow.h"
 #include "bbschematicwindowinner.h"
@@ -36,6 +37,8 @@ struct _BbSchematicWindow
     BbSchematicWindowInner *inner_window;
 
     BbSchematicWrapper *schematic_wrapper;
+
+    BbSchematic *schematic;
 };
 
 
@@ -64,16 +67,15 @@ bb_schematic_window_set_property(GObject *object, guint property_id, const GValu
 void
 bb_schematic_window_apply_selection(BbSchematicWindow *window, BbApplyFunc func, gpointer user_data)
 {
+    g_return_if_fail(window != NULL);
 
-}
-
-
-void
-bb_schematic_window_apply_property(BbSchematicWindow *window, const char *name)
-{
-    g_message("apply-property = \"%s\"", name);
-
-    g_signal_emit_by_name(window, "update");
+    bb_schematic_foreach_modify(
+        window->schematic,
+        bb_pred_always,
+        NULL,
+        func,
+        user_data
+        );
 }
 
 
@@ -186,13 +188,23 @@ bb_schematic_window_init(BbSchematicWindow *window)
     gtk_widget_init_template(GTK_WIDGET(window));
 
     window->schematic_wrapper = g_object_new(BB_TYPE_SCHEMATIC_WRAPPER, NULL);
+
+    window->schematic = bb_schematic_new();
 }
 
 
 void
 bb_schematic_window_query_selection(BbSchematicWindow *window, BbQueryFunc func, gpointer user_data)
 {
+    g_return_if_fail(window != NULL);
 
+    bb_schematic_foreach_query(
+        window->schematic,
+        bb_pred_always,
+        NULL,
+        func,
+        user_data
+        );
 }
 
 

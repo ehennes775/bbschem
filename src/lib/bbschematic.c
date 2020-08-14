@@ -23,6 +23,7 @@
 #include "bbschematic.h"
 #include "bbschematicitem.h"
 #include "bbgraphicline.h"
+#include "bbapplyfunc.h"
 
 
 enum
@@ -234,11 +235,43 @@ bb_schematic_foreach(BbSchematic *schematic, GFunc func, gpointer user_data)
 
 
 void
+bb_schematic_foreach_query(
+    BbSchematic *schematic,
+    BbPred where_pred,
+    gpointer where_user_data,
+    BbQueryFunc query_func,
+    gpointer query_user_data
+    )
+{
+    GSList *iter;
+
+    g_return_if_fail(schematic != NULL);
+    g_return_if_fail(where_pred != NULL);
+    g_return_if_fail(query_func != NULL);
+
+    iter = schematic->items;
+
+    while (iter != NULL)
+    {
+        if (where_pred(iter->data , where_user_data))
+        {
+            if (!query_func(iter->data , query_user_data))
+            {
+                break;
+            }
+        }
+
+        iter = g_slist_next(iter);
+    }
+}
+
+
+void
 bb_schematic_foreach_modify(
     BbSchematic *schematic,
     BbPred where_pred,
     gpointer where_user_data,
-    GFunc modify_func,
+    BbApplyFunc modify_func,
     gpointer modify_user_data
     )
 {
@@ -260,6 +293,18 @@ bb_schematic_foreach_modify(
         iter = g_slist_next(iter);
     }
 }
+
+
+void
+bb_schematic_foreach_remove(
+    BbSchematic *schematic,
+    BbPred where_pred,
+    gpointer where_user_data
+    )
+{
+    // TODO
+}
+
 
 static void
 bb_schematic_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec)
@@ -285,251 +330,6 @@ static void
 bb_schematic_init(BbSchematic *schematic)
 {
     schematic->items = g_slist_append(schematic->items, bb_graphic_line_new());
-}
-
-
-void
-bb_schematic_modify_fill_angle_1(
-    BbSchematic *schematic,
-    BbPred where_pred,
-    gpointer where_user_data,
-    int fill_angle
-    )
-{
-    bb_schematic_foreach_modify(
-        schematic,
-        where_pred,
-        where_user_data,
-        bb_schematic_modify_fill_angle_1_lambda,
-        &fill_angle
-        );
-}
-
-
-static void
-bb_schematic_modify_fill_angle_1_lambda(
-    gpointer data,
-    gpointer user_data
-    )
-{
-    if (BB_IS_ADJUSTABLE_FILL_STYLE(data))
-    {
-        g_object_set(
-            G_OBJECT(data),
-            "fill-angle-1", *((int*) user_data),
-            NULL
-            );
-    }
-}
-
-
-void
-bb_schematic_modify_fill_angle_2(
-    BbSchematic *schematic,
-    BbPred where_pred,
-    gpointer where_user_data,
-    int fill_angle
-    )
-{
-    bb_schematic_foreach_modify(
-        schematic,
-        where_pred,
-        where_user_data,
-        bb_schematic_modify_fill_angle_2_lambda,
-        &fill_angle
-        );
-}
-
-
-static void
-bb_schematic_modify_fill_angle_2_lambda(
-    gpointer data,
-    gpointer user_data
-    )
-{
-    if (BB_IS_ADJUSTABLE_FILL_STYLE(data))
-    {
-        g_object_set(
-            G_OBJECT(data),
-            "fill-angle-2", *((int*) user_data),
-            NULL
-            );
-    }
-}
-
-
-void
-bb_schematic_modify_fill_pitch_1(
-    BbSchematic *schematic,
-    BbPred where_pred,
-    gpointer where_user_data,
-    int fill_pitch
-    )
-{
-    bb_schematic_foreach_modify(
-        schematic,
-        where_pred,
-        where_user_data,
-        bb_schematic_modify_fill_pitch_1_lambda,
-        &fill_pitch
-        );
-}
-
-
-static void
-bb_schematic_modify_fill_pitch_1_lambda(
-    gpointer data,
-    gpointer user_data
-    )
-{
-    if (BB_IS_ADJUSTABLE_FILL_STYLE(data))
-    {
-        g_object_set(
-            G_OBJECT(data),
-            "fill-pitch-1", *((int*) user_data),
-            NULL
-            );
-    }
-}
-
-
-void
-bb_schematic_modify_fill_pitch_2(
-    BbSchematic *schematic,
-    BbPred where_pred,
-    gpointer where_user_data,
-    int fill_pitch
-    )
-{
-    bb_schematic_foreach_modify(
-        schematic,
-        where_pred,
-        where_user_data,
-        bb_schematic_modify_fill_pitch_2_lambda,
-        &fill_pitch
-        );
-}
-
-
-static void
-bb_schematic_modify_fill_pitch_2_lambda(
-    gpointer data,
-    gpointer user_data
-    )
-{
-    if (BB_IS_ADJUSTABLE_FILL_STYLE(data))
-    {
-        g_object_set(
-            G_OBJECT(data),
-            "fill-pitch-2", *((int*) user_data),
-            NULL
-            );
-    }
-}
-
-
-void
-bb_schematic_modify_fill_type(
-    BbSchematic *schematic,
-    BbPred where_pred,
-    gpointer where_user_data,
-    int fill_type
-    )
-{
-    bb_schematic_foreach_modify(
-        schematic,
-        where_pred,
-        where_user_data,
-        bb_schematic_modify_fill_type_lambda,
-        &fill_type
-        );
-}
-
-
-static void
-bb_schematic_modify_fill_type_lambda(
-    gpointer data,
-    gpointer user_data
-    )
-{
-    if (BB_IS_ADJUSTABLE_FILL_STYLE(data))
-    {
-        g_object_set(
-            G_OBJECT(data),
-            "fill-type", *((int*) user_data),
-            NULL
-            );
-    }
-}
-
-
-void
-bb_schematic_modify_fill_width(
-    BbSchematic *schematic,
-    BbPred where_pred,
-    gpointer where_user_data,
-    int fill_width
-    )
-{
-    bb_schematic_foreach_modify(
-        schematic,
-        where_pred,
-        where_user_data,
-        bb_schematic_modify_fill_width_lambda,
-        &fill_width
-        );
-}
-
-
-static void
-bb_schematic_modify_fill_width_lambda(
-    gpointer data,
-    gpointer user_data
-    )
-{
-    if (BB_IS_ADJUSTABLE_FILL_STYLE(data))
-    {
-        g_object_set(
-            G_OBJECT(data),
-            "fill-width", *((int*) user_data),
-            NULL
-            );
-    }
-}
-
-
-void
-bb_schematic_modify_item_color(
-    BbSchematic *schematic,
-    BbPred where_pred,
-    gpointer where_user_data,
-    int color
-    )
-{
-    bb_schematic_foreach_modify(
-        schematic,
-        where_pred,
-        where_user_data,
-        bb_schematic_modify_item_color_lambda,
-        &color
-        );
-}
-
-
-static void
-bb_schematic_modify_item_color_lambda(
-    gpointer data,
-    gpointer user_data
-    )
-{
-    if (BB_IS_ADJUSTABLE_ITEM_COLOR(data))
-    {
-        g_object_set(
-            G_OBJECT(data),
-            "color", *((int*) user_data),
-            NULL
-            );
-    }
 }
 
 
