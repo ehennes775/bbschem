@@ -292,14 +292,56 @@ bb_graphic_line_class_init(BbGraphicLineClass *klasse)
             )
         );
 
-    for (int index = PROP_0 + 1; index < N_PROPERTIES; ++index)
-    {
-        properties[index] = g_object_class_find_property(
-            G_OBJECT_CLASS(klasse),
-            index
-            );
-    }
-}
+    properties[PROP_X0] = g_object_class_find_property(
+        G_OBJECT_CLASS(klasse),
+        "x0"
+        );
+
+    properties[PROP_X1] = g_object_class_find_property(
+        G_OBJECT_CLASS(klasse),
+        "x1"
+        );
+
+    properties[PROP_Y0] = g_object_class_find_property(
+        G_OBJECT_CLASS(klasse),
+        "y0"
+        );
+
+    properties[PROP_Y1] = g_object_class_find_property(
+        G_OBJECT_CLASS(klasse),
+        "y1"
+        );
+
+    properties[PROP_ITEM_COLOR] = g_object_class_find_property(
+        G_OBJECT_CLASS(klasse),
+        "item-color"
+        );
+
+    properties[PROP_CAP_TYPE] = g_object_class_find_property(
+        G_OBJECT_CLASS(klasse),
+        "cap-type"
+        );
+
+    properties[PROP_DASH_LENGTH] = g_object_class_find_property(
+        G_OBJECT_CLASS(klasse),
+        "dash-length"
+        );
+
+    properties[PROP_DASH_SPACE] = g_object_class_find_property(
+        G_OBJECT_CLASS(klasse),
+        "dash-space"
+        );
+
+    properties[PROP_DASH_TYPE] = g_object_class_find_property(
+        G_OBJECT_CLASS(klasse),
+        "DASH_TYPE"
+        );
+
+    properties[PROP_LINE_WIDTH] = g_object_class_find_property(
+        G_OBJECT_CLASS(klasse),
+        "line-width"
+        );
+ }
 
 
 static void
