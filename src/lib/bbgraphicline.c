@@ -294,10 +294,10 @@ bb_graphic_line_class_init(BbGraphicLineClass *klasse)
 
     for (int index = PROP_0 + 1; index < N_PROPERTIES; ++index)
     {
-        properties[index] = g_object_class_find_property(
-            G_OBJECT_CLASS(klasse),
-            index
-            );
+        //properties[index] = g_object_class_find_property(
+        //    G_OBJECT_CLASS(klasse),
+        //    index
+        //    );
     }
 }
 

@@ -74,6 +74,8 @@ add_executable(bbsch
         src/gui/bbpinpropertyeditor.h
         src/gui/bbpropertycombobox.c
         src/gui/bbpropertycombobox.h
+ 	src/gui/bbquitaction.c       
+        src/gui/bbquitaction.h
         src/gui/bbschematicwindow.c
         src/gui/bbschematicwindow.h
         src/gui/bbschematicwindowinner.c

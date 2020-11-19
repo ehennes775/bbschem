@@ -87,6 +87,7 @@
                 <section>
                     <item>
                         <attribute name="label" translatable="yes">Quit</attribute>
+                        <attribute name="action">win.quit</attribute>
                     </item>
                 </section>
             </submenu>

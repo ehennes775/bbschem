@@ -21,6 +21,7 @@
 #include "bbapplication.h"
 #include "bbdocumentwindowtab.h"
 #include "bbschematicwindow.h"
+#include "bbquitaction.h"
 
 enum
 {
@@ -183,9 +184,17 @@ bb_main_window_init(BbMainWindow *window)
 
     gtk_widget_init_template(GTK_WIDGET(window));
 
+    bb_main_window_add_page(window, g_object_new(BB_TYPE_SCHEMATIC_WINDOW, NULL));
+    bb_main_window_add_page(window, g_object_new(BB_TYPE_SCHEMATIC_WINDOW, NULL));
 
-    bb_main_window_add_page(window, g_object_new(BB_TYPE_SCHEMATIC_WINDOW, NULL));
-    bb_main_window_add_page(window, g_object_new(BB_TYPE_SCHEMATIC_WINDOW, NULL));
+    GActionMap* map = G_ACTION_MAP(window);
+    BbQuitAction* action = bb_quit_action_new();
+    GSimpleAction* simple = g_simple_action_new("quit", NULL);
+
+    g_action_map_add_action(
+        map,
+        G_ACTION(action)
+        );
 }
 
 
