@@ -27,8 +27,6 @@
 #define BB_TYPE_SCHEMATIC_WINDOW bb_schematic_window_get_type()
 G_DECLARE_FINAL_TYPE(BbSchematicWindow, bb_schematic_window, BB, SCHEMATIC_WINDOW, BbDocumentWindow)
 
-void
-bb_schematic_window_apply_property(BbSchematicWindow *window, const char *name);
 
 BbSchematicWrapper*
 bb_schematic_window_get_schematic_wrapper(BbSchematicWindow *window);

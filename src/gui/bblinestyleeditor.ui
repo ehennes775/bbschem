@@ -131,7 +131,7 @@
                         <property name="hexpand">true</property>
                         <property name="id-column">1</property>
                         <property name="model">line-type-list</property>
-                        <signal name="apply" handler="bb_line_style_editor_apply"/>
+                        <signal name="apply" handler="bb_line_style_editor_apply_dash_type"/>
                         <style>
                             <class name="propedit"/>
                         </style>
@@ -174,7 +174,7 @@
                         <property name="has-entry">true</property>
                         <property name="hexpand">true</property>
                         <property name="model">line-width-list</property>
-                        <signal name="apply" handler="bb_line_style_editor_apply"/>
+                        <signal name="apply" handler="bb_line_style_editor_apply_line_width"/>
                         <style>
                             <class name="propedit"/>
                         </style>
@@ -207,7 +207,7 @@
                         <property name="has-entry">true</property>
                         <property name="hexpand">true</property>
                         <property name="model">dash-length-list</property>
-                        <signal name="apply" handler="bb_line_style_editor_apply"/>
+                        <signal name="apply" handler="bb_line_style_editor_apply_dash_length"/>
                         <style>
                             <class name="propedit"/>
                         </style>
@@ -240,7 +240,7 @@
                         <property name="has-entry">true</property>
                         <property name="hexpand">true</property>
                         <property name="model">dash-length-list</property>
-                        <signal name="apply" handler="bb_line_style_editor_apply"/>
+                        <signal name="apply" handler="bb_line_style_editor_apply_dash_space"/>
                         <style>
                             <class name="propedit"/>
                         </style>
@@ -272,7 +272,7 @@
                         <property name="hexpand">true</property>
                         <property name="id-column">1</property>
                         <property name="model">cap-type-list</property>
-                        <signal name="apply" handler="bb_line_style_editor_apply"/>
+                        <signal name="apply" handler="bb_line_style_editor_apply_cap_type"/>
                         <style>
                             <class name="propedit"/>
                         </style>
