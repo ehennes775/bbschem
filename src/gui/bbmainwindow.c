@@ -21,6 +21,10 @@
 #include "bbapplication.h"
 #include "bbdocumentwindowtab.h"
 #include "bbschematicwindow.h"
+
+#include "bbcopyaction.h"
+#include "bbcutaction.h"
+#include "bbpasteaction.h"
 #include "bbquitaction.h"
 
 enum
@@ -187,13 +191,24 @@ bb_main_window_init(BbMainWindow *window)
     bb_main_window_add_page(window, g_object_new(BB_TYPE_SCHEMATIC_WINDOW, NULL));
     bb_main_window_add_page(window, g_object_new(BB_TYPE_SCHEMATIC_WINDOW, NULL));
 
-    GActionMap* map = G_ACTION_MAP(window);
-    BbQuitAction* action = bb_quit_action_new();
-    GSimpleAction* simple = g_simple_action_new("quit", NULL);
+    g_action_map_add_action(
+        G_ACTION_MAP(window),
+        G_ACTION(bb_copy_action_new())
+        );
 
     g_action_map_add_action(
-        map,
-        G_ACTION(action)
+        G_ACTION_MAP(window),
+        G_ACTION(bb_cut_action_new())
+        );
+
+    g_action_map_add_action(
+        G_ACTION_MAP(window),
+        G_ACTION(bb_paste_action_new())
+        );
+
+    g_action_map_add_action(
+        G_ACTION_MAP(window),
+        G_ACTION(bb_quit_action_new())
         );
 }
 

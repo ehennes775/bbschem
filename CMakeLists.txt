@@ -46,6 +46,10 @@ add_executable(bbsch
         src/gui/bbcolorcombobox.h
         src/gui/bbcoloreditor.c
         src/gui/bbcoloreditor.h
+        src/gui/bbcopyaction.c
+        src/gui/bbcopyaction.h
+        src/gui/bbcutaction.c
+        src/gui/bbcutaction.h
         src/gui/bbcomponentselector.c
         src/gui/bbcomponentselector.h
         src/gui/bbcomponentselectorplugin.c
@@ -70,11 +74,13 @@ add_executable(bbsch
         src/gui/bblinestyleeditor.h
         src/gui/bbmainwindow.c
         src/gui/bbmainwindow.h
+        src/gui/bbpasteaction.c
+        src/gui/bbpasteaction.h
         src/gui/bbpinpropertyeditor.c
         src/gui/bbpinpropertyeditor.h
         src/gui/bbpropertycombobox.c
         src/gui/bbpropertycombobox.h
- 	src/gui/bbquitaction.c       
+        src/gui/bbquitaction.c
         src/gui/bbquitaction.h
         src/gui/bbschematicwindow.c
         src/gui/bbschematicwindow.h
