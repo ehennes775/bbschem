@@ -35,7 +35,7 @@ bb_schematic_window_get_schematic_wrapper(BbSchematicWindow *window);
 /**
  * Perform an operation to modify all items in the selection
  *
- * @param window
+ * @param window This window
  * @param func The operation to perform on each item in the selection
  * @param user_data Data to pass through to the operation as a parameter
  */
@@ -44,14 +44,157 @@ bb_schematic_window_apply_selection(BbSchematicWindow *window, BbApplyFunc func,
 
 
 /**
+ * Copy the selection to the clipboard
+ *
+ * @param window This window
+ */
+void
+bb_schematic_window_copy(BbSchematicWindow *window);
+
+
+/**
+ * Cut the selection and place in the clipboard
+ *
+ * @param window This window
+ */
+void
+bb_schematic_window_cut(BbSchematicWindow *window);
+
+
+/**
+ * Indicates a copy operation could be performed
+ *
+ * @param window This window
+ * @return TRUE if the operation can be performed
+ */
+gboolean
+bb_schematic_window_get_can_copy(BbSchematicWindow *window);
+
+
+/**
+ * Indicates a cut operation could be performed
+ *
+ * @param window This window
+ * @return TRUE if the operation can be performed
+ */
+gboolean
+bb_schematic_window_get_can_cut(BbSchematicWindow *window);
+
+
+/**
+ * Indicates a delete operation could be performed
+ *
+ * @param window This window
+ * @return TRUE if the operation can be performed
+ */
+gboolean
+bb_schematic_window_get_can_delete(BbSchematicWindow *window);
+
+
+/**
+ * Indicates a paste operation could be performed
+ *
+ * @param window This window
+ * @return TRUE if the operation can be performed
+ */
+gboolean
+bb_schematic_window_get_can_paste(BbSchematicWindow *window);
+
+
+/**
+ * Indicates a redo operation could be performed
+ *
+ * @param window This window
+ * @return TRUE if the operation can be performed
+ */
+gboolean
+bb_schematic_window_get_can_redo(BbSchematicWindow *window);
+
+
+/**
+ * Indicates a select all operation could be performed
+ *
+ * @param window This window
+ * @return TRUE if the operation can be performed
+ */
+gboolean
+bb_schematic_window_get_can_select_all(BbSchematicWindow *window);
+
+
+/**
+ * Indicates clearing the selection operation could be performed
+ *
+ * @param window This window
+ * @return TRUE if the operation can be performed
+ */
+gboolean
+bb_schematic_window_get_can_select_none(BbSchematicWindow *window);
+
+
+/**
+ * Indicates an undo operation could be performed
+ *
+ * @param window This window
+ * @return TRUE if the operation can be performed
+ */
+gboolean
+bb_schematic_window_get_can_undo(BbSchematicWindow *window);
+
+
+/**
+ * Paste the contents of the clipboard
+ *
+ * @param window This window
+ */
+void
+bb_schematic_window_paste(BbSchematicWindow *window);
+
+
+/**
  * Perform an operation to query all items in the selection
  *
- * @param window
+ * @param window This window
  * @param func The operation to perform on each item in the selection
  * @param user_data Data to pass through to the operation as a parameter
  */
 void
 bb_schematic_window_query_selection(BbSchematicWindow *window, BbQueryFunc func, gpointer user_data);
+
+
+/**
+ * Redo the last undo operation
+ *
+ * @param window This window
+ */
+void
+bb_schematic_window_select_redo(BbSchematicWindow *window);
+
+
+/**
+ * Select the entire document
+ *
+ * @param window This window
+ */
+void
+bb_schematic_window_select_all(BbSchematicWindow *window);
+
+
+/**
+ * Clear the selection
+ *
+ * @param window This window
+ */
+void
+bb_schematic_window_select_none(BbSchematicWindow *window);
+
+
+/**
+ * Undo the last operation
+ *
+ * @param window This window
+ */
+void
+bb_schematic_window_select_undo(BbSchematicWindow *window);
 
 
 void
