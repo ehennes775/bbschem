@@ -19,11 +19,22 @@
  */
 
 #include <gtk/gtk.h>
+#include "bbmainwindow.h"
 
 #define BB_TYPE_QUIT_ACTION bb_quit_action_get_type()
 G_DECLARE_FINAL_TYPE(BbQuitAction, bb_quit_action, BB, QUIT_ACTION, GObject)
 
+
+BbMainWindow*
+bb_quit_action_get_window(BbQuitAction *action);
+
+
 BbQuitAction*
-bb_quit_action_new();
+bb_quit_action_new(BbMainWindow *window);
+
+
+void
+bb_quit_action_set_window(BbQuitAction *action, BbMainWindow* window);
+
 
 #endif

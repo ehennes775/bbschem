@@ -17,9 +17,8 @@
  */
 
 #include <gtk/gtk.h>
-#include "bbcopyaction.h"
+#include "bbselectnoneaction.h"
 #include "bbschematicwindow.h"
-
 
 enum
 {
@@ -35,7 +34,7 @@ enum
 };
 
 
-struct _BbCopyAction
+struct _BbSelectNoneAction
 {
     GObject parent;
 
@@ -44,98 +43,98 @@ struct _BbCopyAction
 
 
 static void
-bb_copy_action_action_init(GActionInterface *iface);
+bb_select_none_action_action_init(GActionInterface *iface);
 
 static void
-bb_copy_action_activate(GAction *action, GVariant *parameter);
+bb_select_none_action_activate(GAction *action, GVariant *parameter);
 
 static void
-bb_copy_action_change_state(GAction *action, GVariant *value);
+bb_select_none_action_change_state(GAction *action, GVariant *value);
 
 static void
-bb_copy_action_dispose(GObject *object);
+bb_select_none_action_dispose(GObject *object);
 
 static void
-bb_copy_action_finalize(GObject *object);
+bb_select_none_action_finalize(GObject *object);
 
 static gboolean
-bb_copy_action_get_enabled(GAction *action);
+bb_select_none_action_get_enabled(GAction *action);
 
 static const gchar *
-bb_copy_action_get_name(GAction *action);
+bb_select_none_action_get_name(GAction *action);
 
 static const GVariantType *
-bb_copy_action_get_parameter_type(GAction *action);
+bb_select_none_action_get_parameter_type(GAction *action);
 
 static void
-bb_copy_action_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
+bb_select_none_action_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
 
 static GVariant *
-bb_copy_action_get_state(GAction *action);
+bb_select_none_action_get_state(GAction *action);
 
 static GVariant *
-bb_copy_action_get_state_hint(GAction *action);
+bb_select_none_action_get_state_hint(GAction *action);
 
 static const GVariantType *
-bb_copy_action_get_state_type(GAction *action);
+bb_select_none_action_get_state_type(GAction *action);
 
 static void
-bb_copy_action_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
+bb_select_none_action_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
 
 
 GParamSpec *properties[N_PROPERTIES];
 
 
 G_DEFINE_TYPE_WITH_CODE(
-    BbCopyAction,
-    bb_copy_action,
+    BbSelectNoneAction,
+    bb_select_none_action,
     G_TYPE_OBJECT,
-    G_IMPLEMENT_INTERFACE(G_TYPE_ACTION, bb_copy_action_action_init)
-)
+    G_IMPLEMENT_INTERFACE(G_TYPE_ACTION, bb_select_none_action_action_init)
+    )
 
 
 static void
-bb_copy_action_action_init(GActionInterface *iface)
+bb_select_none_action_action_init(GActionInterface *iface)
 {
-    iface->activate = bb_copy_action_activate;
-    iface->change_state = bb_copy_action_change_state;
-    iface->get_enabled = bb_copy_action_get_enabled;
-    iface->get_name = bb_copy_action_get_name;
-    iface->get_parameter_type = bb_copy_action_get_parameter_type;
-    iface->get_state = bb_copy_action_get_state;
-    iface->get_state_hint = bb_copy_action_get_state_hint;
-    iface->get_state_type = bb_copy_action_get_state_type;
+    iface->activate = bb_select_none_action_activate;
+    iface->change_state = bb_select_none_action_change_state;
+    iface->get_enabled = bb_select_none_action_get_enabled;
+    iface->get_name = bb_select_none_action_get_name;
+    iface->get_parameter_type = bb_select_none_action_get_parameter_type;
+    iface->get_state = bb_select_none_action_get_state;
+    iface->get_state_hint = bb_select_none_action_get_state_hint;
+    iface->get_state_type = bb_select_none_action_get_state_type;
 }
 
 
 static void
-bb_copy_action_activate(GAction *action, GVariant *parameter)
+bb_select_none_action_activate(GAction *action, GVariant *parameter)
 {
     GtkWidget *window = bb_main_window_get_current_document_window(
-        bb_copy_action_get_window(BB_COPY_ACTION(action))
+        bb_select_none_action_get_window(BB_SELECT_NONE_ACTION(action))
         );
 
     if (BB_IS_SCHEMATIC_WINDOW(window))
     {
-        bb_schematic_window_copy(BB_SCHEMATIC_WINDOW(window));
+        bb_schematic_window_select_none(BB_SCHEMATIC_WINDOW(window));
     }
 }
 
 
 static void
-bb_copy_action_change_state(GAction *action, GVariant *value)
+bb_select_none_action_change_state(GAction *action, GVariant *value)
 {
 
 }
 
 
 static void
-bb_copy_action_class_init(BbCopyActionClass *klasse)
+bb_select_none_action_class_init(BbSelectNoneActionClass *klasse)
 {
-    G_OBJECT_CLASS(klasse)->dispose = bb_copy_action_dispose;
-    G_OBJECT_CLASS(klasse)->finalize = bb_copy_action_finalize;
-    G_OBJECT_CLASS(klasse)->get_property = bb_copy_action_get_property;
-    G_OBJECT_CLASS(klasse)->set_property = bb_copy_action_set_property;
+    G_OBJECT_CLASS(klasse)->dispose = bb_select_none_action_dispose;
+    G_OBJECT_CLASS(klasse)->finalize = bb_select_none_action_finalize;
+    G_OBJECT_CLASS(klasse)->get_property = bb_select_none_action_get_property;
+    G_OBJECT_CLASS(klasse)->set_property = bb_select_none_action_set_property;
 
     g_object_class_override_property(
         G_OBJECT_CLASS(klasse),
@@ -184,42 +183,43 @@ bb_copy_action_class_init(BbCopyActionClass *klasse)
             G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS
             )
         );
+
 }
 
 
 static void
-bb_copy_action_dispose(GObject *object)
+bb_select_none_action_dispose(GObject *object)
 {
-    // BbCopyAction* privat = BbCopy_ACTION_GET_PRIVATE(object);
+    // BbSelectNoneAction* privat = BbSelectNone_ACTION_GET_PRIVATE(object);
 }
 
 
 static void
-bb_copy_action_finalize(GObject *object)
+bb_select_none_action_finalize(GObject *object)
 {
-    // BbCopyAction* privat = BbCopy_ACTION_GET_PRIVATE(object);
+    // BbSelectNoneAction* privat = BbSelectNone_ACTION_GET_PRIVATE(object);
 }
 
 
 static gboolean
-bb_copy_action_get_enabled(GAction *action)
+bb_select_none_action_get_enabled(GAction *action)
 {
     g_return_val_if_fail(action != NULL, FALSE);
 
     GtkWidget *window = bb_main_window_get_current_document_window(
-        bb_copy_action_get_window(BB_COPY_ACTION(action))
+        bb_select_none_action_get_window(BB_SELECT_NONE_ACTION(action))
         );
 
     return
         BB_IS_SCHEMATIC_WINDOW(window) &&
-        bb_schematic_window_get_can_copy(BB_SCHEMATIC_WINDOW(window));
+        bb_schematic_window_get_can_select_none(BB_SCHEMATIC_WINDOW(window));
 }
 
 
 static const gchar *
-bb_copy_action_get_name(GAction *action)
+bb_select_none_action_get_name(GAction *action)
 {
-    const gchar *name = "edit-copy";
+    const gchar *name = "edit-select_none";
 
     g_return_val_if_fail(action != NULL, name);
 
@@ -228,7 +228,7 @@ bb_copy_action_get_name(GAction *action)
 
 
 static const GVariantType *
-bb_copy_action_get_parameter_type(GAction *action)
+bb_select_none_action_get_parameter_type(GAction *action)
 {
     g_return_val_if_fail(action != NULL, NULL);
 
@@ -237,36 +237,36 @@ bb_copy_action_get_parameter_type(GAction *action)
 
 
 static void
-bb_copy_action_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec)
+bb_select_none_action_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec)
 {
     switch (property_id)
     {
         case PROP_ENABLED:
-            g_value_set_boolean(value, bb_copy_action_get_enabled(G_ACTION(object)));
+            g_value_set_boolean(value, bb_select_none_action_get_enabled(G_ACTION(object)));
             break;
 
         case PROP_NAME:
-            g_value_set_string(value, bb_copy_action_get_name(G_ACTION(object)));
+            g_value_set_string(value, bb_select_none_action_get_name(G_ACTION(object)));
             break;
 
         case PROP_PARAMETER_TYPE:
-            g_value_set_boxed(value, bb_copy_action_get_parameter_type(G_ACTION(object)));
+            g_value_set_boxed(value, bb_select_none_action_get_parameter_type(G_ACTION(object)));
             break;
 
         case PROP_STATE:
-            g_value_set_variant(value, bb_copy_action_get_state(G_ACTION(object)));
+            g_value_set_variant(value, bb_select_none_action_get_state(G_ACTION(object)));
             break;
 
         case PROP_STATE_HINT:
-            g_value_set_variant(value, bb_copy_action_get_state_hint(G_ACTION(object)));
+            g_value_set_variant(value, bb_select_none_action_get_state_hint(G_ACTION(object)));
             break;
 
         case PROP_STATE_TYPE:
-            g_value_set_boxed(value, bb_copy_action_get_state_type(G_ACTION(object)));
+            g_value_set_boxed(value, bb_select_none_action_get_state_type(G_ACTION(object)));
             break;
 
         case PROP_WINDOW:
-            g_value_set_object(value, bb_copy_action_get_window(BB_COPY_ACTION(object)));
+            g_value_set_object(value, bb_select_none_action_get_window(BB_SELECT_NONE_ACTION(object)));
             break;
 
         default:
@@ -276,7 +276,7 @@ bb_copy_action_get_property(GObject *object, guint property_id, GValue *value, G
 
 
 static GVariant *
-bb_copy_action_get_state(GAction *action)
+bb_select_none_action_get_state(GAction *action)
 {
     g_return_val_if_fail(action != NULL, NULL);
 
@@ -285,7 +285,7 @@ bb_copy_action_get_state(GAction *action)
 
 
 static GVariant *
-bb_copy_action_get_state_hint(GAction *action)
+bb_select_none_action_get_state_hint(GAction *action)
 {
     g_return_val_if_fail(action != NULL, NULL);
 
@@ -293,8 +293,8 @@ bb_copy_action_get_state_hint(GAction *action)
 }
 
 
-static const GVariantType*
-bb_copy_action_get_state_type(GAction *action)
+static const GVariantType *
+bb_select_none_action_get_state_type(GAction *action)
 {
     g_return_val_if_fail(action != NULL, NULL);
 
@@ -303,7 +303,7 @@ bb_copy_action_get_state_type(GAction *action)
 
 
 BbMainWindow*
-bb_copy_action_get_window(BbCopyAction *action)
+bb_select_none_action_get_window(BbSelectNoneAction *action)
 {
     g_return_val_if_fail(action != NULL, NULL);
 
@@ -312,17 +312,17 @@ bb_copy_action_get_window(BbCopyAction *action)
 
 
 static void
-bb_copy_action_init(BbCopyAction *action)
+bb_select_none_action_init(BbSelectNoneAction *action)
 {
     action->window = NULL;
 }
 
 
-BbCopyAction *
-bb_copy_action_new(BbMainWindow *window)
+BbSelectNoneAction*
+bb_select_none_action_new(BbMainWindow *window)
 {
-    return BB_COPY_ACTION(g_object_new(
-        BB_TYPE_COPY_ACTION,
+    return BB_SELECT_NONE_ACTION(g_object_new(
+        BB_TYPE_SELECT_NONE_ACTION,
         "window", window,
         NULL
         ));
@@ -330,19 +330,19 @@ bb_copy_action_new(BbMainWindow *window)
 
 
 __attribute__((constructor)) void
-bb_copy_action_register()
+bb_select_none_action_register()
 {
-    bb_copy_action_get_type();
+    bb_select_none_action_get_type();
 }
 
 
 static void
-bb_copy_action_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec)
+bb_select_none_action_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec)
 {
     switch (property_id)
     {
         case PROP_WINDOW:
-            bb_copy_action_set_window(BB_COPY_ACTION(object), BB_MAIN_WINDOW(g_value_get_object(value)));
+            bb_select_none_action_set_window(BB_SELECT_NONE_ACTION(object), g_value_get_object(value));
             break;
 
         default:
@@ -352,7 +352,7 @@ bb_copy_action_set_property(GObject *object, guint property_id, const GValue *va
 
 
 void
-bb_copy_action_set_window(BbCopyAction *action, BbMainWindow* window)
+bb_select_none_action_set_window(BbSelectNoneAction *action, BbMainWindow* window)
 {
     g_return_if_fail(action != NULL);
 

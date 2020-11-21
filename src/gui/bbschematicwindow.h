@@ -58,6 +58,15 @@ bb_schematic_window_cut(BbSchematicWindow *window);
 
 
 /**
+ * Delete the selection
+ *
+ * @param window This window
+ */
+void
+bb_schematic_window_delete(BbSchematicWindow *window);
+
+
+/**
  * Indicates a copy operation could be performed
  *
  * @param window This window
@@ -163,7 +172,7 @@ bb_schematic_window_query_selection(BbSchematicWindow *window, BbQueryFunc func,
  * @param window This window
  */
 void
-bb_schematic_window_select_redo(BbSchematicWindow *window);
+bb_schematic_window_redo(BbSchematicWindow *window);
 
 
 /**
@@ -190,7 +199,7 @@ bb_schematic_window_select_none(BbSchematicWindow *window);
  * @param window This window
  */
 void
-bb_schematic_window_select_undo(BbSchematicWindow *window);
+bb_schematic_window_undo(BbSchematicWindow *window);
 
 
 #endif

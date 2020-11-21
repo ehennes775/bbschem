@@ -1,5 +1,5 @@
-#ifndef __BBCOPYACTION__
-#define __BBCOPYACTION__
+#ifndef __BBREDOACTION__
+#define __BBREDOACTION__
 /*
  * bbsch
  * Copyright (C) 2020 Edward C. Hennessy
@@ -21,20 +21,20 @@
 #include <gtk/gtk.h>
 #include "bbmainwindow.h"
 
-#define BB_TYPE_COPY_ACTION bb_copy_action_get_type()
-G_DECLARE_FINAL_TYPE(BbCopyAction, bb_copy_action, BB, COPY_ACTION, GObject)
+#define BB_TYPE_REDO_ACTION bb_redo_action_get_type()
+G_DECLARE_FINAL_TYPE(BbRedoAction, bb_redo_action, BB, REDO_ACTION, GObject)
 
 
 BbMainWindow*
-bb_copy_action_get_window(BbCopyAction *action);
+bb_redo_action_get_window(BbRedoAction *action);
 
 
-BbCopyAction*
-bb_copy_action_new(BbMainWindow *window);
+BbRedoAction*
+bb_redo_action_new(BbMainWindow *window);
 
 
 void
-bb_copy_action_set_window(BbCopyAction *action, BbMainWindow* window);
+bb_redo_action_set_window(BbRedoAction *action, BbMainWindow* window);
 
 
 #endif

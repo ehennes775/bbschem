@@ -18,6 +18,7 @@
 
 #include <gtk/gtk.h>
 #include "bbcutaction.h"
+#include "bbschematicwindow.h"
 
 enum
 {
@@ -28,6 +29,7 @@ enum
     PROP_STATE,
     PROP_STATE_HINT,
     PROP_STATE_TYPE,
+    PROP_WINDOW,
     N_PROPERTIES
 };
 
@@ -35,6 +37,8 @@ enum
 struct _BbCutAction
 {
     GObject parent;
+
+    BbMainWindow* window;
 };
 
 
@@ -106,7 +110,14 @@ bb_cut_action_action_init(GActionInterface *iface)
 static void
 bb_cut_action_activate(GAction *action, GVariant *parameter)
 {
-    g_message("bb_cut_action_activate");
+    GtkWidget *window = bb_main_window_get_current_document_window(
+        bb_cut_action_get_window(BB_CUT_ACTION(action))
+        );
+
+    if (BB_IS_SCHEMATIC_WINDOW(window))
+    {
+        bb_schematic_window_cut(BB_SCHEMATIC_WINDOW(window));
+    }
 }
 
 
@@ -126,28 +137,28 @@ bb_cut_action_class_init(BbCutActionClass *klasse)
     G_OBJECT_CLASS(klasse)->set_property = bb_cut_action_set_property;
 
     g_object_class_override_property(
-        klasse,
+        G_OBJECT_CLASS(klasse),
         PROP_ENABLED,
         "enabled"
-    );
+        );
 
     g_object_class_override_property(
-        klasse,
+        G_OBJECT_CLASS(klasse),
         PROP_NAME,
         "name"
-    );
+        );
 
     g_object_class_override_property(
-        klasse,
+        G_OBJECT_CLASS(klasse),
         PROP_PARAMETER_TYPE,
         "parameter-type"
-    );
+        );
 
     g_object_class_override_property(
-        klasse,
+        G_OBJECT_CLASS(klasse),
         PROP_STATE,
         "state"
-    );
+        );
 
     //g_object_class_override_property(
     //    klasse,
@@ -156,10 +167,23 @@ bb_cut_action_class_init(BbCutActionClass *klasse)
     //    );
 
     g_object_class_override_property(
-        klasse,
+        G_OBJECT_CLASS(klasse),
         PROP_STATE_TYPE,
         "state-type"
-    );
+        );
+
+    g_object_class_install_property(
+        G_OBJECT_CLASS(klasse),
+        PROP_WINDOW,
+        properties[PROP_WINDOW] = g_param_spec_object(
+            "window",
+            "",
+            "",
+            BB_TYPE_MAIN_WINDOW,
+            G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS
+            )
+        );
+
 }
 
 
@@ -182,14 +206,20 @@ bb_cut_action_get_enabled(GAction *action)
 {
     g_return_val_if_fail(action != NULL, FALSE);
 
-    return TRUE;
+    GtkWidget *window = bb_main_window_get_current_document_window(
+        bb_cut_action_get_window(BB_CUT_ACTION(action))
+        );
+
+    return
+        BB_IS_SCHEMATIC_WINDOW(window) &&
+        bb_schematic_window_get_can_cut(BB_SCHEMATIC_WINDOW(window));
 }
 
 
 static const gchar *
 bb_cut_action_get_name(GAction *action)
 {
-    const gchar *name = "Cut";
+    const gchar *name = "edit-cut";
 
     g_return_val_if_fail(action != NULL, name);
 
@@ -235,6 +265,10 @@ bb_cut_action_get_property(GObject *object, guint property_id, GValue *value, GP
             g_value_set_boxed(value, bb_cut_action_get_state_type(G_ACTION(object)));
             break;
 
+        case PROP_WINDOW:
+            g_value_set_object(value, bb_cut_action_get_window(BB_CUT_ACTION(object)));
+            break;
+
         default:
             G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
     }
@@ -268,16 +302,30 @@ bb_cut_action_get_state_type(GAction *action)
 }
 
 
-static void
-bb_cut_action_init(BbCutAction *window)
+BbMainWindow*
+bb_cut_action_get_window(BbCutAction *action)
 {
+    g_return_val_if_fail(action != NULL, NULL);
+
+    return action->window;
+}
+
+
+static void
+bb_cut_action_init(BbCutAction *action)
+{
+    action->window = NULL;
 }
 
 
 BbCutAction*
-bb_cut_action_new()
+bb_cut_action_new(BbMainWindow *window)
 {
-    return BB_CUT_ACTION(g_object_new(BB_TYPE_CUT_ACTION, NULL));
+    return BB_CUT_ACTION(g_object_new(
+        BB_TYPE_CUT_ACTION,
+        "window", window,
+        NULL
+        ));
 }
 
 
@@ -293,7 +341,35 @@ bb_cut_action_set_property(GObject *object, guint property_id, const GValue *val
 {
     switch (property_id)
     {
+        case PROP_WINDOW:
+            bb_cut_action_set_window(BB_CUT_ACTION(object), g_value_get_object(value));
+            break;
+
         default:
             G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
+    }
+}
+
+
+void
+bb_cut_action_set_window(BbCutAction *action, BbMainWindow* window)
+{
+    g_return_if_fail(action != NULL);
+
+    if (action->window != window)
+    {
+        if (action->window != NULL)
+        {
+            g_object_unref(action->window);
+        }
+
+        action->window = window;
+
+        if (action->window != NULL)
+        {
+            g_object_ref(action->window);
+        }
+
+        g_object_notify_by_pspec(G_OBJECT(action), properties[PROP_WINDOW]);
     }
 }

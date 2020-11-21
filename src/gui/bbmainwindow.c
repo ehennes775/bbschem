@@ -24,8 +24,14 @@
 
 #include "bbcopyaction.h"
 #include "bbcutaction.h"
+#include "bbdeleteaction.h"
 #include "bbpasteaction.h"
 #include "bbquitaction.h"
+#include "bbselectallaction.h"
+#include "bbselectnoneaction.h"
+#include "bbundoaction.h"
+#include "bbredoaction.h"
+
 
 enum
 {
@@ -193,22 +199,47 @@ bb_main_window_init(BbMainWindow *window)
 
     g_action_map_add_action(
         G_ACTION_MAP(window),
-        G_ACTION(bb_copy_action_new())
+        G_ACTION(bb_copy_action_new(window))
         );
 
     g_action_map_add_action(
         G_ACTION_MAP(window),
-        G_ACTION(bb_cut_action_new())
+        G_ACTION(bb_cut_action_new(window))
         );
 
     g_action_map_add_action(
         G_ACTION_MAP(window),
-        G_ACTION(bb_paste_action_new())
+        G_ACTION(bb_delete_action_new(window))
         );
 
     g_action_map_add_action(
         G_ACTION_MAP(window),
-        G_ACTION(bb_quit_action_new())
+        G_ACTION(bb_paste_action_new(window))
+        );
+
+    g_action_map_add_action(
+        G_ACTION_MAP(window),
+        G_ACTION(bb_quit_action_new(window))
+        );
+
+    g_action_map_add_action(
+        G_ACTION_MAP(window),
+        G_ACTION(bb_redo_action_new(window))
+        );
+
+    g_action_map_add_action(
+        G_ACTION_MAP(window),
+        G_ACTION(bb_select_all_action_new(window))
+        );
+
+    g_action_map_add_action(
+        G_ACTION_MAP(window),
+        G_ACTION(bb_select_none_action_new(window))
+        );
+
+    g_action_map_add_action(
+        G_ACTION_MAP(window),
+        G_ACTION(bb_undo_action_new(window))
         );
 }
 

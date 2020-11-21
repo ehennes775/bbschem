@@ -18,6 +18,7 @@
 
 #include <gtk/gtk.h>
 #include "bbquitaction.h"
+#include "bbschematicwindow.h"
 
 
 enum
@@ -27,8 +28,8 @@ enum
     PROP_NAME,
     PROP_PARAMETER_TYPE,
     PROP_STATE,
-    PROP_STATE_HINT,
     PROP_STATE_TYPE,
+    PROP_WINDOW,
     N_PROPERTIES
 };
 
@@ -36,6 +37,8 @@ enum
 struct _BbQuitAction
 {
     GObject parent;
+
+    BbMainWindow* window;
 };
 
 
@@ -57,22 +60,22 @@ bb_quit_action_finalize(GObject *object);
 static gboolean
 bb_quit_action_get_enabled(GAction *action);
 
-static const gchar*
+static const gchar *
 bb_quit_action_get_name(GAction *action);
 
-static const GVariantType*
+static const GVariantType *
 bb_quit_action_get_parameter_type(GAction *action);
 
 static void
 bb_quit_action_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
 
-static GVariant*
+static GVariant *
 bb_quit_action_get_state(GAction *action);
 
-static GVariant*
+static GVariant *
 bb_quit_action_get_state_hint(GAction *action);
 
-static const GVariantType*
+static const GVariantType *
 bb_quit_action_get_state_type(GAction *action);
 
 static void
@@ -87,7 +90,7 @@ G_DEFINE_TYPE_WITH_CODE(
     bb_quit_action,
     G_TYPE_OBJECT,
     G_IMPLEMENT_INTERFACE(G_TYPE_ACTION, bb_quit_action_action_init)
-    )
+)
 
 
 static void
@@ -114,7 +117,6 @@ bb_quit_action_activate(GAction *action, GVariant *parameter)
 static void
 bb_quit_action_change_state(GAction *action, GVariant *value)
 {
-
 }
 
 
@@ -127,39 +129,45 @@ bb_quit_action_class_init(BbQuitActionClass *klasse)
     G_OBJECT_CLASS(klasse)->set_property = bb_quit_action_set_property;
 
     g_object_class_override_property(
-        klasse,
+        G_OBJECT_CLASS(klasse),
         PROP_ENABLED,
         "enabled"
         );
 
     g_object_class_override_property(
-        klasse,
+        G_OBJECT_CLASS(klasse),
         PROP_NAME,
         "name"
         );
 
     g_object_class_override_property(
-        klasse,
+        G_OBJECT_CLASS(klasse),
         PROP_PARAMETER_TYPE,
         "parameter-type"
         );
 
     g_object_class_override_property(
-        klasse,
+        G_OBJECT_CLASS(klasse),
         PROP_STATE,
         "state"
         );
 
-    //g_object_class_override_property(
-    //    klasse,
-    //    PROP_STATE_HINT,
-    //    "state-hint"
-    //    );
-
     g_object_class_override_property(
-        klasse,
+        G_OBJECT_CLASS(klasse),
         PROP_STATE_TYPE,
         "state-type"
+        );
+
+    g_object_class_install_property(
+        G_OBJECT_CLASS(klasse),
+        PROP_WINDOW,
+        properties[PROP_WINDOW] = g_param_spec_object(
+            "window",
+            "",
+            "",
+            BB_TYPE_MAIN_WINDOW,
+            G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS
+            )
         );
 }
 
@@ -167,30 +175,38 @@ bb_quit_action_class_init(BbQuitActionClass *klasse)
 static void
 bb_quit_action_dispose(GObject *object)
 {
-    // BbQuitAction* privat = BBQUIT_ACTION_GET_PRIVATE(object);
+    g_return_if_fail(object != NULL);
+
+    BbQuitAction *action = BB_QUIT_ACTION(object);
+    g_return_if_fail(action != NULL);
+
+    if (action->window != NULL)
+    {
+        g_object_unref(action->window);
+        action->window = NULL;
+    }
 }
 
 
 static void
 bb_quit_action_finalize(GObject *object)
 {
-    // BbQuitAction* privat = BBQUIT_ACTION_GET_PRIVATE(object);
 }
 
 
 static gboolean
 bb_quit_action_get_enabled(GAction *action)
 {
-    g_return_val_if_fail(action != NULL, FALSE);
+    g_return_val_if_fail(action != NULL, TRUE);
 
     return TRUE;
 }
 
 
-static const gchar*
+static const gchar *
 bb_quit_action_get_name(GAction *action)
 {
-    const gchar* name = "quit";
+    const gchar *name = "quit";
 
     g_return_val_if_fail(action != NULL, name);
 
@@ -198,7 +214,7 @@ bb_quit_action_get_name(GAction *action)
 }
 
 
-static const GVariantType*
+static const GVariantType *
 bb_quit_action_get_parameter_type(GAction *action)
 {
     g_return_val_if_fail(action != NULL, NULL);
@@ -228,12 +244,12 @@ bb_quit_action_get_property(GObject *object, guint property_id, GValue *value, G
             g_value_set_variant(value, bb_quit_action_get_state(G_ACTION(object)));
             break;
 
-        case PROP_STATE_HINT:
-            g_value_set_variant(value, bb_quit_action_get_state_hint(G_ACTION(object)));
-            break;
-
         case PROP_STATE_TYPE:
             g_value_set_boxed(value, bb_quit_action_get_state_type(G_ACTION(object)));
+            break;
+
+        case PROP_WINDOW:
+            g_value_set_object(value, bb_quit_action_get_window(BB_QUIT_ACTION(object)));
             break;
 
         default:
@@ -251,7 +267,7 @@ bb_quit_action_get_state(GAction *action)
 }
 
 
-static GVariant*
+static GVariant *
 bb_quit_action_get_state_hint(GAction *action)
 {
     g_return_val_if_fail(action != NULL, NULL);
@@ -269,16 +285,30 @@ bb_quit_action_get_state_type(GAction *action)
 }
 
 
-static void
-bb_quit_action_init(BbQuitAction *window)
+BbMainWindow*
+bb_quit_action_get_window(BbQuitAction *action)
 {
+    g_return_val_if_fail(action != NULL, NULL);
+
+    return action->window;
 }
 
 
-BbQuitAction*
-bb_quit_action_new()
+static void
+bb_quit_action_init(BbQuitAction *action)
 {
-    return BB_QUIT_ACTION(g_object_new(BB_TYPE_QUIT_ACTION, NULL));
+    action->window = NULL;
+}
+
+
+BbQuitAction *
+bb_quit_action_new(BbMainWindow *window)
+{
+    return BB_QUIT_ACTION(g_object_new(
+        BB_TYPE_QUIT_ACTION,
+        "window", window,
+        NULL
+    ));
 }
 
 
@@ -294,7 +324,35 @@ bb_quit_action_set_property(GObject *object, guint property_id, const GValue *va
 {
     switch (property_id)
     {
+        case PROP_WINDOW:
+            bb_quit_action_set_window(BB_QUIT_ACTION(object), BB_MAIN_WINDOW(g_value_get_object(value)));
+            break;
+
         default:
             G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
+    }
+}
+
+
+void
+bb_quit_action_set_window(BbQuitAction *action, BbMainWindow* window)
+{
+    g_return_if_fail(action != NULL);
+
+    if (action->window != window)
+    {
+        if (action->window != NULL)
+        {
+            g_object_unref(action->window);
+        }
+
+        action->window = window;
+
+        if (action->window != NULL)
+        {
+            g_object_ref(action->window);
+        }
+
+        g_object_notify_by_pspec(G_OBJECT(action), properties[PROP_WINDOW]);
     }
 }

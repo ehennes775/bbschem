@@ -19,11 +19,22 @@
  */
 
 #include <gtk/gtk.h>
+#include "bbmainwindow.h"
 
 #define BB_TYPE_PASTE_ACTION bb_paste_action_get_type()
 G_DECLARE_FINAL_TYPE(BbPasteAction, bb_paste_action, BB, PASTE_ACTION, GObject)
 
+
+BbMainWindow*
+bb_paste_action_get_window(BbPasteAction *action);
+
+
 BbPasteAction*
-bb_paste_action_new();
+bb_paste_action_new(BbMainWindow *window);
+
+
+void
+bb_paste_action_set_window(BbPasteAction *action, BbMainWindow* window);
+
 
 #endif

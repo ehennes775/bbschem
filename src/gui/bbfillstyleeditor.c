@@ -521,6 +521,7 @@ bb_fill_style_editor_set_main_window(BbFillStyleEditor *editor, BbMainWindow *wi
 
     editor->main_window = window;
 
+#if 0
     bb_property_combo_box_set_action_group(
         BB_PROPERTY_COMBO_BOX(editor->fill_angle1_combo),
         G_ACTION_GROUP(editor->main_window)
@@ -540,6 +541,7 @@ bb_fill_style_editor_set_main_window(BbFillStyleEditor *editor, BbMainWindow *wi
         BB_PROPERTY_COMBO_BOX(editor->fill_pitch2_combo),
         G_ACTION_GROUP(editor->main_window)
         );
+#endif
 
     if (editor->main_window != NULL)
     {

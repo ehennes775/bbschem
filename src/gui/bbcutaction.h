@@ -19,11 +19,21 @@
  */
 
 #include <gtk/gtk.h>
+#include "bbmainwindow.h"
 
 #define BB_TYPE_CUT_ACTION bb_cut_action_get_type()
 G_DECLARE_FINAL_TYPE(BbCutAction, bb_cut_action, BB, CUT_ACTION, GObject)
 
+BbMainWindow*
+bb_cut_action_get_window(BbCutAction *action);
+
+
 BbCutAction*
-bb_cut_action_new();
+bb_cut_action_new(BbMainWindow *window);
+
+
+void
+bb_cut_action_set_window(BbCutAction *action, BbMainWindow* window);
+
 
 #endif

@@ -18,6 +18,8 @@
 
 #include <gtk/gtk.h>
 #include "bbpasteaction.h"
+#include "bbschematicwindow.h"
+
 
 enum
 {
@@ -28,6 +30,7 @@ enum
     PROP_STATE,
     PROP_STATE_HINT,
     PROP_STATE_TYPE,
+    PROP_WINDOW,
     N_PROPERTIES
 };
 
@@ -35,6 +38,8 @@ enum
 struct _BbPasteAction
 {
     GObject parent;
+
+    BbMainWindow* window;
 };
 
 
@@ -106,7 +111,14 @@ bb_paste_action_action_init(GActionInterface *iface)
 static void
 bb_paste_action_activate(GAction *action, GVariant *parameter)
 {
-    g_message("bb_paste_action_activate");
+    GtkWidget *window = bb_main_window_get_current_document_window(
+        bb_paste_action_get_window(BB_PASTE_ACTION(action))
+        );
+
+    if (BB_IS_SCHEMATIC_WINDOW(window))
+    {
+        bb_schematic_window_paste(BB_SCHEMATIC_WINDOW(window));
+    }
 }
 
 
@@ -126,28 +138,28 @@ bb_paste_action_class_init(BbPasteActionClass *klasse)
     G_OBJECT_CLASS(klasse)->set_property = bb_paste_action_set_property;
 
     g_object_class_override_property(
-        klasse,
+        G_OBJECT_CLASS(klasse),
         PROP_ENABLED,
         "enabled"
-    );
+        );
 
     g_object_class_override_property(
-        klasse,
+        G_OBJECT_CLASS(klasse),
         PROP_NAME,
         "name"
-    );
+        );
 
     g_object_class_override_property(
-        klasse,
+        G_OBJECT_CLASS(klasse),
         PROP_PARAMETER_TYPE,
         "parameter-type"
-    );
+        );
 
     g_object_class_override_property(
-        klasse,
+        G_OBJECT_CLASS(klasse),
         PROP_STATE,
         "state"
-    );
+        );
 
     //g_object_class_override_property(
     //    klasse,
@@ -156,10 +168,22 @@ bb_paste_action_class_init(BbPasteActionClass *klasse)
     //    );
 
     g_object_class_override_property(
-        klasse,
+        G_OBJECT_CLASS(klasse),
         PROP_STATE_TYPE,
         "state-type"
-    );
+        );
+
+    g_object_class_install_property(
+        G_OBJECT_CLASS(klasse),
+        PROP_WINDOW,
+        properties[PROP_WINDOW] = g_param_spec_object(
+            "window",
+            "",
+            "",
+            BB_TYPE_MAIN_WINDOW,
+            G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS
+            )
+        );
 }
 
 
@@ -182,14 +206,20 @@ bb_paste_action_get_enabled(GAction *action)
 {
     g_return_val_if_fail(action != NULL, FALSE);
 
-    return TRUE;
+    GtkWidget *window = bb_main_window_get_current_document_window(
+        bb_paste_action_get_window(BB_PASTE_ACTION(action))
+        );
+
+    return
+        BB_IS_SCHEMATIC_WINDOW(window) &&
+        bb_schematic_window_get_can_paste(BB_SCHEMATIC_WINDOW(window));
 }
 
 
 static const gchar *
 bb_paste_action_get_name(GAction *action)
 {
-    const gchar *name = "Paste";
+    const gchar *name = "edit-paste";
 
     g_return_val_if_fail(action != NULL, name);
 
@@ -235,6 +265,10 @@ bb_paste_action_get_property(GObject *object, guint property_id, GValue *value, 
             g_value_set_boxed(value, bb_paste_action_get_state_type(G_ACTION(object)));
             break;
 
+        case PROP_WINDOW:
+            g_value_set_object(value, bb_paste_action_get_window(BB_PASTE_ACTION(object)));
+            break;
+
         default:
             G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
     }
@@ -259,7 +293,7 @@ bb_paste_action_get_state_hint(GAction *action)
 }
 
 
-static const GVariantType *
+static const GVariantType*
 bb_paste_action_get_state_type(GAction *action)
 {
     g_return_val_if_fail(action != NULL, NULL);
@@ -268,16 +302,30 @@ bb_paste_action_get_state_type(GAction *action)
 }
 
 
-static void
-bb_paste_action_init(BbPasteAction *window)
+BbMainWindow*
+bb_paste_action_get_window(BbPasteAction *action)
 {
+    g_return_val_if_fail(action != NULL, NULL);
+
+    return action->window;
+}
+
+
+static void
+bb_paste_action_init(BbPasteAction *action)
+{
+    action->window = NULL;
 }
 
 
 BbPasteAction *
-bb_paste_action_new()
+bb_paste_action_new(BbMainWindow *window)
 {
-    return BB_PASTE_ACTION(g_object_new(BB_TYPE_PASTE_ACTION, NULL));
+    return BB_PASTE_ACTION(g_object_new(
+        BB_TYPE_PASTE_ACTION,
+        "window", window,
+        NULL
+        ));
 }
 
 
@@ -293,7 +341,35 @@ bb_paste_action_set_property(GObject *object, guint property_id, const GValue *v
 {
     switch (property_id)
     {
+        case PROP_WINDOW:
+            bb_paste_action_set_window(BB_PASTE_ACTION(object), BB_MAIN_WINDOW(g_value_get_object(value)));
+            break;
+
         default:
             G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
+    }
+}
+
+
+void
+bb_paste_action_set_window(BbPasteAction *action, BbMainWindow* window)
+{
+    g_return_if_fail(action != NULL);
+
+    if (action->window != window)
+    {
+        if (action->window != NULL)
+        {
+            g_object_unref(action->window);
+        }
+
+        action->window = window;
+
+        if (action->window != NULL)
+        {
+            g_object_ref(action->window);
+        }
+
+        g_object_notify_by_pspec(G_OBJECT(action), properties[PROP_WINDOW]);
     }
 }

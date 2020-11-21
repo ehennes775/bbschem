@@ -54,6 +54,8 @@ add_executable(bbsch
         src/gui/bbcomponentselector.h
         src/gui/bbcomponentselectorplugin.c
         src/gui/bbcomponentselectorplugin.h
+        src/gui/bbdeleteaction.c
+        src/gui/bbdeleteaction.h
         src/gui/bbdocumentwindow.c
         src/gui/bbdocumentwindow.h
         src/gui/bbdocumentwindowtab.c
@@ -82,6 +84,12 @@ add_executable(bbsch
         src/gui/bbpropertycombobox.h
         src/gui/bbquitaction.c
         src/gui/bbquitaction.h
+        src/gui/bbredoaction.c
+        src/gui/bbredoaction.h
+        src/gui/bbselectallaction.c
+        src/gui/bbselectallaction.h
+        src/gui/bbselectnoneaction.c
+        src/gui/bbselectnoneaction.h
         src/gui/bbschematicwindow.c
         src/gui/bbschematicwindow.h
         src/gui/bbschematicwindowinner.c
@@ -90,6 +98,8 @@ add_executable(bbsch
         src/gui/bbtextpropertyeditor.h
         src/gui/bbtoolpalette.c
         src/gui/bbtoolpalette.h
+        src/gui/bbundoaction.c
+        src/gui/bbundoaction.h
         src/lib/bbabsolutelineto.c
         src/lib/bbabsolutelineto.h
         src/lib/bbabsolutemoveto.c

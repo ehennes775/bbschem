@@ -1,5 +1,5 @@
-#ifndef __BBCOPYACTION__
-#define __BBCOPYACTION__
+#ifndef __BBDELETEACTION__
+#define __BBDELETEACTION__
 /*
  * bbsch
  * Copyright (C) 2020 Edward C. Hennessy
@@ -21,20 +21,19 @@
 #include <gtk/gtk.h>
 #include "bbmainwindow.h"
 
-#define BB_TYPE_COPY_ACTION bb_copy_action_get_type()
-G_DECLARE_FINAL_TYPE(BbCopyAction, bb_copy_action, BB, COPY_ACTION, GObject)
-
+#define BB_TYPE_DELETE_ACTION bb_delete_action_get_type()
+G_DECLARE_FINAL_TYPE(BbDeleteAction, bb_delete_action, BB, DELETE_ACTION, GObject)
 
 BbMainWindow*
-bb_copy_action_get_window(BbCopyAction *action);
+bb_delete_action_get_window(BbDeleteAction *action);
 
 
-BbCopyAction*
-bb_copy_action_new(BbMainWindow *window);
+BbDeleteAction*
+bb_delete_action_new(BbMainWindow *window);
 
 
 void
-bb_copy_action_set_window(BbCopyAction *action, BbMainWindow* window);
+bb_delete_action_set_window(BbDeleteAction *action, BbMainWindow* window);
 
 
 #endif

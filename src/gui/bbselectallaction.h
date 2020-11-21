@@ -1,5 +1,5 @@
-#ifndef __BBCOPYACTION__
-#define __BBCOPYACTION__
+#ifndef __BBSELECTALLACTION__
+#define __BBSELECTALLACTION__
 /*
  * bbsch
  * Copyright (C) 2020 Edward C. Hennessy
@@ -21,20 +21,19 @@
 #include <gtk/gtk.h>
 #include "bbmainwindow.h"
 
-#define BB_TYPE_COPY_ACTION bb_copy_action_get_type()
-G_DECLARE_FINAL_TYPE(BbCopyAction, bb_copy_action, BB, COPY_ACTION, GObject)
-
+#define BB_TYPE_SELECT_ALL_ACTION bb_select_all_action_get_type()
+G_DECLARE_FINAL_TYPE(BbSelectAllAction, bb_select_all_action, BB, SELECT_ALL_ACTION, GObject)
 
 BbMainWindow*
-bb_copy_action_get_window(BbCopyAction *action);
+bb_select_all_action_get_window(BbSelectAllAction *action);
 
 
-BbCopyAction*
-bb_copy_action_new(BbMainWindow *window);
+BbSelectAllAction*
+bb_select_all_action_new(BbMainWindow *window);
 
 
 void
-bb_copy_action_set_window(BbCopyAction *action, BbMainWindow* window);
+bb_select_all_action_set_window(BbSelectAllAction *action, BbMainWindow* window);
 
 
 #endif

@@ -33,7 +33,6 @@ enum
     PROP_CAN_SELECT_ALL,
     PROP_CAN_SELECT_NONE,
     PROP_CAN_UNDO,
-    PROP_SCHEMATIC_WRAPPER,
     N_PROPERTIES
 };
 
@@ -54,14 +53,6 @@ struct _BbSchematicWindow
     GSList *undo_stack;
 };
 
-
-
-
-static void
-bb_schematic_window_attach_actions(BbDocumentWindow *window, GActionMap *map);
-
-static void
-bb_schematic_window_detach_actions(BbDocumentWindow *window, GActionMap *map);
 
 static void
 bb_schematic_window_dispose(GObject *object);
@@ -221,14 +212,27 @@ bb_schematic_window_class_init(BbSchematicWindowClass *klasse)
 void
 bb_schematic_window_copy(BbSchematicWindow *window)
 {
+    g_return_if_fail(window != NULL);
 
+    g_message("bb_schematic_window_copy");
 }
 
 
 void
 bb_schematic_window_cut(BbSchematicWindow *window)
 {
+    g_return_if_fail(window != NULL);
 
+    g_message("bb_schematic_window_cut");
+}
+
+
+void
+bb_schematic_window_delete(BbSchematicWindow *window)
+{
+    g_return_if_fail(window != NULL);
+
+    g_message("bb_schematic_window_delete");
 }
 
 
@@ -251,7 +255,7 @@ bb_schematic_window_get_can_copy(BbSchematicWindow *window)
 {
     g_return_val_if_fail(window != NULL, FALSE);
 
-    return (g_hash_table_size(window->selection) > 0);
+    return TRUE; // (g_hash_table_size(window->selection) > 0);
 }
 
 
@@ -260,7 +264,7 @@ bb_schematic_window_get_can_cut(BbSchematicWindow *window)
 {
     g_return_val_if_fail(window != NULL, FALSE);
 
-    return (g_hash_table_size(window->selection) > 0);
+    return TRUE; // (g_hash_table_size(window->selection) > 0);
 }
 
 
@@ -269,7 +273,7 @@ bb_schematic_window_get_can_delete(BbSchematicWindow *window)
 {
     g_return_val_if_fail(window != NULL, FALSE);
 
-    return (g_hash_table_size(window->selection) > 0);
+    return TRUE; // (g_hash_table_size(window->selection) > 0);
 }
 
 
@@ -287,7 +291,7 @@ bb_schematic_window_get_can_redo(BbSchematicWindow *window)
 {
     g_return_val_if_fail(window != NULL, FALSE);
 
-    return (window->redo_stack != NULL);
+    return TRUE; //(window->redo_stack != NULL);
 }
 
 
@@ -316,7 +320,7 @@ bb_schematic_window_get_can_undo(BbSchematicWindow *window)
 {
     g_return_val_if_fail(window != NULL, FALSE);
 
-    return (window->undo_stack != NULL);
+    return TRUE; //(window->undo_stack != NULL);
 }
 
 
@@ -382,7 +386,9 @@ bb_schematic_window_init(BbSchematicWindow *window)
 void
 bb_schematic_window_paste(BbSchematicWindow *window)
 {
+    g_return_if_fail(window != NULL);
 
+    g_message("bb_schematic_window_paste");
 }
 
 
@@ -398,6 +404,15 @@ bb_schematic_window_query_selection(BbSchematicWindow *window, BbQueryFunc func,
         func,
         user_data
         );
+}
+
+
+void
+bb_schematic_window_redo(BbSchematicWindow *window)
+{
+    g_return_if_fail(window != NULL);
+
+    g_message("bb_schematic_window_redo");
 }
 
 
@@ -425,20 +440,26 @@ bb_schematic_window_set_property(GObject *object, guint property_id, const GValu
 void
 bb_schematic_window_select_all(BbSchematicWindow *window)
 {
+    g_return_if_fail(window != NULL);
 
+    g_message("bb_schematic_window_select_all");
 }
 
 
 void
 bb_schematic_window_select_none(BbSchematicWindow *window)
 {
+    g_return_if_fail(window != NULL);
 
+    g_message("bb_schematic_window_select_none");
 }
 
 
 void
-bb_schematic_window_select_undo(BbSchematicWindow *window)
+bb_schematic_window_undo(BbSchematicWindow *window)
 {
+    g_return_if_fail(window != NULL);
 
+    g_message("bb_schematic_window_undo");
 }
 
