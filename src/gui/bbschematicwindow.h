@@ -22,14 +22,10 @@
 #include <src/lib/bbapplyfunc.h>
 #include <src/lib/bbqueryfunc.h>
 #include "bbdocumentwindow.h"
-#include "bbschematicwrapper.h"
+
 
 #define BB_TYPE_SCHEMATIC_WINDOW bb_schematic_window_get_type()
 G_DECLARE_FINAL_TYPE(BbSchematicWindow, bb_schematic_window, BB, SCHEMATIC_WINDOW, BbDocumentWindow)
-
-
-BbSchematicWrapper*
-bb_schematic_window_get_schematic_wrapper(BbSchematicWindow *window);
 
 
 /**
@@ -196,8 +192,5 @@ bb_schematic_window_select_none(BbSchematicWindow *window);
 void
 bb_schematic_window_select_undo(BbSchematicWindow *window);
 
-
-void
-bb_schematic_window_set_schematic_wrapper(BbSchematicWindow *window, BbSchematicWrapper *wrapper);
 
 #endif

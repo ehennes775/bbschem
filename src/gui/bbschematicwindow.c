@@ -18,7 +18,6 @@
 
 #include <gtk/gtk.h>
 #include <src/lib/bbschematic.h>
-#include "bbschematicwrapper.h"
 #include "bbschematicwindow.h"
 #include "bbschematicwindowinner.h"
 
@@ -44,8 +43,6 @@ struct _BbSchematicWindow
     BbDocumentWindow parent;
 
     BbSchematicWindowInner *inner_window;
-
-    BbSchematicWrapper *schematic_wrapper;
 
     BbSchematic *schematic;
 
@@ -105,28 +102,12 @@ bb_schematic_window_apply_selection(BbSchematicWindow *window, BbApplyFunc func,
 
 
 static void
-bb_schematic_window_attach_actions(BbDocumentWindow *window, GActionMap *map)
-{
-    BbSchematicWindow *x = BB_SCHEMATIC_WINDOW(window);
-    g_return_if_fail(x != NULL);
-
-    if (x->schematic_wrapper)
-    {
-        bb_schematic_wrapper_attach_actions(x->schematic_wrapper, map);
-    }
-}
-
-
-static void
 bb_schematic_window_class_init(BbSchematicWindowClass *klasse)
 {
     G_OBJECT_CLASS(klasse)->dispose = bb_schematic_window_dispose;
     G_OBJECT_CLASS(klasse)->finalize = bb_schematic_window_finalize;
     G_OBJECT_CLASS(klasse)->get_property = bb_schematic_window_get_property;
     G_OBJECT_CLASS(klasse)->set_property = bb_schematic_window_set_property;
-
-    BB_DOCUMENT_WINDOW_CLASS(klasse)->attach_actions = bb_schematic_window_attach_actions;
-    BB_DOCUMENT_WINDOW_CLASS(klasse)->detach_actions = bb_schematic_window_detach_actions;
 
     g_object_class_install_property(
         G_OBJECT_CLASS(klasse),
@@ -224,18 +205,6 @@ bb_schematic_window_class_init(BbSchematicWindowClass *klasse)
             )
         );
 
-    g_object_class_install_property(
-        G_OBJECT_CLASS(klasse),
-        PROP_SCHEMATIC_WRAPPER,
-        properties[PROP_SCHEMATIC_WRAPPER] = g_param_spec_object(
-            "schematic-wrapper",
-            "",
-            "",
-            BB_TYPE_SCHEMATIC_WRAPPER,
-            G_PARAM_READWRITE
-            )
-        );
-
     gtk_widget_class_set_template_from_resource(
         GTK_WIDGET_CLASS(klasse),
         "/com/github/ehennes775/bbsch/gui/bbschematicwindow.ui"
@@ -260,19 +229,6 @@ void
 bb_schematic_window_cut(BbSchematicWindow *window)
 {
 
-}
-
-
-static void
-bb_schematic_window_detach_actions(BbDocumentWindow *window, GActionMap *map)
-{
-    BbSchematicWindow *w = BB_SCHEMATIC_WINDOW(window);
-    g_return_if_fail(w != NULL);
-
-    if (w->schematic_wrapper)
-    {
-        bb_schematic_wrapper_detach_actions(w->schematic_wrapper, map);
-    }
 }
 
 
@@ -404,22 +360,9 @@ bb_schematic_window_get_property(GObject *object, guint property_id, GValue *val
             g_value_set_boolean(value, bb_schematic_window_get_can_undo(window));
             break;
 
-        case PROP_SCHEMATIC_WRAPPER:
-            g_value_set_object(value, bb_schematic_window_get_schematic_wrapper(window));
-            break;
-
         default:
             G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
     }
-}
-
-
-BbSchematicWrapper*
-bb_schematic_window_get_schematic_wrapper(BbSchematicWindow *window)
-{
-    g_return_val_if_fail(window != NULL, NULL);
-
-    return window->schematic_wrapper;
 }
 
 
@@ -428,9 +371,11 @@ bb_schematic_window_init(BbSchematicWindow *window)
 {
     gtk_widget_init_template(GTK_WIDGET(window));
 
-    window->schematic_wrapper = g_object_new(BB_TYPE_SCHEMATIC_WRAPPER, NULL);
-
     window->schematic = bb_schematic_new();
+
+    window->redo_stack = NULL;
+    window->selection = g_hash_table_new(g_direct_hash, g_direct_equal);
+    window->undo_stack = NULL;
 }
 
 
@@ -471,30 +416,8 @@ bb_schematic_window_set_property(GObject *object, guint property_id, const GValu
 
     switch (property_id)
     {
-        case PROP_SCHEMATIC_WRAPPER:
-            bb_schematic_window_set_schematic_wrapper(window, BB_SCHEMATIC_WRAPPER(g_value_get_object(value)));
-            break;
-
         default:
             G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
-    }
-}
-
-
-void
-bb_schematic_window_set_schematic_wrapper(BbSchematicWindow *window, BbSchematicWrapper *wrapper)
-{
-    g_return_if_fail(window != NULL);
-
-    g_set_object(&window->schematic_wrapper, wrapper);
-
-    if (window->schematic_wrapper != NULL)
-    {
-        // attach action ports
-    }
-    else
-    {
-        // detach action ports
     }
 }
 

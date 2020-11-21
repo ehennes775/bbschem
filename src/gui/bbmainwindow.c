@@ -234,17 +234,7 @@ bb_main_window_notify_page_num(BbMainWindow *window, GParamSpec *pspec, GtkNoteb
 
     if (window->current_page != next_page)
     {
-        if (window->current_page != NULL)
-        {
-            bb_document_window_detach_actions(window->current_page, G_ACTION_MAP(window));
-        }
-
         g_set_object(&window->current_page, next_page);
-
-        if (window->current_page != NULL)
-        {
-            bb_document_window_attach_actions(window->current_page, G_ACTION_MAP(window));
-        }
 
         g_signal_emit_by_name(window, "update");
     }

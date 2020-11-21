@@ -86,8 +86,6 @@ add_executable(bbsch
         src/gui/bbschematicwindow.h
         src/gui/bbschematicwindowinner.c
         src/gui/bbschematicwindowinner.h
-        src/gui/bbschematicwrapper.c
-        src/gui/bbschematicwrapper.h
         src/gui/bbtextpropertyeditor.c
         src/gui/bbtextpropertyeditor.h
         src/gui/bbtoolpalette.c
