@@ -296,6 +296,33 @@ bb_schematic_window_get_can_redo(BbSchematicWindow *window)
 
 
 gboolean
+bb_schematic_window_get_can_reload(BbSchematicWindow *window)
+{
+    g_warn_if_fail(window != NULL);
+
+    return TRUE;
+}
+
+
+gboolean
+bb_schematic_window_get_can_save(BbSchematicWindow *window)
+{
+    g_warn_if_fail(window != NULL);
+
+    return TRUE;
+}
+
+
+gboolean
+bb_schematic_window_get_can_save_as(BbSchematicWindow *window)
+{
+    g_warn_if_fail(window != NULL);
+
+    return TRUE;
+}
+
+
+gboolean
 bb_schematic_window_get_can_select_all(BbSchematicWindow *window)
 {
     g_return_val_if_fail(window != NULL, FALSE);
@@ -416,10 +443,37 @@ bb_schematic_window_redo(BbSchematicWindow *window)
 }
 
 
+void
+bb_schematic_window_reload(BbSchematicWindow *window)
+{
+    g_return_if_fail(window != NULL);
+
+    g_message("bb_schematic_window_reload");
+}
+
+
 __attribute__((constructor)) void
 bb_schematic_window_register()
 {
     bb_schematic_window_get_type();
+}
+
+
+void
+bb_schematic_window_save(BbSchematicWindow *window)
+{
+    g_return_if_fail(window != NULL);
+
+    g_message("bb_schematic_window_save");
+}
+
+
+void
+bb_schematic_window_save_as(BbSchematicWindow *window)
+{
+    g_return_if_fail(window != NULL);
+
+    g_message("bb_schematic_window_save_as");
 }
 
 

@@ -31,6 +31,10 @@
 #include "bbselectnoneaction.h"
 #include "bbundoaction.h"
 #include "bbredoaction.h"
+#include "bbsaveaction.h"
+#include "bbsaveallaction.h"
+#include "bbsaveasaction.h"
+#include "bbreloadaction.h"
 
 
 enum
@@ -225,6 +229,26 @@ bb_main_window_init(BbMainWindow *window)
     g_action_map_add_action(
         G_ACTION_MAP(window),
         G_ACTION(bb_redo_action_new(window))
+        );
+
+    g_action_map_add_action(
+        G_ACTION_MAP(window),
+        G_ACTION(bb_reload_action_new(window))
+        );
+
+    g_action_map_add_action(
+        G_ACTION_MAP(window),
+        G_ACTION(bb_save_action_new(window))
+        );
+
+    g_action_map_add_action(
+        G_ACTION_MAP(window),
+        G_ACTION(bb_save_all_action_new(window))
+        );
+
+    g_action_map_add_action(
+        G_ACTION_MAP(window),
+        G_ACTION(bb_save_as_action_new(window))
         );
 
     g_action_map_add_action(

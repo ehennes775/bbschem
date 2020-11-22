@@ -86,6 +86,14 @@ add_executable(bbsch
         src/gui/bbquitaction.h
         src/gui/bbredoaction.c
         src/gui/bbredoaction.h
+        src/gui/bbreloadaction.c
+        src/gui/bbreloadaction.h
+        src/gui/bbsaveaction.c
+        src/gui/bbsaveaction.h
+        src/gui/bbsaveallaction.c
+        src/gui/bbsaveallaction.h
+        src/gui/bbsaveasaction.c
+        src/gui/bbsaveasaction.h
         src/gui/bbselectallaction.c
         src/gui/bbselectallaction.h
         src/gui/bbselectnoneaction.c

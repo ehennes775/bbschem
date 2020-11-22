@@ -117,6 +117,36 @@ bb_schematic_window_get_can_redo(BbSchematicWindow *window);
 
 
 /**
+ * Indicates a the document can be reloaded
+ *
+ * @param window This window
+ * @return TRUE if the operation can be performed
+ */
+gboolean
+bb_schematic_window_get_can_reload(BbSchematicWindow *window);
+
+
+/**
+ * Indicates a the document can be saved
+ *
+ * @param window This window
+ * @return TRUE if the operation can be performed
+ */
+gboolean
+bb_schematic_window_get_can_save(BbSchematicWindow *window);
+
+
+/**
+ * Indicates a the document can be saved with an alternate filename
+ *
+ * @param window This window
+ * @return TRUE if the operation can be performed
+ */
+gboolean
+bb_schematic_window_get_can_save_as(BbSchematicWindow *window);
+
+
+/**
  * Indicates a select all operation could be performed
  *
  * @param window This window
@@ -173,6 +203,33 @@ bb_schematic_window_query_selection(BbSchematicWindow *window, BbQueryFunc func,
  */
 void
 bb_schematic_window_redo(BbSchematicWindow *window);
+
+
+/**
+ * Reload the underlying document
+ *
+ * @param window This window
+ */
+void
+bb_schematic_window_reload(BbSchematicWindow *window);
+
+
+/**
+ * Save the underlying document
+ *
+ * @param window This window
+ */
+void
+bb_schematic_window_save(BbSchematicWindow *window);
+
+
+/**
+ * Save the underlying document
+ *
+ * @param window This window
+ */
+void
+bb_schematic_window_save_as(BbSchematicWindow *window);
 
 
 /**
