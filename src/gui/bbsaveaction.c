@@ -116,7 +116,17 @@ bb_save_action_activate(GAction *action, GVariant *parameter)
 
     if (BB_IS_SCHEMATIC_WINDOW(window))
     {
-        bb_schematic_window_save(BB_SCHEMATIC_WINDOW(window));
+        GError *error = NULL;
+
+        bb_schematic_window_save(
+            BB_SCHEMATIC_WINDOW(window),
+            NULL,
+            &error
+            );
+
+        // TODO: error message dialog
+
+        g_clear_error(&error);
     }
 }
 

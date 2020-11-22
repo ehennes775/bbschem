@@ -19,20 +19,40 @@
  */
 
 #include <gtk/gtk.h>
-#include "bbschematicwindow.h"
 
 #define BB_TYPE_DRAWING_TOOL bb_drawing_tool_get_type()
-G_DECLARE_DERIVABLE_TYPE(BbDrawingTool, bb_drawing_tool, BB, DRAWING_TOOL, GObject)
+G_DECLARE_INTERFACE(BbDrawingTool, bb_drawing_tool, BB, DRAWING_TOOL, GObject)
 
-struct _BbDrawingToolClass
+struct _BbDrawingToolInterface
 {
-    GObjectClass parent_class;
+    GTypeInterface g_iface;
+
+    void (*button_pressed)(BbDrawingTool *tool);
+    void (*draw)(BbDrawingTool *tool);
+    void (*key_pressed)(BbDrawingTool *tool);
+    void (*key_released)(BbDrawingTool *tool);
+    void (*motion_notify)(BbDrawingTool *tool);
 };
 
-BbSchematicWindow*
-bb_drawing_tool_get_window(BbDrawingTool *tool);
 
 void
-bb_drawing_tool_set_window(BbDrawingTool *tool, BbSchematicWindow *window);
+bb_drawing_tool_button_pressed(BbDrawingTool *tool);
+
+
+void
+bb_drawing_tool_draw(BbDrawingTool *tool);
+
+
+void
+bb_drawing_tool_key_pressed(BbDrawingTool *tool);
+
+
+void
+bb_drawing_tool_key_released(BbDrawingTool *tool);
+
+
+void
+bb_drawing_tool_motion_notify(BbDrawingTool *tool);
+
 
 #endif

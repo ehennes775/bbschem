@@ -1,5 +1,5 @@
-#ifndef __BBITEMBUILDTOOL__
-#define __BBITEMBUILDTOOL__
+#ifndef __BBARCTOOL__
+#define __BBARCTOOL__
 /*
  * bbsch
  * Copyright (C) 2020 Edward C. Hennessy
@@ -19,9 +19,11 @@
  */
 
 #include <gtk/gtk.h>
-#include "bbdrawingtool.h"
 
-#define BB_TYPE_ITEM_BUILD_TOOL bb_item_build_tool_get_type()
-G_DECLARE_FINAL_TYPE(BbItemBuildTool, bb_item_build_tool, BB, ITEM_BUILD_TOOL, GObject)
+#define BB_TYPE_ARC_TOOL bb_arc_tool_get_type()
+G_DECLARE_FINAL_TYPE(BbArcTool, bb_arc_tool, BB, ARC_TOOL, GObject)
+
+BbArcTool*
+bb_arc_tool_new();
 
 #endif

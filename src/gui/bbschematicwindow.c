@@ -20,6 +20,7 @@
 #include <src/lib/bbschematic.h>
 #include "bbschematicwindow.h"
 #include "bbschematicwindowinner.h"
+#include "bbarctool.h"
 
 
 enum
@@ -33,6 +34,7 @@ enum
     PROP_CAN_SELECT_ALL,
     PROP_CAN_SELECT_NONE,
     PROP_CAN_UNDO,
+    PROP_DRAWING_TOOL,
     N_PROPERTIES
 };
 
@@ -43,8 +45,11 @@ struct _BbSchematicWindow
 
     BbSchematicWindowInner *inner_window;
 
+    BbDrawingTool *drawing_tool;
+
     BbSchematic *schematic;
 
+    GFile *file;
 
     GSList *redo_stack;
 
@@ -54,6 +59,9 @@ struct _BbSchematicWindow
 };
 
 
+static gboolean
+bb_schematic_window_button_pressed_cb(GtkWidget *widget, GdkEvent *event, gpointer user_data);
+
 static void
 bb_schematic_window_dispose(GObject *object);
 
@@ -62,6 +70,15 @@ bb_schematic_window_finalize(GObject *object);
 
 static void
 bb_schematic_window_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
+
+static gboolean
+bb_schematic_window_key_pressed_cb(GtkWidget *widget, GdkEvent *event, gpointer user_data);
+
+static gboolean
+bb_schematic_window_key_released_cb(GtkWidget *widget, GdkEvent *event, gpointer user_data);
+
+static gboolean
+bb_schematic_window_motion_notify_cb(GtkWidget *widget, GdkEvent  *event, gpointer user_data);
 
 static void
 bb_schematic_window_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
@@ -89,6 +106,21 @@ bb_schematic_window_apply_selection(BbSchematicWindow *window, BbApplyFunc func,
         func,
         user_data
         );
+}
+
+
+static gboolean
+bb_schematic_window_button_pressed_cb(GtkWidget *widget, GdkEvent *event, gpointer user_data)
+{
+    BbSchematicWindow *window = BB_SCHEMATIC_WINDOW(user_data);
+    g_return_val_if_fail(window != NULL, FALSE);
+
+    if (window->drawing_tool != NULL)
+    {
+        bb_drawing_tool_button_pressed(window->drawing_tool);
+    }
+
+    return FALSE;
 }
 
 
@@ -193,6 +225,18 @@ bb_schematic_window_class_init(BbSchematicWindowClass *klasse)
             "",
             FALSE,
             G_PARAM_READABLE | G_PARAM_STATIC_STRINGS
+            )
+        );
+
+    g_object_class_install_property(
+        G_OBJECT_CLASS(klasse),
+        PROP_DRAWING_TOOL,
+        properties[PROP_DRAWING_TOOL] = g_param_spec_object(
+            "drawing-tool",
+            "",
+            "",
+            BB_TYPE_DRAWING_TOOL,
+            G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS
             )
         );
 
@@ -351,6 +395,15 @@ bb_schematic_window_get_can_undo(BbSchematicWindow *window)
 }
 
 
+BbDrawingTool*
+bb_schematic_window_get_drawing_tool(BbSchematicWindow *window)
+{
+    g_return_val_if_fail(window != NULL, NULL);
+
+    return window->drawing_tool;
+}
+
+
 static void
 bb_schematic_window_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec)
 {
@@ -391,6 +444,10 @@ bb_schematic_window_get_property(GObject *object, guint property_id, GValue *val
             g_value_set_boolean(value, bb_schematic_window_get_can_undo(window));
             break;
 
+        case PROP_DRAWING_TOOL:
+            g_value_set_object(value, bb_schematic_window_get_drawing_tool(window));
+            break;
+
         default:
             G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
     }
@@ -407,6 +464,92 @@ bb_schematic_window_init(BbSchematicWindow *window)
     window->redo_stack = NULL;
     window->selection = g_hash_table_new(g_direct_hash, g_direct_equal);
     window->undo_stack = NULL;
+
+    gtk_widget_add_events(
+        GTK_WIDGET(window->inner_window),
+        GDK_BUTTON_PRESS_MASK |
+            GDK_KEY_PRESS_MASK |
+            GDK_KEY_RELEASE_MASK |
+            GDK_POINTER_MOTION_MASK
+        );
+
+    g_signal_connect(
+        window->inner_window,
+        "button-press-event",
+        G_CALLBACK(bb_schematic_window_button_pressed_cb),
+        window
+        );
+
+    g_signal_connect(
+        window->inner_window,
+        "key-press-event",
+        G_CALLBACK(bb_schematic_window_key_pressed_cb),
+        window
+        );
+
+    g_signal_connect(
+        window->inner_window,
+        "key-release-event",
+        G_CALLBACK(bb_schematic_window_key_released_cb),
+        window
+        );
+
+    g_signal_connect(
+        window->inner_window,
+        "motion-notify-event",
+        G_CALLBACK(bb_schematic_window_motion_notify_cb),
+        window
+        );
+
+    bb_schematic_window_set_drawing_tool(
+        window,
+        BB_DRAWING_TOOL(bb_arc_tool_new())
+        );
+}
+
+
+static gboolean
+bb_schematic_window_key_pressed_cb(GtkWidget *widget, GdkEvent *event, gpointer user_data)
+{
+    BbSchematicWindow *window = BB_SCHEMATIC_WINDOW(user_data);
+    g_return_val_if_fail(window != NULL, FALSE);
+
+    if (window->drawing_tool != NULL)
+    {
+        bb_drawing_tool_key_pressed(window->drawing_tool);
+    }
+
+    return FALSE;
+}
+
+
+static gboolean
+bb_schematic_window_key_released_cb(GtkWidget *widget, GdkEvent *event, gpointer user_data)
+{
+    BbSchematicWindow *window = BB_SCHEMATIC_WINDOW(user_data);
+    g_return_val_if_fail(window != NULL, FALSE);
+
+    if (window->drawing_tool != NULL)
+    {
+        bb_drawing_tool_key_released(window->drawing_tool);
+    }
+
+    return FALSE;
+}
+
+
+static gboolean
+bb_schematic_window_motion_notify_cb(GtkWidget *widget, GdkEvent *event, gpointer user_data)
+{
+    BbSchematicWindow *window = BB_SCHEMATIC_WINDOW(user_data);
+    g_return_val_if_fail(window != NULL, FALSE);
+
+    if (window->drawing_tool != NULL)
+    {
+        bb_drawing_tool_motion_notify(window->drawing_tool);
+    }
+
+    return FALSE;
 }
 
 
@@ -444,7 +587,7 @@ bb_schematic_window_redo(BbSchematicWindow *window)
 
 
 void
-bb_schematic_window_reload(BbSchematicWindow *window)
+bb_schematic_window_reload(BbSchematicWindow *window, GError **error)
 {
     g_return_if_fail(window != NULL);
 
@@ -460,16 +603,35 @@ bb_schematic_window_register()
 
 
 void
-bb_schematic_window_save(BbSchematicWindow *window)
+bb_schematic_window_save(BbSchematicWindow *window, GCancellable *cancellable, GError **error)
 {
     g_return_if_fail(window != NULL);
+    g_return_if_fail(window->file != NULL);
+    g_return_if_fail(window->schematic != NULL);
 
-    g_message("bb_schematic_window_save");
+    GFileOutputStream *stream = g_file_replace(
+        window->file,
+        NULL,
+        TRUE,
+        G_FILE_CREATE_NONE,
+        cancellable,
+        error
+        );
+
+    if (error == NULL || *error == NULL)
+    {
+        bb_schematic_write(
+            window->schematic,
+            G_OUTPUT_STREAM(stream),
+            cancellable,
+            error
+            );
+    }
 }
 
 
 void
-bb_schematic_window_save_as(BbSchematicWindow *window)
+bb_schematic_window_save_as(BbSchematicWindow *window, GError **error)
 {
     g_return_if_fail(window != NULL);
 
@@ -485,6 +647,10 @@ bb_schematic_window_set_property(GObject *object, guint property_id, const GValu
 
     switch (property_id)
     {
+        case PROP_DRAWING_TOOL:
+            bb_schematic_window_set_drawing_tool(BB_SCHEMATIC_WINDOW(object), g_value_get_object(value));
+            break;
+
         default:
             G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
     }
@@ -509,6 +675,29 @@ bb_schematic_window_select_none(BbSchematicWindow *window)
 }
 
 
+void bb_schematic_window_set_drawing_tool(BbSchematicWindow *window, BbDrawingTool *tool)
+{
+    g_return_if_fail(window != NULL);
+
+    if (window->drawing_tool != tool)
+    {
+        if (window->drawing_tool != NULL)
+        {
+            g_object_unref(window->drawing_tool);
+        }
+
+        window->drawing_tool = tool;
+
+        if (window->drawing_tool != NULL)
+        {
+            g_object_ref(window->drawing_tool);
+        }
+
+        g_object_notify_by_pspec(G_OBJECT(window), properties[PROP_DRAWING_TOOL]);
+    }
+}
+
+
 void
 bb_schematic_window_undo(BbSchematicWindow *window)
 {
@@ -516,4 +705,5 @@ bb_schematic_window_undo(BbSchematicWindow *window)
 
     g_message("bb_schematic_window_undo");
 }
+
 

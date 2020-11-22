@@ -116,7 +116,6 @@ bb_save_all_action_activate(GAction *action, GVariant *parameter)
 
     if (BB_IS_SCHEMATIC_WINDOW(window))
     {
-        bb_schematic_window_save(BB_SCHEMATIC_WINDOW(window));
     }
 }
 

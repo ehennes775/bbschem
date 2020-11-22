@@ -36,6 +36,8 @@ add_executable(bbsch
         src/gui/bbapplication.h
         src/gui/bbattributeeditor.c
         src/gui/bbattributeeditor.h
+        src/gui/bbarctool.c
+        src/gui/bbarctool.h
         src/gui/bbboxbuilder.c
         src/gui/bbboxbuilder.h
         src/gui/bbcellrenderercolorswatch.c

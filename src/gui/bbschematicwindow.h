@@ -22,6 +22,7 @@
 #include <src/lib/bbapplyfunc.h>
 #include <src/lib/bbqueryfunc.h>
 #include "bbdocumentwindow.h"
+#include "bbdrawingtool.h"
 
 
 #define BB_TYPE_SCHEMATIC_WINDOW bb_schematic_window_get_type()
@@ -177,6 +178,15 @@ bb_schematic_window_get_can_undo(BbSchematicWindow *window);
 
 
 /**
+ * Get the drawing tool for this window
+ *
+ * @param window This window
+ */
+BbDrawingTool*
+bb_schematic_window_get_drawing_tool(BbSchematicWindow *window);
+
+
+/**
  * Paste the contents of the clipboard
  *
  * @param window This window
@@ -211,7 +221,7 @@ bb_schematic_window_redo(BbSchematicWindow *window);
  * @param window This window
  */
 void
-bb_schematic_window_reload(BbSchematicWindow *window);
+bb_schematic_window_reload(BbSchematicWindow *window, GError **error);
 
 
 /**
@@ -220,7 +230,7 @@ bb_schematic_window_reload(BbSchematicWindow *window);
  * @param window This window
  */
 void
-bb_schematic_window_save(BbSchematicWindow *window);
+bb_schematic_window_save(BbSchematicWindow *window, GCancellable *cancellable, GError **error);
 
 
 /**
@@ -229,7 +239,7 @@ bb_schematic_window_save(BbSchematicWindow *window);
  * @param window This window
  */
 void
-bb_schematic_window_save_as(BbSchematicWindow *window);
+bb_schematic_window_save_as(BbSchematicWindow *window, GError **error);
 
 
 /**
@@ -248,6 +258,15 @@ bb_schematic_window_select_all(BbSchematicWindow *window);
  */
 void
 bb_schematic_window_select_none(BbSchematicWindow *window);
+
+
+/**
+ * Set the drawing tool for this window
+ *
+ * @param window This window
+ */
+void
+bb_schematic_window_set_drawing_tool(BbSchematicWindow *window, BbDrawingTool *tool);
 
 
 /**

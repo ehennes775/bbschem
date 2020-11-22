@@ -36,7 +36,7 @@ enum State
 
 struct _BbItemBuildTool
 {
-    BbDrawingTool parent;
+    GObject parent;
 
     BbItemBuilder *builder;
 
