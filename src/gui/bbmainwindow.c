@@ -211,8 +211,6 @@ bb_main_window_get_property(GObject *object, guint property_id, GValue *value, G
 static void
 bb_main_window_init(BbMainWindow *window)
 {
-    g_message("%s", g_type_name(BB_TYPE_MAIN_WINDOW));
-
     gtk_widget_init_template(GTK_WIDGET(window));
 
     bb_main_window_add_page(window, g_object_new(BB_TYPE_SCHEMATIC_WINDOW, NULL));

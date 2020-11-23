@@ -18,6 +18,7 @@
 
 #include <gtk/gtk.h>
 #include "bbcolorcombobox.h"
+#include "bbcellrenderercolorswatch.h"
 
 
 enum
@@ -51,6 +52,8 @@ bb_color_combo_box_update_cb(BbPropertyComboBox *unused, GVariant *value, BbColo
 static void
 bb_color_combo_box_class_init(BbColorComboBoxClass *klasse)
 {
+    BB_TYPE_CELL_RENDERER_COLOR_SWATCH;
+
     g_return_if_fail(G_OBJECT_CLASS(klasse) != NULL);
 
     G_OBJECT_CLASS(klasse)->get_property = bb_color_combo_box_get_property;

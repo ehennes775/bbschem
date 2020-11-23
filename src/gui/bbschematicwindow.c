@@ -127,6 +127,8 @@ bb_schematic_window_button_pressed_cb(GtkWidget *widget, GdkEvent *event, gpoint
 static void
 bb_schematic_window_class_init(BbSchematicWindowClass *klasse)
 {
+    BB_TYPE_SCHEMATIC_WINDOW_INNER;
+
     G_OBJECT_CLASS(klasse)->dispose = bb_schematic_window_dispose;
     G_OBJECT_CLASS(klasse)->finalize = bb_schematic_window_finalize;
     G_OBJECT_CLASS(klasse)->get_property = bb_schematic_window_get_property;

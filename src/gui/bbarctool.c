@@ -152,7 +152,6 @@ bb_arc_tool_get_property(GObject *object, guint property_id, GValue *value, GPar
 static void
 bb_arc_tool_init(BbArcTool *window)
 {
-    gtk_widget_init_template(GTK_WIDGET(window));
 }
 
 BbArcTool*
