@@ -3,6 +3,8 @@
     <template class="BbSchematicWindow">
         <child>
             <object class="BbSchematicWindowInner" id="inner_window">
+                <property name="hexpand">TRUE</property>
+                <property name="vexpand">TRUE</property>
             </object>
         </child>
     </template>
