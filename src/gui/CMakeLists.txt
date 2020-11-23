@@ -1,7 +1,20 @@
-#add_custom_command(
-#        OUTPUT bbsch.gresource.ui.c
-#        COMMAND glib-compile-resources --generate-source bbsch.gresource.ui
-#        )
+find_program(GLIB_COMPILE_RESOURCES NAMES glib-compile-resources REQUIRED)
+
+set(THING1 bbsch.gresource.ui.c)
+set(THING2 bbsch.gresource.ui)
+
+add_custom_command(
+        OUTPUT ${THING1}
+        COMMAND ${GLIB_COMPILE_RESOURCES}
+        ARGS
+            --generate-source
+            --sourcedir=${CMAKE_CURRENT_SOURCE_DIR}
+            --target=${CMAKE_CURRENT_BINARY_DIR}/${THING1}
+            ${CMAKE_CURRENT_SOURCE_DIR}/${THING2}
+        VERBATIM
+        MAIN_DEPENDENCY ${THING2}
+        COMMENT "Compiling GUI Resources to ${THING1}"
+        )
 
 add_library(bbgui
         bbapplication.c
@@ -82,5 +95,10 @@ add_library(bbgui
         bbtoolpalette.h
         bbundoaction.c
         bbundoaction.h
-        bbsch.gresource.ui.c
+        ${CMAKE_CURRENT_BINARY_DIR}/${THING1}
+        )
+
+set_source_files_properties(
+        ${CMAKE_CURRENT_BINARY_DIR}/${THING1}
+        PROPERTIES GENERATED TRUE
         )

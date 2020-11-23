@@ -27,7 +27,7 @@ include_directories(src/lib)
 add_subdirectory(src/lib)
 add_subdirectory(src/gui)
 
-add_executable(bbsch src/main.c src/gui/bbsch.gresource.ui.c)
+add_executable(bbsch src/main.c)
 
 target_link_libraries(bbsch
         bbgui
