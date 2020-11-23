@@ -71,6 +71,9 @@ bb_schematic_window_finalize(GObject *object);
 static void
 bb_schematic_window_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
 
+static void
+bb_schematic_window_invalidate_item_cb(BbSchematicItem *item, BbSchematicWindow *window);
+
 static gboolean
 bb_schematic_window_key_pressed_cb(GtkWidget *widget, GdkEvent *event, gpointer user_data);
 
@@ -510,6 +513,15 @@ bb_schematic_window_init(BbSchematicWindow *window)
 }
 
 
+static void
+bb_schematic_window_invalidate_item_cb(BbSchematicItem *item, BbSchematicWindow *window)
+{
+    g_return_if_fail(window != NULL);
+
+    g_message("bb_schematic_window_invalidate_item_cb");
+}
+
+
 static gboolean
 bb_schematic_window_key_pressed_cb(GtkWidget *widget, GdkEvent *event, gpointer user_data)
 {
@@ -685,6 +697,12 @@ void bb_schematic_window_set_drawing_tool(BbSchematicWindow *window, BbDrawingTo
     {
         if (window->drawing_tool != NULL)
         {
+            g_signal_handlers_disconnect_by_func(
+                tool,
+                G_CALLBACK(bb_schematic_window_invalidate_item_cb),
+                window
+                );
+
             g_object_unref(window->drawing_tool);
         }
 
@@ -693,6 +711,14 @@ void bb_schematic_window_set_drawing_tool(BbSchematicWindow *window, BbDrawingTo
         if (window->drawing_tool != NULL)
         {
             g_object_ref(window->drawing_tool);
+
+            g_signal_connect_object(
+                tool,
+                "invalidate-item",
+                G_CALLBACK(bb_schematic_window_invalidate_item_cb),
+                window,
+                0
+                );
         }
 
         g_object_notify_by_pspec(G_OBJECT(window), properties[PROP_DRAWING_TOOL]);

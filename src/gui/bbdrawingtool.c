@@ -53,6 +53,19 @@ bb_drawing_tool_default_init(BbDrawingToolInterface *iface)
     iface->key_pressed = bb_drawing_tool_key_pressed_missing;
     iface->key_released = bb_drawing_tool_key_released_missing;
     iface->motion_notify = bb_drawing_tool_motion_notify_missing;
+
+    g_signal_new(
+        "invalidate-item",
+        BB_TYPE_DRAWING_TOOL,
+        0,
+        0,
+        NULL,
+        NULL,
+        g_cclosure_marshal_VOID__VOID,
+        G_TYPE_NONE,
+        0,
+        NULL
+        );
 }
 
 

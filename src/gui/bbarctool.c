@@ -17,14 +17,15 @@
  */
 
 #include <gtk/gtk.h>
+#include "bbschematicitem.h"
 #include "bbdrawingtool.h"
 #include "bbarctool.h"
-
+#include "bbgraphicarc.h"
 
 enum
 {
     PROP_0,
-    PROP_1,
+    PROP_ITEM,
     PROP_2,
     PROP_3,
     N_PROPERTIES
@@ -34,6 +35,8 @@ enum
 struct _BbArcTool
 {
     GObject parent;
+
+    BbGraphicArc *item;
 };
 
 
@@ -52,8 +55,14 @@ bb_arc_tool_drawing_tool_init(BbDrawingToolInterface *iface);
 static void
 bb_arc_tool_finalize(GObject *object);
 
+static BbGraphicArc*
+bb_arc_tool_get_item(BbArcTool *tool);
+
 static void
 bb_arc_tool_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
+
+static void
+bb_arc_tool_invalidate_item_cb(BbSchematicItem *item, BbArcTool *tool);
 
 static void
 bb_arc_tool_key_pressed(BbDrawingTool *tool);
@@ -63,6 +72,9 @@ bb_arc_tool_key_released(BbDrawingTool *tool);
 
 static void
 bb_arc_tool_motion_notify(BbDrawingTool *tool);
+
+static void
+bb_arc_tool_set_item(BbArcTool *tool, BbGraphicArc *item);
 
 static void
 bb_arc_tool_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
@@ -83,6 +95,8 @@ static void
 bb_arc_tool_button_pressed(BbDrawingTool *tool)
 {
     g_message("bb_arc_tool_button_pressed");
+
+    bb_arc_tool_invalidate_item_cb(NULL, BB_ARC_TOOL(tool));
 }
 
 
@@ -93,6 +107,18 @@ bb_arc_tool_class_init(BbArcToolClass *klasse)
     G_OBJECT_CLASS(klasse)->finalize = bb_arc_tool_finalize;
     G_OBJECT_CLASS(klasse)->get_property = bb_arc_tool_get_property;
     G_OBJECT_CLASS(klasse)->set_property = bb_arc_tool_set_property;
+
+    g_object_class_install_property(
+        G_OBJECT_CLASS(klasse),
+        PROP_ITEM,
+        properties[PROP_ITEM] = g_param_spec_object(
+            "item",
+            "",
+            "",
+            BB_TYPE_GRAPHIC_ARC,
+            G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS
+            )
+        );
 }
 
 
@@ -129,12 +155,22 @@ bb_arc_tool_finalize(GObject *object)
 }
 
 
+static BbGraphicArc*
+bb_arc_tool_get_item(BbArcTool *tool)
+{
+    g_return_val_if_fail(tool != NULL, NULL);
+
+    return tool->item;
+}
+
+
 static void
 bb_arc_tool_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec)
 {
     switch (property_id)
     {
-        case PROP_1:
+        case PROP_ITEM:
+            g_value_set_object(value, bb_arc_tool_get_item(BB_ARC_TOOL(object)));
             break;
 
         case PROP_2:
@@ -150,9 +186,42 @@ bb_arc_tool_get_property(GObject *object, guint property_id, GValue *value, GPar
 
 
 static void
-bb_arc_tool_init(BbArcTool *window)
+bb_arc_tool_init(BbArcTool *tool)
 {
+    bb_arc_tool_set_item(
+        tool,
+        g_object_new(BB_TYPE_GRAPHIC_ARC, NULL)
+        );
 }
+
+
+static void
+bb_arc_tool_invalidate_item_cb(BbSchematicItem *item, BbArcTool *tool)
+{
+    g_return_if_fail(tool != NULL);
+
+    g_signal_emit(
+        tool,
+        g_signal_lookup("invalidate-item", BB_TYPE_DRAWING_TOOL),
+        0,
+        item
+        );
+}
+
+
+static void
+bb_arc_tool_key_pressed(BbDrawingTool *tool)
+{
+    g_message("bb_arc_tool_key_pressed");
+}
+
+
+static void
+bb_arc_tool_key_released(BbDrawingTool *tool)
+{
+    g_message("bb_arc_tool_key_released");
+}
+
 
 BbArcTool*
 bb_arc_tool_new()
@@ -172,23 +241,33 @@ bb_arc_tool_register()
 
 
 static void
-bb_arc_tool_key_pressed(BbDrawingTool *tool)
-{
-    g_message("bb_arc_tool_key_pressed");
-}
-
-
-static void
-bb_arc_tool_key_released(BbDrawingTool *tool)
-{
-    g_message("bb_arc_tool_key_released");
-}
-
-
-static void
 bb_arc_tool_motion_notify(BbDrawingTool *tool)
 {
     g_message("bb_arc_tool_motion_notify");
+}
+
+
+static void
+bb_arc_tool_set_item(BbArcTool *tool, BbGraphicArc *item)
+{
+    g_return_if_fail(tool != NULL);
+
+    if (tool->item != item)
+    {
+        if (tool->item != NULL)
+        {
+            g_object_unref(tool->item);
+        }
+
+        tool->item = item;
+
+        if (tool->item != NULL)
+        {
+            g_object_ref(tool->item);
+        }
+
+        g_object_notify_by_pspec(G_OBJECT(tool), properties[PROP_ITEM]);
+    }
 }
 
 
@@ -197,13 +276,8 @@ bb_arc_tool_set_property(GObject *object, guint property_id, const GValue *value
 {
     switch (property_id)
     {
-        case PROP_1:
-            break;
-
-        case PROP_2:
-            break;
-
-        case PROP_3:
+        case PROP_ITEM:
+            bb_arc_tool_set_item(BB_ARC_TOOL(object), BB_GRAPHIC_ARC(g_value_get_object(value)));
             break;
 
         default:
