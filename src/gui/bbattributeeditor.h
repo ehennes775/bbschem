@@ -22,7 +22,7 @@
 #include "bbdocumentwindow.h"
 
 
-#define BB_TYPE_COMPONENT_SELECTOR bb_attribute_editor_get_type()
+#define BB_TYPE_ATTRIBUTE_EDITOR bb_attribute_editor_get_type()
 G_DECLARE_FINAL_TYPE(BbAttributeEditor, bb_attribute_editor, BB, ATTRIBUTE_EDITOR, GtkBox)
 
 BbDocumentWindow*

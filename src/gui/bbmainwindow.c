@@ -35,6 +35,14 @@
 #include "bbsaveallaction.h"
 #include "bbsaveasaction.h"
 #include "bbreloadaction.h"
+#include "bbfillstyleeditor.h"
+#include "bblinestyleeditor.h"
+#include "bbattributeeditor.h"
+#include "bbcomponentselector.h"
+#include "bbpinpropertyeditor.h"
+#include "bbtoolpalette.h"
+#include "bbtextpropertyeditor.h"
+#include "bbcoloreditor.h"
 
 
 enum
@@ -96,6 +104,15 @@ bb_main_window_add_page(BbMainWindow *window, BbDocumentWindow *page)
 static void
 bb_main_window_class_init(BbMainWindowClass *class)
 {
+    BB_TYPE_COMPONENT_SELECTOR;
+    BB_TYPE_ATTRIBUTE_EDITOR;
+    BB_TYPE_COLOR_EDITOR;
+    BB_TYPE_FILL_STYLE_EDITOR;
+    BB_TYPE_LINE_STYLE_EDITOR;
+    BB_TYPE_TEXT_PROPERTY_EDITOR;
+    BB_TYPE_PIN_PROPERTY_EDITOR;
+    BB_TYPE_TOOL_PALETTE;
+
     G_OBJECT_CLASS(class)->dispose = bb_main_window_dispose;
     G_OBJECT_CLASS(class)->get_property = bb_main_window_get_property;
     G_OBJECT_CLASS(class)->set_property = bb_main_window_set_property;
