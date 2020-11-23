@@ -26,8 +26,6 @@ enum
 {
     PROP_0,
     PROP_ITEM,
-    PROP_2,
-    PROP_3,
     N_PROPERTIES
 };
 
@@ -96,7 +94,18 @@ bb_arc_tool_button_pressed(BbDrawingTool *tool)
 {
     g_message("bb_arc_tool_button_pressed");
 
-    bb_arc_tool_invalidate_item_cb(NULL, BB_ARC_TOOL(tool));
+    BbArcTool *arc_tool = BB_ARC_TOOL(tool);
+    g_return_if_fail(arc_tool != NULL);
+
+    bb_graphic_arc_set_center_x(
+        arc_tool->item,
+        bb_graphic_arc_get_center_x(arc_tool->item) + 1
+        );
+
+    bb_graphic_arc_set_center_x(
+        arc_tool->item,
+        bb_graphic_arc_get_center_x(arc_tool->item) + 1
+        );
 }
 
 
@@ -173,12 +182,6 @@ bb_arc_tool_get_property(GObject *object, guint property_id, GValue *value, GPar
             g_value_set_object(value, bb_arc_tool_get_item(BB_ARC_TOOL(object)));
             break;
 
-        case PROP_2:
-            break;
-
-        case PROP_3:
-            break;
-
         default:
             G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
     }
@@ -243,7 +246,7 @@ bb_arc_tool_register()
 static void
 bb_arc_tool_motion_notify(BbDrawingTool *tool)
 {
-    g_message("bb_arc_tool_motion_notify");
+    //g_message("bb_arc_tool_motion_notify");
 }
 
 
@@ -256,6 +259,8 @@ bb_arc_tool_set_item(BbArcTool *tool, BbGraphicArc *item)
     {
         if (tool->item != NULL)
         {
+            g_signal_handlers_disconnect_by_data(item, tool);
+
             g_object_unref(tool->item);
         }
 
@@ -264,6 +269,14 @@ bb_arc_tool_set_item(BbArcTool *tool, BbGraphicArc *item)
         if (tool->item != NULL)
         {
             g_object_ref(tool->item);
+
+            g_signal_connect_object(
+                item,
+                "invalidate-item",
+                G_CALLBACK(bb_arc_tool_invalidate_item_cb),
+                tool,
+                0
+                );
         }
 
         g_object_notify_by_pspec(G_OBJECT(tool), properties[PROP_ITEM]);

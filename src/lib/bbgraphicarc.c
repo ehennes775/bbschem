@@ -366,7 +366,19 @@ bb_graphic_arc_set_center_x(BbGraphicArc *arc, int x)
 
     if (arc->center_x != x)
     {
+        g_signal_emit(
+            arc,
+            g_signal_lookup("invalidate-item", BB_TYPE_SCHEMATIC_ITEM),
+            0
+            );
+
         arc->center_x = x;
+
+        g_signal_emit(
+            arc,
+            g_signal_lookup("invalidate-item", BB_TYPE_SCHEMATIC_ITEM),
+            0
+            );
 
         g_object_notify_by_pspec(G_OBJECT(arc), properties[PROP_CENTER_X]);
     }
@@ -380,7 +392,19 @@ bb_graphic_arc_set_center_y(BbGraphicArc *arc, int y)
 
     if (arc->center_y != y)
     {
+        g_signal_emit(
+            arc,
+            g_signal_lookup("invalidate-item", BB_TYPE_SCHEMATIC_ITEM),
+            0
+            );
+
         arc->center_y = y;
+
+        g_signal_emit(
+            arc,
+            g_signal_lookup("invalidate-item", BB_TYPE_SCHEMATIC_ITEM),
+            0
+            );
 
         g_object_notify_by_pspec(G_OBJECT(arc), properties[PROP_CENTER_Y]);
     }
@@ -429,7 +453,19 @@ bb_graphic_arc_set_radius(BbGraphicArc *arc, int radius)
 
     if (arc->radius != radius)
     {
+        g_signal_emit(
+            arc,
+            g_signal_lookup("invalidate-item", BB_TYPE_SCHEMATIC_ITEM),
+            0
+            );
+
         arc->radius = radius;
+
+        g_signal_emit(
+            arc,
+            g_signal_lookup("invalidate-item", BB_TYPE_SCHEMATIC_ITEM),
+            0
+            );
 
         g_object_notify_by_pspec(G_OBJECT(arc), properties[PROP_RADIUS]);
     }
@@ -443,7 +479,19 @@ bb_graphic_arc_set_start_angle(BbGraphicArc *arc, int angle)
 
     if (arc->start_angle != angle)
     {
+        g_signal_emit(
+            arc,
+            g_signal_lookup("invalidate-item", BB_TYPE_SCHEMATIC_ITEM),
+            0
+            );
+
         arc->start_angle = angle;
+
+        g_signal_emit(
+            arc,
+            g_signal_lookup("invalidate-item", BB_TYPE_SCHEMATIC_ITEM),
+            0
+            );
 
         g_object_notify_by_pspec(G_OBJECT(arc), properties[PROP_START_ANGLE]);
     }
@@ -457,7 +505,19 @@ bb_graphic_arc_set_sweep_angle(BbGraphicArc *arc, int angle)
 
     if (arc->sweep_angle != angle)
     {
+        g_signal_emit(
+            arc,
+            g_signal_lookup("invalidate-item", BB_TYPE_SCHEMATIC_ITEM),
+            0
+            );
+
         arc->sweep_angle = angle;
+
+        g_signal_emit(
+            arc,
+            g_signal_lookup("invalidate-item", BB_TYPE_SCHEMATIC_ITEM),
+            0
+            );
 
         g_object_notify_by_pspec(G_OBJECT(arc), properties[PROP_SWEEP_ANGLE]);
     }
@@ -472,7 +532,19 @@ bb_graphic_arc_set_width(BbGraphicArc *arc, int width)
 
     if (arc->line_style->line_width != width)
     {
+        g_signal_emit(
+            arc,
+            g_signal_lookup("invalidate-item", BB_TYPE_SCHEMATIC_ITEM),
+            0
+            );
+
         arc->line_style->line_width = width;
+
+        g_signal_emit(
+            arc,
+            g_signal_lookup("invalidate-item", BB_TYPE_SCHEMATIC_ITEM),
+            0
+            );
 
         g_object_notify_by_pspec(G_OBJECT(arc), properties[PROP_LINE_WIDTH]);
     }

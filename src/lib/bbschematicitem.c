@@ -140,6 +140,19 @@ bb_schematic_item_class_init(BbSchematicItemClass *class)
     class->write = bb_schematic_item_write_missing;
     class->write_async = bb_schematic_item_write_async_missing;
     class->write_finish = bb_schematic_item_write_finish_missing;
+
+    g_signal_new(
+        "invalidate-item",
+        BB_TYPE_SCHEMATIC_ITEM,
+        0,
+        0,
+        NULL,
+        NULL,
+        g_cclosure_marshal_VOID__VOID,
+        G_TYPE_NONE,
+        0,
+        NULL
+        );
 }
 
 
