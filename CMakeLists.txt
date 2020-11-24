@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(bbsch C)
+project(bbschem C)
 
 set(CMAKE_C_STANDARD 11)
 
@@ -46,7 +46,7 @@ add_custom_command(
     )
 
 
-add_executable(bbsch
+add_executable(bbschem
         src/main.c
         ${CMAKE_CURRENT_BINARY_DIR}/${THING1}
         )
@@ -66,7 +66,7 @@ set_source_files_properties(
 #        ${CMAKE_CURRENT_BINARY_DIR}/${THING1}
 #)
 
-target_link_libraries(bbsch
+target_link_libraries(bbschem
         bbgui
         bblib
         m
