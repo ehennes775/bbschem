@@ -226,19 +226,6 @@
                                 <child>
                                     <object class="GtkStack" id="stack-editors">
                                         <child>
-                                            <object class="BbComponentSelector" id="component-selector">
-                                                <property name="hexpand">true</property>
-                                                <property name="vexpand">true</property>
-                                                <style>
-                                                    <class name="panelouter"/>
-                                                </style>
-                                            </object>
-                                            <packing>
-                                                <property name="name">library</property>
-                                                <property name="title">Library</property>
-                                            </packing>
-                                        </child>
-                                        <child>
                                             <object class="BbAttributeEditor" id="attribute-editor">
                                                 <!--<property name="document-window" bind-source="BbMainWindow" bind-property="current-document-window"/>-->
                                                 <property name="hexpand">true</property>
@@ -249,7 +236,7 @@
                                             </object>
                                             <packing>
                                                 <property name="name">editor</property>
-                                                <property name="title">Editor</property>
+                                                <property name="title">Attributes</property>
                                             </packing>
                                         </child>
                                         <child>
@@ -313,19 +300,127 @@
                                             </object>
                                             <packing>
                                                 <property name="name">property-editor</property>
-                                                <property name="title">Prop</property>
+                                                <property name="title">Properties</property>
                                             </packing>
                                         </child>
                                         <child>
-                                            <object class="BbToolPalette" id="tool_palette">
+                                            <object class="GtkStack" id="tool_stack">
                                                 <property name="hexpand">true</property>
                                                 <property name="vexpand">true</property>
                                                 <style>
                                                     <class name="panelouter"/>
                                                 </style>
+                                                <child>
+                                                    <object class="GtkLabel" id ="select_panel">
+                                                        <property name="label">Select</property>
+                                                    </object>
+                                                    <packing>
+                                                        <property name="name">select</property>
+                                                    </packing>
+                                                </child>
+                                                <child>
+                                                    <object class="GtkLabel" id ="attribute">
+                                                        <property name="label">Attribute</property>
+                                                    </object>
+                                                    <packing>
+                                                        <property name="name">attribute</property>
+                                                    </packing>
+                                                </child>
+                                                <child>
+                                                    <object class="GtkLabel" id ="arc_panel">
+                                                        <property name="label">Arc</property>
+                                                    </object>
+                                                    <packing>
+                                                        <property name="name">arc</property>
+                                                    </packing>
+                                                </child>
+                                                <child>
+                                                    <object class="GtkLabel" id ="bus_panel">
+                                                        <property name="label">Bus</property>
+                                                    </object>
+                                                    <packing>
+                                                        <property name="name">bus</property>
+                                                    </packing>
+                                                </child>
+                                                <child>
+                                                    <object class="GtkLabel" id ="box_panel">
+                                                        <property name="label">Box</property>
+                                                    </object>
+                                                    <packing>
+                                                        <property name="name">box</property>
+                                                    </packing>
+                                                </child>
+                                                <child>
+                                                    <object class="GtkLabel" id ="circle_panel">
+                                                        <property name="label">Circle</property>
+                                                    </object>
+                                                    <packing>
+                                                        <property name="name">circle</property>
+                                                    </packing>
+                                                </child>
+                                                <child>
+                                                    <object class="BbComponentSelector" id="component-panel">
+                                                        <property name="hexpand">true</property>
+                                                        <property name="vexpand">true</property>
+                                                        <style>
+                                                            <class name="panelouter"/>
+                                                        </style>
+                                                    </object>
+                                                    <packing>
+                                                        <property name="name">complex</property>
+                                                    </packing>
+                                                </child>
+                                                <child>
+                                                    <object class="GtkLabel" id ="line_panel">
+                                                        <property name="label">Line</property>
+                                                    </object>
+                                                    <packing>
+                                                        <property name="name">line</property>
+                                                    </packing>
+                                                </child>
+                                                <child>
+                                                    <object class="GtkLabel" id ="net_panel">
+                                                        <property name="label">Net</property>
+                                                    </object>
+                                                    <packing>
+                                                        <property name="name">net</property>
+                                                    </packing>
+                                                </child>
+                                                <child>
+                                                    <object class="GtkLabel" id ="path_panel">
+                                                        <property name="label">Path</property>
+                                                    </object>
+                                                    <packing>
+                                                        <property name="name">path</property>
+                                                    </packing>
+                                                </child>
+                                                <child>
+                                                    <object class="GtkLabel" id ="pin_panel">
+                                                        <property name="label">Pin</property>
+                                                    </object>
+                                                    <packing>
+                                                        <property name="name">pin</property>
+                                                    </packing>
+                                                </child>
+                                                <child>
+                                                    <object class="GtkLabel" id ="text_panel">
+                                                        <property name="label">Text</property>
+                                                    </object>
+                                                    <packing>
+                                                        <property name="name">text</property>
+                                                    </packing>
+                                                </child>
+                                                <child>
+                                                    <object class="GtkLabel" id ="zoom_panel">
+                                                        <property name="label">Zoom</property>
+                                                    </object>
+                                                    <packing>
+                                                        <property name="name">zoom</property>
+                                                    </packing>
+                                                </child>
                                             </object>
                                             <packing>
-                                                <property name="name">tools</property>
+                                                <property name="name">toolstack</property>
                                                 <property name="title">Tools</property>
                                             </packing>
                                         </child>

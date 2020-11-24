@@ -10,6 +10,8 @@ add_library(bbgui
         bbboxbuilder.h
         bbcellrenderercolorswatch.c
         bbcellrenderercolorswatch.h
+        bbchoosetoolaction.c
+        bbchoosetoolaction.h
         bbcirclebuilder.c
         bbcirclebuilder.h
         bbcolorcombobox.c

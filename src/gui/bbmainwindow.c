@@ -43,7 +43,7 @@
 #include "bbtoolpalette.h"
 #include "bbtextpropertyeditor.h"
 #include "bbcoloreditor.h"
-
+#include "bbchoosetoolaction.h"
 
 enum
 {
@@ -58,6 +58,7 @@ struct _BbMainWindow
 
     BbDocumentWindow *current_page;
     GtkNotebook *document_notebook;
+    GtkStack *tool_stack;
 };
 
 
@@ -153,6 +154,12 @@ bb_main_window_class_init(BbMainWindowClass *class)
     gtk_widget_class_bind_template_callback(
         GTK_WIDGET_CLASS(class),
         bb_main_window_page_removed
+        );
+
+    gtk_widget_class_bind_template_child(
+        GTK_WIDGET_CLASS(class),
+        BbMainWindow,
+        tool_stack
         );
 
     g_signal_new(
@@ -279,6 +286,11 @@ bb_main_window_init(BbMainWindow *window)
     g_action_map_add_action(
         G_ACTION_MAP(window),
         G_ACTION(bb_undo_action_new(window))
+        );
+
+    g_action_map_add_action(
+        G_ACTION_MAP(window),
+        G_ACTION(bb_choose_tool_action_new(window, window->tool_stack))
         );
 }
 
