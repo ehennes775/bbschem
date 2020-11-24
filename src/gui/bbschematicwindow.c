@@ -21,6 +21,7 @@
 #include "bbschematicwindow.h"
 #include "bbschematicwindowinner.h"
 #include "bbarctool.h"
+#include "bbextensions.h"
 
 
 enum
@@ -137,7 +138,7 @@ bb_schematic_window_class_init(BbSchematicWindowClass *klasse)
     G_OBJECT_CLASS(klasse)->get_property = bb_schematic_window_get_property;
     G_OBJECT_CLASS(klasse)->set_property = bb_schematic_window_set_property;
 
-    g_object_class_install_property(
+    bb_object_class_install_property(
         G_OBJECT_CLASS(klasse),
         PROP_CAN_COPY,
         properties[PROP_CAN_COPY] = g_param_spec_boolean(
@@ -149,7 +150,7 @@ bb_schematic_window_class_init(BbSchematicWindowClass *klasse)
             )
         );
 
-    g_object_class_install_property(
+    bb_object_class_install_property(
         G_OBJECT_CLASS(klasse),
         PROP_CAN_CUT,
         properties[PROP_CAN_CUT] = g_param_spec_boolean(
@@ -161,7 +162,7 @@ bb_schematic_window_class_init(BbSchematicWindowClass *klasse)
             )
         );
 
-    g_object_class_install_property(
+    bb_object_class_install_property(
         G_OBJECT_CLASS(klasse),
         PROP_CAN_DELETE,
         properties[PROP_CAN_DELETE] = g_param_spec_boolean(
@@ -173,7 +174,7 @@ bb_schematic_window_class_init(BbSchematicWindowClass *klasse)
             )
         );
 
-    g_object_class_install_property(
+    bb_object_class_install_property(
         G_OBJECT_CLASS(klasse),
         PROP_CAN_PASTE,
         properties[PROP_CAN_PASTE] = g_param_spec_boolean(
@@ -185,7 +186,7 @@ bb_schematic_window_class_init(BbSchematicWindowClass *klasse)
             )
         );
 
-    g_object_class_install_property(
+    bb_object_class_install_property(
         G_OBJECT_CLASS(klasse),
         PROP_CAN_REDO,
         properties[PROP_CAN_REDO] = g_param_spec_boolean(
@@ -197,7 +198,7 @@ bb_schematic_window_class_init(BbSchematicWindowClass *klasse)
             )
         );
 
-    g_object_class_install_property(
+    bb_object_class_install_property(
         G_OBJECT_CLASS(klasse),
         PROP_CAN_SELECT_ALL,
         properties[PROP_CAN_SELECT_ALL] = g_param_spec_boolean(
@@ -209,7 +210,7 @@ bb_schematic_window_class_init(BbSchematicWindowClass *klasse)
             )
         );
 
-    g_object_class_install_property(
+    bb_object_class_install_property(
         G_OBJECT_CLASS(klasse),
         PROP_CAN_SELECT_NONE,
         properties[PROP_CAN_SELECT_NONE] = g_param_spec_boolean(
@@ -221,7 +222,7 @@ bb_schematic_window_class_init(BbSchematicWindowClass *klasse)
             )
         );
 
-    g_object_class_install_property(
+    bb_object_class_install_property(
         G_OBJECT_CLASS(klasse),
         PROP_CAN_UNDO,
         properties[PROP_CAN_UNDO] = g_param_spec_boolean(
@@ -233,7 +234,7 @@ bb_schematic_window_class_init(BbSchematicWindowClass *klasse)
             )
         );
 
-    g_object_class_install_property(
+    bb_object_class_install_property(
         G_OBJECT_CLASS(klasse),
         PROP_DRAWING_TOOL,
         properties[PROP_DRAWING_TOOL] = g_param_spec_object(

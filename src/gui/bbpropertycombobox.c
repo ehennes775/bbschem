@@ -18,6 +18,7 @@
 
 #include <gtk/gtk.h>
 #include "bbpropertycombobox.h"
+#include "bbextensions.h"
 
 enum
 {
@@ -183,7 +184,7 @@ bb_property_combo_box_class_init(BbPropertyComboBoxClass *class)
     G_OBJECT_CLASS(class)->get_property = bb_property_combo_box_get_property;
     G_OBJECT_CLASS(class)->set_property = bb_property_combo_box_set_property;
 
-    g_object_class_install_property(
+    bb_object_class_install_property(
         G_OBJECT_CLASS(class),
         PROP_ACTION_GROUP,
         g_param_spec_object(
@@ -195,7 +196,7 @@ bb_property_combo_box_class_init(BbPropertyComboBoxClass *class)
             )
         );
 
-    g_object_class_install_property(
+    bb_object_class_install_property(
         G_OBJECT_CLASS(class),
         PROP_ACTION_NAME,
         g_param_spec_string(

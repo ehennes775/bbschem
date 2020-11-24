@@ -17,6 +17,7 @@
  */
 
 #include <gtk/gtk.h>
+#include <src/gui/bbextensions.h>
 #include "bbgraphicline.h"
 #include "bbcoord.h"
 #include "bbitemparams.h"
@@ -236,7 +237,7 @@ bb_graphic_line_class_init(BbGraphicLineClass *klasse)
         "line-width"
         );
 
-    g_object_class_install_property(
+    bb_object_class_install_property(
         G_OBJECT_CLASS(klasse),
         PROP_X0,
         g_param_spec_int(
@@ -250,7 +251,7 @@ bb_graphic_line_class_init(BbGraphicLineClass *klasse)
             )
         );
 
-    g_object_class_install_property(
+    bb_object_class_install_property(
         G_OBJECT_CLASS(klasse),
         PROP_X1,
         g_param_spec_int(
@@ -264,7 +265,7 @@ bb_graphic_line_class_init(BbGraphicLineClass *klasse)
             )
         );
 
-    g_object_class_install_property(
+    bb_object_class_install_property(
         G_OBJECT_CLASS(klasse),
         PROP_Y0,
         g_param_spec_int(
@@ -278,7 +279,7 @@ bb_graphic_line_class_init(BbGraphicLineClass *klasse)
             )
         );
 
-    g_object_class_install_property(
+    bb_object_class_install_property(
         G_OBJECT_CLASS(klasse),
         PROP_Y1,
         g_param_spec_int(

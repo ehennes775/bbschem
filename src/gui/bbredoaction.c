@@ -168,7 +168,7 @@ bb_redo_action_class_init(BbRedoActionClass *klasse)
         "state-type"
         );
 
-    g_object_class_install_property(
+    bb_object_class_install_property(
         G_OBJECT_CLASS(klasse),
         PROP_WINDOW,
         properties[PROP_WINDOW] = g_param_spec_object(

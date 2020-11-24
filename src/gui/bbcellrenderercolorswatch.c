@@ -18,6 +18,7 @@
 
 #include <gtk/gtk.h>
 #include "bbcellrenderercolorswatch.h"
+#include "bbextensions.h"
 
 
 enum
@@ -63,7 +64,7 @@ bb_cell_renderer_color_swatch_class_init(BbCellRendererColorSwatchClass *klasse)
 
     GTK_CELL_RENDERER_CLASS(klasse)->render = bb_cell_renderer_color_swatch_render;
 
-    g_object_class_install_property(
+    bb_object_class_install_property(
         G_OBJECT_CLASS(klasse),
         PROP_ITEM_COLOR,
         g_param_spec_boxed(

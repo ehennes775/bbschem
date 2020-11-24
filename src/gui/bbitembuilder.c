@@ -18,6 +18,7 @@
 
 #include <gtk/gtk.h>
 #include "bbitembuilder.h"
+#include "bbextensions.h"
 
 
 enum
@@ -68,7 +69,7 @@ bb_item_builder_class_init(BbItemBuilderClass *class)
 
     for (int index = PROP_0 + 1; index < N_PROPERTIES; ++index)
     {
-        g_object_class_install_property(
+        bb_object_class_install_property(
             G_OBJECT_CLASS(class),
             index,
             properties[index]

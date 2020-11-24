@@ -18,6 +18,7 @@
 
 #include <gtk/gtk.h>
 #include "bbdocumentwindowtab.h"
+#include "bbextensions.h"
 
 
 enum
@@ -57,7 +58,7 @@ bb_document_window_tab_class_init(BbDocumentWindowTabClass *klasse)
     G_OBJECT_CLASS(klasse)->get_property = bb_document_window_tab_get_property;
     G_OBJECT_CLASS(klasse)->set_property = bb_document_window_tab_set_property;
 
-    g_object_class_install_property(
+    bb_object_class_install_property(
         G_OBJECT_CLASS(klasse),
         PROP_DOCUMENT_WINDOW,
         g_param_spec_object(

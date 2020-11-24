@@ -18,6 +18,7 @@
 
 #include <gtk/gtk.h>
 #include "bblinebuilder.h"
+#include "bbextensions.h"
 #include <src/lib/bbgraphicline.h>
 
 enum
@@ -123,7 +124,7 @@ bb_line_builder_class_init(BbLineBuilderClass *class)
 
     for (int index = PROP_0 + 1; index < N_PROPERTIES; ++index)
     {
-        g_object_class_install_property(
+        bb_object_class_install_property(
             G_OBJECT_CLASS(class),
             index,
             properties[index]

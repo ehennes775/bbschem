@@ -44,6 +44,7 @@
 #include "bbtextpropertyeditor.h"
 #include "bbcoloreditor.h"
 #include "bbchoosetoolaction.h"
+#include "bbextensions.h"
 
 enum
 {
@@ -118,7 +119,7 @@ bb_main_window_class_init(BbMainWindowClass *class)
     G_OBJECT_CLASS(class)->get_property = bb_main_window_get_property;
     G_OBJECT_CLASS(class)->set_property = bb_main_window_set_property;
 
-    g_object_class_install_property(
+    bb_object_class_install_property(
         G_OBJECT_CLASS(class),
         PROP_CURRENT_DOCUMENT_WINDOW,
         g_param_spec_object(

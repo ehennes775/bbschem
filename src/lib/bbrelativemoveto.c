@@ -17,6 +17,7 @@
  */
 
 #include <gtk/gtk.h>
+#include <src/gui/bbextensions.h>
 #include "bbpathcommand.h"
 #include "bbrelativemoveto.h"
 #include "bbcoord.h"
@@ -114,7 +115,7 @@ bb_relative_move_to_class_init(BbRelativeMoveToClass *klasse)
 
     for (int index = PROP_0 + 1; index < N_PROPERTIES; ++index)
     {
-        g_object_class_install_property(
+        bb_object_class_install_property(
             G_OBJECT_CLASS(klasse),
             index,
             properties[index]

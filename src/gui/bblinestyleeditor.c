@@ -23,6 +23,7 @@
 #include "bbpropertycombobox.h"
 #include "bbschematicwindow.h"
 #include "bbint32combobox.h"
+#include "bbextensions.h"
 
 
 enum
@@ -323,7 +324,7 @@ bb_line_style_editor_class_init(BbLineStyleEditorClass *class)
     G_OBJECT_CLASS(class)->get_property = bb_line_style_editor_get_property;
     G_OBJECT_CLASS(class)->set_property = bb_line_style_editor_set_property;
 
-    g_object_class_install_property(
+    bb_object_class_install_property(
         G_OBJECT_CLASS(class),
         PROP_MAIN_WINDOW,
         g_param_spec_object(

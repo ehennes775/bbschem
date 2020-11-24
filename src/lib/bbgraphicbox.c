@@ -17,6 +17,7 @@
  */
 
 #include <gtk/gtk.h>
+#include <src/gui/bbextensions.h>
 #include "bbgraphicbox.h"
 #include "bbcoord.h"
 #include "bbitemparams.h"
@@ -219,10 +220,10 @@ bb_graphic_box_class_init(BbGraphicBoxClass *klasse)
         "line-width"
         );
 
-    g_object_class_install_property(
+    bb_object_class_install_property(
         G_OBJECT_CLASS(klasse),
         PROP_X0,
-        g_param_spec_int(
+        properties[PROP_X0] = g_param_spec_int(
             "x0",
             "x0",
             "The x coordinate of the first endpoint",
@@ -233,10 +234,10 @@ bb_graphic_box_class_init(BbGraphicBoxClass *klasse)
             )
         );
 
-    g_object_class_install_property(
+    bb_object_class_install_property(
         G_OBJECT_CLASS(klasse),
         PROP_X1,
-        g_param_spec_int(
+        properties[PROP_X1] = g_param_spec_int(
             "x1",
             "x1",
             "The x coordinate of the second endpoint",
@@ -247,10 +248,10 @@ bb_graphic_box_class_init(BbGraphicBoxClass *klasse)
             )
         );
 
-    g_object_class_install_property(
+    bb_object_class_install_property(
         G_OBJECT_CLASS(klasse),
-        PROP_Y0,  
-        g_param_spec_int(
+        PROP_Y0,
+        properties[PROP_Y0] = g_param_spec_int(
             "y0",
             "y0",
             "The y coordinate of the first endpoint",
@@ -261,10 +262,10 @@ bb_graphic_box_class_init(BbGraphicBoxClass *klasse)
             )
         );
 
-    g_object_class_install_property(
+    bb_object_class_install_property(
         G_OBJECT_CLASS(klasse),
         PROP_Y1,
-        g_param_spec_int(
+        properties[PROP_Y1] = g_param_spec_int(
             "y1",
             "y1",
             "The y coordinate of the second endpoint",
@@ -274,14 +275,6 @@ bb_graphic_box_class_init(BbGraphicBoxClass *klasse)
             G_PARAM_READWRITE
             )
         );
-
-    for (int index = PROP_0 + 1; index < N_PROPERTIES; ++index)
-    {
-        properties[index] = g_object_class_find_property(
-            G_OBJECT_CLASS(klasse),
-            index
-            );
-    }
 }
 
 

@@ -17,6 +17,7 @@
  */
 
 #include <gtk/gtk.h>
+#include <src/gui/bbextensions.h>
 #include "bbcoord.h"
 #include "bbitemparams.h"
 #include "bbgraphiccircle.h"
@@ -258,10 +259,10 @@ bb_graphic_circle_class_init(BbGraphicCircleClass *klasse)
         "line-width"
         );
 
-    g_object_class_install_property(
+    bb_object_class_install_property(
         G_OBJECT_CLASS(klasse),
         PROP_CENTER_X,
-        g_param_spec_int(
+        properties[PROP_CENTER_X] = g_param_spec_int(
             "center-x",
             "Center X",
             "The x coordinate of the center",
@@ -272,10 +273,10 @@ bb_graphic_circle_class_init(BbGraphicCircleClass *klasse)
             )
         );
 
-    g_object_class_install_property(
+    bb_object_class_install_property(
         G_OBJECT_CLASS(klasse),
         PROP_CENTER_Y,
-        g_param_spec_int(
+        properties[PROP_CENTER_Y] = g_param_spec_int(
             "center-y",
             "Center Y",
             "The y coordinate of the center",
@@ -286,10 +287,10 @@ bb_graphic_circle_class_init(BbGraphicCircleClass *klasse)
             )
         );
 
-    g_object_class_install_property(
+    bb_object_class_install_property(
         G_OBJECT_CLASS(klasse),
         PROP_RADIUS,
-        g_param_spec_int(
+        properties[PROP_RADIUS] = g_param_spec_int(
             "radius",
             "Radius",
             "The radius of the arc",
@@ -299,14 +300,6 @@ bb_graphic_circle_class_init(BbGraphicCircleClass *klasse)
             G_PARAM_READWRITE
             )
         );
-
-    for (int index = PROP_0 + 1; index < N_PROPERTIES; ++index)
-    {
-        properties[index] = g_object_class_find_property(
-            G_OBJECT_CLASS(klasse),
-            index
-            );
-    }
 }
 
 

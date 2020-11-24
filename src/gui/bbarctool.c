@@ -21,6 +21,7 @@
 #include "bbdrawingtool.h"
 #include "bbarctool.h"
 #include "bbgraphicarc.h"
+#include "bbextensions.h"
 
 enum
 {
@@ -117,7 +118,7 @@ bb_arc_tool_class_init(BbArcToolClass *klasse)
     G_OBJECT_CLASS(klasse)->get_property = bb_arc_tool_get_property;
     G_OBJECT_CLASS(klasse)->set_property = bb_arc_tool_set_property;
 
-    g_object_class_install_property(
+    bb_object_class_install_property(
         G_OBJECT_CLASS(klasse),
         PROP_ITEM,
         properties[PROP_ITEM] = g_param_spec_object(

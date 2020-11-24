@@ -26,3 +26,10 @@ bb_object_class_override_property(GObjectClass *object_class, guint property_id,
 
     return g_object_class_find_property(object_class, name);
 }
+
+
+void
+bb_object_class_install_property(GObjectClass *object_class, guint property_id, GParamSpec *pspec)
+{
+    g_object_class_install_property(object_class, property_id, pspec);
+}

@@ -17,9 +17,11 @@
  */
 
 #include <gtk/gtk.h>
+#include <src/gui/bbextensions.h>
 #include "bbgraphicarc.h"
 #include "bbcoord.h"
 #include "bbitemparams.h"
+#include "bbadjustablelinestyle.h"
 
 
 enum
@@ -64,8 +66,8 @@ struct _BbGraphicArc
 };
 
 
-G_DEFINE_TYPE(BbGraphicArc, bb_graphic_arc, BB_TYPE_SCHEMATIC_ITEM)
-
+static void
+bb_graphic_arc_adjustable_line_style_init(BbAdjustableLineStyleInterface *iface);
 
 static BbBounds*
 bb_graphic_arc_calculate_bounds(BbSchematicItem *item, BbBoundsCalculator *calculator);
@@ -119,6 +121,19 @@ bb_graphic_arc_write_finish(
 static GParamSpec *properties[N_PROPERTIES];
 
 
+G_DEFINE_TYPE_WITH_CODE(
+    BbGraphicArc,
+    bb_graphic_arc,
+    BB_TYPE_SCHEMATIC_ITEM,
+    G_IMPLEMENT_INTERFACE(BB_TYPE_ADJUSTABLE_LINE_STYLE, bb_graphic_arc_adjustable_line_style_init)
+    )
+
+
+static void
+bb_graphic_arc_adjustable_line_style_init(BbAdjustableLineStyleInterface *iface)
+{
+}
+
 static BbBounds*
 bb_graphic_arc_calculate_bounds(BbSchematicItem *item, BbBoundsCalculator *calculator)
 {
@@ -141,10 +156,13 @@ bb_graphic_arc_calculate_bounds(BbSchematicItem *item, BbBoundsCalculator *calcu
 static void
 bb_graphic_arc_class_init(BbGraphicArcClass *klasse)
 {
-    G_OBJECT_CLASS(klasse)->dispose = bb_graphic_arc_dispose;
-    G_OBJECT_CLASS(klasse)->finalize = bb_graphic_arc_finalize;
-    G_OBJECT_CLASS(klasse)->get_property = bb_graphic_arc_get_property;
-    G_OBJECT_CLASS(klasse)->set_property = bb_graphic_arc_set_property;
+    GObjectClass *object_class = G_OBJECT_CLASS(klasse);
+    g_return_if_fail(object_class != NULL);
+
+    object_class->dispose = bb_graphic_arc_dispose;
+    object_class->finalize = bb_graphic_arc_finalize;
+    object_class->get_property = bb_graphic_arc_get_property;
+    object_class->set_property = bb_graphic_arc_set_property;
 
     BB_SCHEMATIC_ITEM_CLASS(klasse)->calculate_bounds = bb_graphic_arc_calculate_bounds;
     BB_SCHEMATIC_ITEM_CLASS(klasse)->render = bb_graphic_arc_render;
@@ -153,74 +171,119 @@ bb_graphic_arc_class_init(BbGraphicArcClass *klasse)
     BB_SCHEMATIC_ITEM_CLASS(klasse)->write_async = bb_graphic_arc_write_async;
     BB_SCHEMATIC_ITEM_CLASS(klasse)->write_finish = bb_graphic_arc_write_finish;
 
-    properties[PROP_CENTER_X] = g_param_spec_int(
-        "center-x",
-        "Center X",
-        "The x coordinate of the center",
-        INT_MIN,
-        INT_MAX,
-        0,
-        G_PARAM_READWRITE
+    bb_object_class_install_property(
+         object_class,
+        PROP_CENTER_X,
+        properties[PROP_CENTER_X] = g_param_spec_int(
+            "center-x",
+            "Center X",
+            "The x coordinate of the center",
+            INT_MIN,
+            INT_MAX,
+            0,
+            G_PARAM_READWRITE
+            )
         );
 
-    properties[PROP_CENTER_Y] = g_param_spec_int(
-        "center-y",
-        "Center Y",
-        "The y coordinate of the center",
-        INT_MIN,
-        INT_MAX,
-        0,
-        G_PARAM_READWRITE
+    bb_object_class_install_property(
+        object_class,
+        PROP_CENTER_Y,
+        properties[PROP_CENTER_Y] = g_param_spec_int(
+            "center-y",
+            "Center Y",
+            "The y coordinate of the center",
+            INT_MIN,
+            INT_MAX,
+            0,
+            G_PARAM_READWRITE
+            )
         );
 
-    properties[PROP_RADIUS] = g_param_spec_int(
-        "radius",
-        "Radius",
-        "The radius of the arc",
-        0,
-        INT_MAX,
-        0,
-        G_PARAM_READWRITE
+    bb_object_class_install_property(
+        object_class,
+        PROP_RADIUS,
+        properties[PROP_RADIUS] = g_param_spec_int(
+            "radius",
+            "Radius",
+            "The radius of the arc",
+            0,
+            INT_MAX,
+            0,
+            G_PARAM_READWRITE
+            )
         );
 
-    properties[PROP_START_ANGLE] = g_param_spec_int(
-        "start-angle",
-        "Start Angle",
-        "The staring angle",
-        INT_MIN,
-        INT_MAX,
-        0,
-        G_PARAM_READWRITE
+    bb_object_class_install_property(
+        object_class,
+        PROP_START_ANGLE,
+        properties[PROP_START_ANGLE] = g_param_spec_int(
+            "start-angle",
+            "Start Angle",
+            "The staring angle",
+            INT_MIN,
+            INT_MAX,
+            0,
+            G_PARAM_READWRITE
+            )
         );
 
-    properties[PROP_SWEEP_ANGLE] = g_param_spec_int(
-        "sweep-angle",
-        "Sweep Angle",
-        "The sweep angle",
-        INT_MIN,
-        INT_MAX,
-        90,
-        G_PARAM_READWRITE
+    bb_object_class_install_property(
+        object_class,
+        PROP_SWEEP_ANGLE,
+        properties[PROP_SWEEP_ANGLE] = g_param_spec_int(
+            "sweep-angle",
+            "Sweep Angle",
+            "The sweep angle",
+            INT_MIN,
+            INT_MAX,
+            90,
+            G_PARAM_READWRITE
+            )
         );
 
-    properties[PROP_LINE_WIDTH] = g_param_spec_int(
-        "width",
-        "Line Width",
-        "The line width",
-        0,
-        INT_MAX,
-        0,
-        G_PARAM_READWRITE
+    bb_object_class_install_property(
+        object_class,
+        PROP_LINE_WIDTH,
+        properties[PROP_LINE_WIDTH] = g_param_spec_int(
+            "width",
+            "Line Width",
+            "The line width",
+            0,
+            INT_MAX,
+            0,
+            G_PARAM_READWRITE
+            )
         );
 
-    for (int index = PROP_0 + 1; index < N_PROPERTIES; ++index)
-    {
-        g_object_class_install_property(
-            G_OBJECT_CLASS(klasse),
-            index,
-            properties[index]
-            );
-    }
+    properties[PROP_CAP_TYPE] = bb_object_class_override_property(
+        object_class,
+        PROP_CAP_TYPE,
+        "cap-type"
+        );
+
+    properties[PROP_DASH_LENGTH] = bb_object_class_override_property(
+        object_class,
+        PROP_DASH_LENGTH,
+        "dash-length"
+        );
+
+    properties[PROP_DASH_SPACE] = bb_object_class_override_property(
+        object_class,
+        PROP_DASH_TYPE,
+        "dash-space"
+        );
+
+    properties[PROP_DASH_TYPE] = bb_object_class_override_property(
+        object_class,
+        PROP_DASH_TYPE,
+        "dash-type"
+        );
+
+    properties[PROP_LINE_WIDTH] = bb_object_class_override_property(
+        object_class,
+        PROP_LINE_WIDTH,
+        "line-width"
+        );
 }
 
 

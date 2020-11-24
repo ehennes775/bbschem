@@ -22,6 +22,7 @@
 #include "bbtextpropertyeditor.h"
 #include "bbpropertycombobox.h"
 #include "bbschematicwindow.h"
+#include "bbextensions.h"
 
 
 enum
@@ -59,7 +60,7 @@ bb_text_property_editor_class_init(BbTextPropertyEditorClass *class)
     G_OBJECT_CLASS(class)->get_property = bb_text_property_editor_get_property;
     G_OBJECT_CLASS(class)->set_property = bb_text_property_editor_set_property;
 
-    g_object_class_install_property(
+    bb_object_class_install_property(
         G_OBJECT_CLASS(class),
         PROP_MAIN_WINDOW,
         g_param_spec_object(
