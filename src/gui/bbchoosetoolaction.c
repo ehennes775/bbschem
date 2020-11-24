@@ -18,6 +18,7 @@
 
 #include <gtk/gtk.h>
 #include "bbchoosetoolaction.h"
+#include "bbextensions.h"
 
 enum
 {
@@ -159,36 +160,31 @@ bb_choose_tool_action_class_init(BbChooseToolActionClass *klasse)
     object_class->get_property = bb_choose_tool_action_get_property;
     object_class->set_property = bb_choose_tool_action_set_property;
 
-    g_object_class_override_property(
+    properties[PROP_ENABLED] = bb_object_class_override_property(
         object_class,
         PROP_ENABLED,
         "enabled"
         );
 
-    g_object_class_override_property(
+    properties[PROP_NAME] = bb_object_class_override_property(
         object_class,
         PROP_NAME,
         "name"
         );
 
-    g_object_class_override_property(
+    properties[PROP_PARAMETER_TYPE] = bb_object_class_override_property(
         object_class,
         PROP_PARAMETER_TYPE,
         "parameter-type"
         );
 
-    g_object_class_override_property(
+    properties[PROP_STATE] = bb_object_class_override_property(
         object_class,
         PROP_STATE,
         "state"
         );
 
-    properties[PROP_STATE] = g_object_class_find_property(
-        object_class,
-        "state"
-        );
-
-    g_object_class_override_property(
+    properties[PROP_STATE_TYPE] = bb_object_class_override_property(
         object_class,
         PROP_STATE_TYPE,
         "state-type"

@@ -200,37 +200,37 @@ bb_graphic_line_class_init(BbGraphicLineClass *klasse)
     BB_SCHEMATIC_ITEM_CLASS(klasse)->write_async = bb_graphic_line_write_async;
     BB_SCHEMATIC_ITEM_CLASS(klasse)->write_finish = bb_graphic_line_write_finish;
 
-    g_object_class_override_property(
+    properties[PROP_CAP_TYPE] = bb_object_class_override_property(
         G_OBJECT_CLASS(klasse),
         PROP_CAP_TYPE,
         "cap-type"
         );
 
-    g_object_class_override_property(
+    properties[PROP_DASH_LENGTH] = bb_object_class_override_property(
         G_OBJECT_CLASS(klasse),
         PROP_DASH_LENGTH,
         "dash-length"
         );
 
-    g_object_class_override_property(
+    properties[PROP_DASH_SPACE] = bb_object_class_override_property(
         G_OBJECT_CLASS(klasse),
         PROP_DASH_SPACE,
         "dash-space"
         );
 
-    g_object_class_override_property(
+    properties[PROP_DASH_TYPE] = bb_object_class_override_property(
         G_OBJECT_CLASS(klasse),
         PROP_DASH_TYPE,
         "dash-type"
         );
 
-    g_object_class_override_property(
+    properties[PROP_ITEM_COLOR] = bb_object_class_override_property(
         G_OBJECT_CLASS(klasse),
         PROP_ITEM_COLOR,
         "item-color"
         );
 
-    g_object_class_override_property(
+    properties[PROP_LINE_WIDTH] = bb_object_class_override_property(
         G_OBJECT_CLASS(klasse),
         PROP_LINE_WIDTH,
         "line-width"
@@ -291,14 +291,6 @@ bb_graphic_line_class_init(BbGraphicLineClass *klasse)
             G_PARAM_READWRITE
             )
         );
-
-    for (int index = PROP_0 + 1; index < N_PROPERTIES; ++index)
-    {
-        //properties[index] = g_object_class_find_property(
-        //    G_OBJECT_CLASS(klasse),
-        //    index
-        //    );
-    }
 }
 
 

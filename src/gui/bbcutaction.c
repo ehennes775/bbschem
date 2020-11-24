@@ -19,6 +19,7 @@
 #include <gtk/gtk.h>
 #include "bbcutaction.h"
 #include "bbschematicwindow.h"
+#include "bbextensions.h"
 
 enum
 {
@@ -136,37 +137,31 @@ bb_cut_action_class_init(BbCutActionClass *klasse)
     G_OBJECT_CLASS(klasse)->get_property = bb_cut_action_get_property;
     G_OBJECT_CLASS(klasse)->set_property = bb_cut_action_set_property;
 
-    g_object_class_override_property(
+    properties[PROP_ENABLED] = bb_object_class_override_property(
         G_OBJECT_CLASS(klasse),
         PROP_ENABLED,
         "enabled"
         );
 
-    g_object_class_override_property(
+    properties[PROP_NAME] = bb_object_class_override_property(
         G_OBJECT_CLASS(klasse),
         PROP_NAME,
         "name"
         );
 
-    g_object_class_override_property(
+    properties[PROP_PARAMETER_TYPE] = bb_object_class_override_property(
         G_OBJECT_CLASS(klasse),
         PROP_PARAMETER_TYPE,
         "parameter-type"
         );
 
-    g_object_class_override_property(
+    properties[PROP_STATE] = bb_object_class_override_property(
         G_OBJECT_CLASS(klasse),
         PROP_STATE,
         "state"
         );
 
-    //g_object_class_override_property(
-    //    klasse,
-    //    PROP_STATE_HINT,
-    //    "state-hint"
-    //    );
-
-    g_object_class_override_property(
+    properties[PROP_STATE_TYPE] = bb_object_class_override_property(
         G_OBJECT_CLASS(klasse),
         PROP_STATE_TYPE,
         "state-type"
@@ -183,7 +178,6 @@ bb_cut_action_class_init(BbCutActionClass *klasse)
             G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS
             )
         );
-
 }
 
 
