@@ -22,6 +22,7 @@
 #include "bbcoord.h"
 #include "bbitemparams.h"
 #include "bbadjustablelinestyle.h"
+#include "bblibrary.h"
 
 
 enum
@@ -74,10 +75,16 @@ struct _BbGraphicArc
 
 
 static void
+bb_graphic_arc_adjustable_item_color_init(BbAdjustableLineStyleInterface *iface);
+
+static void
 bb_graphic_arc_adjustable_line_style_init(BbAdjustableLineStyleInterface *iface);
 
 static BbBounds*
 bb_graphic_arc_calculate_bounds(BbSchematicItem *item, BbBoundsCalculator *calculator);
+
+static BbSchematicItem*
+bb_graphic_arc_clone(BbSchematicItem *item);
 
 static void
 bb_graphic_arc_dispose(GObject *object);
@@ -85,14 +92,44 @@ bb_graphic_arc_dispose(GObject *object);
 static void
 bb_graphic_arc_finalize(GObject *object);
 
+static int
+bb_graphic_arc_get_cap_type(BbGraphicArc *arc);
+
+static int
+bb_graphic_arc_get_dash_space(BbGraphicArc *arc);
+
+static int
+bb_graphic_arc_get_dash_length(BbGraphicArc *arc);
+
+static int
+bb_graphic_arc_get_dash_type(BbGraphicArc *arc);
+
+static int
+bb_graphic_arc_get_item_color(BbGraphicArc *arc);
+
 static void
 bb_graphic_arc_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
 
 static int
-bb_graphic_arc_get_width(BbGraphicArc *arc);
+bb_graphic_arc_get_line_width(BbGraphicArc *arc);
 
 static void
 bb_graphic_arc_render(BbSchematicItem *item, BbItemRenderer *renderer);
+
+static void
+bb_graphic_arc_set_cap_type(BbGraphicArc *arc, int cap_type);
+
+static void
+bb_graphic_arc_set_dash_length(BbGraphicArc *arc, int dash_length);
+
+static void
+bb_graphic_arc_set_dash_space(BbGraphicArc *arc, int dash_space);
+
+static void
+bb_graphic_arc_set_dash_type(BbGraphicArc *arc, int dash_type);
+
+static void
+bb_graphic_arc_set_item_color(BbGraphicArc *arc, int item_color);
 
 static void
 bb_graphic_arc_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
@@ -133,8 +170,15 @@ G_DEFINE_TYPE_WITH_CODE(
     BbGraphicArc,
     bb_graphic_arc,
     BB_TYPE_SCHEMATIC_ITEM,
+    G_IMPLEMENT_INTERFACE(BB_TYPE_ADJUSTABLE_ITEM_COLOR, bb_graphic_arc_adjustable_item_color_init)
     G_IMPLEMENT_INTERFACE(BB_TYPE_ADJUSTABLE_LINE_STYLE, bb_graphic_arc_adjustable_line_style_init)
     )
+
+
+static void
+bb_graphic_arc_adjustable_item_color_init(BbAdjustableLineStyleInterface *iface)
+{
+}
 
 
 static void
@@ -173,6 +217,7 @@ bb_graphic_arc_class_init(BbGraphicArcClass *klasse)
     object_class->set_property = bb_graphic_arc_set_property;
 
     BB_SCHEMATIC_ITEM_CLASS(klasse)->calculate_bounds = bb_graphic_arc_calculate_bounds;
+    BB_SCHEMATIC_ITEM_CLASS(klasse)->clone = bb_graphic_arc_clone;
     BB_SCHEMATIC_ITEM_CLASS(klasse)->render = bb_graphic_arc_render;
     BB_SCHEMATIC_ITEM_CLASS(klasse)->translate = bb_graphic_arc_translate;
     BB_SCHEMATIC_ITEM_CLASS(klasse)->write = bb_graphic_arc_write;
@@ -263,6 +308,12 @@ bb_graphic_arc_class_init(BbGraphicArcClass *klasse)
             )
         );
 
+    properties[PROP_ITEM_COLOR] = bb_object_class_override_property(
+        object_class,
+        PROP_ITEM_COLOR,
+        "item-color"
+        );
+
     properties[PROP_CAP_TYPE] = bb_object_class_override_property(
         object_class,
         PROP_CAP_TYPE,
@@ -277,7 +328,7 @@ bb_graphic_arc_class_init(BbGraphicArcClass *klasse)
 
     properties[PROP_DASH_SPACE] = bb_object_class_override_property(
         object_class,
-        PROP_DASH_TYPE,
+        PROP_DASH_SPACE,
         "dash-space"
         );
 
@@ -294,6 +345,30 @@ bb_graphic_arc_class_init(BbGraphicArcClass *klasse)
         );
 
     signals[SIG_INVALIDATE] = g_signal_lookup("invalidate-item", BB_TYPE_SCHEMATIC_ITEM);
+}
+
+
+static BbSchematicItem*
+bb_graphic_arc_clone(BbSchematicItem *item)
+{
+    return BB_SCHEMATIC_ITEM(g_object_new(
+        BB_TYPE_GRAPHIC_ARC,
+        "center-x", bb_graphic_arc_get_center_x(BB_GRAPHIC_ARC(item)),
+        "center-y", bb_graphic_arc_get_center_y(BB_GRAPHIC_ARC(item)),
+        "radius", bb_graphic_arc_get_radius(BB_GRAPHIC_ARC(item)),
+        "start-angle", bb_graphic_arc_get_start_angle(BB_GRAPHIC_ARC(item)),
+        "sweep-angle", bb_graphic_arc_get_sweep_angle(BB_GRAPHIC_ARC(item)),
+
+        "item-color", bb_graphic_arc_get_item_color(BB_GRAPHIC_ARC(item)),
+
+        "cap-type", bb_graphic_arc_get_cap_type(BB_GRAPHIC_ARC(item)),
+        "dash-length", bb_graphic_arc_get_dash_length(BB_GRAPHIC_ARC(item)),
+        "dash-space", bb_graphic_arc_get_dash_space(BB_GRAPHIC_ARC(item)),
+        "dash-type", bb_graphic_arc_get_dash_type(BB_GRAPHIC_ARC(item)),
+        "line-width", bb_graphic_arc_get_line_width(BB_GRAPHIC_ARC(item)),
+
+        NULL
+        ));
 }
 
 
@@ -314,6 +389,16 @@ bb_graphic_arc_finalize(GObject *object)
 }
 
 
+static int
+bb_graphic_arc_get_cap_type(BbGraphicArc *arc)
+{
+    g_return_val_if_fail(arc != NULL, 0);
+    g_return_val_if_fail(arc->line_style != NULL, 0);
+
+    return arc->line_style->cap_type;
+}
+
+
 int
 bb_graphic_arc_get_center_x(BbGraphicArc *arc)
 {
@@ -329,6 +414,45 @@ bb_graphic_arc_get_center_y(BbGraphicArc *arc)
     g_return_val_if_fail(arc != NULL, 0);
 
     return arc->center_y;
+}
+
+
+static int
+bb_graphic_arc_get_dash_length(BbGraphicArc *arc)
+{
+    g_return_val_if_fail(arc != NULL, 0);
+    g_return_val_if_fail(arc->line_style != NULL, 0);
+
+    return arc->line_style->dash_length;
+}
+
+
+static int
+bb_graphic_arc_get_dash_space(BbGraphicArc *arc)
+{
+    g_return_val_if_fail(arc != NULL, 0);
+    g_return_val_if_fail(arc->line_style != NULL, 0);
+
+    return arc->line_style->dash_space;
+}
+
+
+static int
+bb_graphic_arc_get_dash_type(BbGraphicArc *arc)
+{
+    g_return_val_if_fail(arc != NULL, 0);
+    g_return_val_if_fail(arc->line_style != NULL, 0);
+
+    return arc->line_style->dash_type;
+}
+
+
+static int
+bb_graphic_arc_get_item_color(BbGraphicArc *arc)
+{
+    g_return_val_if_fail(arc != NULL, 0);
+
+    return arc->color;
 }
 
 
@@ -357,13 +481,43 @@ bb_graphic_arc_get_property(GObject *object, guint property_id, GValue *value, G
             g_value_set_int(value, bb_graphic_arc_get_sweep_angle(BB_GRAPHIC_ARC(object)));
             break;
 
+        case PROP_ITEM_COLOR:
+            g_value_set_int(value, bb_graphic_arc_get_item_color(BB_GRAPHIC_ARC(object)));
+            break;
+
+        case PROP_CAP_TYPE:
+            g_value_set_int(value, bb_graphic_arc_get_cap_type(BB_GRAPHIC_ARC(object)));
+            break;
+
+        case PROP_DASH_LENGTH:
+            g_value_set_int(value, bb_graphic_arc_get_dash_length(BB_GRAPHIC_ARC(object)));
+            break;
+
+        case PROP_DASH_SPACE:
+            g_value_set_int(value, bb_graphic_arc_get_dash_space(BB_GRAPHIC_ARC(object)));
+            break;
+
+        case PROP_DASH_TYPE:
+            g_value_set_int(value, bb_graphic_arc_get_dash_type(BB_GRAPHIC_ARC(object)));
+            break;
+
         case PROP_LINE_WIDTH:
-            g_value_set_int(value, bb_graphic_arc_get_width(BB_GRAPHIC_ARC(object)));
+            g_value_set_int(value, bb_graphic_arc_get_line_width(BB_GRAPHIC_ARC(object)));
             break;
 
         default:
             G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
     }
+}
+
+
+static int
+bb_graphic_arc_get_line_width(BbGraphicArc *arc)
+{
+    g_return_val_if_fail(arc != NULL, 0);
+    g_return_val_if_fail(arc->line_style != NULL, 0);
+
+    return arc->line_style->line_width;
 }
 
 
@@ -394,16 +548,6 @@ bb_graphic_arc_get_sweep_angle(BbGraphicArc *arc)
 }
 
 
-static int
-bb_graphic_arc_get_width(BbGraphicArc *arc)
-{
-    g_return_val_if_fail(arc != NULL, 0);
-    g_return_val_if_fail(arc->line_style != NULL, 0);
-
-    return arc->line_style->line_width;
-}
-
-
 static void
 bb_graphic_arc_init(BbGraphicArc *arc)
 {
@@ -429,6 +573,23 @@ bb_graphic_arc_render(BbSchematicItem *item, BbItemRenderer *renderer)
     bb_item_renderer_set_line_style(renderer, arc->line_style);
 
     bb_item_renderer_render_graphic_arc(renderer, arc);
+}
+
+
+static void
+bb_graphic_arc_set_cap_type(BbGraphicArc *arc, int cap_type)
+{
+    g_return_if_fail(arc != NULL);
+    g_return_if_fail(arc->line_style != NULL);
+
+    if (arc->line_style->cap_type != cap_type)
+    {
+        arc->line_style->cap_type = cap_type;
+
+        g_signal_emit(arc, signals[SIG_INVALIDATE], 0);
+
+        g_object_notify_by_pspec(G_OBJECT(arc), properties[PROP_CAP_TYPE]);
+    }
 }
 
 
@@ -469,6 +630,73 @@ bb_graphic_arc_set_center_y(BbGraphicArc *arc, int y)
 
 
 static void
+bb_graphic_arc_set_dash_length(BbGraphicArc *arc, int dash_length)
+{
+    g_return_if_fail(arc != NULL);
+    g_return_if_fail(arc->line_style != NULL);
+
+    if (arc->line_style->dash_length != dash_length)
+    {
+        arc->line_style->dash_length = dash_length;
+
+        g_signal_emit(arc, signals[SIG_INVALIDATE], 0);
+
+        g_object_notify_by_pspec(G_OBJECT(arc), properties[PROP_DASH_LENGTH]);
+    }
+}
+
+
+static void
+bb_graphic_arc_set_dash_space(BbGraphicArc *arc, int dash_space)
+{
+    g_return_if_fail(arc != NULL);
+    g_return_if_fail(arc->line_style != NULL);
+
+    if (arc->line_style->dash_space != dash_space)
+    {
+        arc->line_style->dash_space = dash_space;
+
+        g_signal_emit(arc, signals[SIG_INVALIDATE], 0);
+
+        g_object_notify_by_pspec(G_OBJECT(arc), properties[PROP_DASH_SPACE]);
+    }
+}
+
+
+static void
+bb_graphic_arc_set_dash_type(BbGraphicArc *arc, int dash_type)
+{
+    g_return_if_fail(arc != NULL);
+    g_return_if_fail(arc->line_style != NULL);
+
+    if (arc->line_style->dash_type != dash_type)
+    {
+        arc->line_style->dash_type = dash_type;
+
+        g_signal_emit(arc, signals[SIG_INVALIDATE], 0);
+
+        g_object_notify_by_pspec(G_OBJECT(arc), properties[PROP_DASH_TYPE]);
+    }
+}
+
+
+static void
+bb_graphic_arc_set_item_color(BbGraphicArc *arc, int color)
+{
+    g_return_if_fail(arc != NULL);
+
+    if (arc->color != color)
+    {
+        arc->color = color;
+
+        g_signal_emit(arc, signals[SIG_INVALIDATE], 0);
+
+        g_object_notify_by_pspec(G_OBJECT(arc), properties[PROP_ITEM_COLOR]);
+    }
+}
+
+
+static void
 bb_graphic_arc_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec)
 {
     switch (property_id)
@@ -491,6 +719,26 @@ bb_graphic_arc_set_property(GObject *object, guint property_id, const GValue *va
 
         case PROP_SWEEP_ANGLE:
             bb_graphic_arc_set_sweep_angle(BB_GRAPHIC_ARC(object), g_value_get_int(value));
+            break;
+
+        case PROP_ITEM_COLOR:
+            bb_graphic_arc_set_item_color(BB_GRAPHIC_ARC(object), g_value_get_int(value));
+            break;
+
+        case PROP_CAP_TYPE:
+            bb_graphic_arc_set_cap_type(BB_GRAPHIC_ARC(object), g_value_get_int(value));
+            break;
+
+        case PROP_DASH_LENGTH:
+            bb_graphic_arc_set_dash_length(BB_GRAPHIC_ARC(object), g_value_get_int(value));
+            break;
+
+        case PROP_DASH_SPACE:
+            bb_graphic_arc_set_dash_space(BB_GRAPHIC_ARC(object), g_value_get_int(value));
+            break;
+
+        case PROP_DASH_TYPE:
+            bb_graphic_arc_set_dash_type(BB_GRAPHIC_ARC(object), g_value_get_int(value));
             break;
 
         case PROP_LINE_WIDTH:

@@ -1,7 +1,7 @@
-#ifndef __BBARCTOOL__
-#define __BBARCTOOL__
+#ifndef __BBTOOLSUBJECT__
+#define __BBTOOLSUBJECT__
 /*
- * bbsch
+ * bbschem
  * Copyright (C) 2020 Edward C. Hennessy
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,12 +19,20 @@
  */
 
 #include <gtk/gtk.h>
-#include "bbtoolsubject.h"
 
-#define BB_TYPE_ARC_TOOL bb_arc_tool_get_type()
-G_DECLARE_FINAL_TYPE(BbArcTool, bb_arc_tool, BB, ARC_TOOL, GObject)
+#define BB_TYPE_TOOL_SUBJECT bb_tool_subject_get_type()
+G_DECLARE_INTERFACE(BbToolSubject, bb_tool_subject, BB, TOOL_SUBJECT, GObject)
 
-BbArcTool*
-bb_arc_tool_new(BbToolSubject *subject);
+struct _BbToolSubjectInterface
+{
+    GTypeInterface g_iface;
+
+    void (*add_item)(BbToolSubject *subject, BbSchematicItem *item);
+};
+
+
+void
+bb_tool_subject_add_item(BbToolSubject *subject, BbSchematicItem *item);
+
 
 #endif

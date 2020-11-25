@@ -60,6 +60,9 @@ struct _BbSchematicWindow
 };
 
 
+static void
+bb_schematic_window_add_item(BbToolSubject *subject, BbSchematicItem *item);
+
 static gboolean
 bb_schematic_window_button_pressed_cb(GtkWidget *widget, GdkEvent *event, gpointer user_data);
 
@@ -87,15 +90,26 @@ bb_schematic_window_motion_notify_cb(GtkWidget *widget, GdkEvent  *event, gpoint
 static void
 bb_schematic_window_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
 
+static void
+bb_schematic_window_tool_subject_init(BbToolSubjectInterface *iface);
+
 
 static GParamSpec *properties[N_PROPERTIES];
 
 
-G_DEFINE_TYPE(
+G_DEFINE_TYPE_WITH_CODE(
     BbSchematicWindow,
     bb_schematic_window,
-    BB_TYPE_DOCUMENT_WINDOW
+    BB_TYPE_DOCUMENT_WINDOW,
+    G_IMPLEMENT_INTERFACE(BB_TYPE_TOOL_SUBJECT, bb_schematic_window_tool_subject_init)
     )
+
+
+static void
+bb_schematic_window_add_item(BbToolSubject *subject, BbSchematicItem *item)
+{
+    g_message("bb_schematic_window_add_item");
+}
 
 
 void
@@ -509,7 +523,7 @@ bb_schematic_window_init(BbSchematicWindow *window)
 
     bb_schematic_window_set_drawing_tool(
         window,
-        BB_DRAWING_TOOL(bb_arc_tool_new())
+        BB_DRAWING_TOOL(bb_arc_tool_new(BB_TOOL_SUBJECT(window)))
         );
 }
 
@@ -736,3 +750,10 @@ bb_schematic_window_undo(BbSchematicWindow *window)
 }
 
 
+static void
+bb_schematic_window_tool_subject_init(BbToolSubjectInterface *iface)
+{
+    g_return_if_fail(iface != NULL);
+
+    iface->add_item = bb_schematic_window_add_item;
+}

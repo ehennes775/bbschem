@@ -27,6 +27,7 @@ enum
 {
     PROP_0,
     PROP_ITEM,
+    PROP_SUBJECT,
     N_PROPERTIES
 };
 
@@ -54,6 +55,8 @@ struct _BbArcTool
     BbGraphicArc *item;
 
     int state;
+
+    BbToolSubject *subject;
 };
 
 
@@ -81,6 +84,9 @@ bb_arc_tool_get_item(BbArcTool *tool);
 static void
 bb_arc_tool_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
 
+static BbToolSubject*
+bb_arc_tool_get_subject(BbArcTool *tool);
+
 static void
 bb_arc_tool_invalidate_item_cb(BbSchematicItem *item, BbArcTool *arc_tool);
 
@@ -106,11 +112,13 @@ static void
 bb_arc_tool_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
 
 static void
+bb_arc_tool_set_subject(BbArcTool *tool, BbToolSubject *subject);
+
+static void
 bb_arc_tool_update_with_point(BbArcTool *arc_tool, double x, double y);
 
 
 static GParamSpec *properties[N_PROPERTIES];
-
 static guint signals[N_SIGNALS];
 
 
@@ -180,6 +188,18 @@ bb_arc_tool_class_init(BbArcToolClass *klasse)
             )
         );
 
+    properties[PROP_SUBJECT] = bb_object_class_install_property(
+        object_class,
+        PROP_SUBJECT,
+        g_param_spec_object(
+            "subject",
+            "",
+            "",
+            BB_TYPE_TOOL_SUBJECT,
+            G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS
+            )
+        );
+
     signals[SIG_INVALIDATE_ITEM] = g_signal_lookup(
         "invalidate-item",
         BB_TYPE_DRAWING_TOOL
@@ -194,6 +214,7 @@ bb_arc_tool_dispose(GObject *object)
     g_return_if_fail(arc_tool != NULL);
 
     bb_arc_tool_set_item(arc_tool, NULL);
+    bb_arc_tool_set_subject(arc_tool, NULL);
 }
 
 
@@ -226,7 +247,13 @@ bb_arc_tool_finalize(GObject *object)
 static void
 bb_arc_tool_finish(BbArcTool *arc_tool)
 {
-    // TODO Add the new arc to the schematic
+    g_return_if_fail(arc_tool != NULL);
+
+    BbSchematicItem *item = bb_schematic_item_clone(BB_SCHEMATIC_ITEM(arc_tool->item));
+
+    bb_tool_subject_add_item(arc_tool->subject, item);
+
+    g_clear_object(&item);
 
     bb_arc_tool_reset(arc_tool);
 }
@@ -250,9 +277,22 @@ bb_arc_tool_get_property(GObject *object, guint property_id, GValue *value, GPar
             g_value_set_object(value, bb_arc_tool_get_item(BB_ARC_TOOL(object)));
             break;
 
+        case PROP_SUBJECT:
+            g_value_set_object(value, bb_arc_tool_get_subject(BB_ARC_TOOL(object)));
+            break;
+
         default:
             G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
     }
+}
+
+
+static BbToolSubject*
+bb_arc_tool_get_subject(BbArcTool *tool)
+{
+    g_return_val_if_fail(tool != NULL, NULL);
+
+    return tool->subject;
 }
 
 
@@ -289,11 +329,12 @@ bb_arc_tool_key_released(BbDrawingTool *tool)
 
 
 BbArcTool*
-bb_arc_tool_new()
+bb_arc_tool_new(BbToolSubject *subject)
 {
     return BB_ARC_TOOL(g_object_new(
         BB_TYPE_ARC_TOOL,
         "item", g_object_new(BB_TYPE_GRAPHIC_ARC, NULL),
+        "subject", subject,
         NULL
         ));
 }
@@ -322,53 +363,6 @@ bb_arc_tool_reset_with_point(BbArcTool *arc_tool, gdouble x, gdouble y)
     bb_graphic_arc_set_sweep_angle(arc_tool->item, 270);
 
     arc_tool->state = STATE_S1;
-}
-
-
-static void
-bb_arc_tool_update_with_point(BbArcTool *arc_tool, gdouble x, gdouble y)
-{
-    g_return_if_fail(arc_tool != NULL);
-    g_return_if_fail(arc_tool->item != NULL);
-
-    if (arc_tool->state == STATE_S1)
-    {
-        double distance = bb_coord_distance(
-            bb_graphic_arc_get_center_x(arc_tool->item),
-            bb_graphic_arc_get_center_y(arc_tool->item),
-            x,
-            y
-            );
-
-        bb_graphic_arc_set_radius(arc_tool->item, distance);
-    }
-    else if (arc_tool->state == STATE_S2)
-    {
-        double radians = bb_coord_radians(
-            bb_graphic_arc_get_center_x(arc_tool->item),
-            bb_graphic_arc_get_center_y(arc_tool->item),
-            x,
-            y
-            );
-
-        bb_graphic_arc_set_start_angle(arc_tool->item, bb_angle_from_radians(radians));
-    }
-    else if (arc_tool->state == STATE_S3)
-    {
-        double radians = bb_coord_radians(
-            bb_graphic_arc_get_center_x(arc_tool->item),
-            bb_graphic_arc_get_center_y(arc_tool->item),
-            x,
-            y
-            );
-
-        int sweep = bb_angle_calculate_sweep(
-            bb_graphic_arc_get_start_angle(arc_tool->item),
-            bb_angle_from_radians(radians)
-            );
-
-        bb_graphic_arc_set_sweep_angle(arc_tool->item, sweep);
-    }
 }
 
 
@@ -427,7 +421,83 @@ bb_arc_tool_set_property(GObject *object, guint property_id, const GValue *value
             bb_arc_tool_set_item(BB_ARC_TOOL(object), BB_GRAPHIC_ARC(g_value_get_object(value)));
             break;
 
+        case PROP_SUBJECT:
+            bb_arc_tool_set_subject(BB_ARC_TOOL(object), BB_TOOL_SUBJECT(g_value_get_object(value)));
+            break;
+
         default:
             G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
     }
 }
+
+
+static void
+bb_arc_tool_set_subject(BbArcTool *tool, BbToolSubject *subject)
+{
+    g_return_if_fail(tool != NULL);
+
+    if (tool->subject != subject)
+    {
+        if (tool->subject != NULL)
+        {
+            g_object_unref(tool->subject);
+        }
+
+        tool->subject = subject;
+
+        if (tool->subject != NULL)
+        {
+            g_object_ref(tool->subject);
+        }
+
+        g_object_notify_by_pspec(G_OBJECT(tool), properties[PROP_SUBJECT]);
+    }
+}
+
+
+static void
+bb_arc_tool_update_with_point(BbArcTool *arc_tool, gdouble x, gdouble y)
+{
+    g_return_if_fail(arc_tool != NULL);
+    g_return_if_fail(arc_tool->item != NULL);
+
+    if (arc_tool->state == STATE_S1)
+    {
+        double distance = bb_coord_distance(
+            bb_graphic_arc_get_center_x(arc_tool->item),
+            bb_graphic_arc_get_center_y(arc_tool->item),
+            x,
+            y
+            );
+
+        bb_graphic_arc_set_radius(arc_tool->item, distance);
+    }
+    else if (arc_tool->state == STATE_S2)
+    {
+        double radians = bb_coord_radians(
+            bb_graphic_arc_get_center_x(arc_tool->item),
+            bb_graphic_arc_get_center_y(arc_tool->item),
+            x,
+            y
+            );
+
+        bb_graphic_arc_set_start_angle(arc_tool->item, bb_angle_from_radians(radians));
+    }
+    else if (arc_tool->state == STATE_S3)
+    {
+        double radians = bb_coord_radians(
+            bb_graphic_arc_get_center_x(arc_tool->item),
+            bb_graphic_arc_get_center_y(arc_tool->item),
+            x,
+            y
+            );
+
+        int sweep = bb_angle_calculate_sweep(
+            bb_graphic_arc_get_start_angle(arc_tool->item),
+            bb_angle_from_radians(radians)
+            );
+
+        bb_graphic_arc_set_sweep_angle(arc_tool->item, sweep);
+    }
+}
+
