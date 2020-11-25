@@ -62,7 +62,7 @@ bb_drawing_tool_default_init(BbDrawingToolInterface *iface)
         0,
         NULL,
         NULL,
-        g_cclosure_marshal_VOID__VOID,
+        g_cclosure_marshal_VOID__OBJECT,
         G_TYPE_NONE,
         1,
         BB_TYPE_SCHEMATIC_ITEM
