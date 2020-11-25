@@ -17,13 +17,13 @@
  */
 
 #include <gtk/gtk.h>
+#include <bbextensions.h>
 #include <src/lib/bbadjustablelinestyle.h>
 #include "bbmainwindow.h"
 #include "bblinestyleeditor.h"
 #include "bbpropertycombobox.h"
 #include "bbschematicwindow.h"
 #include "bbint32combobox.h"
-#include "bbextensions.h"
 
 
 enum

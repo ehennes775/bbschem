@@ -17,9 +17,9 @@
  */
 
 #include <gtk/gtk.h>
-#include <src/lib/bbgraphicbox.h>
+#include <bbextensions.h>
+#include <bbgraphicbox.h>
 #include "bbboxbuilder.h"
-#include "bbextensions.h"
 
 
 enum

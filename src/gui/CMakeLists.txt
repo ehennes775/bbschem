@@ -80,4 +80,4 @@ add_library(bbgui
         bbtoolpalette.h
         bbundoaction.c
         bbundoaction.h
-        bbextensions.h bbextensions.c)
+        )

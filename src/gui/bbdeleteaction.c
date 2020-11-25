@@ -17,9 +17,9 @@
  */
 
 #include <gtk/gtk.h>
+#include <bbextensions.h>
 #include "bbdeleteaction.h"
 #include "bbschematicwindow.h"
-#include "bbextensions.h"
 
 enum
 {

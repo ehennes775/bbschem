@@ -17,8 +17,8 @@
  */
 
 #include <gtk/gtk.h>
+#include <bbextensions.h>
 #include "bbchoosetoolaction.h"
-#include "bbextensions.h"
 
 enum
 {

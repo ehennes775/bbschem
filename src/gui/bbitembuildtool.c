@@ -18,9 +18,9 @@
 
 #include <math.h>
 #include <gtk/gtk.h>
+#include <bbextensions.h>
 #include "bbitembuilder.h"
 #include "bbitembuildtool.h"
-#include "bbextensions.h"
 
 enum
 {

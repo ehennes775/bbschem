@@ -35,6 +35,13 @@ GParamSpec*
 bb_object_class_override_property(GObjectClass *object_class, guint property_id, const gchar *name);
 
 
+/**
+ * Wrapper around g_object_class_install_property()
+ *
+ * @param object_class The GObjectClass for the implementing class
+ * @param property_id The property_id within the implementing class
+ * @param pspec The GParamSpec to associate with the property
+ */
 void
 bb_object_class_install_property(GObjectClass *object_class, guint property_id, GParamSpec *pspec);
 

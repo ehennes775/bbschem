@@ -23,7 +23,9 @@ add_definitions(${PEAS_CFLAGS_OTHER})
 include_directories(.)
 include_directories(src/gui)
 include_directories(src/lib)
+include_directories(src/ext)
 
+add_subdirectory(src/ext)
 add_subdirectory(src/lib)
 add_subdirectory(src/gui)
 
@@ -69,6 +71,7 @@ set_source_files_properties(
 target_link_libraries(bbschem
         bbgui
         bblib
+        bbext
         m
         ${GLIB_LIBRARIES}
         ${GTK3_LIBRARIES}

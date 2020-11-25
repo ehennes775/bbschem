@@ -17,13 +17,13 @@
  */
 
 #include <gtk/gtk.h>
-#include <bbcoord.h>
 #include <bbangle.h>
+#include <bbextensions.h>
+#include <bbcoord.h>
 #include "bbschematicitem.h"
 #include "bbdrawingtool.h"
 #include "bbarctool.h"
 #include "bbgraphicarc.h"
-#include "bbextensions.h"
 
 enum
 {

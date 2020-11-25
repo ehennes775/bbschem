@@ -17,9 +17,10 @@
  */
 
 #include <gtk/gtk.h>
+#include <bbextensions.h>
 #include "bbredoaction.h"
 #include "bbschematicwindow.h"
-#include "bbextensions.h"
+#include "src/ext/bbextensions.h"
 
 
 enum

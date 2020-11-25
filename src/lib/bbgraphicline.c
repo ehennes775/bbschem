@@ -17,7 +17,7 @@
  */
 
 #include <gtk/gtk.h>
-#include <src/gui/bbextensions.h>
+#include <bbextensions.h>
 #include "bbgraphicline.h"
 #include "bbcoord.h"
 #include "bbitemparams.h"

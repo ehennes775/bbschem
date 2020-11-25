@@ -17,9 +17,9 @@
  */
 
 #include <gtk/gtk.h>
+#include <bbextensions.h>
 #include <src/lib/bbgraphiccircle.h>
 #include "bbcirclebuilder.h"
-#include "bbextensions.h"
 
 
 enum

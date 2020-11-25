@@ -17,6 +17,7 @@
  */
 
 #include <gtk/gtk.h>
+#include <bbextensions.h>
 #include "bbmainwindow.h"
 #include "bbapplication.h"
 #include "bbdocumentwindowtab.h"
@@ -44,7 +45,7 @@
 #include "bbtextpropertyeditor.h"
 #include "bbcoloreditor.h"
 #include "bbchoosetoolaction.h"
-#include "bbextensions.h"
+
 
 enum
 {

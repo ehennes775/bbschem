@@ -17,11 +17,11 @@
  */
 
 #include <gtk/gtk.h>
-#include <src/lib/bbschematic.h>
+#include <bbextensions.h>
+#include <bbschematic.h>
 #include "bbschematicwindow.h"
 #include "bbschematicwindowinner.h"
 #include "bbarctool.h"
-#include "bbextensions.h"
 
 
 enum

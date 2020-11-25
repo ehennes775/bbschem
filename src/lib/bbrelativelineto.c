@@ -17,7 +17,7 @@
  */
 
 #include <gtk/gtk.h>
-#include <src/gui/bbextensions.h>
+#include <bbextensions.h>
 #include "bbpathcommand.h"
 #include "bbrelativelineto.h"
 #include "bbcoord.h"
