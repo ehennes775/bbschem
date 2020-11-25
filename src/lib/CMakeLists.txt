@@ -62,4 +62,4 @@ add_library(bblib
         bbsweep.h
         bbvaluecount.c
         bbvaluecount.h
-        )
+        bblibrary.h)

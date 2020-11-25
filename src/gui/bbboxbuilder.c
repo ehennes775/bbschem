@@ -18,7 +18,7 @@
 
 #include <gtk/gtk.h>
 #include <bbextensions.h>
-#include <bbgraphicbox.h>
+#include <bblibrary.h>
 #include "bbboxbuilder.h"
 
 

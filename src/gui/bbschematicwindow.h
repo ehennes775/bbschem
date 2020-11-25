@@ -19,8 +19,8 @@
  */
 
 #include <gtk/gtk.h>
-#include <src/lib/bbapplyfunc.h>
-#include <src/lib/bbqueryfunc.h>
+#include <bbapplyfunc.h>
+#include <bbqueryfunc.h>
 #include "bbdocumentwindow.h"
 #include "bbdrawingtool.h"
 

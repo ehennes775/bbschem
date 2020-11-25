@@ -1,3 +1,5 @@
+#ifndef __BBLIBRARY__
+#define __BBLIBRARY__
 /*
  * bbsch
  * Copyright (C) 2020 Edward C. Hennessy
@@ -16,22 +18,37 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "bbextensions.h"
+#include "bbapplyfunc.h"
+#include "bbpred.h"
 
+#include "bbvaluecount.h"
 
-GParamSpec*
-bb_object_class_override_property(GObjectClass *object_class, guint property_id, const gchar *name)
-{
-    g_object_class_override_property(object_class, property_id, name);
+#include "bbangle.h"
+#include "bbbounds.h"
+#include "bbcoord.h"
+#include "bbsweep.h"
 
-    return g_object_class_find_property(object_class, name);
-}
+#include "bbschematicitem.h"
+#include "bbschematic.h"
 
+#include "bbcaptype.h"
+#include "bbdashtype.h"
+#include "bbfilltype.h"
 
-GParamSpec*
-bb_object_class_install_property(GObjectClass *object_class, guint property_id, GParamSpec *pspec)
-{
-    g_object_class_install_property(object_class, property_id, pspec);
+#include "bblinestyle.h"
+#include "bbfillstyle.h"
 
-    return pspec;
-}
+#include "bbpathcommand.h"
+
+#include "bbabsolutelineto.h"
+#include "bbabsolutemoveto.h"
+#include "bbrelativelineto.h"
+#include "bbrelativemoveto.h"
+
+#include "bbgraphicarc.h"
+#include "bbgraphicbox.h"
+#include "bbgraphiccircle.h"
+#include "bbgraphicline.h"
+#include "bbgraphicpath.h"
+
+#endif

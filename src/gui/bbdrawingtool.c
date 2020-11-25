@@ -17,6 +17,7 @@
  */
 
 #include <gtk/gtk.h>
+#include <bbschematicitem.h>
 #include "bbdrawingtool.h"
 
 
@@ -63,8 +64,8 @@ bb_drawing_tool_default_init(BbDrawingToolInterface *iface)
         NULL,
         g_cclosure_marshal_VOID__VOID,
         G_TYPE_NONE,
-        0,
-        NULL
+        1,
+        BB_TYPE_SCHEMATIC_ITEM
         );
 }
 

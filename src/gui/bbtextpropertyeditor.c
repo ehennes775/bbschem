@@ -18,6 +18,7 @@
 
 #include <gtk/gtk.h>
 #include <bbextensions.h>
+#include <bblibrary.h>
 #include "bbcolorcombobox.h"
 #include "bbmainwindow.h"
 #include "bbtextpropertyeditor.h"

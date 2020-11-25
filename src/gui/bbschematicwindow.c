@@ -18,7 +18,7 @@
 
 #include <gtk/gtk.h>
 #include <bbextensions.h>
-#include <bbschematic.h>
+#include <bblibrary.h>
 #include "bbschematicwindow.h"
 #include "bbschematicwindowinner.h"
 #include "bbarctool.h"

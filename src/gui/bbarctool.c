@@ -17,13 +17,11 @@
  */
 
 #include <gtk/gtk.h>
-#include <bbangle.h>
 #include <bbextensions.h>
-#include <bbcoord.h>
-#include "bbschematicitem.h"
-#include "bbdrawingtool.h"
+#include <bblibrary.h>
 #include "bbarctool.h"
-#include "bbgraphicarc.h"
+#include "bbdrawingtool.h"
+#include "bbschematicitem.h"
 
 enum
 {
@@ -162,15 +160,18 @@ bb_arc_tool_button_pressed(BbDrawingTool *tool, gdouble x, gdouble y)
 static void
 bb_arc_tool_class_init(BbArcToolClass *klasse)
 {
-    G_OBJECT_CLASS(klasse)->dispose = bb_arc_tool_dispose;
-    G_OBJECT_CLASS(klasse)->finalize = bb_arc_tool_finalize;
-    G_OBJECT_CLASS(klasse)->get_property = bb_arc_tool_get_property;
-    G_OBJECT_CLASS(klasse)->set_property = bb_arc_tool_set_property;
+    GObjectClass *object_class = G_OBJECT_CLASS(klasse);
+    g_return_if_fail(object_class != NULL);
 
-    bb_object_class_install_property(
-        G_OBJECT_CLASS(klasse),
+    object_class->dispose = bb_arc_tool_dispose;
+    object_class->finalize = bb_arc_tool_finalize;
+    object_class->get_property = bb_arc_tool_get_property;
+    object_class->set_property = bb_arc_tool_set_property;
+
+    properties[PROP_ITEM] = bb_object_class_install_property(
+        object_class,
         PROP_ITEM,
-        properties[PROP_ITEM] = g_param_spec_object(
+        g_param_spec_object(
             "item",
             "",
             "",
@@ -179,7 +180,10 @@ bb_arc_tool_class_init(BbArcToolClass *klasse)
             )
         );
 
-    signals[SIG_INVALIDATE_ITEM] = g_signal_lookup("invalidate-item", BB_TYPE_DRAWING_TOOL);
+    signals[SIG_INVALIDATE_ITEM] = g_signal_lookup(
+        "invalidate-item",
+        BB_TYPE_DRAWING_TOOL
+        );
 }
 
 
@@ -253,12 +257,9 @@ bb_arc_tool_get_property(GObject *object, guint property_id, GValue *value, GPar
 
 
 static void
-bb_arc_tool_init(BbArcTool *tool)
+bb_arc_tool_init(BbArcTool *arc_tool)
 {
-    bb_arc_tool_set_item(
-        tool,
-        g_object_new(BB_TYPE_GRAPHIC_ARC, NULL)
-        );
+    bb_arc_tool_reset(arc_tool);
 }
 
 
@@ -292,6 +293,7 @@ bb_arc_tool_new()
 {
     return BB_ARC_TOOL(g_object_new(
         BB_TYPE_ARC_TOOL,
+        "item", g_object_new(BB_TYPE_GRAPHIC_ARC, NULL),
         NULL
         ));
 }

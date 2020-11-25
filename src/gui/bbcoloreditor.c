@@ -18,9 +18,9 @@
 
 #include <gtk/gtk.h>
 #include <bbextensions.h>
+#include <bblibrary.h>
 #include <bbadjustableitemcolor.h>
 #include <bbhashtable.h>
-#include <bbvaluecount.h>
 #include "bbmainwindow.h"
 #include "bbcolorcombobox.h"
 #include "bbcoloreditor.h"

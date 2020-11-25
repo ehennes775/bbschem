@@ -18,8 +18,9 @@
 
 #include <gtk/gtk.h>
 #include <bbextensions.h>
+#include <bblibrary.h>
 #include "bblinebuilder.h"
-#include <src/lib/bbgraphicline.h>
+
 
 enum
 {

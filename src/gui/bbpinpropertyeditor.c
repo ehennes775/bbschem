@@ -18,7 +18,7 @@
 
 #include <gtk/gtk.h>
 #include <bbextensions.h>
-#include <src/lib/bbvaluecount.h>
+#include <bblibrary.h>
 #include "bbmainwindow.h"
 #include "bbpinpropertyeditor.h"
 #include "bbpropertycombobox.h"

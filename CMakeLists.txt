@@ -20,10 +20,10 @@ add_definitions(${GLIB_CFLAGS_OTHER})
 add_definitions(${GTK3_CFLAGS_OTHER})
 add_definitions(${PEAS_CFLAGS_OTHER})
 
-include_directories(.)
 include_directories(src/gui)
 include_directories(src/lib)
 include_directories(src/ext)
+include_directories(src)
 
 add_subdirectory(src/ext)
 add_subdirectory(src/lib)

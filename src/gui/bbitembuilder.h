@@ -19,7 +19,7 @@
  */
 
 #include <gtk/gtk.h>
-#include <src/lib/bbitemrenderer.h>
+#include <bbitemrenderer.h>
 
 #define BB_TYPE_ITEM_BUILDER bb_item_builder_get_type()
 G_DECLARE_DERIVABLE_TYPE(BbItemBuilder, bb_item_builder, BB, ITEM_BUILDER, GObject)

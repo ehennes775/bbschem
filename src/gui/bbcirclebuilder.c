@@ -18,7 +18,7 @@
 
 #include <gtk/gtk.h>
 #include <bbextensions.h>
-#include <src/lib/bbgraphiccircle.h>
+#include <bblibrary.h>
 #include "bbcirclebuilder.h"
 
 
