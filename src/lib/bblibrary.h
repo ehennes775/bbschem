@@ -20,23 +20,28 @@
 
 #include "bbapplyfunc.h"
 #include "bbpred.h"
-
+#include "bbqueryfunc.h"
 #include "bbvaluecount.h"
 
 #include "bbangle.h"
 #include "bbbounds.h"
+#include "bbcaptype.h"
 #include "bbcoord.h"
+#include "bbdashtype.h"
+#include "bbfilltype.h"
 #include "bbsweep.h"
+
+#include "bblinestyle.h"
+#include "bbfillstyle.h"
+
+#include "bbhashtable.h"
 
 #include "bbschematicitem.h"
 #include "bbschematic.h"
 
-#include "bbcaptype.h"
-#include "bbdashtype.h"
-#include "bbfilltype.h"
-
-#include "bblinestyle.h"
-#include "bbfillstyle.h"
+#include "bbadjustablefillstyle.h"
+#include "bbadjustableitemcolor.h"
+#include "bbadjustablelinestyle.h"
 
 #include "bbpathcommand.h"
 

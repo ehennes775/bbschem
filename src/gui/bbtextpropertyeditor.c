@@ -23,7 +23,6 @@
 #include "bbmainwindow.h"
 #include "bbtextpropertyeditor.h"
 #include "bbpropertycombobox.h"
-#include "bbschematicwindow.h"
 
 
 enum

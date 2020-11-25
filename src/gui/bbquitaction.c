@@ -19,7 +19,6 @@
 #include <gtk/gtk.h>
 #include <bbextensions.h>
 #include "bbquitaction.h"
-#include "bbschematicwindow.h"
 
 
 enum

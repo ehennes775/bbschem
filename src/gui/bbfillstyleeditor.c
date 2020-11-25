@@ -18,7 +18,7 @@
 
 #include <gtk/gtk.h>
 #include <bbextensions.h>
-#include <bbadjustablefillstyle.h>
+#include <bblibrary.h>
 #include "bbmainwindow.h"
 #include "bbfillstyleeditor.h"
 #include "bbint32combobox.h"

@@ -21,7 +21,7 @@
 #include <bblibrary.h>
 #include "bbarctool.h"
 #include "bbdrawingtool.h"
-#include "bbschematicitem.h"
+
 
 enum
 {

@@ -18,7 +18,7 @@
 
 #include <gtk/gtk.h>
 #include <bbextensions.h>
-#include <bbadjustablelinestyle.h>
+#include <bblibrary.h>
 #include "bbmainwindow.h"
 #include "bblinestyleeditor.h"
 #include "bbpropertycombobox.h"

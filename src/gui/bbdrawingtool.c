@@ -17,7 +17,7 @@
  */
 
 #include <gtk/gtk.h>
-#include <bbschematicitem.h>
+#include <bblibrary.h>
 #include "bbdrawingtool.h"
 
 
