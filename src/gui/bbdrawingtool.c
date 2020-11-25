@@ -20,8 +20,8 @@
 #include "bbdrawingtool.h"
 
 
-static void
-bb_drawing_tool_button_pressed_missing(BbDrawingTool *tool);
+static gboolean
+bb_drawing_tool_button_pressed_missing(BbDrawingTool *tool, gdouble x, gdouble y);
 
 static void
 bb_drawing_tool_draw_missing(BbDrawingTool *tool);
@@ -32,8 +32,8 @@ bb_drawing_tool_key_pressed_missing(BbDrawingTool *tool);
 static void
 bb_drawing_tool_key_released_missing(BbDrawingTool *tool);
 
-static void
-bb_drawing_tool_motion_notify_missing(BbDrawingTool *tool);
+static gboolean
+bb_drawing_tool_motion_notify_missing(BbDrawingTool *tool, gdouble x, gdouble y);
 
 
 G_DEFINE_INTERFACE(
@@ -69,22 +69,24 @@ bb_drawing_tool_default_init(BbDrawingToolInterface *iface)
 }
 
 
-void
-bb_drawing_tool_button_pressed(BbDrawingTool *tool)
+gboolean
+bb_drawing_tool_button_pressed(BbDrawingTool *tool, gdouble x, gdouble y)
 {
     BbDrawingToolInterface *iface = BB_DRAWING_TOOL_GET_IFACE(tool);
 
-    g_return_if_fail(iface != NULL);
-    g_return_if_fail(iface->button_pressed != NULL);
+    g_return_val_if_fail(iface != NULL, FALSE);
+    g_return_val_if_fail(iface->button_pressed != NULL, FALSE);
 
-    return iface->button_pressed(tool);
+    return iface->button_pressed(tool, x, y);
 }
 
 
-static void
-bb_drawing_tool_button_pressed_missing(BbDrawingTool *tool)
+static gboolean
+bb_drawing_tool_button_pressed_missing(BbDrawingTool *tool, gdouble x, gdouble y)
 {
     g_error("bb_drawing_tool_button_pressed() not overridden");
+
+    return FALSE;
 }
 
 
@@ -145,20 +147,22 @@ bb_drawing_tool_key_released_missing(BbDrawingTool *tool)
 }
 
 
-void
-bb_drawing_tool_motion_notify(BbDrawingTool *tool)
+gboolean
+bb_drawing_tool_motion_notify(BbDrawingTool *tool, gdouble x, gdouble y)
 {
     BbDrawingToolInterface *iface = BB_DRAWING_TOOL_GET_IFACE(tool);
 
-    g_return_if_fail(iface != NULL);
-    g_return_if_fail(iface->motion_notify != NULL);
+    g_return_val_if_fail(iface != NULL, FALSE);
+    g_return_val_if_fail(iface->motion_notify != NULL, FALSE);
 
-    return iface->motion_notify(tool);
+    return iface->motion_notify(tool, x, y);
 }
 
 
-static void
-bb_drawing_tool_motion_notify_missing(BbDrawingTool *tool)
+static gboolean
+bb_drawing_tool_motion_notify_missing(BbDrawingTool *tool, gdouble x, gdouble y)
 {
     g_error("bb_drawing_tool_motion_notify() not overridden");
+
+    return FALSE;
 }

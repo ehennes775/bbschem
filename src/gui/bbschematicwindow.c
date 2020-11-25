@@ -88,7 +88,7 @@ static void
 bb_schematic_window_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
 
 
-GParamSpec *properties[N_PROPERTIES];
+static GParamSpec *properties[N_PROPERTIES];
 
 
 G_DEFINE_TYPE(
@@ -121,7 +121,7 @@ bb_schematic_window_button_pressed_cb(GtkWidget *widget, GdkEvent *event, gpoint
 
     if (window->drawing_tool != NULL)
     {
-        bb_drawing_tool_button_pressed(window->drawing_tool);
+        return bb_drawing_tool_button_pressed(window->drawing_tool, event->button.x, event->button.y);
     }
 
     return FALSE;
@@ -561,7 +561,7 @@ bb_schematic_window_motion_notify_cb(GtkWidget *widget, GdkEvent *event, gpointe
 
     if (window->drawing_tool != NULL)
     {
-        bb_drawing_tool_motion_notify(window->drawing_tool);
+        return bb_drawing_tool_motion_notify(window->drawing_tool, event->motion.x, event->motion.y);
     }
 
     return FALSE;

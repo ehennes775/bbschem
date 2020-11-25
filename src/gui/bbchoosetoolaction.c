@@ -104,8 +104,8 @@ static void
 bb_choose_tool_action_set_window(BbChooseToolAction *action, BbMainWindow *window);
 
 
-GParamSpec *properties[N_PROPERTIES];
-guint signals[N_SIGNALS];
+static GParamSpec *properties[N_PROPERTIES];
+static guint signals[N_SIGNALS];
 
 
 G_DEFINE_TYPE_WITH_CODE(

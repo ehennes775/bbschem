@@ -27,16 +27,16 @@ struct _BbDrawingToolInterface
 {
     GTypeInterface g_iface;
 
-    void (*button_pressed)(BbDrawingTool *tool);
+    gboolean (*button_pressed)(BbDrawingTool *tool, gdouble x, gdouble y);
     void (*draw)(BbDrawingTool *tool);
     void (*key_pressed)(BbDrawingTool *tool);
     void (*key_released)(BbDrawingTool *tool);
-    void (*motion_notify)(BbDrawingTool *tool);
+    gboolean (*motion_notify)(BbDrawingTool *tool, gdouble x, gdouble y);
 };
 
 
-void
-bb_drawing_tool_button_pressed(BbDrawingTool *tool);
+gboolean
+bb_drawing_tool_button_pressed(BbDrawingTool *tool, gdouble x, gdouble y);
 
 
 void
@@ -51,8 +51,8 @@ void
 bb_drawing_tool_key_released(BbDrawingTool *tool);
 
 
-void
-bb_drawing_tool_motion_notify(BbDrawingTool *tool);
+gboolean
+bb_drawing_tool_motion_notify(BbDrawingTool *tool, gdouble x, gdouble y);
 
 
 #endif

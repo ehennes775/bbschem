@@ -17,6 +17,8 @@
  */
 
 #include <gtk/gtk.h>
+#include <bbcoord.h>
+#include <bbangle.h>
 #include "bbschematicitem.h"
 #include "bbdrawingtool.h"
 #include "bbarctool.h"
@@ -31,16 +33,34 @@ enum
 };
 
 
+enum
+{
+    SIG_INVALIDATE_ITEM,
+    N_SIGNALS
+};
+
+
+enum
+{
+    STATE_S0,
+    STATE_S1,
+    STATE_S2,
+    STATE_S3
+};
+
+
 struct _BbArcTool
 {
     GObject parent;
 
     BbGraphicArc *item;
+
+    int state;
 };
 
 
-static void
-bb_arc_tool_button_pressed(BbDrawingTool *tool);
+static gboolean
+bb_arc_tool_button_pressed(BbDrawingTool *tool, double x, double y);
 
 static void
 bb_arc_tool_dispose(GObject *object);
@@ -54,6 +74,9 @@ bb_arc_tool_drawing_tool_init(BbDrawingToolInterface *iface);
 static void
 bb_arc_tool_finalize(GObject *object);
 
+static void
+bb_arc_tool_finish(BbArcTool *arc_tool);
+
 static BbGraphicArc*
 bb_arc_tool_get_item(BbArcTool *tool);
 
@@ -61,7 +84,7 @@ static void
 bb_arc_tool_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
 
 static void
-bb_arc_tool_invalidate_item_cb(BbSchematicItem *item, BbArcTool *tool);
+bb_arc_tool_invalidate_item_cb(BbSchematicItem *item, BbArcTool *arc_tool);
 
 static void
 bb_arc_tool_key_pressed(BbDrawingTool *tool);
@@ -69,8 +92,14 @@ bb_arc_tool_key_pressed(BbDrawingTool *tool);
 static void
 bb_arc_tool_key_released(BbDrawingTool *tool);
 
+static gboolean
+bb_arc_tool_motion_notify(BbDrawingTool *tool, double x, double y);
+
 static void
-bb_arc_tool_motion_notify(BbDrawingTool *tool);
+bb_arc_tool_reset(BbArcTool *arc_tool);
+
+static void
+bb_arc_tool_reset_with_point(BbArcTool *tool, double x, double y);
 
 static void
 bb_arc_tool_set_item(BbArcTool *tool, BbGraphicArc *item);
@@ -78,8 +107,13 @@ bb_arc_tool_set_item(BbArcTool *tool, BbGraphicArc *item);
 static void
 bb_arc_tool_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
 
+static void
+bb_arc_tool_update_with_point(BbArcTool *arc_tool, double x, double y);
 
-GParamSpec *properties[N_PROPERTIES];
+
+static GParamSpec *properties[N_PROPERTIES];
+
+static guint signals[N_SIGNALS];
 
 
 G_DEFINE_TYPE_WITH_CODE(
@@ -90,23 +124,38 @@ G_DEFINE_TYPE_WITH_CODE(
     )
 
 
-static void
-bb_arc_tool_button_pressed(BbDrawingTool *tool)
+static gboolean
+bb_arc_tool_button_pressed(BbDrawingTool *tool, gdouble x, gdouble y)
 {
-    g_message("bb_arc_tool_button_pressed");
-
     BbArcTool *arc_tool = BB_ARC_TOOL(tool);
-    g_return_if_fail(arc_tool != NULL);
+    g_return_val_if_fail(arc_tool != NULL, FALSE);
 
-    bb_graphic_arc_set_center_x(
-        arc_tool->item,
-        bb_graphic_arc_get_center_x(arc_tool->item) + 1
-        );
+    switch (arc_tool->state)
+    {
+        case STATE_S0:
+            bb_arc_tool_reset_with_point(arc_tool, x, y);
+            break;
 
-    bb_graphic_arc_set_center_x(
-        arc_tool->item,
-        bb_graphic_arc_get_center_x(arc_tool->item) + 1
-        );
+        case STATE_S1:
+            bb_arc_tool_update_with_point(arc_tool, x, y);
+            arc_tool->state = STATE_S2;
+            break;
+
+        case STATE_S2:
+            bb_arc_tool_update_with_point(arc_tool, x, y);
+            arc_tool->state = STATE_S3;
+            break;
+
+        case STATE_S3:
+            bb_arc_tool_update_with_point(arc_tool, x, y);
+            bb_arc_tool_finish(arc_tool);
+            break;
+
+        default:
+            g_return_val_if_reached(FALSE);
+    }
+
+    return TRUE;
 }
 
 
@@ -129,20 +178,25 @@ bb_arc_tool_class_init(BbArcToolClass *klasse)
             G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS
             )
         );
+
+    signals[SIG_INVALIDATE_ITEM] = g_signal_lookup("invalidate-item", BB_TYPE_DRAWING_TOOL);
 }
 
 
 static void
 bb_arc_tool_dispose(GObject *object)
 {
-    g_return_if_fail(object != NULL);
+    BbArcTool *arc_tool = BB_ARC_TOOL(object);
+    g_return_if_fail(arc_tool != NULL);
+
+    bb_arc_tool_set_item(arc_tool, NULL);
 }
 
 
 static void
 bb_arc_tool_draw(BbDrawingTool *tool)
 {
-    g_message("bb_arc_tool_button_pressed");
+    g_message("bb_arc_tool_draw");
 }
 
 
@@ -162,6 +216,15 @@ bb_arc_tool_drawing_tool_init(BbDrawingToolInterface *iface)
 static void
 bb_arc_tool_finalize(GObject *object)
 {
+}
+
+
+static void
+bb_arc_tool_finish(BbArcTool *arc_tool)
+{
+    // TODO Add the new arc to the schematic
+
+    bb_arc_tool_reset(arc_tool);
 }
 
 
@@ -200,16 +263,13 @@ bb_arc_tool_init(BbArcTool *tool)
 
 
 static void
-bb_arc_tool_invalidate_item_cb(BbSchematicItem *item, BbArcTool *tool)
+bb_arc_tool_invalidate_item_cb(BbSchematicItem *item, BbArcTool *arc_tool)
 {
-    g_return_if_fail(tool != NULL);
+    g_return_if_fail(arc_tool != NULL);
+    g_return_if_fail(arc_tool->item != NULL);
+    g_return_if_fail(arc_tool->item == BB_GRAPHIC_ARC(item));
 
-    g_signal_emit(
-        tool,
-        g_signal_lookup("invalidate-item", BB_TYPE_DRAWING_TOOL),
-        0,
-        item
-        );
+    g_signal_emit(arc_tool, signals[SIG_INVALIDATE_ITEM], 0, item);
 }
 
 
@@ -237,17 +297,88 @@ bb_arc_tool_new()
 }
 
 
-__attribute__((constructor)) void
-bb_arc_tool_register()
+static void
+bb_arc_tool_reset(BbArcTool *arc_tool)
 {
-    bb_arc_tool_get_type();
+    g_return_if_fail(arc_tool != NULL);
+
+    arc_tool->state = STATE_S0;
 }
 
 
 static void
-bb_arc_tool_motion_notify(BbDrawingTool *tool)
+bb_arc_tool_reset_with_point(BbArcTool *arc_tool, gdouble x, gdouble y)
 {
-    //g_message("bb_arc_tool_motion_notify");
+    g_return_if_fail(arc_tool != NULL);
+
+    bb_graphic_arc_set_center_x(arc_tool->item, x);
+    bb_graphic_arc_set_center_y(arc_tool->item, y);
+
+    bb_graphic_arc_set_radius(arc_tool->item, 100);
+
+    bb_graphic_arc_set_start_angle(arc_tool->item, 0);
+    bb_graphic_arc_set_sweep_angle(arc_tool->item, 270);
+
+    arc_tool->state = STATE_S1;
+}
+
+
+static void
+bb_arc_tool_update_with_point(BbArcTool *arc_tool, gdouble x, gdouble y)
+{
+    g_return_if_fail(arc_tool != NULL);
+    g_return_if_fail(arc_tool->item != NULL);
+
+    if (arc_tool->state == STATE_S1)
+    {
+        double distance = bb_coord_distance(
+            bb_graphic_arc_get_center_x(arc_tool->item),
+            bb_graphic_arc_get_center_y(arc_tool->item),
+            x,
+            y
+            );
+
+        bb_graphic_arc_set_radius(arc_tool->item, distance);
+    }
+    else if (arc_tool->state == STATE_S2)
+    {
+        double radians = bb_coord_radians(
+            bb_graphic_arc_get_center_x(arc_tool->item),
+            bb_graphic_arc_get_center_y(arc_tool->item),
+            x,
+            y
+            );
+
+        bb_graphic_arc_set_start_angle(arc_tool->item, bb_angle_from_radians(radians));
+    }
+    else if (arc_tool->state == STATE_S3)
+    {
+        double radians = bb_coord_radians(
+            bb_graphic_arc_get_center_x(arc_tool->item),
+            bb_graphic_arc_get_center_y(arc_tool->item),
+            x,
+            y
+            );
+
+        int sweep = bb_angle_calculate_sweep(
+            bb_graphic_arc_get_start_angle(arc_tool->item),
+            bb_angle_from_radians(radians)
+            );
+
+        bb_graphic_arc_set_sweep_angle(arc_tool->item, sweep);
+    }
+}
+
+
+static gboolean
+bb_arc_tool_motion_notify(BbDrawingTool *tool, gdouble x, gdouble y)
+{
+    BbArcTool *arc_tool = BB_ARC_TOOL(tool);
+    g_return_val_if_fail(arc_tool != NULL, FALSE);
+
+    bb_arc_tool_update_with_point(arc_tool, x, y);
+
+    return TRUE;
 }
 
 

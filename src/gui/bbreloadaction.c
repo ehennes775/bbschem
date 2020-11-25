@@ -83,7 +83,7 @@ static void
 bb_reload_action_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
 
 
-GParamSpec *properties[N_PROPERTIES];
+static GParamSpec *properties[N_PROPERTIES];
 
 
 G_DEFINE_TYPE_WITH_CODE(
