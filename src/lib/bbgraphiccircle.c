@@ -378,6 +378,8 @@ bb_graphic_circle_class_init(BbGraphicCircleClass *klasse)
             G_PARAM_READWRITE
             )
         );
+
+    signals[SIG_INVALIDATE] = g_signal_lookup("invalidate-item", BB_TYPE_SCHEMATIC_ITEM);
 }
 
 
@@ -695,7 +697,11 @@ bb_graphic_circle_set_cap_type(BbGraphicCircle *circle, int type)
 
     if (circle->line_style->cap_type != type)
     {
+        g_signal_emit(circle, signals[SIG_INVALIDATE], 0);
+
         circle->line_style->cap_type = type;
+
+        g_signal_emit(circle, signals[SIG_INVALIDATE], 0);
 
         g_object_notify_by_pspec(G_OBJECT(circle), properties[PROP_CAP_TYPE]);
     }
@@ -712,6 +718,8 @@ bb_graphic_circle_set_angle_1(BbGraphicCircle *circle, int angle)
     {
         circle->fill_style->angle[0] = angle;
 
+        g_signal_emit(circle, signals[SIG_INVALIDATE], 0);
+
         g_object_notify_by_pspec(G_OBJECT(circle), properties[PROP_ANGLE_1]);
     }
 }
@@ -727,6 +735,8 @@ bb_graphic_circle_set_angle_2(BbGraphicCircle *circle, int angle)
     {
         circle->fill_style->angle[1] = angle;
 
+        g_signal_emit(circle, signals[SIG_INVALIDATE], 0);
+
         g_object_notify_by_pspec(G_OBJECT(circle), properties[PROP_ANGLE_2]);
     }
 }
@@ -739,7 +749,11 @@ bb_graphic_circle_set_center_x(BbGraphicCircle *circle, int x)
 
     if (circle->center_x != x)
     {
+        g_signal_emit(circle, signals[SIG_INVALIDATE], 0);
+
         circle->center_x = x;
+
+        g_signal_emit(circle, signals[SIG_INVALIDATE], 0);
 
         g_object_notify_by_pspec(G_OBJECT(circle), properties[PROP_CENTER_X]);
     }
@@ -753,7 +767,11 @@ bb_graphic_circle_set_center_y(BbGraphicCircle *circle, int y)
 
     if (circle->center_y != y)
     {
+        g_signal_emit(circle, signals[SIG_INVALIDATE], 0);
+
         circle->center_y = y;
+
+        g_signal_emit(circle, signals[SIG_INVALIDATE], 0);
 
         g_object_notify_by_pspec(G_OBJECT(circle), properties[PROP_CENTER_Y]);
     }
@@ -770,6 +788,8 @@ bb_graphic_circle_set_dash_length(BbGraphicCircle *circle, int length)
     {
         circle->line_style->dash_length = length;
 
+        g_signal_emit(circle, signals[SIG_INVALIDATE], 0);
+
         g_object_notify_by_pspec(G_OBJECT(circle), properties[PROP_DASH_LENGTH]);
     }
 }
@@ -784,6 +804,8 @@ bb_graphic_circle_set_dash_space(BbGraphicCircle *circle, int space)
     if (circle->line_style->dash_space != space)
     {
         circle->line_style->dash_space = space;
+
+        g_signal_emit(circle, signals[SIG_INVALIDATE], 0);
 
         g_object_notify_by_pspec(G_OBJECT(circle), properties[PROP_DASH_SPACE]);
     }
@@ -800,6 +822,8 @@ bb_graphic_circle_set_dash_type(BbGraphicCircle *circle, int type)
     {
         circle->line_style->dash_type = type;
 
+        g_signal_emit(circle, signals[SIG_INVALIDATE], 0);
+
         g_object_notify_by_pspec(G_OBJECT(circle), properties[PROP_DASH_TYPE]);
     }
 }
@@ -814,6 +838,8 @@ bb_graphic_circle_set_fill_type(BbGraphicCircle *circle, int type)
     if (circle->fill_style->type != type)
     {
         circle->fill_style->type = type;
+
+        g_signal_emit(circle, signals[SIG_INVALIDATE], 0);
 
         g_object_notify_by_pspec(G_OBJECT(circle), properties[PROP_FILL_TYPE]);
     }
@@ -830,6 +856,8 @@ bb_graphic_circle_set_fill_width(BbGraphicCircle *circle, int width)
     {
         circle->fill_style->width = width;
 
+        g_signal_emit(circle, signals[SIG_INVALIDATE], 0);
+
         g_object_notify_by_pspec(G_OBJECT(circle), properties[PROP_FILL_WIDTH]);
     }
 }
@@ -844,6 +872,8 @@ bb_graphic_circle_set_item_color(BbGraphicCircle *circle, int color)
     {
         circle->color = color;
 
+        g_signal_emit(circle, signals[SIG_INVALIDATE], 0);
+
         g_object_notify_by_pspec(G_OBJECT(circle), properties[PROP_ITEM_COLOR]);
     }
 }
@@ -857,7 +887,11 @@ bb_graphic_circle_set_line_width(BbGraphicCircle *circle, int width)
 
     if (circle->line_style->line_width != width)
     {
+        g_signal_emit(circle, signals[SIG_INVALIDATE], 0);
+
         circle->line_style->line_width = width;
+
+        g_signal_emit(circle, signals[SIG_INVALIDATE], 0);
 
         g_object_notify_by_pspec(G_OBJECT(circle), properties[PROP_LINE_WIDTH]);
     }
@@ -874,6 +908,8 @@ bb_graphic_circle_set_pitch_1(BbGraphicCircle *circle, int pitch)
     {
         circle->fill_style->pitch[0] = pitch;
 
+        g_signal_emit(circle, signals[SIG_INVALIDATE], 0);
+
         g_object_notify_by_pspec(G_OBJECT(circle), properties[PROP_PITCH_1]);
     }
 }
@@ -888,6 +924,8 @@ bb_graphic_circle_set_pitch_2(BbGraphicCircle *circle, int pitch)
     if (circle->fill_style->pitch[1] != pitch)
     {
         circle->fill_style->pitch[1] = pitch;
+
+        g_signal_emit(circle, signals[SIG_INVALIDATE], 0);
 
         g_object_notify_by_pspec(G_OBJECT(circle), properties[PROP_PITCH_2]);
     }
@@ -972,7 +1010,11 @@ bb_graphic_circle_set_radius(BbGraphicCircle *circle, int radius)
 
     if (circle->radius != radius)
     {
+        g_signal_emit(circle, signals[SIG_INVALIDATE], 0);
+
         circle->radius = radius;
+
+        g_signal_emit(circle, signals[SIG_INVALIDATE], 0);
 
         g_object_notify_by_pspec(G_OBJECT(circle), properties[PROP_RADIUS]);
     }

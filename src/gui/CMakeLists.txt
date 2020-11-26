@@ -52,6 +52,10 @@ add_library(bbgui
         bblinebuilder.h
         bblinestyleeditor.c
         bblinestyleeditor.h
+        bblinetool.c
+        bblinetool.h
+        bblinetoolpanel.c
+        bblinetoolpanel.h
         bbmainwindow.c
         bbmainwindow.h
         bbpasteaction.c

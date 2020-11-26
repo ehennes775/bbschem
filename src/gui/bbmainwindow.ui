@@ -371,7 +371,7 @@
                                                     </packing>
                                                 </child>
                                                 <child>
-                                                    <object class="GtkLabel" id ="line_panel">
+                                                    <object class="BbLineToolPanel" id ="line_panel">
                                                         <property name="label">Line</property>
                                                     </object>
                                                     <packing>
