@@ -8,14 +8,14 @@ add_library(bbgui
         bbarctool.h
         bbarctoolpanel.c
         bbarctoolpanel.h
-        bbboxbuilder.c
-        bbboxbuilder.h
+        bbboxtool.c
+        bbboxtool.h
+        bbboxtoolpanel.c
+        bbboxtoolpanel.h
         bbcellrenderercolorswatch.c
         bbcellrenderercolorswatch.h
         bbchoosetoolaction.c
         bbchoosetoolaction.h
-        bbcirclebuilder.c
-        bbcirclebuilder.h
         bbcircletool.c
         bbcircletool.h
         bbcircletoolpanel.c
@@ -44,12 +44,6 @@ add_library(bbgui
         bbfillstyleeditor.h
         bbint32combobox.c
         bbint32combobox.h
-        bbitembuilder.c
-        bbitembuilder.h
-        bbitembuildtool.c
-        bbitembuildtool.h
-        bblinebuilder.c
-        bblinebuilder.h
         bblinestyleeditor.c
         bblinestyleeditor.h
         bblinetool.c

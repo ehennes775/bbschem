@@ -343,7 +343,7 @@
                                                     </packing>
                                                 </child>
                                                 <child>
-                                                    <object class="GtkLabel" id ="box_panel">
+                                                    <object class="BbBoxToolPanel" id ="box_panel">
                                                         <property name="label">Box</property>
                                                     </object>
                                                     <packing>

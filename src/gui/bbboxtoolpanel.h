@@ -1,7 +1,7 @@
-#ifndef __BBITEMBUILDTOOL__
-#define __BBITEMBUILDTOOL__
+#ifndef __BBBOXTOOLPANEL__
+#define __BBBOXTOOLPANEL__
 /*
- * bbsch
+ * bbschem
  * Copyright (C) 2020 Edward C. Hennessy
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,9 +19,8 @@
  */
 
 #include <gtk/gtk.h>
-#include "bbdrawingtool.h"
 
-#define BB_TYPE_ITEM_BUILD_TOOL bb_item_build_tool_get_type()
-G_DECLARE_FINAL_TYPE(BbItemBuildTool, bb_item_build_tool, BB, ITEM_BUILD_TOOL, GObject)
+#define BB_TYPE_BOX_TOOL_PANEL bb_box_tool_panel_get_type()
+G_DECLARE_FINAL_TYPE(BbBoxToolPanel, bb_box_tool_panel, BB, BOX_TOOL_PANEL, GtkLabel)
 
 #endif

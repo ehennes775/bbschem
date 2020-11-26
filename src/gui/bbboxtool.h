@@ -1,7 +1,7 @@
-#ifndef __BBLINEBUILDER__
-#define __BBLINEBUILDER__
+#ifndef __BBBOXTOOL__
+#define __BBBOXTOOL__
 /*
- * bbsch
+ * bbschem
  * Copyright (C) 2020 Edward C. Hennessy
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,34 +19,12 @@
  */
 
 #include <gtk/gtk.h>
-#include "bbitembuilder.h"
+#include "bbtoolsubject.h"
 
-#define BB_TYPE_LINE_BUILDER bb_line_builder_get_type()
-G_DECLARE_FINAL_TYPE(BbLineBuilder, bb_line_builder, BB, LINE_BUILDER, BbItemBuilder)
+#define BB_TYPE_BOX_TOOL bb_box_tool_get_type()
+G_DECLARE_FINAL_TYPE(BbBoxTool, bb_box_tool, BB, BOX_TOOL, GObject)
 
-
-int
-bb_line_builder_get_x0(BbLineBuilder *builder);
-
-int
-bb_line_builder_get_x1(BbLineBuilder *builder);
-
-int
-bb_line_builder_get_y0(BbLineBuilder *builder);
-
-int
-bb_line_builder_get_y1(BbLineBuilder *builder);
-
-void
-bb_line_builder_set_x0(BbLineBuilder *builder, int x);
-
-void
-bb_line_builder_set_x1(BbLineBuilder *builder, int x);
-
-void
-bb_line_builder_set_y0(BbLineBuilder *builder, int y);
-
-void
-bb_line_builder_set_y1(BbLineBuilder *builder, int y);
+BbBoxTool*
+bb_box_tool_new(BbToolSubject *subject);
 
 #endif
