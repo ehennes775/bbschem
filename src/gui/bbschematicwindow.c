@@ -813,7 +813,13 @@ bb_schematic_window_set_tool_changer(BbSchematicWindow *window, BbToolChanger *t
 static void
 bb_schematic_window_tool_changed_cb(BbToolChanger *changer, BbSchematicWindow *window)
 {
-    g_message("bb_schematic_window_tool_changed_cb");
+    bb_schematic_window_set_drawing_tool(
+        window,
+        bb_tool_changer_create_tool(
+            changer,
+            BB_TOOL_SUBJECT(window)
+            )
+        );
 }
 
 

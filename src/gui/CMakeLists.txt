@@ -6,6 +6,8 @@ add_library(bbgui
         bbattributeeditor.h
         bbarctool.c
         bbarctool.h
+        bbarctoolpanel.c
+        bbarctoolpanel.h
         bbboxbuilder.c
         bbboxbuilder.h
         bbcellrenderercolorswatch.c

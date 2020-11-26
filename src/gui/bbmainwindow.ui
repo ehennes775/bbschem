@@ -327,7 +327,7 @@
                                                     </packing>
                                                 </child>
                                                 <child>
-                                                    <object class="GtkLabel" id ="arc_panel">
+                                                    <object class="BbArcToolPanel" id ="arc_panel">
                                                         <property name="label">Arc</property>
                                                     </object>
                                                     <packing>
