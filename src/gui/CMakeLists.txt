@@ -78,6 +78,8 @@ add_library(bbgui
         bbtextpropertyeditor.h
         bbtoolchanger.c
         bbtoolchanger.h
+        bbtoolfactory.c
+        bbtoolfactory.h
         bbtoolpalette.c
         bbtoolpalette.h
         bbtoolstack.c
