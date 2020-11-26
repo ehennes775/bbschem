@@ -403,7 +403,7 @@
                                                     </packing>
                                                 </child>
                                                 <child>
-                                                    <object class="GtkLabel" id ="text_panel">
+                                                    <object class="BbTextToolPanel" id ="text_panel">
                                                         <property name="label">Text</property>
                                                     </object>
                                                     <packing>

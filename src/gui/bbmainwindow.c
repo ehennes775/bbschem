@@ -51,6 +51,7 @@
 #include "bbcircletoolpanel.h"
 #include "bblinetoolpanel.h"
 #include "bbboxtoolpanel.h"
+#include "bbtexttoolpanel.h"
 
 
 enum
@@ -127,6 +128,7 @@ bb_main_window_class_init(BbMainWindowClass *class)
     BB_TYPE_CIRCLE_TOOL_PANEL;
     BB_TYPE_LINE_TOOL_PANEL;
     BB_TYPE_BOX_TOOL_PANEL;
+    BB_TYPE_TEXT_TOOL_PANEL;
 
 
     G_OBJECT_CLASS(class)->dispose = bb_main_window_dispose;

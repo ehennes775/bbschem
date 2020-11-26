@@ -92,4 +92,8 @@ add_library(bbgui
         bbtoolsubject.h
         bbundoaction.c
         bbundoaction.h
+        bbtexttool.c
+        bbtexttool.h
+        bbtexttoolpanel.c
+        bbtexttoolpanel.h
         )
