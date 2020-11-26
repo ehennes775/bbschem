@@ -20,6 +20,7 @@
 #include <bblibrary.h>
 #include "bbtoolstack.h"
 #include "bbtoolchanger.h"
+#include "bbtoolfactory.h"
 
 
 enum
@@ -102,7 +103,18 @@ bb_tool_stack_class_init(BbToolStackClass *klasse)
 static BbDrawingTool*
 bb_tool_stack_create_tool(BbToolChanger *changer, BbToolSubject *subject)
 {
-    return NULL;
+    BbDrawingTool *drawing_tool = NULL;
+    GtkWidget *widget = gtk_stack_get_visible_child(GTK_STACK(changer));
+
+    if (BB_IS_TOOL_FACTORY(widget))
+    {
+        drawing_tool = bb_tool_factory_create_tool(
+            BB_TOOL_FACTORY(widget),
+            subject
+            );
+    }
+
+    return drawing_tool;
 }
 
 
