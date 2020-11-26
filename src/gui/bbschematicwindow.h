@@ -23,6 +23,7 @@
 #include <bbqueryfunc.h>
 #include "bbdocumentwindow.h"
 #include "bbdrawingtool.h"
+#include "bbtoolchanger.h"
 
 
 #define BB_TYPE_SCHEMATIC_WINDOW bb_schematic_window_get_type()
@@ -267,6 +268,9 @@ bb_schematic_window_select_none(BbSchematicWindow *window);
  */
 void
 bb_schematic_window_set_drawing_tool(BbSchematicWindow *window, BbDrawingTool *tool);
+
+void
+bb_schematic_window_set_tool_changer(BbSchematicWindow *window, BbToolChanger *tool_changer);
 
 
 /**

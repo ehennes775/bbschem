@@ -304,7 +304,7 @@
                                             </packing>
                                         </child>
                                         <child>
-                                            <object class="GtkStack" id="tool_stack">
+                                            <object class="BbToolStack" id="tool_stack">
                                                 <property name="hexpand">true</property>
                                                 <property name="vexpand">true</property>
                                                 <style>

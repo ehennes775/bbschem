@@ -45,6 +45,8 @@
 #include "bbtextpropertyeditor.h"
 #include "bbcoloreditor.h"
 #include "bbchoosetoolaction.h"
+#include "bbtoolstack.h"
+#include "bbtoolchanger.h"
 
 
 enum
@@ -60,7 +62,7 @@ struct _BbMainWindow
 
     BbDocumentWindow *current_page;
     GtkNotebook *document_notebook;
-    GtkStack *tool_stack;
+    BbToolStack *tool_stack;
 };
 
 
@@ -115,6 +117,7 @@ bb_main_window_class_init(BbMainWindowClass *class)
     BB_TYPE_TEXT_PROPERTY_EDITOR;
     BB_TYPE_PIN_PROPERTY_EDITOR;
     BB_TYPE_TOOL_PALETTE;
+    BB_TYPE_TOOL_STACK;
 
     G_OBJECT_CLASS(class)->dispose = bb_main_window_dispose;
     G_OBJECT_CLASS(class)->get_property = bb_main_window_get_property;
@@ -222,8 +225,17 @@ bb_main_window_init(BbMainWindow *window)
 {
     gtk_widget_init_template(GTK_WIDGET(window));
 
-    bb_main_window_add_page(window, g_object_new(BB_TYPE_SCHEMATIC_WINDOW, NULL));
-    bb_main_window_add_page(window, g_object_new(BB_TYPE_SCHEMATIC_WINDOW, NULL));
+    bb_main_window_add_page(window, g_object_new(
+        BB_TYPE_SCHEMATIC_WINDOW,
+        "tool-changer", window->tool_stack,
+        NULL
+        ));
+
+    bb_main_window_add_page(window, g_object_new(
+        BB_TYPE_SCHEMATIC_WINDOW,
+        "tool-changer", window->tool_stack,
+        NULL
+        ));
 
     g_action_map_add_action(
         G_ACTION_MAP(window),
@@ -292,7 +304,7 @@ bb_main_window_init(BbMainWindow *window)
 
     g_action_map_add_action(
         G_ACTION_MAP(window),
-        G_ACTION(bb_choose_tool_action_new(window, window->tool_stack))
+        G_ACTION(bb_choose_tool_action_new(window, GTK_STACK(window->tool_stack)))
         );
 }
 

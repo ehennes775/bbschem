@@ -22,6 +22,7 @@
 #include "bbschematicwindow.h"
 #include "bbschematicwindowinner.h"
 #include "bbarctool.h"
+#include "bbtoolchanger.h"
 
 
 enum
@@ -36,6 +37,7 @@ enum
     PROP_CAN_SELECT_NONE,
     PROP_CAN_UNDO,
     PROP_DRAWING_TOOL,
+    PROP_TOOL_CHANGER,
     N_PROPERTIES
 };
 
@@ -55,6 +57,8 @@ struct _BbSchematicWindow
     GSList *redo_stack;
 
     GHashTable *selection;
+
+    BbToolChanger *tool_changer;
 
     GSList *undo_stack;
 };
@@ -89,6 +93,9 @@ bb_schematic_window_motion_notify_cb(GtkWidget *widget, GdkEvent  *event, gpoint
 
 static void
 bb_schematic_window_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
+
+static void
+bb_schematic_window_tool_changed_cb(BbToolChanger *changer, BbSchematicWindow *window);
 
 static void
 bb_schematic_window_tool_subject_init(BbToolSubjectInterface *iface);
@@ -256,6 +263,18 @@ bb_schematic_window_class_init(BbSchematicWindowClass *klasse)
             "",
             "",
             BB_TYPE_DRAWING_TOOL,
+            G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS
+            )
+        );
+
+    bb_object_class_install_property(
+        G_OBJECT_CLASS(klasse),
+        PROP_TOOL_CHANGER,
+        properties[PROP_TOOL_CHANGER] = g_param_spec_object(
+            "tool-changer",
+            "",
+            "",
+            BB_TYPE_TOOL_CHANGER,
             G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS
             )
         );
@@ -680,6 +699,10 @@ bb_schematic_window_set_property(GObject *object, guint property_id, const GValu
             bb_schematic_window_set_drawing_tool(BB_SCHEMATIC_WINDOW(object), g_value_get_object(value));
             break;
 
+        case PROP_TOOL_CHANGER:
+            bb_schematic_window_set_tool_changer(BB_SCHEMATIC_WINDOW(object), g_value_get_object(value));
+            break;
+
         default:
             G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
     }
@@ -704,7 +727,8 @@ bb_schematic_window_select_none(BbSchematicWindow *window)
 }
 
 
-void bb_schematic_window_set_drawing_tool(BbSchematicWindow *window, BbDrawingTool *tool)
+void
+bb_schematic_window_set_drawing_tool(BbSchematicWindow *window, BbDrawingTool *tool)
 {
     g_return_if_fail(window != NULL);
 
@@ -713,7 +737,7 @@ void bb_schematic_window_set_drawing_tool(BbSchematicWindow *window, BbDrawingTo
         if (window->drawing_tool != NULL)
         {
             g_signal_handlers_disconnect_by_func(
-                tool,
+                window->drawing_tool,
                 G_CALLBACK(bb_schematic_window_invalidate_item_cb),
                 window
                 );
@@ -728,7 +752,7 @@ void bb_schematic_window_set_drawing_tool(BbSchematicWindow *window, BbDrawingTo
             g_object_ref(window->drawing_tool);
 
             g_signal_connect_object(
-                tool,
+                window->drawing_tool,
                 "invalidate-item",
                 G_CALLBACK(bb_schematic_window_invalidate_item_cb),
                 window,
@@ -742,11 +766,54 @@ void bb_schematic_window_set_drawing_tool(BbSchematicWindow *window, BbDrawingTo
 
 
 void
-bb_schematic_window_undo(BbSchematicWindow *window)
+bb_schematic_window_set_tool_changer(BbSchematicWindow *window, BbToolChanger *tool_changer)
 {
     g_return_if_fail(window != NULL);
 
-    g_message("bb_schematic_window_undo");
+    if (window->tool_changer != tool_changer)
+    {
+        bb_schematic_window_set_drawing_tool(window, NULL);
+
+        if (window->tool_changer != NULL)
+        {
+            g_signal_handlers_disconnect_by_func(
+                tool_changer,
+                G_CALLBACK(bb_schematic_window_tool_changed_cb),
+                window
+                );
+
+            g_object_unref(window->tool_changer);
+        }
+
+        window->tool_changer = tool_changer;
+
+        if (window->tool_changer != NULL)
+        {
+            g_object_ref(window->tool_changer);
+
+            g_signal_connect_object(
+                tool_changer,
+                "tool-changed",
+                G_CALLBACK(bb_schematic_window_tool_changed_cb),
+                window,
+                0
+                );
+
+            bb_schematic_window_set_drawing_tool(
+                window,
+                bb_tool_changer_create_tool(tool_changer, BB_TOOL_SUBJECT(window))
+                );
+        }
+
+        g_object_notify_by_pspec(G_OBJECT(window), properties[PROP_DRAWING_TOOL]);
+    }
+}
+
+
+static void
+bb_schematic_window_tool_changed_cb(BbToolChanger *changer, BbSchematicWindow *window)
+{
+    g_message("bb_schematic_window_tool_changed_cb");
 }
 
 
@@ -756,4 +823,13 @@ bb_schematic_window_tool_subject_init(BbToolSubjectInterface *iface)
     g_return_if_fail(iface != NULL);
 
     iface->add_item = bb_schematic_window_add_item;
+}
+
+
+void
+bb_schematic_window_undo(BbSchematicWindow *window)
+{
+    g_return_if_fail(window != NULL);
+
+    g_message("bb_schematic_window_undo");
 }

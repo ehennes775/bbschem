@@ -76,8 +76,12 @@ add_library(bbgui
         bbschematicwindowinner.h
         bbtextpropertyeditor.c
         bbtextpropertyeditor.h
+        bbtoolchanger.c
+        bbtoolchanger.h
         bbtoolpalette.c
         bbtoolpalette.h
+        bbtoolstack.c
+        bbtoolstack.h
         bbtoolsubject.c
         bbtoolsubject.h
         bbundoaction.c
