@@ -351,7 +351,7 @@
                                                     </packing>
                                                 </child>
                                                 <child>
-                                                    <object class="GtkLabel" id ="circle_panel">
+                                                    <object class="BbCircleToolPanel" id ="circle_panel">
                                                         <property name="label">Circle</property>
                                                     </object>
                                                     <packing>

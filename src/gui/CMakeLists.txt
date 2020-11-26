@@ -16,6 +16,10 @@ add_library(bbgui
         bbchoosetoolaction.h
         bbcirclebuilder.c
         bbcirclebuilder.h
+        bbcircletool.c
+        bbcircletool.h
+        bbcircletoolpanel.c
+        bbcircletoolpanel.h
         bbcolorcombobox.c
         bbcolorcombobox.h
         bbcoloreditor.c

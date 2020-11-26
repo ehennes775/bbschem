@@ -34,14 +34,17 @@ enum
     PROP_CENTER_Y,
     PROP_RADIUS,
 
-    PROP_ITEM_COLOR,
-
+    /* From AdjustableLineStyle */
     PROP_CAP_TYPE,
     PROP_DASH_LENGTH,
     PROP_DASH_SPACE,
     PROP_DASH_TYPE,
     PROP_LINE_WIDTH,
 
+    /* From AdjustableItemColor */
+    PROP_ITEM_COLOR,
+
+    /* From AdjustableFillStyle */
     PROP_FILL_TYPE,
     PROP_FILL_WIDTH,
     PROP_ANGLE_1,
@@ -50,6 +53,13 @@ enum
     PROP_PITCH_2,
 
     N_PROPERTIES
+};
+
+
+enum
+{
+    SIG_INVALIDATE,
+    N_SIGNALS
 };
 
 
@@ -80,25 +90,23 @@ bb_graphic_circle_adjustable_item_color_init(BbAdjustableItemColorInterface *ifa
 static void
 bb_graphic_circle_adjustable_line_style_init(BbAdjustableLineStyleInterface *iface);
 
-
-G_DEFINE_TYPE_WITH_CODE(
-    BbGraphicCircle,
-    bb_graphic_circle,
-    BB_TYPE_SCHEMATIC_ITEM,
-    G_IMPLEMENT_INTERFACE(BB_TYPE_ADJUSTABLE_FILL_STYLE, bb_graphic_circle_adjustable_fill_style_init)
-    G_IMPLEMENT_INTERFACE(BB_TYPE_ADJUSTABLE_ITEM_COLOR, bb_graphic_circle_adjustable_item_color_init)
-    G_IMPLEMENT_INTERFACE(BB_TYPE_ADJUSTABLE_LINE_STYLE, bb_graphic_circle_adjustable_line_style_init)
-    )
-
-
 static BbBounds*
 bb_graphic_circle_calculate_bounds(BbSchematicItem *item, BbBoundsCalculator *calculator);
+
+static BbSchematicItem*
+bb_graphic_circle_clone(BbSchematicItem *item);
 
 static void
 bb_graphic_circle_dispose(GObject *object);
 
 static void
 bb_graphic_circle_finalize(GObject *object);
+
+static int
+bb_graphic_circle_get_angle_1(BbGraphicCircle *circle);
+
+static int
+bb_graphic_circle_get_angle_2(BbGraphicCircle *circle);
 
 static int
 bb_graphic_circle_get_cap_type(BbGraphicCircle *circle);
@@ -113,10 +121,22 @@ static int
 bb_graphic_circle_get_dash_type(BbGraphicCircle *circle);
 
 static int
+bb_graphic_circle_get_fill_type(BbGraphicCircle *circle);
+
+static int
+bb_graphic_circle_get_fill_width(BbGraphicCircle *circle);
+
+static int
 bb_graphic_circle_get_item_color(BbGraphicCircle *circle);
 
 static int
 bb_graphic_circle_get_line_width(BbGraphicCircle *circle);
+
+static int
+bb_graphic_circle_get_pitch_1(BbGraphicCircle *circle);
+
+static int
+bb_graphic_circle_get_pitch_2(BbGraphicCircle *circle);
 
 static void
 bb_graphic_circle_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
@@ -168,6 +188,17 @@ bb_graphic_circle_write_finish(
 
 
 static GParamSpec *properties[N_PROPERTIES];
+static guint signals[N_SIGNALS];
+
+
+G_DEFINE_TYPE_WITH_CODE(
+    BbGraphicCircle,
+    bb_graphic_circle,
+    BB_TYPE_SCHEMATIC_ITEM,
+    G_IMPLEMENT_INTERFACE(BB_TYPE_ADJUSTABLE_FILL_STYLE, bb_graphic_circle_adjustable_fill_style_init)
+    G_IMPLEMENT_INTERFACE(BB_TYPE_ADJUSTABLE_ITEM_COLOR, bb_graphic_circle_adjustable_item_color_init)
+    G_IMPLEMENT_INTERFACE(BB_TYPE_ADJUSTABLE_LINE_STYLE, bb_graphic_circle_adjustable_line_style_init)
+    )
 
 
 static void
@@ -212,55 +243,102 @@ bb_graphic_circle_calculate_bounds(BbSchematicItem *item, BbBoundsCalculator *ca
 static void
 bb_graphic_circle_class_init(BbGraphicCircleClass *klasse)
 {
-    G_OBJECT_CLASS(klasse)->dispose = bb_graphic_circle_dispose;
-    G_OBJECT_CLASS(klasse)->finalize = bb_graphic_circle_finalize;
-    G_OBJECT_CLASS(klasse)->get_property = bb_graphic_circle_get_property;
-    G_OBJECT_CLASS(klasse)->set_property = bb_graphic_circle_set_property;
+    GObjectClass *object_class = G_OBJECT_CLASS(klasse);
+    g_return_if_fail(object_class != NULL);
+
+    object_class->dispose = bb_graphic_circle_dispose;
+    object_class->finalize = bb_graphic_circle_finalize;
+    object_class->get_property = bb_graphic_circle_get_property;
+    object_class->set_property = bb_graphic_circle_set_property;
 
     BB_SCHEMATIC_ITEM_CLASS(klasse)->calculate_bounds = bb_graphic_circle_calculate_bounds;
+    BB_SCHEMATIC_ITEM_CLASS(klasse)->clone = bb_graphic_circle_clone;
     BB_SCHEMATIC_ITEM_CLASS(klasse)->render = bb_graphic_circle_render;
     BB_SCHEMATIC_ITEM_CLASS(klasse)->translate = bb_graphic_circle_translate;
     BB_SCHEMATIC_ITEM_CLASS(klasse)->write_async = bb_graphic_circle_write_async;
     BB_SCHEMATIC_ITEM_CLASS(klasse)->write_finish = bb_graphic_circle_write_finish;
 
+    /* Properties from BbAdjustableFillStyle */
+
+    properties[PROP_ANGLE_1] = bb_object_class_override_property(
+        object_class,
+        PROP_ANGLE_1,
+        "angle-1"
+        );
+
+    properties[PROP_ANGLE_2] = bb_object_class_override_property(
+        object_class,
+        PROP_ANGLE_2,
+        "angle-2"
+        );
+
+    properties[PROP_PITCH_1] = bb_object_class_override_property(
+        object_class,
+        PROP_PITCH_1,
+        "pitch-1"
+        );
+
+    properties[PROP_PITCH_2] = bb_object_class_override_property(
+        object_class,
+        PROP_PITCH_2,
+        "pitch-2"
+        );
+
+    properties[PROP_FILL_TYPE] = bb_object_class_override_property(
+        object_class,
+        PROP_FILL_TYPE,
+        "fill-type"
+        );
+
+    properties[PROP_FILL_WIDTH] = bb_object_class_override_property(
+        object_class,
+        PROP_FILL_WIDTH,
+        "fill-width"
+        );
+
+    /* Properties from BbAdjustableItemColor */
+
+    properties[PROP_ITEM_COLOR] = bb_object_class_override_property(
+        object_class,
+        PROP_ITEM_COLOR,
+        "item-color"
+        );
+
+
+    /* Properties from BbAdjustableLineStyle */
+
     properties[PROP_CAP_TYPE] = bb_object_class_override_property(
-        G_OBJECT_CLASS(klasse),
+        object_class,
         PROP_CAP_TYPE,
         "cap-type"
         );
 
     properties[PROP_DASH_LENGTH] = bb_object_class_override_property(
-        G_OBJECT_CLASS(klasse),
+        object_class,
         PROP_DASH_LENGTH,
         "dash-length"
         );
 
     properties[PROP_DASH_SPACE] = bb_object_class_override_property(
-        G_OBJECT_CLASS(klasse),
+        object_class,
         PROP_DASH_SPACE,
         "dash-space"
         );
 
     properties[PROP_DASH_TYPE] = bb_object_class_override_property(
-        G_OBJECT_CLASS(klasse),
+        object_class,
         PROP_DASH_TYPE,
         "dash-type"
         );
 
-    properties[PROP_ITEM_COLOR] = bb_object_class_override_property(
-        G_OBJECT_CLASS(klasse),
-        PROP_ITEM_COLOR,
-        "item-color"
-        );
-
     properties[PROP_LINE_WIDTH] = bb_object_class_override_property(
-        G_OBJECT_CLASS(klasse),
+        object_class,
         PROP_LINE_WIDTH,
         "line-width"
         );
 
     bb_object_class_install_property(
-        G_OBJECT_CLASS(klasse),
+        object_class,
         PROP_CENTER_X,
         properties[PROP_CENTER_X] = g_param_spec_int(
             "center-x",
@@ -274,7 +352,7 @@ bb_graphic_circle_class_init(BbGraphicCircleClass *klasse)
         );
 
     bb_object_class_install_property(
-        G_OBJECT_CLASS(klasse),
+        object_class,
         PROP_CENTER_Y,
         properties[PROP_CENTER_Y] = g_param_spec_int(
             "center-y",
@@ -288,7 +366,7 @@ bb_graphic_circle_class_init(BbGraphicCircleClass *klasse)
         );
 
     bb_object_class_install_property(
-        G_OBJECT_CLASS(klasse),
+        object_class,
         PROP_RADIUS,
         properties[PROP_RADIUS] = g_param_spec_int(
             "radius",
@@ -300,6 +378,38 @@ bb_graphic_circle_class_init(BbGraphicCircleClass *klasse)
             G_PARAM_READWRITE
             )
         );
+}
+
+
+static BbSchematicItem*
+bb_graphic_circle_clone(BbSchematicItem *item)
+{
+    return BB_SCHEMATIC_ITEM(g_object_new(
+        BB_TYPE_GRAPHIC_CIRCLE,
+        "center-x", bb_graphic_circle_get_center_x(BB_GRAPHIC_CIRCLE(item)),
+        "center-y", bb_graphic_circle_get_center_y(BB_GRAPHIC_CIRCLE(item)),
+        "radius", bb_graphic_circle_get_radius(BB_GRAPHIC_CIRCLE(item)),
+
+        /* From AdjustableFillStyle */
+        "angle-1", bb_graphic_circle_get_angle_1(BB_GRAPHIC_CIRCLE(item)),
+        "angle-2", bb_graphic_circle_get_angle_2(BB_GRAPHIC_CIRCLE(item)),
+        "fill-type", bb_graphic_circle_get_fill_type(BB_GRAPHIC_CIRCLE(item)),
+        "fill-width", bb_graphic_circle_get_fill_width(BB_GRAPHIC_CIRCLE(item)),
+        "pitch-1", bb_graphic_circle_get_pitch_1(BB_GRAPHIC_CIRCLE(item)),
+        "pitch-2", bb_graphic_circle_get_pitch_2(BB_GRAPHIC_CIRCLE(item)),
+
+        /* From AdjustableItemColor */
+        "item-color", bb_graphic_circle_get_item_color(BB_GRAPHIC_CIRCLE(item)),
+
+        /* From AdjustableLineStyle */
+        "cap-type", bb_graphic_circle_get_cap_type(BB_GRAPHIC_CIRCLE(item)),
+        "dash-length", bb_graphic_circle_get_dash_length(BB_GRAPHIC_CIRCLE(item)),
+        "dash-space", bb_graphic_circle_get_dash_space(BB_GRAPHIC_CIRCLE(item)),
+        "dash-type", bb_graphic_circle_get_dash_type(BB_GRAPHIC_CIRCLE(item)),
+        "line-width", bb_graphic_circle_get_line_width(BB_GRAPHIC_CIRCLE(item)),
+
+        NULL
+        ));
 }
 
 
@@ -318,6 +428,26 @@ bb_graphic_circle_finalize(GObject *object)
 
     bb_fill_style_free(circle->fill_style);
     bb_line_style_free(circle->line_style);
+}
+
+
+static int
+bb_graphic_circle_get_angle_1(BbGraphicCircle *circle)
+{
+    g_return_val_if_fail(circle != NULL, 0);
+    g_return_val_if_fail(circle->fill_style != NULL, 0);
+
+    return circle->fill_style->angle[0];
+}
+
+
+static int
+bb_graphic_circle_get_angle_2(BbGraphicCircle *circle)
+{
+    g_return_val_if_fail(circle != NULL, 0);
+    g_return_val_if_fail(circle->fill_style != NULL, 0);
+
+    return circle->fill_style->angle[1];
 }
 
 
@@ -380,6 +510,26 @@ bb_graphic_circle_get_dash_type(BbGraphicCircle *circle)
 
 
 static int
+bb_graphic_circle_get_fill_type(BbGraphicCircle *circle)
+{
+    g_return_val_if_fail(circle != NULL, 0);
+    g_return_val_if_fail(circle->fill_style != NULL, 0);
+
+    return circle->fill_style->type;
+}
+
+
+static int
+bb_graphic_circle_get_fill_width(BbGraphicCircle *circle)
+{
+    g_return_val_if_fail(circle != NULL, 0);
+    g_return_val_if_fail(circle->fill_style != NULL, 0);
+
+    return circle->fill_style->width;
+}
+
+
+static int
 bb_graphic_circle_get_item_color(BbGraphicCircle *circle)
 {
     g_return_val_if_fail(circle != NULL, 0);
@@ -398,11 +548,39 @@ bb_graphic_circle_get_line_width(BbGraphicCircle *circle)
 }
 
 
+static int
+bb_graphic_circle_get_pitch_1(BbGraphicCircle *circle)
+{
+    g_return_val_if_fail(circle != NULL, 0);
+    g_return_val_if_fail(circle->fill_style != NULL, 0);
+
+    return circle->fill_style->pitch[0];
+}
+
+
+static int
+bb_graphic_circle_get_pitch_2(BbGraphicCircle *circle)
+{
+    g_return_val_if_fail(circle != NULL, 0);
+    g_return_val_if_fail(circle->fill_style != NULL, 0);
+
+    return circle->fill_style->pitch[1];
+}
+
+
 static void
 bb_graphic_circle_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec)
 {
     switch (property_id)
     {
+        case PROP_ANGLE_1:
+            g_value_set_int(value, bb_graphic_circle_get_angle_1(BB_GRAPHIC_CIRCLE(object)));
+            break;
+
+        case PROP_ANGLE_2:
+            g_value_set_int(value, bb_graphic_circle_get_angle_2(BB_GRAPHIC_CIRCLE(object)));
+            break;
+
         case PROP_CAP_TYPE:
             g_value_set_int(value, bb_graphic_circle_get_cap_type(BB_GRAPHIC_CIRCLE(object)));
             break;
@@ -435,8 +613,24 @@ bb_graphic_circle_get_property(GObject *object, guint property_id, GValue *value
             g_value_set_int(value, bb_graphic_circle_get_line_width(BB_GRAPHIC_CIRCLE(object)));
             break;
 
+        case PROP_PITCH_1:
+            g_value_set_int(value, bb_graphic_circle_get_pitch_1(BB_GRAPHIC_CIRCLE(object)));
+            break;
+
+        case PROP_PITCH_2:
+            g_value_set_int(value, bb_graphic_circle_get_pitch_2(BB_GRAPHIC_CIRCLE(object)));
+            break;
+
         case PROP_RADIUS:
             g_value_set_int(value, bb_graphic_circle_get_radius(BB_GRAPHIC_CIRCLE(object)));
+            break;
+
+        case PROP_FILL_TYPE:
+            g_value_set_int(value, bb_graphic_circle_get_fill_type(BB_GRAPHIC_CIRCLE(object)));
+            break;
+
+        case PROP_FILL_WIDTH:
+            g_value_set_int(value, bb_graphic_circle_get_fill_width(BB_GRAPHIC_CIRCLE(object)));
             break;
 
         default:
@@ -504,6 +698,36 @@ bb_graphic_circle_set_cap_type(BbGraphicCircle *circle, int type)
         circle->line_style->cap_type = type;
 
         g_object_notify_by_pspec(G_OBJECT(circle), properties[PROP_CAP_TYPE]);
+    }
+}
+
+
+void
+bb_graphic_circle_set_angle_1(BbGraphicCircle *circle, int angle)
+{
+    g_return_if_fail(circle != NULL);
+    g_return_if_fail(circle->fill_style != NULL);
+
+    if (circle->fill_style->angle[0] != angle)
+    {
+        circle->fill_style->angle[0] = angle;
+
+        g_object_notify_by_pspec(G_OBJECT(circle), properties[PROP_ANGLE_1]);
+    }
+}
+
+
+void
+bb_graphic_circle_set_angle_2(BbGraphicCircle *circle, int angle)
+{
+    g_return_if_fail(circle != NULL);
+    g_return_if_fail(circle->fill_style != NULL);
+
+    if (circle->fill_style->angle[1] != angle)
+    {
+        circle->fill_style->angle[1] = angle;
+
+        g_object_notify_by_pspec(G_OBJECT(circle), properties[PROP_ANGLE_2]);
     }
 }
 
@@ -581,6 +805,36 @@ bb_graphic_circle_set_dash_type(BbGraphicCircle *circle, int type)
 }
 
 
+void
+bb_graphic_circle_set_fill_type(BbGraphicCircle *circle, int type)
+{
+    g_return_if_fail(circle != NULL);
+    g_return_if_fail(circle->fill_style != NULL);
+
+    if (circle->fill_style->type != type)
+    {
+        circle->fill_style->type = type;
+
+        g_object_notify_by_pspec(G_OBJECT(circle), properties[PROP_FILL_TYPE]);
+    }
+}
+
+
+void
+bb_graphic_circle_set_fill_width(BbGraphicCircle *circle, int width)
+{
+    g_return_if_fail(circle != NULL);
+    g_return_if_fail(circle->fill_style != NULL);
+
+    if (circle->fill_style->width != width)
+    {
+        circle->fill_style->width = width;
+
+        g_object_notify_by_pspec(G_OBJECT(circle), properties[PROP_FILL_WIDTH]);
+    }
+}
+
+
 static void
 bb_graphic_circle_set_item_color(BbGraphicCircle *circle, int color)
 {
@@ -610,11 +864,49 @@ bb_graphic_circle_set_line_width(BbGraphicCircle *circle, int width)
 }
 
 
+void
+bb_graphic_circle_set_pitch_1(BbGraphicCircle *circle, int pitch)
+{
+    g_return_if_fail(circle != NULL);
+    g_return_if_fail(circle->fill_style != NULL);
+
+    if (circle->fill_style->pitch[0] != pitch)
+    {
+        circle->fill_style->pitch[0] = pitch;
+
+        g_object_notify_by_pspec(G_OBJECT(circle), properties[PROP_PITCH_1]);
+    }
+}
+
+
+void
+bb_graphic_circle_set_pitch_2(BbGraphicCircle *circle, int pitch)
+{
+    g_return_if_fail(circle != NULL);
+    g_return_if_fail(circle->fill_style != NULL);
+
+    if (circle->fill_style->pitch[1] != pitch)
+    {
+        circle->fill_style->pitch[1] = pitch;
+
+        g_object_notify_by_pspec(G_OBJECT(circle), properties[PROP_PITCH_2]);
+    }
+}
+
+
 static void
 bb_graphic_circle_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec)
 {
     switch (property_id)
     {
+        case PROP_ANGLE_1:
+            bb_graphic_circle_set_angle_1(BB_GRAPHIC_CIRCLE(object), g_value_get_int(value));
+            break;
+
+        case PROP_ANGLE_2:
+            bb_graphic_circle_set_angle_2(BB_GRAPHIC_CIRCLE(object), g_value_get_int(value));
+            break;
+
         case PROP_CAP_TYPE:
             bb_graphic_circle_set_cap_type(BB_GRAPHIC_CIRCLE(object), g_value_get_int(value));
             break;
@@ -643,10 +935,26 @@ bb_graphic_circle_set_property(GObject *object, guint property_id, const GValue 
             bb_graphic_circle_set_dash_type(BB_GRAPHIC_CIRCLE(object), g_value_get_int(value));
             break;
 
+        case PROP_FILL_TYPE:
+            bb_graphic_circle_set_fill_type(BB_GRAPHIC_CIRCLE(object), g_value_get_int(value));
+            break;
+
+        case PROP_FILL_WIDTH:
+            bb_graphic_circle_set_fill_width(BB_GRAPHIC_CIRCLE(object), g_value_get_int(value));
+            break;
+
         case PROP_LINE_WIDTH:
             bb_graphic_circle_set_line_width(BB_GRAPHIC_CIRCLE(object), g_value_get_int(value));
             break;
-            
+
+        case PROP_PITCH_1:
+            bb_graphic_circle_set_pitch_1(BB_GRAPHIC_CIRCLE(object), g_value_get_int(value));
+            break;
+
+        case PROP_PITCH_2:
+            bb_graphic_circle_set_pitch_2(BB_GRAPHIC_CIRCLE(object), g_value_get_int(value));
+            break;
+
         case PROP_RADIUS:
             bb_graphic_circle_set_radius(BB_GRAPHIC_CIRCLE(object), g_value_get_int(value));
             break;

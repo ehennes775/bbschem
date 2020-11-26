@@ -48,6 +48,7 @@
 #include "bbtoolstack.h"
 #include "bbtoolchanger.h"
 #include "bbarctoolpanel.h"
+#include "bbcircletoolpanel.h"
 
 
 enum
@@ -119,7 +120,9 @@ bb_main_window_class_init(BbMainWindowClass *class)
     BB_TYPE_PIN_PROPERTY_EDITOR;
     BB_TYPE_TOOL_PALETTE;
     BB_TYPE_TOOL_STACK;
+
     BB_TYPE_ARC_TOOL_PANEL;
+    BB_TYPE_CIRCLE_TOOL_PANEL;
 
 
     G_OBJECT_CLASS(class)->dispose = bb_main_window_dispose;
