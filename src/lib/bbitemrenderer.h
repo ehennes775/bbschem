@@ -24,13 +24,6 @@
 
 /* forward declarations */
 
-struct _BbGraphicArc;
-struct _BbGraphicBox;
-struct _BbGraphicCircle;
-struct _BbGraphicLine;
-struct _BbGraphicPath;
-
-
 #define BB_TYPE_ITEM_RENDERER bb_item_renderer_get_type()
 G_DECLARE_INTERFACE(BbItemRenderer, bb_item_renderer, BB, ITEM_RENDERER, GObject)
 
@@ -38,17 +31,20 @@ struct _BbItemRendererInterface
 {
     GTypeInterface parent;
 
+    void (*close_path)(BbItemRenderer *renderer);
     void (*render_absolute_line_to)(BbItemRenderer *renderer, int x, int y);
     void (*render_absolute_move_to)(BbItemRenderer *renderer, int x, int y);
-    void (*render_graphic_arc)(BbItemRenderer *renderer, struct _BbGraphicArc *arc);
-    void (*render_graphic_box)(BbItemRenderer *renderer, struct _BbGraphicBox *box);
-    void (*render_graphic_circle)(BbItemRenderer *renderer, struct _BbGraphicCircle *circle);
+    void (*render_arc)(BbItemRenderer *renderer, int x, int y, int radius, int start, int sweep);
     void (*render_relative_line_to)(BbItemRenderer *renderer, int dx, int dy);
     void (*render_relative_move_to)(BbItemRenderer *renderer, int dx, int dy);
     void (*set_color)(BbItemRenderer *renderer, int color);
     void (*set_fill_style)(BbItemRenderer *renderer, BbFillStyle *style);
     void (*set_line_style)(BbItemRenderer *renderer, BbLineStyle *style);
 };
+
+
+void
+bb_item_renderer_close_path(BbItemRenderer *renderer);
 
 
 void
@@ -60,15 +56,7 @@ bb_item_renderer_render_absolute_move_to(BbItemRenderer *renderer, int x, int y)
 
 
 void
-bb_item_renderer_render_graphic_arc(BbItemRenderer *renderer, struct _BbGraphicArc *arc);
-
-
-void
-bb_item_renderer_render_graphic_box(BbItemRenderer *renderer, struct _BbGraphicBox *box);
-
-
-void
-bb_item_renderer_render_graphic_circle(BbItemRenderer *renderer, struct _BbGraphicCircle *circle);
+bb_item_renderer_render_arc(BbItemRenderer *renderer, int x, int y, int radius, int start, int sweep);
 
 
 void

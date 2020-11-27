@@ -29,7 +29,7 @@
 enum
 {
     PROP_0,
-    PROP_1,
+    PROP_CAIRO,
     PROP_2,
     PROP_3,
     N_PROPERTIES
@@ -311,7 +311,7 @@ bb_schematic_get_property(GObject *object, guint property_id, GValue *value, GPa
 {
     switch (property_id)
     {
-        case PROP_1:
+        case PROP_CAIRO:
             break;
 
         case PROP_2:
@@ -352,7 +352,7 @@ bb_schematic_set_property(GObject *object, guint property_id, const GValue *valu
 {
     switch (property_id)
     {
-        case PROP_1:
+        case PROP_CAIRO:
             break;
 
         case PROP_2:

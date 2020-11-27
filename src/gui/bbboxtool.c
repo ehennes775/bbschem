@@ -65,7 +65,7 @@ static void
 bb_box_tool_dispose(GObject *object);
 
 static void
-bb_box_tool_draw(BbDrawingTool *tool);
+bb_box_tool_draw(BbDrawingTool *tool, BbGraphics *graphics);
 
 static void
 bb_box_tool_drawing_tool_init(BbDrawingToolInterface *iface);
@@ -207,9 +207,18 @@ bb_box_tool_dispose(GObject *object)
 
 
 static void
-bb_box_tool_draw(BbDrawingTool *tool)
+bb_box_tool_draw(BbDrawingTool *tool, BbGraphics *graphics)
 {
-    g_message("bb_box_tool_draw");
+    BbBoxTool *box_tool = BB_BOX_TOOL(tool);
+    g_return_if_fail(box_tool != NULL);
+
+    if (box_tool->state != STATE_S0)
+    {
+        bb_schematic_item_render(
+            BB_SCHEMATIC_ITEM(box_tool->item),
+            BB_ITEM_RENDERER(graphics)
+            );
+    }
 }
 
 

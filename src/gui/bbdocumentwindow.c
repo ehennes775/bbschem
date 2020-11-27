@@ -23,7 +23,7 @@
 enum
 {
     PROP_0,
-    PROP_1,
+    PROP_CAIRO,
     PROP_2,
     PROP_3
 };
@@ -92,7 +92,7 @@ bb_document_window_get_property(GObject *object, guint property_id, GValue *valu
 {
     switch (property_id)
     {
-        case PROP_1:
+        case PROP_CAIRO:
             break;
 
         case PROP_2:
@@ -132,7 +132,7 @@ bb_document_window_set_property(GObject *object, guint property_id, const GValue
 {
     switch (property_id)
     {
-        case PROP_1:
+        case PROP_CAIRO:
             break;
 
         case PROP_2:

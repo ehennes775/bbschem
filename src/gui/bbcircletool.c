@@ -65,7 +65,7 @@ static void
 bb_circle_tool_dispose(GObject *object);
 
 static void
-bb_circle_tool_draw(BbDrawingTool *tool);
+bb_circle_tool_draw(BbDrawingTool *tool, BbGraphics *graphics);
 
 static void
 bb_circle_tool_drawing_tool_init(BbDrawingToolInterface *iface);
@@ -207,9 +207,18 @@ bb_circle_tool_dispose(GObject *object)
 
 
 static void
-bb_circle_tool_draw(BbDrawingTool *tool)
+bb_circle_tool_draw(BbDrawingTool *tool, BbGraphics *graphics)
 {
-    g_message("bb_circle_tool_draw");
+    BbCircleTool *circle_tool = BB_CIRCLE_TOOL(tool);
+    g_return_if_fail(circle_tool != NULL);
+
+    if (circle_tool->state != STATE_S0)
+    {
+        bb_schematic_item_render(
+            BB_SCHEMATIC_ITEM(circle_tool->item),
+            BB_ITEM_RENDERER(graphics)
+         );
+    }
 }
 
 
@@ -345,7 +354,7 @@ bb_circle_tool_reset_with_point(BbCircleTool *circle_tool, gdouble x, gdouble y)
     bb_graphic_circle_set_center_x(circle_tool->item, x);
     bb_graphic_circle_set_center_y(circle_tool->item, y);
 
-    bb_graphic_circle_set_radius(circle_tool->item, 100);
+    bb_graphic_circle_set_radius(circle_tool->item, 0);
 
     circle_tool->state = STATE_S1;
 }

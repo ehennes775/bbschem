@@ -67,7 +67,7 @@ static void
 bb_arc_tool_dispose(GObject *object);
 
 static void
-bb_arc_tool_draw(BbDrawingTool *tool);
+bb_arc_tool_draw(BbDrawingTool *tool, BbGraphics *graphics);
 
 static void
 bb_arc_tool_drawing_tool_init(BbDrawingToolInterface *iface);
@@ -219,9 +219,18 @@ bb_arc_tool_dispose(GObject *object)
 
 
 static void
-bb_arc_tool_draw(BbDrawingTool *tool)
+bb_arc_tool_draw(BbDrawingTool *tool, BbGraphics *graphics)
 {
-    g_message("bb_arc_tool_draw");
+    BbArcTool *arc_tool = BB_ARC_TOOL(tool);
+    g_return_if_fail(arc_tool != NULL);
+
+    if (arc_tool->state != STATE_S0)
+    {
+        bb_schematic_item_render(
+            BB_SCHEMATIC_ITEM(arc_tool->item),
+            BB_ITEM_RENDERER(graphics)
+            );
+    }
 }
 
 
@@ -357,7 +366,7 @@ bb_arc_tool_reset_with_point(BbArcTool *arc_tool, gdouble x, gdouble y)
     bb_graphic_arc_set_center_x(arc_tool->item, x);
     bb_graphic_arc_set_center_y(arc_tool->item, y);
 
-    bb_graphic_arc_set_radius(arc_tool->item, 100);
+    bb_graphic_arc_set_radius(arc_tool->item, 0);
 
     bb_graphic_arc_set_start_angle(arc_tool->item, 0);
     bb_graphic_arc_set_sweep_angle(arc_tool->item, 270);
@@ -472,7 +481,8 @@ bb_arc_tool_update_with_point(BbArcTool *arc_tool, gdouble x, gdouble y)
 
         bb_graphic_arc_set_radius(arc_tool->item, distance);
     }
-    else if (arc_tool->state == STATE_S2)
+
+    if (arc_tool->state == STATE_S1 || arc_tool->state == STATE_S2)
     {
         double radians = bb_coord_radians(
             bb_graphic_arc_get_center_x(arc_tool->item),
@@ -483,7 +493,8 @@ bb_arc_tool_update_with_point(BbArcTool *arc_tool, gdouble x, gdouble y)
 
         bb_graphic_arc_set_start_angle(arc_tool->item, bb_angle_from_radians(radians));
     }
-    else if (arc_tool->state == STATE_S3)
+
+    if (arc_tool->state == STATE_S3)
     {
         double radians = bb_coord_radians(
             bb_graphic_arc_get_center_x(arc_tool->item),

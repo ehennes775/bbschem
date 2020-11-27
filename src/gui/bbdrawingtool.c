@@ -25,7 +25,7 @@ static gboolean
 bb_drawing_tool_button_pressed_missing(BbDrawingTool *tool, gdouble x, gdouble y);
 
 static void
-bb_drawing_tool_draw_missing(BbDrawingTool *tool);
+bb_drawing_tool_draw_missing(BbDrawingTool *tool, BbGraphics *graphics);
 
 static void
 bb_drawing_tool_key_pressed_missing(BbDrawingTool *tool);
@@ -92,19 +92,19 @@ bb_drawing_tool_button_pressed_missing(BbDrawingTool *tool, gdouble x, gdouble y
 
 
 void
-bb_drawing_tool_draw(BbDrawingTool *tool)
+bb_drawing_tool_draw(BbDrawingTool *tool, BbGraphics *graphics)
 {
     BbDrawingToolInterface *iface = BB_DRAWING_TOOL_GET_IFACE(tool);
 
     g_return_if_fail(iface != NULL);
     g_return_if_fail(iface->draw != NULL);
 
-    return iface->draw(tool);
+    return iface->draw(tool, graphics);
 }
 
 
 static void
-bb_drawing_tool_draw_missing(BbDrawingTool *tool)
+bb_drawing_tool_draw_missing(BbDrawingTool *tool, BbGraphics *graphics)
 {
     g_error("bb_drawing_tool_draw() not overridden");
 }

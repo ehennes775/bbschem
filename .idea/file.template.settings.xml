@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ExportableFileTemplateSettings">
+    <default_templates>
+      <template name="GAction Implementation Source File.c" reformat="false" live-template-enabled="true" />
+      <template name="GAction Implemntation Header File.h" reformat="false" live-template-enabled="true" />
+      <template name="GInterface Header File.h" reformat="false" live-template-enabled="true" />
+      <template name="GInterface Source File.c" reformat="false" live-template-enabled="true" />
+      <template name="GObject Header File Derivable.h" reformat="false" live-template-enabled="true" />
+      <template name="GObject Header File Final.h" reformat="false" live-template-enabled="true" />
+      <template name="GObject Source File Final.c" reformat="false" live-template-enabled="true" />
+    </default_templates>
+  </component>
+</project>

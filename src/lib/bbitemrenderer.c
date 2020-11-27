@@ -30,13 +30,13 @@ static void
 bb_item_renderer_render_absolute_move_to_missing(BbItemRenderer *renderer, int x, int y);
 
 static void
-bb_item_renderer_render_graphic_arc_missing(BbItemRenderer *renderer, struct _BbGraphicArc *arc);
+bb_item_renderer_render_arc_missing(BbItemRenderer *renderer, int x, int y, int radius, int start, int sweep);
 
 static void
-bb_item_renderer_render_graphic_box_missing(BbItemRenderer *renderer, struct _BbGraphicBox *box);
+bb_item_renderer_render_relative_line_to_missing(BbItemRenderer *renderer, int dx, int dy);
 
 static void
-bb_item_renderer_render_graphic_circle_missing(BbItemRenderer *renderer, struct _BbGraphicCircle *circle);
+bb_item_renderer_render_relative_move_to_missing(BbItemRenderer *renderer, int dx, int dy);
 
 static void
 bb_item_renderer_set_color_missing(BbItemRenderer *renderer, int color);
@@ -51,19 +51,39 @@ bb_item_renderer_set_line_style_missing(BbItemRenderer *renderer, BbLineStyle *s
 G_DEFINE_INTERFACE(BbItemRenderer, bb_item_renderer, G_TYPE_OBJECT)
 
 
-static void
-bb_item_renderer_default_init(BbItemRendererInterface *class)
+void
+bb_item_renderer_close_path(BbItemRenderer *renderer)
 {
-    g_return_if_fail(class != NULL);
+    BbItemRendererInterface *iface = BB_ITEM_RENDERER_GET_IFACE(renderer);
 
-    class->render_absolute_line_to = bb_item_renderer_render_absolute_line_to_missing;
-    class->render_absolute_move_to = bb_item_renderer_render_absolute_move_to_missing;
-    class->render_graphic_arc = bb_item_renderer_render_graphic_arc_missing;
-    class->render_graphic_box = bb_item_renderer_render_graphic_box_missing;
-    class->render_graphic_circle = bb_item_renderer_render_graphic_circle_missing;
-    class->set_color = bb_item_renderer_set_color_missing;
-    class->set_fill_style = bb_item_renderer_set_fill_style_missing;
-    class->set_line_style = bb_item_renderer_set_line_style_missing;
+    g_return_if_fail(iface != NULL);
+    g_return_if_fail(iface->close_path != NULL);
+
+    return iface->close_path(renderer);
+}
+
+
+void
+bb_item_renderer_close_path_missing(BbItemRenderer *renderer)
+{
+    g_error("bb_item_renderer_close_path() not overridden");
+}
+
+
+static void
+bb_item_renderer_default_init(BbItemRendererInterface *iface)
+{
+    g_return_if_fail(iface != NULL);
+
+    iface->close_path = bb_item_renderer_close_path;
+    iface->render_absolute_line_to = bb_item_renderer_render_absolute_line_to_missing;
+    iface->render_absolute_move_to = bb_item_renderer_render_absolute_move_to_missing;
+    iface->render_arc = bb_item_renderer_render_arc_missing;
+    iface->render_relative_line_to = bb_item_renderer_render_relative_line_to_missing;
+    iface->render_relative_move_to = bb_item_renderer_render_relative_move_to_missing;
+    iface->set_color = bb_item_renderer_set_color_missing;
+    iface->set_fill_style = bb_item_renderer_set_fill_style_missing;
+    iface->set_line_style = bb_item_renderer_set_line_style_missing;
 }
 
 
@@ -106,59 +126,21 @@ bb_item_renderer_render_absolute_move_to_missing(BbItemRenderer *renderer, int x
 
 
 void
-bb_item_renderer_render_graphic_arc(BbItemRenderer *renderer, struct _BbGraphicArc *arc)
+bb_item_renderer_render_arc(BbItemRenderer *renderer, int x, int y, int radius, int start, int sweep)
 {
     BbItemRendererInterface *iface = BB_ITEM_RENDERER_GET_IFACE(renderer);
 
     g_return_if_fail(iface != NULL);
-    g_return_if_fail(iface->render_graphic_arc != NULL);
+    g_return_if_fail(iface->render_arc != NULL);
 
-    return iface->render_graphic_arc(renderer, arc);
+    return iface->render_arc(renderer, x, y, radius, start, sweep);
 }
 
 
 static void
-bb_item_renderer_render_graphic_arc_missing(BbItemRenderer *renderer, struct _BbGraphicArc *arc)
+bb_item_renderer_render_arc_missing(BbItemRenderer *renderer, int x, int y, int radius, int start, int sweep)
 {
-    g_error("bb_item_renderer_render_graphic_arc() not overridden");
-}
-
-
-void
-bb_item_renderer_render_graphic_box(BbItemRenderer *renderer, struct _BbGraphicBox *box)
-{
-    BbItemRendererInterface *iface = BB_ITEM_RENDERER_GET_IFACE(renderer);
-
-    g_return_if_fail(iface != NULL);
-    g_return_if_fail(iface->render_graphic_box != NULL);
-
-    return iface->render_graphic_box(renderer, box);
-}
-
-
-static void
-bb_item_renderer_render_graphic_box_missing(BbItemRenderer *renderer, struct _BbGraphicBox *box)
-{
-    g_error("bb_item_renderer_render_graphic_box() not overridden");
-}
-
-
-void
-bb_item_renderer_render_graphic_circle(BbItemRenderer *renderer, struct _BbGraphicCircle *circle)
-{
-    BbItemRendererInterface *iface = BB_ITEM_RENDERER_GET_IFACE(renderer);
-
-    g_return_if_fail(iface != NULL);
-    g_return_if_fail(iface->render_graphic_circle != NULL);
-
-    return iface->render_graphic_circle(renderer, circle);
-}
-
-
-static void
-bb_item_renderer_render_graphic_circle_missing(BbItemRenderer *renderer, struct _BbGraphicCircle *circle)
-{
-    g_error("bb_item_renderer_render_graphic_circle() not overridden");
+    g_error("bb_item_renderer_render_arc() not overridden");
 }
 
 
@@ -174,7 +156,7 @@ bb_item_renderer_render_relative_line_to(BbItemRenderer *renderer, int dx, int d
 }
 
 
-void
+static void
 bb_item_renderer_render_relative_line_to_missing(BbItemRenderer *renderer, int dx, int dy)
 {
     g_error("bb_item_renderer_render_relative_line_to() not overridden");

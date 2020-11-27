@@ -69,8 +69,8 @@ struct _BbGraphicCircle
 
     BbItemParams *params;
 
-    int insert_x;
-    int insert_y;
+    int center_x;
+    int center_y;
 
     int radius;
 
@@ -231,10 +231,10 @@ bb_graphic_circle_calculate_bounds(BbSchematicItem *item, BbBoundsCalculator *ca
 
     return bb_bounds_calculator_calculate_from_corners(
         calculator,
-        circle->insert_x - circle->radius,
-        circle->insert_y - circle->radius,
-        circle->insert_x + circle->radius,
-        circle->insert_y + circle->radius,
+        circle->center_x - circle->radius,
+        circle->center_y - circle->radius,
+        circle->center_x + circle->radius,
+        circle->center_y + circle->radius,
         circle->line_style->line_width
         );
 }
@@ -468,7 +468,7 @@ bb_graphic_circle_get_center_x(BbGraphicCircle *circle)
 {
     g_return_val_if_fail(circle != NULL, 0);
 
-    return circle->insert_x;
+    return circle->center_x;
 }
 
 
@@ -477,7 +477,7 @@ bb_graphic_circle_get_center_y(BbGraphicCircle *circle)
 {
     g_return_val_if_fail(circle != NULL, 0);
 
-    return circle->insert_y;
+    return circle->center_y;
 }
 
 
@@ -685,7 +685,14 @@ bb_graphic_circle_render(BbSchematicItem *item, BbItemRenderer *renderer)
     bb_item_renderer_set_fill_style(renderer, circle->fill_style);
     bb_item_renderer_set_line_style(renderer, circle->line_style);
 
-    bb_item_renderer_render_graphic_circle(renderer, circle);
+    bb_item_renderer_render_arc(
+        renderer,
+        circle->center_x,
+        circle->center_y,
+        circle->radius,
+        0,
+        360
+        );
 }
 
 
@@ -747,11 +754,11 @@ bb_graphic_circle_set_center_x(BbGraphicCircle *circle, int x)
 {
     g_return_if_fail(circle != NULL);
 
-    if (circle->insert_x != x)
+    if (circle->center_x != x)
     {
         g_signal_emit(circle, signals[SIG_INVALIDATE], 0);
 
-        circle->insert_x = x;
+        circle->center_x = x;
 
         g_signal_emit(circle, signals[SIG_INVALIDATE], 0);
 
@@ -765,11 +772,11 @@ bb_graphic_circle_set_center_y(BbGraphicCircle *circle, int y)
 {
     g_return_if_fail(circle != NULL);
 
-    if (circle->insert_y != y)
+    if (circle->center_y != y)
     {
         g_signal_emit(circle, signals[SIG_INVALIDATE], 0);
 
-        circle->insert_y = y;
+        circle->center_y = y;
 
         g_signal_emit(circle, signals[SIG_INVALIDATE], 0);
 
@@ -1027,7 +1034,7 @@ bb_graphic_circle_translate(BbSchematicItem *item, int dx, int dy)
     BbGraphicCircle *circle = BB_GRAPHIC_CIRCLE(item);
     g_return_if_fail(circle != NULL);
 
-    bb_coord_translate(dx, dy, &circle->insert_x, &circle->insert_y, 1);
+    bb_coord_translate(dx, dy, &circle->center_x, &circle->center_y, 1);
 
     g_object_notify_by_pspec(G_OBJECT(circle), properties[PROP_CENTER_X]);
     g_object_notify_by_pspec(G_OBJECT(circle), properties[PROP_CENTER_Y]);

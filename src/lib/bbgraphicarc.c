@@ -572,7 +572,14 @@ bb_graphic_arc_render(BbSchematicItem *item, BbItemRenderer *renderer)
     bb_item_renderer_set_color(renderer, arc->color);
     bb_item_renderer_set_line_style(renderer, arc->line_style);
 
-    bb_item_renderer_render_graphic_arc(renderer, arc);
+    bb_item_renderer_render_arc(
+        renderer,
+        arc->center_x,
+        arc->center_y,
+        arc->radius,
+        arc->start_angle,
+        arc->sweep_angle
+        );
 }
 
 

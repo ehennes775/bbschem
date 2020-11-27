@@ -65,7 +65,7 @@ static void
 bb_line_tool_dispose(GObject *object);
 
 static void
-bb_line_tool_draw(BbDrawingTool *tool);
+bb_line_tool_draw(BbDrawingTool *tool, BbGraphics *graphics);
 
 static void
 bb_line_tool_drawing_tool_init(BbDrawingToolInterface *iface);
@@ -207,9 +207,18 @@ bb_line_tool_dispose(GObject *object)
 
 
 static void
-bb_line_tool_draw(BbDrawingTool *tool)
+bb_line_tool_draw(BbDrawingTool *tool, BbGraphics *graphics)
 {
-    g_message("bb_line_tool_draw");
+    BbLineTool *line_tool = BB_LINE_TOOL(tool);
+    g_return_if_fail(line_tool != NULL);
+
+    if (line_tool->state != STATE_S0)
+    {
+        bb_schematic_item_render(
+            BB_SCHEMATIC_ITEM(line_tool->item),
+            BB_ITEM_RENDERER(graphics)
+            );
+    }
 }
 
 

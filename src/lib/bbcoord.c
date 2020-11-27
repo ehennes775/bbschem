@@ -40,7 +40,7 @@ bb_coord_distance(int x0, int y0, int x1, int y1)
 double
 bb_coord_radians(int x0, int y0, int x1, int y1)
 {
-    return atan2(x1 - x0, y1 - y0);
+    return atan2(y1 - y0, x1 - x0);
 }
 
 

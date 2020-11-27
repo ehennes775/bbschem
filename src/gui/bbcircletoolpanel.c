@@ -26,7 +26,7 @@
 enum
 {
     PROP_0,
-    PROP_1,
+    PROP_CAIRO,
     PROP_2,
     PROP_3,
     N_PROPERTIES
@@ -110,7 +110,7 @@ bb_circle_tool_panel_get_property(GObject *object, guint property_id, GValue *va
 {
     switch (property_id)
     {
-        case PROP_1:
+        case PROP_CAIRO:
             break;
 
         case PROP_2:
@@ -144,7 +144,7 @@ bb_circle_tool_panel_set_property(GObject *object, guint property_id, const GVal
 {
     switch (property_id)
     {
-        case PROP_1:
+        case PROP_CAIRO:
             break;
 
         case PROP_2:

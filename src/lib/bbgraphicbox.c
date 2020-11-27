@@ -689,7 +689,11 @@ bb_graphic_box_render(BbSchematicItem *item, BbItemRenderer *renderer)
     bb_item_renderer_set_fill_style(renderer, box->fill_style);
     bb_item_renderer_set_line_style(renderer, box->line_style);
 
-    bb_item_renderer_render_graphic_box(renderer, box);
+    bb_item_renderer_render_absolute_move_to(renderer, box->x[0], box->y[0]);
+    bb_item_renderer_render_absolute_line_to(renderer, box->x[1], box->y[0]);
+    bb_item_renderer_render_absolute_line_to(renderer, box->x[1], box->y[1]);
+    bb_item_renderer_render_absolute_line_to(renderer, box->x[0], box->y[1]);
+    bb_item_renderer_close_path(renderer);
 }
 
 

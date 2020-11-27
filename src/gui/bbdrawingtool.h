@@ -19,6 +19,7 @@
  */
 
 #include <gtk/gtk.h>
+#include "bbgraphics.h"
 
 #define BB_TYPE_DRAWING_TOOL bb_drawing_tool_get_type()
 G_DECLARE_INTERFACE(BbDrawingTool, bb_drawing_tool, BB, DRAWING_TOOL, GObject)
@@ -28,7 +29,7 @@ struct _BbDrawingToolInterface
     GTypeInterface g_iface;
 
     gboolean (*button_pressed)(BbDrawingTool *tool, gdouble x, gdouble y);
-    void (*draw)(BbDrawingTool *tool);
+    void (*draw)(BbDrawingTool *tool, BbGraphics *graphics);
     void (*key_pressed)(BbDrawingTool *tool);
     void (*key_released)(BbDrawingTool *tool);
     gboolean (*motion_notify)(BbDrawingTool *tool, gdouble x, gdouble y);
@@ -40,7 +41,7 @@ bb_drawing_tool_button_pressed(BbDrawingTool *tool, gdouble x, gdouble y);
 
 
 void
-bb_drawing_tool_draw(BbDrawingTool *tool);
+bb_drawing_tool_draw(BbDrawingTool *tool, BbGraphics *graphics);
 
 
 void

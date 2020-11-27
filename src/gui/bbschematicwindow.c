@@ -23,6 +23,7 @@
 #include "bbschematicwindowinner.h"
 #include "bbarctool.h"
 #include "bbtoolchanger.h"
+#include "bbgraphics.h"
 
 
 enum
@@ -74,13 +75,16 @@ static void
 bb_schematic_window_dispose(GObject *object);
 
 static void
+bb_schematic_window_draw_cb(BbSchematicWindowInner *inner, cairo_t *cairo, BbSchematicWindow *outer);
+
+static void
 bb_schematic_window_finalize(GObject *object);
 
 static void
 bb_schematic_window_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
 
 static void
-bb_schematic_window_invalidate_item_cb(BbSchematicItem *item, BbSchematicWindow *window);
+bb_schematic_window_invalidate_item_cb(BbDrawingTool *tool, BbSchematicItem *item, BbSchematicWindow *window);
 
 static gboolean
 bb_schematic_window_key_pressed_cb(GtkWidget *widget, GdkEvent *event, gpointer user_data);
@@ -327,6 +331,23 @@ bb_schematic_window_dispose(GObject *object)
 
 
 static void
+bb_schematic_window_draw_cb(BbSchematicWindowInner *inner, cairo_t *cairo, BbSchematicWindow *outer)
+{
+    gboolean test1 = BB_IS_SCHEMATIC_WINDOW_INNER(inner);
+    gboolean test2 = BB_IS_SCHEMATIC_WINDOW(outer);
+
+    BbGraphics *graphics = bb_graphics_new(cairo);
+
+    if (outer->drawing_tool != NULL)
+    {
+        bb_drawing_tool_draw(outer->drawing_tool, graphics);
+    }
+
+    cairo_stroke(cairo);
+}
+
+
+static void
 bb_schematic_window_finalize(GObject *object)
 {
     //BbSchematicWindow* privat = BBSCHEMATIC_WINDOW_GET_PRIVATE(object);
@@ -540,19 +561,23 @@ bb_schematic_window_init(BbSchematicWindow *window)
         window
         );
 
-    bb_schematic_window_set_drawing_tool(
-        window,
-        BB_DRAWING_TOOL(bb_arc_tool_new(BB_TOOL_SUBJECT(window)))
+    g_signal_connect(
+        window->inner_window,
+        "draw",
+        G_CALLBACK(bb_schematic_window_draw_cb),
+        window
         );
 }
 
 
 static void
-bb_schematic_window_invalidate_item_cb(BbSchematicItem *item, BbSchematicWindow *window)
+bb_schematic_window_invalidate_item_cb(BbDrawingTool *tool, BbSchematicItem *item, BbSchematicWindow *window)
 {
     g_return_if_fail(window != NULL);
+    g_return_if_fail(window->inner_window != NULL);
 
-    g_message("bb_schematic_window_invalidate_item_cb");
+    // TODO Just invalidate everything until the bounds calculations are working
+    gtk_widget_queue_draw(GTK_WIDGET(window->inner_window));
 }
 
 

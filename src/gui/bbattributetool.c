@@ -56,7 +56,7 @@ static void
 bb_attribute_tool_dispose(GObject *object);
 
 static void
-bb_attribute_tool_draw(BbDrawingTool *tool);
+bb_attribute_tool_draw(BbDrawingTool *tool, BbGraphics *graphics);
 
 static void
 bb_attribute_tool_drawing_tool_init(BbDrawingToolInterface *iface);
@@ -186,7 +186,7 @@ bb_attribute_tool_dispose(GObject *object)
 
 
 static void
-bb_attribute_tool_draw(BbDrawingTool *tool)
+bb_attribute_tool_draw(BbDrawingTool *tool, BbGraphics *graphics)
 {
     g_message("bb_attribute_tool_draw");
 }

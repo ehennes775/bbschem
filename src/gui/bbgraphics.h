@@ -21,7 +21,13 @@
 #include <gtk/gtk.h>
 
 #define BB_TYPE_GRAPHICS bb_graphics_get_type()
-
 G_DECLARE_FINAL_TYPE(BbGraphics, bb_graphics, BB, GRAPHICS, GObject)
+
+
+cairo_t*
+bb_graphics_get_cairo(BbGraphics *graphics);
+
+BbGraphics*
+bb_graphics_new(cairo_t *cairo);
 
 #endif
