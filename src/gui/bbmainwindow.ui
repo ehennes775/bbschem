@@ -359,7 +359,7 @@
                                                     </packing>
                                                 </child>
                                                 <child>
-                                                    <object class="BbComponentSelector" id="component-panel">
+                                                    <object class="BbBlockToolPanel" id="component-panel">
                                                         <property name="hexpand">true</property>
                                                         <property name="vexpand">true</property>
                                                         <style>

@@ -55,6 +55,7 @@
 #include "bbgraphiccircle.h"
 #include "bbgraphicline.h"
 #include "bbgraphicpath.h"
+#include "bbuniversalblock.h"
 #include "bbuniversaltext.h"
 
 #endif

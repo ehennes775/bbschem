@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <interface>
-    <template class="BbComponentSelector" parent="GtkBox">
+    <template class="BbBlockToolPanel" parent="GtkBox">
         <child>
             <object class="GtkPaned" id="library-paned">
                 <property name="orientation">GTK_ORIENTATION_VERTICAL</property>

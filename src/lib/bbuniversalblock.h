@@ -1,3 +1,5 @@
+#ifndef __BBUNIVERSALBLOCK__
+#define __BBUNIVERSALBLOCK__
 /*
  * bbsch
  * Copyright (C) 2020 Edward C. Hennessy
@@ -17,41 +19,30 @@
  */
 
 #include <gtk/gtk.h>
-#include "bbcomponentselector.h"
+#include "bbschematicitem.h"
+
+#define BB_TYPE_UNIVERSAL_BLOCK bb_universal_block_get_type()
+G_DECLARE_FINAL_TYPE(BbUniversalBlock, bb_universal_block, BB, UNIVERSAL_BLOCK, BbSchematicItem)
 
 
-struct _BbComponentSelector
-{
-    GtkBox parent;
-};
+int
+bb_universal_block_get_insert_x(BbUniversalBlock *block);
 
 
-G_DEFINE_TYPE(
-    BbComponentSelector,
-    bb_component_selector,
-    GTK_TYPE_BOX
-    );
+int
+bb_universal_block_get_insert_y(BbUniversalBlock *block);
 
 
-static void
-bb_component_selector_class_init(BbComponentSelectorClass *class)
-{
-    gtk_widget_class_set_template_from_resource(
-        GTK_WIDGET_CLASS(class),
-        "/com/github/ehennes775/bbsch/gui/bbcomponentselector.ui"
-        );
-}
+BbUniversalBlock*
+bb_universal_block_new();
 
 
-static void
-bb_component_selector_init(BbComponentSelector *window)
-{
-    gtk_widget_init_template(GTK_WIDGET(window));
-}
+void
+bb_universal_block_set_insert_x(BbUniversalBlock *block, int x);
 
 
-__attribute__((constructor)) void
-bb_component_selector_register()
-{
-    bb_component_selector_get_type();
-}
+void
+bb_universal_block_set_insert_y(BbUniversalBlock *block, int y);
+
+
+#endif

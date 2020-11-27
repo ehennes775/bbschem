@@ -1,7 +1,7 @@
-#ifndef __BBCOMPONENTSELECTOR__
-#define __BBCOMPONENTSELECTOR__
+#ifndef __BBBLOCKTOOL__
+#define __BBBLOCKTOOL__
 /*
- * bbsch
+ * bbschem
  * Copyright (C) 2020 Edward C. Hennessy
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,10 +19,12 @@
  */
 
 #include <gtk/gtk.h>
+#include "bbtoolsubject.h"
 
+#define BB_TYPE_BLOCK_TOOL bb_block_tool_get_type()
+G_DECLARE_FINAL_TYPE(BbBlockTool, bb_block_tool, BB, BLOCK_TOOL, GObject)
 
-#define BB_TYPE_COMPONENT_SELECTOR bb_component_selector_get_type()
-G_DECLARE_FINAL_TYPE(BbComponentSelector, bb_component_selector, BB, ComponentSelector, GtkBox)
-
+BbBlockTool*
+bb_block_tool_new(BbToolSubject *subject);
 
 #endif

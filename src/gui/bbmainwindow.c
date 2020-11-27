@@ -39,7 +39,7 @@
 #include "bbfillstyleeditor.h"
 #include "bblinestyleeditor.h"
 #include "bbattributeeditor.h"
-#include "bbcomponentselector.h"
+#include "bbblocktoolpanel.h"
 #include "bbpinpropertyeditor.h"
 #include "bbtoolpalette.h"
 #include "bbtextpropertyeditor.h"
@@ -114,7 +114,6 @@ bb_main_window_add_page(BbMainWindow *window, BbDocumentWindow *page)
 static void
 bb_main_window_class_init(BbMainWindowClass *class)
 {
-    BB_TYPE_COMPONENT_SELECTOR;
     BB_TYPE_ATTRIBUTE_EDITOR;
     BB_TYPE_COLOR_EDITOR;
     BB_TYPE_FILL_STYLE_EDITOR;
@@ -125,6 +124,7 @@ bb_main_window_class_init(BbMainWindowClass *class)
     BB_TYPE_TOOL_STACK;
 
     BB_TYPE_ARC_TOOL_PANEL;
+    BB_TYPE_BLOCK_TOOL_PANEL;
     BB_TYPE_CIRCLE_TOOL_PANEL;
     BB_TYPE_LINE_TOOL_PANEL;
     BB_TYPE_BOX_TOOL_PANEL;

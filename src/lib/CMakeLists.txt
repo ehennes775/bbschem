@@ -60,6 +60,8 @@ add_library(bblib
         bbschematicitem.h
         bbsweep.c
         bbsweep.h
+        bbuniversalblock.c
+        bbuniversalblock.h
         bbuniversaltext.c
         bbuniversaltext.h
         bbvaluecount.c

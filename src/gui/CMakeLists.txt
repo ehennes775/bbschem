@@ -8,6 +8,10 @@ add_library(bbgui
         bbarctool.h
         bbarctoolpanel.c
         bbarctoolpanel.h
+        bbblocktool.c
+        bbblocktool.h
+        bbblocktoolpanel.c
+        bbblocktoolpanel.h
         bbboxtool.c
         bbboxtool.h
         bbboxtoolpanel.c
@@ -28,8 +32,8 @@ add_library(bbgui
         bbcopyaction.h
         bbcutaction.c
         bbcutaction.h
-        bbcomponentselector.c
-        bbcomponentselector.h
+        bbblocktoolpanel.c
+        bbblocktoolpanel.h
         bbcomponentselectorplugin.c
         bbcomponentselectorplugin.h
         bbdeleteaction.c
