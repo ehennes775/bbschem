@@ -319,7 +319,7 @@
                                                     </packing>
                                                 </child>
                                                 <child>
-                                                    <object class="GtkLabel" id ="attribute">
+                                                    <object class="BbAttributeToolPanel" id ="attribute_panel">
                                                         <property name="label">Attribute</property>
                                                     </object>
                                                     <packing>

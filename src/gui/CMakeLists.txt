@@ -4,6 +4,10 @@ add_library(bbgui
         bbapplication.h
         bbattributeeditor.c
         bbattributeeditor.h
+        bbattributetool.c
+        bbattributetool.h
+        bbattributetoolpanel.c
+        bbattributetoolpanel.h
         bbarctool.c
         bbarctool.h
         bbarctoolpanel.c
@@ -46,6 +50,8 @@ add_library(bbgui
         bbdrawingtool.h
         bbfillstyleeditor.c
         bbfillstyleeditor.h
+        bbgraphics.c
+        bbgraphics.h
         bbint32combobox.c
         bbint32combobox.h
         bblinestyleeditor.c

@@ -52,6 +52,7 @@
 #include "bblinetoolpanel.h"
 #include "bbboxtoolpanel.h"
 #include "bbtexttoolpanel.h"
+#include "bbattributetoolpanel.h"
 
 
 enum
@@ -124,6 +125,7 @@ bb_main_window_class_init(BbMainWindowClass *class)
     BB_TYPE_TOOL_STACK;
 
     BB_TYPE_ARC_TOOL_PANEL;
+    BB_TYPE_ATTRIBUTE_TOOL_PANEL;
     BB_TYPE_BLOCK_TOOL_PANEL;
     BB_TYPE_CIRCLE_TOOL_PANEL;
     BB_TYPE_LINE_TOOL_PANEL;
