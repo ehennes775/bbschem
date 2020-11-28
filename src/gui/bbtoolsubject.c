@@ -24,6 +24,9 @@
 static void
 bb_tool_subject_add_item_missing(BbToolSubject *subject, BbSchematicItem *item);
 
+static void
+bb_tool_subject_invalidate_rect_dev_missing(BbToolSubject *subject, double x0, double y0, double x1, double y1);
+
 
 G_DEFINE_INTERFACE(BbToolSubject, bb_tool_subject, G_TYPE_OBJECT)
 
@@ -33,7 +36,8 @@ bb_tool_subject_default_init(BbToolSubjectInterface *iface)
 {
     g_return_if_fail(iface != NULL);
 
-    iface->add_item = bb_tool_subject_add_item;
+    iface->add_item = bb_tool_subject_add_item_missing;
+    iface->invalidate_rect_dev = bb_tool_subject_invalidate_rect_dev_missing;
 }
 
 
@@ -58,3 +62,22 @@ bb_tool_subject_add_item_missing(BbToolSubject *subject, BbSchematicItem *item)
 }
 
 
+void
+bb_tool_subject_invalidate_rect_dev(BbToolSubject *subject, double x0, double y0, double x1, double y1)
+{
+    g_return_if_fail(subject != NULL);
+
+    BbToolSubjectInterface *iface = BB_TOOL_SUBJECT_GET_IFACE(subject);
+
+    g_return_if_fail(iface != NULL);
+    g_return_if_fail(iface->invalidate_rect_dev != NULL);
+
+    return iface->invalidate_rect_dev(subject, x0, y0, x1, y1);
+}
+
+
+static void
+bb_tool_subject_invalidate_rect_dev_missing(BbToolSubject *subject, double x0, double y0, double x1, double y1)
+{
+    g_error("bb_tool_subject_invalidate_rect_dev() not overridden");
+}

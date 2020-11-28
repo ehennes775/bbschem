@@ -28,11 +28,15 @@ struct _BbToolSubjectInterface
     GTypeInterface g_iface;
 
     void (*add_item)(BbToolSubject *subject, BbSchematicItem *item);
+    void (*invalidate_rect_dev)(BbToolSubject *subject, double x0, double y0, double x1, double y1);
 };
 
 
 void
 bb_tool_subject_add_item(BbToolSubject *subject, BbSchematicItem *item);
+
+void
+bb_tool_subject_invalidate_rect_dev(BbToolSubject *subject, double x0, double y0, double x1, double y1);
 
 
 #endif

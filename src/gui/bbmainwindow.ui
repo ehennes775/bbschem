@@ -311,7 +311,7 @@
                                                     <class name="panelouter"/>
                                                 </style>
                                                 <child>
-                                                    <object class="GtkLabel" id ="select_panel">
+                                                    <object class="BbSelectToolPanel" id ="select_panel">
                                                         <property name="label">Select</property>
                                                     </object>
                                                     <packing>
@@ -411,7 +411,7 @@
                                                     </packing>
                                                 </child>
                                                 <child>
-                                                    <object class="GtkLabel" id ="zoom_panel">
+                                                    <object class="BbZoomToolPanel" id ="zoom_panel">
                                                         <property name="label">Zoom</property>
                                                     </object>
                                                     <packing>

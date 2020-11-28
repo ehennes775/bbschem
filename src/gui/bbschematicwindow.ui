@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
     <template class="BbSchematicWindow">
+        <style>
+            <class name="schematicwindow"/>
+        </style>
         <child>
             <object class="BbSchematicWindowInner" id="inner_window">
                 <property name="hexpand">TRUE</property>

@@ -84,6 +84,10 @@ add_library(bbgui
         bbselectallaction.h
         bbselectnoneaction.c
         bbselectnoneaction.h
+        bbselecttool.c
+        bbselecttool.h
+        bbselecttoolpanel.c
+        bbselecttoolpanel.h
         bbschematicwindow.c
         bbschematicwindow.h
         bbschematicwindowinner.c
@@ -106,4 +110,8 @@ add_library(bbgui
         bbtexttool.h
         bbtexttoolpanel.c
         bbtexttoolpanel.h
+        bbzoomtool.c
+        bbzoomtool.h
+        bbzoomtoolpanel.c
+        bbzoomtoolpanel.h
         )

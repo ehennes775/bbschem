@@ -1,5 +1,5 @@
-#ifndef __BBGRAPHICS__
-#define __BBGRAPHICS__
+#ifndef __BBZOOMTOOLPANEL__
+#define __BBZOOMTOOLPANEL__
 /*
  * bbschem
  * Copyright (C) 2020 Edward C. Hennessy
@@ -20,23 +20,7 @@
 
 #include <gtk/gtk.h>
 
-#define BB_TYPE_GRAPHICS bb_graphics_get_type()
-G_DECLARE_FINAL_TYPE(BbGraphics, bb_graphics, BB, GRAPHICS, GObject)
-
-
-cairo_t*
-bb_graphics_get_cairo(BbGraphics *graphics);
-
-GtkStyleContext*
-bb_graphics_get_style(BbGraphics *graphics);
-
-BbGraphics*
-bb_graphics_new(cairo_t *cairo, GtkStyleContext *style);
-
-void
-bb_graphics_draw_select_box(BbGraphics *graphics, int x0, int y0, int x1, int y1);
-
-void
-bb_graphics_draw_zoom_box(BbGraphics *graphics, int x0, int y0, int x1, int y1);
+#define BB_TYPE_ZOOM_TOOL_PANEL bb_zoom_tool_panel_get_type()
+G_DECLARE_FINAL_TYPE(BbZoomToolPanel, bb_zoom_tool_panel, BB, ZOOM_TOOL_PANEL, GtkLabel)
 
 #endif

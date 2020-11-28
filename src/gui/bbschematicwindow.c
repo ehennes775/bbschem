@@ -16,6 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <math.h>
 #include <gtk/gtk.h>
 #include <bbextensions.h>
 #include <bblibrary.h>
@@ -85,6 +86,9 @@ bb_schematic_window_get_property(GObject *object, guint property_id, GValue *val
 
 static void
 bb_schematic_window_invalidate_item_cb(BbDrawingTool *tool, BbSchematicItem *item, BbSchematicWindow *window);
+
+static void
+bb_schematic_window_invalidate_rect_dev(BbSchematicWindow *window, double x0, double y0, double x1, double y1);
 
 static gboolean
 bb_schematic_window_key_pressed_cb(GtkWidget *widget, GdkEvent *event, gpointer user_data);
@@ -333,10 +337,11 @@ bb_schematic_window_dispose(GObject *object)
 static void
 bb_schematic_window_draw_cb(BbSchematicWindowInner *inner, cairo_t *cairo, BbSchematicWindow *outer)
 {
-    gboolean test1 = BB_IS_SCHEMATIC_WINDOW_INNER(inner);
-    gboolean test2 = BB_IS_SCHEMATIC_WINDOW(outer);
+    g_return_if_fail(cairo != NULL);
+    g_return_if_fail(BB_IS_SCHEMATIC_WINDOW(outer));
 
-    BbGraphics *graphics = bb_graphics_new(cairo);
+    GtkStyleContext *style = gtk_widget_get_style_context(outer);
+    BbGraphics *graphics = bb_graphics_new(cairo, style);
 
     if (outer->drawing_tool != NULL)
     {
@@ -578,6 +583,23 @@ bb_schematic_window_invalidate_item_cb(BbDrawingTool *tool, BbSchematicItem *ite
 
     // TODO Just invalidate everything until the bounds calculations are working
     gtk_widget_queue_draw(GTK_WIDGET(window->inner_window));
+}
+
+
+static void
+bb_schematic_window_invalidate_rect_dev(BbSchematicWindow *window, double x0, double y0, double x1, double y1)
+{
+    g_return_if_fail(window != NULL);
+    g_return_if_fail(window->inner_window != NULL);
+
+    int min_x = floor(MIN(x0, x1));
+    int min_y = floor(MIN(y0, y1));
+    int max_x = ceil(MAX(x0, x1));
+    int max_y = ceil(MAX(y0, y1));
+    int width = max_x - min_x + 1;
+    int height = max_y - min_y + 1;
+
+    gtk_widget_queue_draw_area(GTK_WIDGET(window->inner_window), min_x, min_y, width, height);
 }
 
 
@@ -854,6 +876,7 @@ bb_schematic_window_tool_subject_init(BbToolSubjectInterface *iface)
     g_return_if_fail(iface != NULL);
 
     iface->add_item = bb_schematic_window_add_item;
+    iface->invalidate_rect_dev = bb_schematic_window_invalidate_rect_dev;
 }
 
 
