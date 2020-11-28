@@ -567,7 +567,7 @@ bb_schematic_window_init(BbSchematicWindow *window)
     g_signal_connect(
         window->inner_window,
         "button-release-event",
-        G_CALLBACK(bb_schematic_window_button_pressed_cb),
+        G_CALLBACK(bb_schematic_window_button_released_cb),
         window
         );
 

@@ -129,27 +129,28 @@ bb_select_tool_button_pressed(BbDrawingTool *tool, gdouble x, gdouble y)
     BbSelectTool *select_tool = BB_SELECT_TOOL(tool);
     g_return_val_if_fail(select_tool != NULL, FALSE);
 
-    switch (select_tool->state)
+    if (select_tool->state == STATE_S0)
     {
-        case STATE_S0:
-            bb_select_tool_reset_with_point(select_tool, x, y);
-            break;
-
-        case STATE_S1:
-            bb_select_tool_update_with_point(select_tool, x, y);
-            bb_select_tool_finish(select_tool);
-            break;
-
-        default:
-            g_return_val_if_reached(FALSE);
+        bb_select_tool_reset_with_point(select_tool, x, y);
     }
 
     return TRUE;
 }
 
+
 static gboolean
 bb_select_tool_button_released(BbDrawingTool *tool, double x, double y)
 {
+    BbSelectTool *select_tool = BB_SELECT_TOOL(tool);
+    g_return_val_if_fail(select_tool != NULL, FALSE);
+
+    if (select_tool->state == STATE_S1)
+    {
+        bb_select_tool_update_with_point(select_tool, x, y);
+        bb_select_tool_finish(select_tool);
+    }
+
+    return TRUE;
 }
 
 

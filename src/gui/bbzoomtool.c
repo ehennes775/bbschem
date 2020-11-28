@@ -129,19 +129,9 @@ bb_zoom_tool_button_pressed(BbDrawingTool *tool, gdouble x, gdouble y)
     BbZoomTool *zoom_tool = BB_ZOOM_TOOL(tool);
     g_return_val_if_fail(zoom_tool != NULL, FALSE);
 
-    switch (zoom_tool->state)
+    if (zoom_tool->state == STATE_S0)
     {
-        case STATE_S0:
-            bb_zoom_tool_reset_with_point(zoom_tool, x, y);
-            break;
-
-        case STATE_S1:
-            bb_zoom_tool_update_with_point(zoom_tool, x, y);
-            bb_zoom_tool_finish(zoom_tool);
-            break;
-
-        default:
-            g_return_val_if_reached(FALSE);
+        bb_zoom_tool_reset_with_point(zoom_tool, x, y);
     }
 
     return TRUE;
@@ -151,6 +141,16 @@ bb_zoom_tool_button_pressed(BbDrawingTool *tool, gdouble x, gdouble y)
 static gboolean
 bb_zoom_tool_button_released(BbDrawingTool *tool, double x, double y)
 {
+    BbZoomTool *zoom_tool = BB_ZOOM_TOOL(tool);
+    g_return_val_if_fail(zoom_tool != NULL, FALSE);
+
+    if (zoom_tool->state == STATE_S1)
+    {
+        bb_zoom_tool_update_with_point(zoom_tool, x, y);
+        bb_zoom_tool_finish(zoom_tool);
+    }
+
+    return TRUE;
 }
 
 
