@@ -91,6 +91,27 @@ bb_drawing_tool_button_pressed_missing(BbDrawingTool *tool, gdouble x, gdouble y
 }
 
 
+gboolean
+bb_drawing_tool_button_released(BbDrawingTool *tool, gdouble x, gdouble y)
+{
+    BbDrawingToolInterface *iface = BB_DRAWING_TOOL_GET_IFACE(tool);
+
+    g_return_val_if_fail(iface != NULL, FALSE);
+    g_return_val_if_fail(iface->button_released != NULL, FALSE);
+
+    return iface->button_released(tool, x, y);
+}
+
+
+static gboolean
+bb_drawing_tool_button_released_missing(BbDrawingTool *tool, gdouble x, gdouble y)
+{
+    g_error("bb_drawing_tool_button_released() not overridden");
+
+    return FALSE;
+}
+
+
 void
 bb_drawing_tool_draw(BbDrawingTool *tool, BbGraphics *graphics)
 {

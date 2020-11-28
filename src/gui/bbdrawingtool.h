@@ -29,6 +29,7 @@ struct _BbDrawingToolInterface
     GTypeInterface g_iface;
 
     gboolean (*button_pressed)(BbDrawingTool *tool, gdouble x, gdouble y);
+    gboolean (*button_released)(BbDrawingTool *tool, gdouble x, gdouble y);
     void (*draw)(BbDrawingTool *tool, BbGraphics *graphics);
     void (*key_pressed)(BbDrawingTool *tool);
     void (*key_released)(BbDrawingTool *tool);
@@ -38,6 +39,10 @@ struct _BbDrawingToolInterface
 
 gboolean
 bb_drawing_tool_button_pressed(BbDrawingTool *tool, gdouble x, gdouble y);
+
+
+gboolean
+bb_drawing_tool_button_released(BbDrawingTool *tool, gdouble x, gdouble y);
 
 
 void

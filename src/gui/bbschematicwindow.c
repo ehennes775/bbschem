@@ -72,6 +72,9 @@ bb_schematic_window_add_item(BbToolSubject *subject, BbSchematicItem *item);
 static gboolean
 bb_schematic_window_button_pressed_cb(GtkWidget *widget, GdkEvent *event, gpointer user_data);
 
+static gboolean
+bb_schematic_window_button_released_cb(GtkWidget *widget, GdkEvent *event, gpointer user_data);
+
 static void
 bb_schematic_window_dispose(GObject *object);
 
@@ -151,6 +154,21 @@ bb_schematic_window_button_pressed_cb(GtkWidget *widget, GdkEvent *event, gpoint
     if (window->drawing_tool != NULL)
     {
         return bb_drawing_tool_button_pressed(window->drawing_tool, event->button.x, event->button.y);
+    }
+
+    return FALSE;
+}
+
+
+static gboolean
+bb_schematic_window_button_released_cb(GtkWidget *widget, GdkEvent *event, gpointer user_data)
+{
+    BbSchematicWindow *window = BB_SCHEMATIC_WINDOW(user_data);
+    g_return_val_if_fail(window != NULL, FALSE);
+
+    if (window->drawing_tool != NULL)
+    {
+        return bb_drawing_tool_button_released(window->drawing_tool, event->button.x, event->button.y);
     }
 
     return FALSE;
@@ -533,6 +551,7 @@ bb_schematic_window_init(BbSchematicWindow *window)
     gtk_widget_add_events(
         GTK_WIDGET(window->inner_window),
         GDK_BUTTON_PRESS_MASK |
+            GDK_BUTTON_RELEASE_MASK |
             GDK_KEY_PRESS_MASK |
             GDK_KEY_RELEASE_MASK |
             GDK_POINTER_MOTION_MASK
@@ -541,6 +560,13 @@ bb_schematic_window_init(BbSchematicWindow *window)
     g_signal_connect(
         window->inner_window,
         "button-press-event",
+        G_CALLBACK(bb_schematic_window_button_pressed_cb),
+        window
+        );
+
+    g_signal_connect(
+        window->inner_window,
+        "button-release-event",
         G_CALLBACK(bb_schematic_window_button_pressed_cb),
         window
         );

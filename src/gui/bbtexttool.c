@@ -52,6 +52,9 @@ struct _BbTextTool
 static gboolean
 bb_text_tool_button_pressed(BbDrawingTool *tool, double x, double y);
 
+static gboolean
+bb_text_tool_button_released(BbDrawingTool *tool, double x, double y);
+
 static void
 bb_text_tool_dispose(GObject *object);
 
@@ -131,6 +134,11 @@ bb_text_tool_button_pressed(BbDrawingTool *tool, gdouble x, gdouble y)
     return TRUE;
 }
 
+static gboolean
+bb_text_tool_button_released(BbDrawingTool *tool, double x, double y)
+{
+}
+
 
 static void
 bb_text_tool_class_init(BbTextToolClass *klasse)
@@ -198,6 +206,7 @@ bb_text_tool_drawing_tool_init(BbDrawingToolInterface *iface)
     g_return_if_fail(iface != NULL);
     
     iface->button_pressed = bb_text_tool_button_pressed;
+    iface->button_released = bb_text_tool_button_released;
     iface->draw = bb_text_tool_draw;
     iface->key_pressed = bb_text_tool_key_pressed;
     iface->key_released = bb_text_tool_key_released;
