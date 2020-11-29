@@ -26,6 +26,7 @@
 #include "bbtoolchanger.h"
 #include "bbgraphics.h"
 #include "bbzoomsubject.h"
+#include "bbrevealsubject.h"
 
 
 enum
@@ -43,6 +44,7 @@ enum
     PROP_CAN_ZOOM_IN,
     PROP_CAN_ZOOM_OUT,
     PROP_DRAWING_TOOL,
+    PROP_REVEAL,
     PROP_TOOL_CHANGER,
     N_PROPERTIES
 };
@@ -61,6 +63,8 @@ struct _BbSchematicWindow
     GFile *file;
 
     GSList *redo_stack;
+
+    gboolean reveal;
 
     GHashTable *selection;
 
@@ -91,6 +95,9 @@ bb_schematic_window_finalize(GObject *object);
 static void
 bb_schematic_window_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
 
+static gboolean
+bb_schematic_window_get_reveal(BbRevealSubject *reveal_subject);
+
 static void
 bb_schematic_window_invalidate_item_cb(BbDrawingTool *tool, BbSchematicItem *item, BbSchematicWindow *window);
 
@@ -107,7 +114,13 @@ static gboolean
 bb_schematic_window_motion_notify_cb(GtkWidget *widget, GdkEvent  *event, gpointer user_data);
 
 static void
+bb_schematic_window_reveal_subject_init(BbRevealSubjectInterface *iface);
+
+static void
 bb_schematic_window_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
+
+static void
+bb_schematic_window_set_reveal(BbRevealSubject *reveal_subject, gboolean reveal);
 
 static void
 bb_schematic_window_tool_changed_cb(BbToolChanger *changer, BbSchematicWindow *window);
@@ -137,6 +150,7 @@ G_DEFINE_TYPE_WITH_CODE(
     BB_TYPE_DOCUMENT_WINDOW,
     G_IMPLEMENT_INTERFACE(BB_TYPE_TOOL_SUBJECT, bb_schematic_window_tool_subject_init)
     G_IMPLEMENT_INTERFACE(BB_TYPE_ZOOM_SUBJECT, bb_schematic_window_zoom_subject_init)
+    G_IMPLEMENT_INTERFACE(BB_TYPE_REVEAL_SUBJECT, bb_schematic_window_reveal_subject_init)
     )
 
 
@@ -349,6 +363,12 @@ bb_schematic_window_class_init(BbSchematicWindowClass *klasse)
         G_OBJECT_CLASS(klasse),
         PROP_CAN_ZOOM_OUT,
         "can-zoom-out"
+        );
+
+    properties[PROP_REVEAL] = bb_object_class_override_property(
+        G_OBJECT_CLASS(klasse),
+        PROP_REVEAL,
+        "reveal"
         );
 }
 
@@ -601,6 +621,10 @@ bb_schematic_window_get_property(GObject *object, guint property_id, GValue *val
             g_value_set_boolean(value, bb_schematic_window_get_can_zoom_out(window));
             break;
 
+        case PROP_REVEAL:
+            g_value_set_boolean(value, bb_schematic_window_get_reveal(BB_REVEAL_SUBJECT(object)));
+            break;
+
         case PROP_DRAWING_TOOL:
             g_value_set_object(value, bb_schematic_window_get_drawing_tool(window));
             break;
@@ -608,6 +632,16 @@ bb_schematic_window_get_property(GObject *object, guint property_id, GValue *val
         default:
             G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
     }
+}
+
+
+static gboolean
+bb_schematic_window_get_reveal(BbRevealSubject *reveal_subject)
+{
+    BbSchematicWindow *window = BB_SCHEMATIC_WINDOW(reveal_subject);
+    g_return_val_if_fail(window != NULL, FALSE);
+
+    return window->reveal;
 }
 
 
@@ -797,6 +831,14 @@ bb_schematic_window_register()
 }
 
 
+static void
+bb_schematic_window_reveal_subject_init(BbRevealSubjectInterface *iface)
+{
+    iface->get_reveal = bb_schematic_window_get_reveal;
+    iface->set_reveal = bb_schematic_window_set_reveal;
+}
+
+
 void
 bb_schematic_window_save(BbSchematicWindow *window, GCancellable *cancellable, GError **error)
 {
@@ -844,6 +886,10 @@ bb_schematic_window_set_property(GObject *object, guint property_id, const GValu
     {
         case PROP_DRAWING_TOOL:
             bb_schematic_window_set_drawing_tool(BB_SCHEMATIC_WINDOW(object), g_value_get_object(value));
+            break;
+
+        case PROP_REVEAL:
+            bb_schematic_window_set_reveal(BB_REVEAL_SUBJECT(object), g_value_get_boolean(value));
             break;
 
         case PROP_TOOL_CHANGER:
@@ -908,6 +954,21 @@ bb_schematic_window_set_drawing_tool(BbSchematicWindow *window, BbDrawingTool *t
         }
 
         g_object_notify_by_pspec(G_OBJECT(window), properties[PROP_DRAWING_TOOL]);
+    }
+}
+
+
+static void
+bb_schematic_window_set_reveal(BbRevealSubject *reveal_subject, gboolean reveal)
+{
+    BbSchematicWindow *window = BB_SCHEMATIC_WINDOW(reveal_subject);
+    g_return_if_fail(window != NULL);
+
+    if (window->reveal != reveal)
+    {
+        window->reveal = reveal;
+
+        g_object_notify_by_pspec(G_OBJECT(window), properties[PROP_REVEAL]);
     }
 }
 

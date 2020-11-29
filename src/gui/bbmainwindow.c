@@ -58,6 +58,7 @@
 #include "bbzoomextentsaction.h"
 #include "bbzoominaction.h"
 #include "bbzoomoutaction.h"
+#include "bbrevealaction.h"
 
 
 enum
@@ -341,6 +342,11 @@ bb_main_window_init(BbMainWindow *window)
     g_action_map_add_action(
         G_ACTION_MAP(window),
         G_ACTION(bb_zoom_out_action_new(window))
+        );
+
+    g_action_map_add_action(
+        G_ACTION_MAP(window),
+        G_ACTION(bb_reveal_action_new(window))
         );
 }
 

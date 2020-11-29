@@ -74,6 +74,10 @@ add_library(bbgui
         bbredoaction.h
         bbreloadaction.c
         bbreloadaction.h
+        bbrevealaction.c
+        bbrevealaction.h
+        bbrevealsubject.c
+        bbrevealsubject.h
         bbsaveaction.c
         bbsaveaction.h
         bbsaveallaction.c
