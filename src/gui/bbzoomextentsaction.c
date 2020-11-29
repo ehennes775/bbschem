@@ -19,7 +19,6 @@
 #include <gtk/gtk.h>
 #include <bbextensions.h>
 #include "bbzoomextentsaction.h"
-#include "bbschematicwindow.h"
 #include "bbzoomsubject.h"
 
 enum
@@ -83,6 +82,9 @@ BbDocumentWindow*
 bb_zoom_extents_action_get_subject(BbZoomExtentsAction *action);
 
 static void
+bb_zoom_extents_action_notify(gpointer unused, GParamSpec *pspec, BbZoomExtentsAction *action);
+
+static void
 bb_zoom_extents_action_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
 
 void
@@ -144,31 +146,31 @@ bb_zoom_extents_action_class_init(BbZoomExtentsActionClass *klasse)
     object_class->get_property = bb_zoom_extents_action_get_property;
     object_class->set_property = bb_zoom_extents_action_set_property;
 
-    g_object_class_override_property(
+    properties[PROP_ENABLED] = bb_object_class_override_property(
         object_class,
         PROP_ENABLED,
         "enabled"
         );
 
-    g_object_class_override_property(
+    properties[PROP_NAME] = bb_object_class_override_property(
         object_class,
         PROP_NAME,
         "name"
         );
 
-    g_object_class_override_property(
+    properties[PROP_PARAMETER_TYPE] = bb_object_class_override_property(
         object_class,
         PROP_PARAMETER_TYPE,
         "parameter-type"
         );
 
-    g_object_class_override_property(
+    properties[PROP_STATE] = bb_object_class_override_property(
         object_class,
         PROP_STATE,
         "state"
         );
 
-    g_object_class_override_property(
+    properties[PROP_STATE_TYPE] = bb_object_class_override_property(
         object_class,
         PROP_STATE_TYPE,
         "state-type"
@@ -315,8 +317,14 @@ bb_zoom_extents_action_get_subject(BbZoomExtentsAction *action)
 
 
 static void
-bb_zoom_extents_action_init(BbZoomExtentsAction *window)
+bb_zoom_extents_action_init(BbZoomExtentsAction *action)
 {
+    g_signal_connect(
+        action,
+        "notify::subject",
+        G_CALLBACK(bb_zoom_extents_action_notify),
+        action
+        );
 }
 
 
@@ -367,7 +375,7 @@ bb_zoom_extents_action_set_property(GObject *object, guint property_id, const GV
 void
 bb_zoom_extents_action_set_subject(BbZoomExtentsAction *action, BbDocumentWindow* subject)
 {
-    g_return_if_fail(action != NULL);
+    g_return_if_fail(BB_IS_ZOOM_EXTENTS_ACTION(action));
 
     if (action->subject != subject)
     {
