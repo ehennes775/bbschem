@@ -98,6 +98,40 @@ bb_zoom_subject_get_can_zoom_extents(BbZoomSubject *zoom_subject)
 }
 
 
+gboolean
+bb_zoom_subject_get_can_zoom_in(BbZoomSubject *zoom_subject)
+{
+    g_return_val_if_fail(BB_IS_ZOOM_SUBJECT(zoom_subject), FALSE);
+
+    gboolean can_zoom_in;
+
+    g_object_get(
+        zoom_subject,
+        "can-zoom-in", &can_zoom_in,
+        NULL
+    );
+
+    return can_zoom_in;
+}
+
+
+gboolean
+bb_zoom_subject_get_can_zoom_out(BbZoomSubject *zoom_subject)
+{
+    g_return_val_if_fail(BB_IS_ZOOM_SUBJECT(zoom_subject), FALSE);
+
+    gboolean can_zoom_out;
+
+    g_object_get(
+        zoom_subject,
+        "can-zoom-out", &can_zoom_out,
+        NULL
+    );
+
+    return can_zoom_out;
+}
+
+
 void
 bb_zoom_subject_zoom_extents(BbZoomSubject *zoom_subject)
 {

@@ -35,6 +35,12 @@ struct _BbZoomSubjectInterface
 gboolean
 bb_zoom_subject_get_can_zoom_extents(BbZoomSubject *zoom_subject);
 
+gboolean
+bb_zoom_subject_get_can_zoom_in(BbZoomSubject *zoom_subject);
+
+gboolean
+bb_zoom_subject_get_can_zoom_out(BbZoomSubject *zoom_subject);
+
 void
 bb_zoom_subject_zoom_extents(BbZoomSubject *zoom_subject);
 

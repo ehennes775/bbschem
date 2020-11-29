@@ -112,6 +112,10 @@ add_library(bbgui
         bbtexttoolpanel.h
         bbzoomextentsaction.c
         bbzoomextentsaction.h
+        bbzoominaction.c
+        bbzoominaction.h
+        bbzoomoutaction.c
+        bbzoomoutaction.h
         bbzoomsubject.c
         bbzoomsubject.h
         bbzoomtool.c
