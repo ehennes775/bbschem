@@ -1,5 +1,5 @@
-#ifndef __BBZOOMSUBJECT__
-#define __BBZOOMSUBJECT__
+#ifndef __BBZOOMEXTENTSACTION__
+#define __BBZOOMEXTENTSACTION__
 /*
  * bbschem
  * Copyright (C) 2020 Edward C. Hennessy
@@ -19,29 +19,18 @@
  */
 
 #include <gtk/gtk.h>
+#include "bbmainwindow.h"
 
-#define BB_TYPE_ZOOM_SUBJECT bb_zoom_subject_get_type()
-G_DECLARE_INTERFACE(BbZoomSubject, bb_zoom_subject, BB, ZOOM_SUBJECT, GObject)
+#define BB_TYPE_ZOOM_EXTENTS_ACTION bb_zoom_extents_action_get_type()
+G_DECLARE_FINAL_TYPE(BbZoomExtentsAction, bb_zoom_extents_action, BB, ZOOM_EXTENTS_ACTION, GObject)
 
-struct _BbZoomSubjectInterface
-{
-    GTypeInterface g_iface;
+BbMainWindow*
+bb_zoom_extents_action_get_window(BbZoomExtentsAction *action);
 
-    void (*zoom_extents)(BbZoomSubject *zoom_subject);
-    void (*zoom_in)(BbZoomSubject *zoom_subject);
-    void (*zoom_out)(BbZoomSubject *zoom_subject);
-};
-
-gboolean
-bb_zoom_subject_get_can_zoom_extents(BbZoomSubject *zoom_subject);
+BbZoomExtentsAction*
+bb_zoom_extents_action_new(BbMainWindow *window);
 
 void
-bb_zoom_subject_zoom_extents(BbZoomSubject *zoom_subject);
-
-void
-bb_zoom_subject_zoom_in(BbZoomSubject *zoom_subject);
-
-void
-bb_zoom_subject_zoom_out(BbZoomSubject *zoom_subject);
+bb_zoom_extents_action_set_window(BbZoomExtentsAction *action, BbMainWindow* window);
 
 #endif

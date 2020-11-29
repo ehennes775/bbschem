@@ -55,6 +55,7 @@
 #include "bbattributetoolpanel.h"
 #include "bbzoomtoolpanel.h"
 #include "bbselecttoolpanel.h"
+#include "bbzoomextentsaction.h"
 
 
 enum
@@ -324,6 +325,11 @@ bb_main_window_init(BbMainWindow *window)
         G_ACTION_MAP(window),
         G_ACTION(bb_choose_tool_action_new(window, GTK_STACK(window->tool_stack)))
         );
+
+    g_action_map_add_action(
+        G_ACTION_MAP(window),
+        G_ACTION(bb_zoom_extents_action_new(window))
+        );
 }
 
 
@@ -351,6 +357,7 @@ bb_main_window_notify_page_num(BbMainWindow *window, GParamSpec *pspec, GtkNoteb
         g_set_object(&window->current_page, next_page);
 
         g_signal_emit_by_name(window, "update");
+        g_object_notify(window, "current-document-window");
     }
 }
 

@@ -81,6 +81,23 @@ bb_zoom_subject_default_init(BbZoomSubjectInterface *iface)
 }
 
 
+gboolean
+bb_zoom_subject_get_can_zoom_extents(BbZoomSubject *zoom_subject)
+{
+    g_return_val_if_fail(BB_IS_ZOOM_SUBJECT(zoom_subject), FALSE);
+
+    gboolean can_zoom_extents;
+
+    g_object_get(
+        zoom_subject,
+        "can-zoom-extents", &can_zoom_extents,
+        NULL
+        );
+
+    return can_zoom_extents;
+}
+
+
 void
 bb_zoom_subject_zoom_extents(BbZoomSubject *zoom_subject)
 {
