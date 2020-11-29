@@ -39,6 +39,9 @@ enum
     PROP_CAN_SELECT_ALL,
     PROP_CAN_SELECT_NONE,
     PROP_CAN_UNDO,
+    PROP_CAN_ZOOM_EXTENTS,
+    PROP_CAN_ZOOM_IN,
+    PROP_CAN_ZOOM_OUT,
     PROP_DRAWING_TOOL,
     PROP_TOOL_CHANGER,
     N_PROPERTIES
@@ -329,6 +332,24 @@ bb_schematic_window_class_init(BbSchematicWindowClass *klasse)
         BbSchematicWindow,
         inner_window
         );
+
+    properties[PROP_CAN_ZOOM_EXTENTS] = bb_object_class_override_property(
+        G_OBJECT_CLASS(klasse),
+        PROP_CAN_ZOOM_EXTENTS,
+        "can-zoom-extents"
+        );
+
+    properties[PROP_CAN_ZOOM_IN] = bb_object_class_override_property(
+        G_OBJECT_CLASS(klasse),
+        PROP_CAN_ZOOM_IN,
+        "can-zoom-in"
+        );
+
+    properties[PROP_CAN_ZOOM_OUT] = bb_object_class_override_property(
+        G_OBJECT_CLASS(klasse),
+        PROP_CAN_ZOOM_OUT,
+        "can-zoom-out"
+        );
 }
 
 
@@ -492,6 +513,33 @@ bb_schematic_window_get_can_undo(BbSchematicWindow *window)
 }
 
 
+static gboolean
+bb_schematic_window_get_can_zoom_extents(BbSchematicWindow *window)
+{
+    g_return_val_if_fail(window != NULL, FALSE);
+
+    return TRUE;
+}
+
+
+static gboolean
+bb_schematic_window_get_can_zoom_in(BbSchematicWindow *window)
+{
+    g_return_val_if_fail(window != NULL, FALSE);
+
+    return TRUE;
+}
+
+
+static gboolean
+bb_schematic_window_get_can_zoom_out(BbSchematicWindow *window)
+{
+    g_return_val_if_fail(window != NULL, FALSE);
+
+    return TRUE;
+}
+
+
 BbDrawingTool*
 bb_schematic_window_get_drawing_tool(BbSchematicWindow *window)
 {
@@ -539,6 +587,18 @@ bb_schematic_window_get_property(GObject *object, guint property_id, GValue *val
 
         case PROP_CAN_UNDO:
             g_value_set_boolean(value, bb_schematic_window_get_can_undo(window));
+            break;
+
+        case PROP_CAN_ZOOM_EXTENTS:
+            g_value_set_boolean(value, bb_schematic_window_get_can_zoom_extents(window));
+            break;
+
+        case PROP_CAN_ZOOM_IN:
+            g_value_set_boolean(value, bb_schematic_window_get_can_zoom_in(window));
+            break;
+
+        case PROP_CAN_ZOOM_OUT:
+            g_value_set_boolean(value, bb_schematic_window_get_can_zoom_out(window));
             break;
 
         case PROP_DRAWING_TOOL:
