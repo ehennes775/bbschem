@@ -25,6 +25,7 @@
 #include "bbarctool.h"
 #include "bbtoolchanger.h"
 #include "bbgraphics.h"
+#include "bbzoomsubject.h"
 
 
 enum
@@ -111,6 +112,18 @@ bb_schematic_window_tool_changed_cb(BbToolChanger *changer, BbSchematicWindow *w
 static void
 bb_schematic_window_tool_subject_init(BbToolSubjectInterface *iface);
 
+static void
+bb_schematic_window_zoom_extents(BbZoomSubject *zoom_subject);
+
+static void
+bb_schematic_window_zoom_in(BbZoomSubject *zoom_subject);
+
+static void
+bb_schematic_window_zoom_out(BbZoomSubject *zoom_subject);
+
+static void
+bb_schematic_window_zoom_subject_init(BbZoomSubjectInterface *iface);
+
 
 static GParamSpec *properties[N_PROPERTIES];
 
@@ -120,6 +133,7 @@ G_DEFINE_TYPE_WITH_CODE(
     bb_schematic_window,
     BB_TYPE_DOCUMENT_WINDOW,
     G_IMPLEMENT_INTERFACE(BB_TYPE_TOOL_SUBJECT, bb_schematic_window_tool_subject_init)
+    G_IMPLEMENT_INTERFACE(BB_TYPE_ZOOM_SUBJECT, bb_schematic_window_zoom_subject_init)
     )
 
 
@@ -912,4 +926,36 @@ bb_schematic_window_undo(BbSchematicWindow *window)
     g_return_if_fail(window != NULL);
 
     g_message("bb_schematic_window_undo");
+}
+
+
+static void
+bb_schematic_window_zoom_extents(BbZoomSubject *zoom_subject)
+{
+    g_message("bb_schematic_window_zoom_extents");
+}
+
+
+static void
+bb_schematic_window_zoom_in(BbZoomSubject *zoom_subject)
+{
+    g_message("bb_schematic_window_zoom_in");
+}
+
+
+static void
+bb_schematic_window_zoom_out(BbZoomSubject *zoom_subject)
+{
+    g_message("bb_schematic_window_zoom_out");
+}
+
+
+static void
+bb_schematic_window_zoom_subject_init(BbZoomSubjectInterface *iface)
+{
+    g_return_if_fail(iface != NULL);
+
+    iface->zoom_extents = bb_schematic_window_zoom_extents;
+    iface->zoom_in = bb_schematic_window_zoom_in;
+    iface->zoom_out = bb_schematic_window_zoom_out;
 }
