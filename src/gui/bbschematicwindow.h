@@ -42,50 +42,12 @@ bb_schematic_window_apply_selection(BbSchematicWindow *window, BbApplyFunc func,
 
 
 /**
- * Copy the selection to the clipboard
- *
- * @param window This window
- */
-void
-bb_schematic_window_copy(BbSchematicWindow *window);
-
-
-/**
- * Cut the selection and place in the clipboard
- *
- * @param window This window
- */
-void
-bb_schematic_window_cut(BbSchematicWindow *window);
-
-
-/**
  * Delete the selection
  *
  * @param window This window
  */
 void
 bb_schematic_window_delete(BbSchematicWindow *window);
-
-
-/**
- * Indicates a copy operation could be performed
- *
- * @param window This window
- * @return TRUE if the operation can be performed
- */
-gboolean
-bb_schematic_window_get_can_copy(BbSchematicWindow *window);
-
-
-/**
- * Indicates a cut operation could be performed
- *
- * @param window This window
- * @return TRUE if the operation can be performed
- */
-gboolean
-bb_schematic_window_get_can_cut(BbSchematicWindow *window);
 
 
 /**
@@ -96,16 +58,6 @@ bb_schematic_window_get_can_cut(BbSchematicWindow *window);
  */
 gboolean
 bb_schematic_window_get_can_delete(BbSchematicWindow *window);
-
-
-/**
- * Indicates a paste operation could be performed
- *
- * @param window This window
- * @return TRUE if the operation can be performed
- */
-gboolean
-bb_schematic_window_get_can_paste(BbSchematicWindow *window);
 
 
 /**
@@ -185,15 +137,6 @@ bb_schematic_window_get_can_undo(BbSchematicWindow *window);
  */
 BbDrawingTool*
 bb_schematic_window_get_drawing_tool(BbSchematicWindow *window);
-
-
-/**
- * Paste the contents of the clipboard
- *
- * @param window This window
- */
-void
-bb_schematic_window_paste(BbSchematicWindow *window);
 
 
 /**

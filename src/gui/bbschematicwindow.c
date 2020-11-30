@@ -28,6 +28,7 @@
 #include "bbzoomsubject.h"
 #include "bbrevealsubject.h"
 #include "bbgridsubject.h"
+#include "bbclipboardsubject.h"
 
 
 enum
@@ -86,6 +87,24 @@ bb_schematic_window_button_pressed_cb(GtkWidget *widget, GdkEvent *event, gpoint
 static gboolean
 bb_schematic_window_button_released_cb(GtkWidget *widget, GdkEvent *event, gpointer user_data);
 
+static gboolean
+bb_schematic_window_get_can_copy(BbClipboardSubject *clipboard_subject);
+
+static gboolean
+bb_schematic_window_get_can_cut(BbClipboardSubject *clipboard_subject);
+
+static gboolean
+bb_schematic_window_get_can_paste(BbClipboardSubject *clipboard_subject);
+
+static void
+bb_schematic_window_clipboard_subject_init(BbClipboardSubjectInterface *iface);
+
+static void
+bb_schematic_window_copy(BbClipboardSubject *clipboard_subject);
+
+static void
+bb_schematic_window_cut(BbClipboardSubject *clipboard_subject);
+
 static void
 bb_schematic_window_dispose(GObject *object);
 
@@ -124,6 +143,9 @@ bb_schematic_window_key_released_cb(GtkWidget *widget, GdkEvent *event, gpointer
 
 static gboolean
 bb_schematic_window_motion_notify_cb(GtkWidget *widget, GdkEvent  *event, gpointer user_data);
+
+static void
+bb_schematic_window_paste(BbClipboardSubject *clipboard_subject);
 
 static void
 bb_schematic_window_reveal_subject_init(BbRevealSubjectInterface *iface);
@@ -166,6 +188,7 @@ G_DEFINE_TYPE_WITH_CODE(
     BbSchematicWindow,
     bb_schematic_window,
     BB_TYPE_DOCUMENT_WINDOW,
+    G_IMPLEMENT_INTERFACE(BB_TYPE_CLIPBOARD_SUBJECT, bb_schematic_window_clipboard_subject_init)
     G_IMPLEMENT_INTERFACE(BB_TYPE_GRID_SUBJECT, bb_schematic_window_grid_subject_init)
     G_IMPLEMENT_INTERFACE(BB_TYPE_TOOL_SUBJECT, bb_schematic_window_tool_subject_init)
     G_IMPLEMENT_INTERFACE(BB_TYPE_ZOOM_SUBJECT, bb_schematic_window_zoom_subject_init)
@@ -239,45 +262,9 @@ bb_schematic_window_class_init(BbSchematicWindowClass *klasse)
 
     bb_object_class_install_property(
         G_OBJECT_CLASS(klasse),
-        PROP_CAN_COPY,
-        properties[PROP_CAN_COPY] = g_param_spec_boolean(
-            "can-copy",
-            "",
-            "",
-            FALSE,
-            G_PARAM_READABLE | G_PARAM_STATIC_STRINGS
-            )
-        );
-
-    bb_object_class_install_property(
-        G_OBJECT_CLASS(klasse),
-        PROP_CAN_CUT,
-        properties[PROP_CAN_CUT] = g_param_spec_boolean(
-            "can-cut",
-            "",
-            "",
-            FALSE,
-            G_PARAM_READABLE | G_PARAM_STATIC_STRINGS
-            )
-        );
-
-    bb_object_class_install_property(
-        G_OBJECT_CLASS(klasse),
         PROP_CAN_DELETE,
         properties[PROP_CAN_DELETE] = g_param_spec_boolean(
             "can-delete",
-            "",
-            "",
-            FALSE,
-            G_PARAM_READABLE | G_PARAM_STATIC_STRINGS
-            )
-        );
-
-    bb_object_class_install_property(
-        G_OBJECT_CLASS(klasse),
-        PROP_CAN_PASTE,
-        properties[PROP_CAN_PASTE] = g_param_spec_boolean(
-            "can-paste",
             "",
             "",
             FALSE,
@@ -369,6 +356,26 @@ bb_schematic_window_class_init(BbSchematicWindowClass *klasse)
         );
 
 
+    /* From BbClipboardSubject */
+
+    properties[PROP_CAN_COPY] = bb_object_class_override_property(
+        object_class,
+        PROP_CAN_COPY,
+        "can-copy"
+        );
+
+    properties[PROP_CAN_CUT] = bb_object_class_override_property(
+        object_class,
+        PROP_CAN_CUT,
+        "can-cut"
+        );
+
+    properties[PROP_CAN_PASTE] = bb_object_class_override_property(
+        object_class,
+        PROP_CAN_PASTE,
+        "can-paste"
+        );
+
     /* From BbGridSubject */
 
     properties[PROP_CAN_SCALE_DOWN] = bb_object_class_override_property(
@@ -412,20 +419,33 @@ bb_schematic_window_class_init(BbSchematicWindowClass *klasse)
         );
 }
 
-
-void
-bb_schematic_window_copy(BbSchematicWindow *window)
+static void
+bb_schematic_window_clipboard_subject_init(BbClipboardSubjectInterface *iface)
 {
-    g_return_if_fail(window != NULL);
+    g_return_if_fail(iface != NULL);
+
+    iface->get_can_copy = bb_schematic_window_get_can_copy;
+    iface->get_can_cut = bb_schematic_window_get_can_cut;
+    iface->get_can_paste = bb_schematic_window_get_can_paste;
+    iface->copy = bb_schematic_window_copy;
+    iface->cut = bb_schematic_window_cut;
+    iface->paste = bb_schematic_window_paste;
+}
+
+
+static void
+bb_schematic_window_copy(BbClipboardSubject *clipboard_subject)
+{
+    g_return_if_fail(clipboard_subject != NULL);
 
     g_message("bb_schematic_window_copy");
 }
 
 
-void
-bb_schematic_window_cut(BbSchematicWindow *window)
+static void
+bb_schematic_window_cut(BbClipboardSubject *clipboard_subject)
 {
-    g_return_if_fail(window != NULL);
+    g_return_if_fail(clipboard_subject != NULL);
 
     g_message("bb_schematic_window_cut");
 }
@@ -473,18 +493,18 @@ bb_schematic_window_finalize(GObject *object)
 
 
 gboolean
-bb_schematic_window_get_can_copy(BbSchematicWindow *window)
+bb_schematic_window_get_can_copy(BbClipboardSubject *clipboard_subject)
 {
-    g_return_val_if_fail(window != NULL, FALSE);
+    g_return_val_if_fail(clipboard_subject != NULL, FALSE);
 
     return TRUE; // (g_hash_table_size(window->selection) > 0);
 }
 
 
 gboolean
-bb_schematic_window_get_can_cut(BbSchematicWindow *window)
+bb_schematic_window_get_can_cut(BbClipboardSubject *clipboard_subject)
 {
-    g_return_val_if_fail(window != NULL, FALSE);
+    g_return_val_if_fail(clipboard_subject != NULL, FALSE);
 
     return TRUE; // (g_hash_table_size(window->selection) > 0);
 }
@@ -500,9 +520,9 @@ bb_schematic_window_get_can_delete(BbSchematicWindow *window)
 
 
 gboolean
-bb_schematic_window_get_can_paste(BbSchematicWindow *window)
+bb_schematic_window_get_can_paste(BbClipboardSubject *clipboard_subject)
 {
-    g_return_val_if_fail(window != NULL, FALSE);
+    g_return_val_if_fail(clipboard_subject != NULL, FALSE);
 
     return TRUE;
 }
@@ -638,11 +658,11 @@ bb_schematic_window_get_property(GObject *object, guint property_id, GValue *val
     switch (property_id)
     {
         case PROP_CAN_COPY:
-            g_value_set_boolean(value, bb_schematic_window_get_can_copy(window));
+            g_value_set_boolean(value, bb_schematic_window_get_can_copy(BB_CLIPBOARD_SUBJECT(object)));
             break;
 
         case PROP_CAN_CUT:
-            g_value_set_boolean(value, bb_schematic_window_get_can_cut(window));
+            g_value_set_boolean(value, bb_schematic_window_get_can_cut(BB_CLIPBOARD_SUBJECT(object)));
             break;
 
         case PROP_CAN_DELETE:
@@ -650,7 +670,7 @@ bb_schematic_window_get_property(GObject *object, guint property_id, GValue *val
             break;
 
         case PROP_CAN_PASTE:
-            g_value_set_boolean(value, bb_schematic_window_get_can_paste(window));
+            g_value_set_boolean(value, bb_schematic_window_get_can_paste(BB_CLIPBOARD_SUBJECT(object)));
             break;
 
         case PROP_CAN_REDO:
@@ -864,9 +884,9 @@ bb_schematic_window_motion_notify_cb(GtkWidget *widget, GdkEvent *event, gpointe
 
 
 void
-bb_schematic_window_paste(BbSchematicWindow *window)
+bb_schematic_window_paste(BbClipboardSubject *clipboard_subject)
 {
-    g_return_if_fail(window != NULL);
+    g_return_if_fail(clipboard_subject != NULL);
 
     g_message("bb_schematic_window_paste");
 }

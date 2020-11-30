@@ -20,6 +20,7 @@
 #include <bbextensions.h>
 #include "bbcopyaction.h"
 #include "bbschematicwindow.h"
+#include "bbclipboardsubject.h"
 
 
 enum
@@ -116,9 +117,9 @@ bb_copy_action_activate(GAction *action, GVariant *parameter)
         bb_copy_action_get_window(BB_COPY_ACTION(action))
         );
 
-    if (BB_IS_SCHEMATIC_WINDOW(window))
+    if (BB_IS_CLIPBOARD_SUBJECT(window))
     {
-        bb_schematic_window_copy(BB_SCHEMATIC_WINDOW(window));
+        bb_clipboard_subject_copy(BB_CLIPBOARD_SUBJECT(window));
     }
 }
 
@@ -206,8 +207,8 @@ bb_copy_action_get_enabled(GAction *action)
         );
 
     return
-        BB_IS_SCHEMATIC_WINDOW(window) &&
-        bb_schematic_window_get_can_copy(BB_SCHEMATIC_WINDOW(window));
+        BB_IS_CLIPBOARD_SUBJECT(window) &&
+        bb_clipboard_subject_get_can_copy(BB_CLIPBOARD_SUBJECT(window));
 }
 
 

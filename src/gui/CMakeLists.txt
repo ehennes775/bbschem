@@ -28,6 +28,8 @@ add_library(bbgui
         bbcircletool.h
         bbcircletoolpanel.c
         bbcircletoolpanel.h
+        bbclipboardsubject.c
+        bbclipboardsubject.h
         bbcolorcombobox.c
         bbcolorcombobox.h
         bbcoloreditor.c
