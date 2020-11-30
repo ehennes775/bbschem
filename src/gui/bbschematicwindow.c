@@ -27,6 +27,7 @@
 #include "bbgraphics.h"
 #include "bbzoomsubject.h"
 #include "bbrevealsubject.h"
+#include "bbgridsubject.h"
 
 
 enum
@@ -37,6 +38,8 @@ enum
     PROP_CAN_DELETE,
     PROP_CAN_PASTE,
     PROP_CAN_REDO,
+    PROP_CAN_SCALE_DOWN,
+    PROP_CAN_SCALE_UP,
     PROP_CAN_SELECT_ALL,
     PROP_CAN_SELECT_NONE,
     PROP_CAN_UNDO,
@@ -92,6 +95,12 @@ bb_schematic_window_draw_cb(BbSchematicWindowInner *inner, cairo_t *cairo, BbSch
 static void
 bb_schematic_window_finalize(GObject *object);
 
+static gboolean
+bb_schematic_window_get_can_scale_down(BbGridSubject *grid_subject);
+
+static gboolean
+bb_schematic_window_get_can_scale_up(BbGridSubject *grid_subject);
+
 static void
 bb_schematic_window_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
 
@@ -99,10 +108,13 @@ static gboolean
 bb_schematic_window_get_reveal(BbRevealSubject *reveal_subject);
 
 static void
+bb_schematic_window_grid_subject_init(BbGridSubjectInterface *iface);
+
+static void
 bb_schematic_window_invalidate_item_cb(BbDrawingTool *tool, BbSchematicItem *item, BbSchematicWindow *window);
 
 static void
-bb_schematic_window_invalidate_rect_dev(BbSchematicWindow *window, double x0, double y0, double x1, double y1);
+bb_schematic_window_invalidate_rect_dev(BbToolSubject *tool_subject, double x0, double y0, double x1, double y1);
 
 static gboolean
 bb_schematic_window_key_pressed_cb(GtkWidget *widget, GdkEvent *event, gpointer user_data);
@@ -115,6 +127,12 @@ bb_schematic_window_motion_notify_cb(GtkWidget *widget, GdkEvent  *event, gpoint
 
 static void
 bb_schematic_window_reveal_subject_init(BbRevealSubjectInterface *iface);
+
+static void
+bb_schematic_window_scale_down(BbGridSubject *grid_subject);
+
+static void
+bb_schematic_window_scale_up(BbGridSubject *grid_subject);
 
 static void
 bb_schematic_window_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
@@ -148,6 +166,7 @@ G_DEFINE_TYPE_WITH_CODE(
     BbSchematicWindow,
     bb_schematic_window,
     BB_TYPE_DOCUMENT_WINDOW,
+    G_IMPLEMENT_INTERFACE(BB_TYPE_GRID_SUBJECT, bb_schematic_window_grid_subject_init)
     G_IMPLEMENT_INTERFACE(BB_TYPE_TOOL_SUBJECT, bb_schematic_window_tool_subject_init)
     G_IMPLEMENT_INTERFACE(BB_TYPE_ZOOM_SUBJECT, bb_schematic_window_zoom_subject_init)
     G_IMPLEMENT_INTERFACE(BB_TYPE_REVEAL_SUBJECT, bb_schematic_window_reveal_subject_init)
@@ -210,6 +229,8 @@ static void
 bb_schematic_window_class_init(BbSchematicWindowClass *klasse)
 {
     BB_TYPE_SCHEMATIC_WINDOW_INNER;
+
+    GObjectClass *object_class = G_OBJECT_CLASS(klasse);
 
     G_OBJECT_CLASS(klasse)->dispose = bb_schematic_window_dispose;
     G_OBJECT_CLASS(klasse)->finalize = bb_schematic_window_finalize;
@@ -347,28 +368,47 @@ bb_schematic_window_class_init(BbSchematicWindowClass *klasse)
         inner_window
         );
 
+
+    /* From BbGridSubject */
+
+    properties[PROP_CAN_SCALE_DOWN] = bb_object_class_override_property(
+        object_class,
+        PROP_CAN_SCALE_DOWN,
+        "scale-down"
+        );
+
+    properties[PROP_CAN_SCALE_UP] = bb_object_class_override_property(
+        object_class,
+        PROP_CAN_SCALE_UP,
+        "scale-up"
+        );
+
+    /* From BbRevealSubject */
+
+    properties[PROP_REVEAL] = bb_object_class_override_property(
+        object_class,
+        PROP_REVEAL,
+        "reveal"
+        );
+
+    /* From BbZoomSubject */
+
     properties[PROP_CAN_ZOOM_EXTENTS] = bb_object_class_override_property(
-        G_OBJECT_CLASS(klasse),
+        object_class,
         PROP_CAN_ZOOM_EXTENTS,
         "can-zoom-extents"
         );
 
     properties[PROP_CAN_ZOOM_IN] = bb_object_class_override_property(
-        G_OBJECT_CLASS(klasse),
+        object_class,
         PROP_CAN_ZOOM_IN,
         "can-zoom-in"
         );
 
     properties[PROP_CAN_ZOOM_OUT] = bb_object_class_override_property(
-        G_OBJECT_CLASS(klasse),
+        object_class,
         PROP_CAN_ZOOM_OUT,
         "can-zoom-out"
-        );
-
-    properties[PROP_REVEAL] = bb_object_class_override_property(
-        G_OBJECT_CLASS(klasse),
-        PROP_REVEAL,
-        "reveal"
         );
 }
 
@@ -413,7 +453,7 @@ bb_schematic_window_draw_cb(BbSchematicWindowInner *inner, cairo_t *cairo, BbSch
     g_return_if_fail(cairo != NULL);
     g_return_if_fail(BB_IS_SCHEMATIC_WINDOW(outer));
 
-    GtkStyleContext *style = gtk_widget_get_style_context(outer);
+    GtkStyleContext *style = gtk_widget_get_style_context(GTK_WIDGET(outer));
     BbGraphics *graphics = bb_graphics_new(cairo, style);
 
     if (outer->drawing_tool != NULL)
@@ -499,6 +539,26 @@ gboolean
 bb_schematic_window_get_can_save_as(BbSchematicWindow *window)
 {
     g_warn_if_fail(window != NULL);
+
+    return TRUE;
+}
+
+
+static gboolean
+bb_schematic_window_get_can_scale_down(BbGridSubject *grid_subject)
+{
+    BbSchematicWindow *window = BB_SCHEMATIC_WINDOW(grid_subject);
+    g_return_val_if_fail(window != NULL, FALSE);
+
+    return TRUE;
+}
+
+
+static gboolean
+bb_schematic_window_get_can_scale_up(BbGridSubject *grid_subject)
+{
+    BbSchematicWindow *window = BB_SCHEMATIC_WINDOW(grid_subject);
+    g_return_val_if_fail(window != NULL, FALSE);
 
     return TRUE;
 }
@@ -597,6 +657,14 @@ bb_schematic_window_get_property(GObject *object, guint property_id, GValue *val
             g_value_set_boolean(value, bb_schematic_window_get_can_redo(window));
             break;
 
+        case PROP_CAN_SCALE_DOWN:
+            g_value_set_boolean(value, bb_schematic_window_get_can_scale_down(BB_GRID_SUBJECT(object)));
+            break;
+
+        case PROP_CAN_SCALE_UP:
+            g_value_set_boolean(value, bb_schematic_window_get_can_scale_up(BB_GRID_SUBJECT(object)));
+            break;
+
         case PROP_CAN_SELECT_ALL:
             g_value_set_boolean(value, bb_schematic_window_get_can_select_all(window));
             break;
@@ -642,6 +710,18 @@ bb_schematic_window_get_reveal(BbRevealSubject *reveal_subject)
     g_return_val_if_fail(window != NULL, FALSE);
 
     return window->reveal;
+}
+
+
+static void
+bb_schematic_window_grid_subject_init(BbGridSubjectInterface *iface)
+{
+    g_return_if_fail(iface != NULL);
+
+    iface->can_scale_down = bb_schematic_window_get_can_scale_down;
+    iface->can_scale_up = bb_schematic_window_get_can_scale_up;
+    iface->scale_down = bb_schematic_window_scale_down;
+    iface->scale_up = bb_schematic_window_scale_up;
 }
 
 
@@ -721,8 +801,9 @@ bb_schematic_window_invalidate_item_cb(BbDrawingTool *tool, BbSchematicItem *ite
 
 
 static void
-bb_schematic_window_invalidate_rect_dev(BbSchematicWindow *window, double x0, double y0, double x1, double y1)
+bb_schematic_window_invalidate_rect_dev(BbToolSubject *tool_subject, double x0, double y0, double x1, double y1)
 {
+    BbSchematicWindow *window = BB_SCHEMATIC_WINDOW(tool_subject);
     g_return_if_fail(window != NULL);
     g_return_if_fail(window->inner_window != NULL);
 
@@ -873,6 +954,20 @@ bb_schematic_window_save_as(BbSchematicWindow *window, GError **error)
     g_return_if_fail(window != NULL);
 
     g_message("bb_schematic_window_save_as");
+}
+
+
+static void
+bb_schematic_window_scale_down(BbGridSubject *grid_subject)
+{
+    g_message("bb_schematic_window_scale_down");
+}
+
+
+static void
+bb_schematic_window_scale_up(BbGridSubject *grid_subject)
+{
+    g_message("bb_schematic_window_scale_up");
 }
 
 
