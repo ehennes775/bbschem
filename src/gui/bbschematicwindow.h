@@ -42,35 +42,6 @@ bb_schematic_window_apply_selection(BbSchematicWindow *window, BbApplyFunc func,
 
 
 /**
- * Delete the selection
- *
- * @param window This window
- */
-void
-bb_schematic_window_delete(BbSchematicWindow *window);
-
-
-/**
- * Indicates a delete operation could be performed
- *
- * @param window This window
- * @return TRUE if the operation can be performed
- */
-gboolean
-bb_schematic_window_get_can_delete(BbSchematicWindow *window);
-
-
-/**
- * Indicates a redo operation could be performed
- *
- * @param window This window
- * @return TRUE if the operation can be performed
- */
-gboolean
-bb_schematic_window_get_can_redo(BbSchematicWindow *window);
-
-
-/**
  * Indicates a the document can be reloaded
  *
  * @param window This window
@@ -101,36 +72,6 @@ bb_schematic_window_get_can_save_as(BbSchematicWindow *window);
 
 
 /**
- * Indicates a select all operation could be performed
- *
- * @param window This window
- * @return TRUE if the operation can be performed
- */
-gboolean
-bb_schematic_window_get_can_select_all(BbSchematicWindow *window);
-
-
-/**
- * Indicates clearing the selection operation could be performed
- *
- * @param window This window
- * @return TRUE if the operation can be performed
- */
-gboolean
-bb_schematic_window_get_can_select_none(BbSchematicWindow *window);
-
-
-/**
- * Indicates an undo operation could be performed
- *
- * @param window This window
- * @return TRUE if the operation can be performed
- */
-gboolean
-bb_schematic_window_get_can_undo(BbSchematicWindow *window);
-
-
-/**
  * Get the drawing tool for this window
  *
  * @param window This window
@@ -148,15 +89,6 @@ bb_schematic_window_get_drawing_tool(BbSchematicWindow *window);
  */
 void
 bb_schematic_window_query_selection(BbSchematicWindow *window, BbQueryFunc func, gpointer user_data);
-
-
-/**
- * Redo the last undo operation
- *
- * @param window This window
- */
-void
-bb_schematic_window_redo(BbSchematicWindow *window);
 
 
 /**
@@ -187,24 +119,6 @@ bb_schematic_window_save_as(BbSchematicWindow *window, GError **error);
 
 
 /**
- * Select the entire document
- *
- * @param window This window
- */
-void
-bb_schematic_window_select_all(BbSchematicWindow *window);
-
-
-/**
- * Clear the selection
- *
- * @param window This window
- */
-void
-bb_schematic_window_select_none(BbSchematicWindow *window);
-
-
-/**
  * Set the drawing tool for this window
  *
  * @param window This window
@@ -214,15 +128,6 @@ bb_schematic_window_set_drawing_tool(BbSchematicWindow *window, BbDrawingTool *t
 
 void
 bb_schematic_window_set_tool_changer(BbSchematicWindow *window, BbToolChanger *tool_changer);
-
-
-/**
- * Undo the last operation
- *
- * @param window This window
- */
-void
-bb_schematic_window_undo(BbSchematicWindow *window);
 
 
 #endif

@@ -29,10 +29,20 @@ struct _BbClipboardSubjectInterface
 
     gboolean (*get_can_copy)(BbClipboardSubject *clipboard_subject);
     gboolean (*get_can_cut)(BbClipboardSubject *clipboard_subject);
+    gboolean (*get_can_delete)(BbClipboardSubject *clipboard_subject);
     gboolean (*get_can_paste)(BbClipboardSubject *clipboard_subject);
+    gboolean (*get_can_redo)(BbClipboardSubject *clipboard_subject);
+    gboolean (*get_can_select_all)(BbClipboardSubject *clipboard_subject);
+    gboolean (*get_can_select_none)(BbClipboardSubject *clipboard_subject);
+    gboolean (*get_can_undo)(BbClipboardSubject *clipboard_subject);
     void (*copy)(BbClipboardSubject *clipboard_subject);
     void (*cut)(BbClipboardSubject *clipboard_subject);
+    void (*delete)(BbClipboardSubject *clipboard_subject);
     void (*paste)(BbClipboardSubject *clipboard_subject);
+    void (*redo)(BbClipboardSubject *clipboard_subject);
+    void (*select_all)(BbClipboardSubject *clipboard_subject);
+    void (*select_none)(BbClipboardSubject *clipboard_subject);
+    void (*undo)(BbClipboardSubject *clipboard_subject);
 };
 
 
@@ -42,8 +52,60 @@ bb_clipboard_subject_get_can_copy(BbClipboardSubject *clipboard_subject);
 gboolean
 bb_clipboard_subject_get_can_cut(BbClipboardSubject *clipboard_subject);
 
+
+/**
+ * Indicates a delete operation could be performed
+ *
+ * @param clipboard_subject This subject of this action
+ * @return TRUE if the operation can be performed
+ */
+gboolean
+bb_clipboard_subject_get_can_delete(BbClipboardSubject *clipboard_subject);
+
+
 gboolean
 bb_clipboard_subject_get_can_paste(BbClipboardSubject *clipboard_subject);
+
+
+/**
+ * Indicates a redo operation could be performed
+ *
+ * @param clipboard_subject This subject of this action
+ * @return TRUE if the operation can be performed
+ */
+gboolean
+bb_clipboard_subject_get_can_redo(BbClipboardSubject *clipboard_subject);
+
+
+/**
+ * Indicates a select all operation could be performed
+ *
+ * @param clipboard_subject This subject of this action
+ * @return TRUE if the operation can be performed
+ */
+gboolean
+bb_clipboard_subject_get_can_select_all(BbClipboardSubject *clipboard_subject);
+
+
+/**
+ * Indicates clearing the selection operation could be performed
+ *
+ * @param clipboard_subject This subject of this action
+ * @return TRUE if the operation can be performed
+ */
+gboolean
+bb_clipboard_subject_get_can_select_none(BbClipboardSubject *clipboard_subject);
+
+
+/**
+ * Indicates an undo operation could be performed
+ *
+ * @param clipboard_subject This subject of this action
+ * @return TRUE if the operation can be performed
+ */
+gboolean
+bb_clipboard_subject_get_can_undo(BbClipboardSubject *clipboard_subject);
+
 
 void
 bb_clipboard_subject_copy(BbClipboardSubject *clipboard_subject);
@@ -51,7 +113,54 @@ bb_clipboard_subject_copy(BbClipboardSubject *clipboard_subject);
 void
 bb_clipboard_subject_cut(BbClipboardSubject *clipboard_subject);
 
+
+/**
+ * Delete the selection
+ *
+ * @param clipboard_subject This subject of this action
+ */
+void
+bb_clipboard_subject_delete(BbClipboardSubject *clipboard_subject);
+
+
 void
 bb_clipboard_subject_paste(BbClipboardSubject *clipboard_subject);
+
+
+/**
+ * Redo the last undo operation
+ *
+ * @param clipboard_subject This subject of this action
+ */
+void
+bb_clipboard_subject_redo(BbClipboardSubject *clipboard_subject);
+
+
+/**
+ * Select the entire document
+ *
+ * @param clipboard_subject This subject of this action
+ */
+void
+bb_clipboard_subject_select_all(BbClipboardSubject *clipboard_subject);
+
+
+/**
+ * Clear the selection
+ *
+ * @param clipboard_subject This subject of this action
+ */
+void
+bb_clipboard_subject_select_none(BbClipboardSubject *clipboard_subject);
+
+
+/**
+ * Undo the last operation
+ *
+ * @param clipboard_subject This subject of this action
+ */
+void
+bb_clipboard_subject_undo(BbClipboardSubject *clipboard_subject);
+
 
 #endif

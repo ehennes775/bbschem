@@ -87,6 +87,9 @@ bb_schematic_window_button_pressed_cb(GtkWidget *widget, GdkEvent *event, gpoint
 static gboolean
 bb_schematic_window_button_released_cb(GtkWidget *widget, GdkEvent *event, gpointer user_data);
 
+static void
+bb_schematic_window_clipboard_subject_init(BbClipboardSubjectInterface *iface);
+
 static gboolean
 bb_schematic_window_get_can_copy(BbClipboardSubject *clipboard_subject);
 
@@ -94,16 +97,31 @@ static gboolean
 bb_schematic_window_get_can_cut(BbClipboardSubject *clipboard_subject);
 
 static gboolean
+bb_schematic_window_get_can_delete(BbClipboardSubject *clipboard_subject);
+
+static gboolean
 bb_schematic_window_get_can_paste(BbClipboardSubject *clipboard_subject);
 
-static void
-bb_schematic_window_clipboard_subject_init(BbClipboardSubjectInterface *iface);
+static gboolean
+bb_schematic_window_get_can_redo(BbClipboardSubject *clipboard_subject);;
+
+static gboolean
+bb_schematic_window_get_can_select_all(BbClipboardSubject *clipboard_subject);;
+
+static gboolean
+bb_schematic_window_get_can_select_none(BbClipboardSubject *clipboard_subject);;
+
+static gboolean
+bb_schematic_window_get_can_undo(BbClipboardSubject *clipboard_subject);;
 
 static void
 bb_schematic_window_copy(BbClipboardSubject *clipboard_subject);
 
 static void
 bb_schematic_window_cut(BbClipboardSubject *clipboard_subject);
+
+static void
+bb_schematic_window_delete(BbClipboardSubject *clipboard_subject);
 
 static void
 bb_schematic_window_dispose(GObject *object);
@@ -148,6 +166,9 @@ static void
 bb_schematic_window_paste(BbClipboardSubject *clipboard_subject);
 
 static void
+bb_schematic_window_redo(BbClipboardSubject *clipboard_subject);
+
+static void
 bb_schematic_window_reveal_subject_init(BbRevealSubjectInterface *iface);
 
 static void
@@ -155,6 +176,12 @@ bb_schematic_window_scale_down(BbGridSubject *grid_subject);
 
 static void
 bb_schematic_window_scale_up(BbGridSubject *grid_subject);
+
+static void
+bb_schematic_window_select_all(BbClipboardSubject *clipboard_subject);
+
+static void
+bb_schematic_window_select_none(BbClipboardSubject *clipboard_subject);
 
 static void
 bb_schematic_window_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
@@ -167,6 +194,9 @@ bb_schematic_window_tool_changed_cb(BbToolChanger *changer, BbSchematicWindow *w
 
 static void
 bb_schematic_window_tool_subject_init(BbToolSubjectInterface *iface);
+
+static void
+bb_schematic_window_undo(BbClipboardSubject *clipboard_subject);
 
 static void
 bb_schematic_window_zoom_extents(BbZoomSubject *zoom_subject);
@@ -262,66 +292,6 @@ bb_schematic_window_class_init(BbSchematicWindowClass *klasse)
 
     bb_object_class_install_property(
         G_OBJECT_CLASS(klasse),
-        PROP_CAN_DELETE,
-        properties[PROP_CAN_DELETE] = g_param_spec_boolean(
-            "can-delete",
-            "",
-            "",
-            FALSE,
-            G_PARAM_READABLE | G_PARAM_STATIC_STRINGS
-            )
-        );
-
-    bb_object_class_install_property(
-        G_OBJECT_CLASS(klasse),
-        PROP_CAN_REDO,
-        properties[PROP_CAN_REDO] = g_param_spec_boolean(
-            "can-redo",
-            "",
-            "",
-            FALSE,
-            G_PARAM_READABLE | G_PARAM_STATIC_STRINGS
-            )
-        );
-
-    bb_object_class_install_property(
-        G_OBJECT_CLASS(klasse),
-        PROP_CAN_SELECT_ALL,
-        properties[PROP_CAN_SELECT_ALL] = g_param_spec_boolean(
-            "can-select-all",
-            "",
-            "",
-            FALSE,
-            G_PARAM_READABLE | G_PARAM_STATIC_STRINGS
-            )
-        );
-
-    bb_object_class_install_property(
-        G_OBJECT_CLASS(klasse),
-        PROP_CAN_SELECT_NONE,
-        properties[PROP_CAN_SELECT_NONE] = g_param_spec_boolean(
-            "can-select-none",
-            "",
-            "",
-            FALSE,
-            G_PARAM_READABLE | G_PARAM_STATIC_STRINGS
-            )
-        );
-
-    bb_object_class_install_property(
-        G_OBJECT_CLASS(klasse),
-        PROP_CAN_UNDO,
-        properties[PROP_CAN_UNDO] = g_param_spec_boolean(
-            "can-undo",
-            "",
-            "",
-            FALSE,
-            G_PARAM_READABLE | G_PARAM_STATIC_STRINGS
-            )
-        );
-
-    bb_object_class_install_property(
-        G_OBJECT_CLASS(klasse),
         PROP_DRAWING_TOOL,
         properties[PROP_DRAWING_TOOL] = g_param_spec_object(
             "drawing-tool",
@@ -355,7 +325,6 @@ bb_schematic_window_class_init(BbSchematicWindowClass *klasse)
         inner_window
         );
 
-
     /* From BbClipboardSubject */
 
     properties[PROP_CAN_COPY] = bb_object_class_override_property(
@@ -370,10 +339,40 @@ bb_schematic_window_class_init(BbSchematicWindowClass *klasse)
         "can-cut"
         );
 
+    properties[PROP_CAN_DELETE] = bb_object_class_override_property(
+        object_class,
+        PROP_CAN_DELETE,
+        "can-delete"
+        );
+
     properties[PROP_CAN_PASTE] = bb_object_class_override_property(
         object_class,
         PROP_CAN_PASTE,
         "can-paste"
+        );
+
+    properties[PROP_CAN_REDO] = bb_object_class_override_property(
+        object_class,
+        PROP_CAN_REDO,
+        "can-redo"
+        );
+
+    properties[PROP_CAN_SELECT_ALL] = bb_object_class_override_property(
+        object_class,
+        PROP_CAN_SELECT_ALL,
+        "can-select-all"
+        );
+
+    properties[PROP_CAN_SELECT_NONE] = bb_object_class_override_property(
+        object_class,
+        PROP_CAN_SELECT_NONE,
+        "can-select-none"
+        );
+
+    properties[PROP_CAN_UNDO] = bb_object_class_override_property(
+        object_class,
+        PROP_CAN_UNDO,
+        "can-undo"
         );
 
     /* From BbGridSubject */
@@ -426,10 +425,20 @@ bb_schematic_window_clipboard_subject_init(BbClipboardSubjectInterface *iface)
 
     iface->get_can_copy = bb_schematic_window_get_can_copy;
     iface->get_can_cut = bb_schematic_window_get_can_cut;
+    iface->get_can_delete = bb_schematic_window_get_can_delete;
     iface->get_can_paste = bb_schematic_window_get_can_paste;
+    iface->get_can_redo = bb_schematic_window_get_can_redo;
+    iface->get_can_select_all = bb_schematic_window_get_can_select_all;
+    iface->get_can_select_none = bb_schematic_window_get_can_select_none;
+    iface->get_can_undo = bb_schematic_window_get_can_undo;
     iface->copy = bb_schematic_window_copy;
     iface->cut = bb_schematic_window_cut;
+    iface->delete = bb_schematic_window_delete;
     iface->paste = bb_schematic_window_paste;
+    iface->redo = bb_schematic_window_redo;
+    iface->select_all = bb_schematic_window_select_all;
+    iface->select_none = bb_schematic_window_select_none;
+    iface->undo = bb_schematic_window_undo;
 }
 
 
@@ -452,9 +461,9 @@ bb_schematic_window_cut(BbClipboardSubject *clipboard_subject)
 
 
 void
-bb_schematic_window_delete(BbSchematicWindow *window)
+bb_schematic_window_delete(BbClipboardSubject *clipboard_subject)
 {
-    g_return_if_fail(window != NULL);
+    g_return_if_fail(clipboard_subject != NULL);
 
     g_message("bb_schematic_window_delete");
 }
@@ -511,9 +520,9 @@ bb_schematic_window_get_can_cut(BbClipboardSubject *clipboard_subject)
 
 
 gboolean
-bb_schematic_window_get_can_delete(BbSchematicWindow *window)
+bb_schematic_window_get_can_delete(BbClipboardSubject *clipboard_subject)
 {
-    g_return_val_if_fail(window != NULL, FALSE);
+    g_return_val_if_fail(clipboard_subject != NULL, FALSE);
 
     return TRUE; // (g_hash_table_size(window->selection) > 0);
 }
@@ -529,9 +538,9 @@ bb_schematic_window_get_can_paste(BbClipboardSubject *clipboard_subject)
 
 
 gboolean
-bb_schematic_window_get_can_redo(BbSchematicWindow *window)
+bb_schematic_window_get_can_redo(BbClipboardSubject *clipboard_subject)
 {
-    g_return_val_if_fail(window != NULL, FALSE);
+    g_return_val_if_fail(clipboard_subject != NULL, FALSE);
 
     return TRUE; //(window->redo_stack != NULL);
 }
@@ -585,8 +594,10 @@ bb_schematic_window_get_can_scale_up(BbGridSubject *grid_subject)
 
 
 gboolean
-bb_schematic_window_get_can_select_all(BbSchematicWindow *window)
+bb_schematic_window_get_can_select_all(BbClipboardSubject *clipboard_subject)
 {
+    BbSchematicWindow *window = BB_SCHEMATIC_WINDOW(clipboard_subject);
+
     g_return_val_if_fail(window != NULL, FALSE);
     g_return_val_if_fail(window->selection != NULL, FALSE);
 
@@ -595,8 +606,10 @@ bb_schematic_window_get_can_select_all(BbSchematicWindow *window)
 
 
 gboolean
-bb_schematic_window_get_can_select_none(BbSchematicWindow *window)
+bb_schematic_window_get_can_select_none(BbClipboardSubject *clipboard_subject)
 {
+    BbSchematicWindow *window = BB_SCHEMATIC_WINDOW(clipboard_subject);
+
     g_return_val_if_fail(window != NULL, FALSE);
     g_return_val_if_fail(window->selection != NULL, FALSE);
 
@@ -605,9 +618,9 @@ bb_schematic_window_get_can_select_none(BbSchematicWindow *window)
 
 
 gboolean
-bb_schematic_window_get_can_undo(BbSchematicWindow *window)
+bb_schematic_window_get_can_undo(BbClipboardSubject *clipboard_subject)
 {
-    g_return_val_if_fail(window != NULL, FALSE);
+    g_return_val_if_fail(clipboard_subject != NULL, FALSE);
 
     return TRUE; //(window->undo_stack != NULL);
 }
@@ -666,7 +679,7 @@ bb_schematic_window_get_property(GObject *object, guint property_id, GValue *val
             break;
 
         case PROP_CAN_DELETE:
-            g_value_set_boolean(value, bb_schematic_window_get_can_delete(window));
+            g_value_set_boolean(value, bb_schematic_window_get_can_delete(BB_CLIPBOARD_SUBJECT(object)));
             break;
 
         case PROP_CAN_PASTE:
@@ -674,7 +687,7 @@ bb_schematic_window_get_property(GObject *object, guint property_id, GValue *val
             break;
 
         case PROP_CAN_REDO:
-            g_value_set_boolean(value, bb_schematic_window_get_can_redo(window));
+            g_value_set_boolean(value, bb_schematic_window_get_can_redo(BB_CLIPBOARD_SUBJECT(object)));
             break;
 
         case PROP_CAN_SCALE_DOWN:
@@ -686,15 +699,15 @@ bb_schematic_window_get_property(GObject *object, guint property_id, GValue *val
             break;
 
         case PROP_CAN_SELECT_ALL:
-            g_value_set_boolean(value, bb_schematic_window_get_can_select_all(window));
+            g_value_set_boolean(value, bb_schematic_window_get_can_select_all(BB_CLIPBOARD_SUBJECT(object)));
             break;
 
         case PROP_CAN_SELECT_NONE:
-            g_value_set_boolean(value, bb_schematic_window_get_can_select_none(window));
+            g_value_set_boolean(value, bb_schematic_window_get_can_select_none(BB_CLIPBOARD_SUBJECT(object)));
             break;
 
         case PROP_CAN_UNDO:
-            g_value_set_boolean(value, bb_schematic_window_get_can_undo(window));
+            g_value_set_boolean(value, bb_schematic_window_get_can_undo(BB_CLIPBOARD_SUBJECT(object)));
             break;
 
         case PROP_CAN_ZOOM_EXTENTS:
@@ -908,9 +921,9 @@ bb_schematic_window_query_selection(BbSchematicWindow *window, BbQueryFunc func,
 
 
 void
-bb_schematic_window_redo(BbSchematicWindow *window)
+bb_schematic_window_redo(BbClipboardSubject *clipboard_subject)
 {
-    g_return_if_fail(window != NULL);
+    g_return_if_fail(clipboard_subject != NULL);
 
     g_message("bb_schematic_window_redo");
 }
@@ -1018,18 +1031,18 @@ bb_schematic_window_set_property(GObject *object, guint property_id, const GValu
 
 
 void
-bb_schematic_window_select_all(BbSchematicWindow *window)
+bb_schematic_window_select_all(BbClipboardSubject *clipboard_subject)
 {
-    g_return_if_fail(window != NULL);
+    g_return_if_fail(clipboard_subject != NULL);
 
     g_message("bb_schematic_window_select_all");
 }
 
 
 void
-bb_schematic_window_select_none(BbSchematicWindow *window)
+bb_schematic_window_select_none(BbClipboardSubject *clipboard_subject)
 {
-    g_return_if_fail(window != NULL);
+    g_return_if_fail(clipboard_subject != NULL);
 
     g_message("bb_schematic_window_select_none");
 }
@@ -1157,9 +1170,9 @@ bb_schematic_window_tool_subject_init(BbToolSubjectInterface *iface)
 
 
 void
-bb_schematic_window_undo(BbSchematicWindow *window)
+bb_schematic_window_undo(BbClipboardSubject *clipboard_subject)
 {
-    g_return_if_fail(window != NULL);
+    g_return_if_fail(clipboard_subject != NULL);
 
     g_message("bb_schematic_window_undo");
 }

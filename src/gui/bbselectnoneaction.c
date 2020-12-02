@@ -20,6 +20,7 @@
 #include <bbextensions.h>
 #include "bbselectnoneaction.h"
 #include "bbschematicwindow.h"
+#include "bbclipboardsubject.h"
 
 
 enum
@@ -116,9 +117,9 @@ bb_select_none_action_activate(GAction *action, GVariant *parameter)
         bb_select_none_action_get_window(BB_SELECT_NONE_ACTION(action))
         );
 
-    if (BB_IS_SCHEMATIC_WINDOW(window))
+    if (BB_IS_CLIPBOARD_SUBJECT(window))
     {
-        bb_schematic_window_select_none(BB_SCHEMATIC_WINDOW(window));
+        bb_clipboard_subject_select_none(BB_CLIPBOARD_SUBJECT(window));
     }
 }
 
@@ -207,15 +208,15 @@ bb_select_none_action_get_enabled(GAction *action)
         );
 
     return
-        BB_IS_SCHEMATIC_WINDOW(window) &&
-        bb_schematic_window_get_can_select_none(BB_SCHEMATIC_WINDOW(window));
+        BB_IS_CLIPBOARD_SUBJECT(window) &&
+        bb_clipboard_subject_get_can_select_none(BB_CLIPBOARD_SUBJECT(window));
 }
 
 
 static const gchar *
 bb_select_none_action_get_name(GAction *action)
 {
-    const gchar *name = "edit-select_none";
+    const gchar *name = "edit-select-none";
 
     g_return_val_if_fail(action != NULL, name);
 

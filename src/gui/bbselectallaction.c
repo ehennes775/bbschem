@@ -20,6 +20,7 @@
 #include <bbextensions.h>
 #include "bbselectallaction.h"
 #include "bbschematicwindow.h"
+#include "bbclipboardsubject.h"
 
 
 enum
@@ -116,9 +117,9 @@ bb_select_all_action_activate(GAction *action, GVariant *parameter)
         bb_select_all_action_get_window(BB_SELECT_ALL_ACTION(action))
         );
 
-    if (BB_IS_SCHEMATIC_WINDOW(window))
+    if (BB_IS_CLIPBOARD_SUBJECT(window))
     {
-        bb_schematic_window_select_all(BB_SCHEMATIC_WINDOW(window));
+        bb_clipboard_subject_select_all(BB_CLIPBOARD_SUBJECT(window));
     }
 }
 
@@ -207,8 +208,8 @@ bb_select_all_action_get_enabled(GAction *action)
         );
 
     return
-        BB_IS_SCHEMATIC_WINDOW(window) &&
-        bb_schematic_window_get_can_delete(BB_SCHEMATIC_WINDOW(window));
+        BB_IS_CLIPBOARD_SUBJECT(window) &&
+        bb_clipboard_subject_get_can_select_all(BB_CLIPBOARD_SUBJECT(window));
 }
 
 
