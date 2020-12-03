@@ -97,6 +97,13 @@ BbSchematic*
 bb_schematic_new();
 
 
+void
+bb_schematic_render(
+    BbSchematic *schematic,
+    BbItemRenderer *renderer
+    );
+
+
 gboolean
 bb_schematic_write(
     BbSchematic *schematic,

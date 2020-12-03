@@ -232,6 +232,15 @@ static void
 bb_schematic_window_add_item(BbToolSubject *subject, BbSchematicItem *item)
 {
     g_message("bb_schematic_window_add_item");
+
+    BbSchematicWindow *window = BB_SCHEMATIC_WINDOW(subject);
+
+    g_return_if_fail(window != NULL);
+    g_return_if_fail(window->schematic != NULL);
+
+    GSList *items = g_slist_append(NULL, item);
+
+    bb_schematic_add_items(window->schematic, items);
 }
 
 
@@ -492,11 +501,17 @@ bb_schematic_window_draw_cb(BbSchematicWindowInner *inner, cairo_t *cairo, BbSch
         cairo_save(cairo);
         cairo_transform(cairo, &outer->matrix);
 
-        bb_drawing_tool_draw(outer->drawing_tool, graphics);
+        if (outer->schematic != NULL)
+        {
+            bb_schematic_render(outer->schematic, BB_ITEM_RENDERER(graphics));
+        }
 
-        cairo_set_source_rgb(cairo, 0.0, 1.0, 0.0);
-        cairo_move_to(cairo, 0, 0);
-        cairo_line_to(cairo, 100, 100);
+        if (outer->drawing_tool != NULL)
+        {
+            bb_drawing_tool_draw(outer->drawing_tool, graphics);
+        }
+
+        // TODO remove
         cairo_stroke(cairo);
 
         cairo_restore(cairo);

@@ -24,6 +24,7 @@
 #include "bbschematicitem.h"
 #include "bbgraphicline.h"
 #include "bbapplyfunc.h"
+#include "bblibrary.h"
 
 
 enum
@@ -64,6 +65,14 @@ struct _AsyncWriteData
 };
 
 
+typedef struct _RenderCapture RenderCapture;
+
+struct _RenderCapture
+{
+    BbItemRenderer *renderer;
+};
+
+
 typedef struct _WriteCapture WriteCapture;
 
 struct _WriteCapture
@@ -87,6 +96,9 @@ bb_schematic_finalize(GObject *object);
 
 static void
 bb_schematic_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
+
+static void
+bb_schematic_render_lambda(BbSchematicItem *item, RenderCapture *capture);
 
 static void
 bb_schematic_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
@@ -170,6 +182,8 @@ bb_schematic_add_items(BbSchematic *schematic, GSList *items)
 static void
 bb_schematic_add_items_lambda(BbSchematicItem *item, BbSchematic *schematic)
 {
+    g_object_ref(item);
+
     /* attach signal handlers */
 }
 
@@ -329,7 +343,16 @@ bb_schematic_get_property(GObject *object, guint property_id, GValue *value, GPa
 static void
 bb_schematic_init(BbSchematic *schematic)
 {
-    schematic->items = g_slist_append(schematic->items, bb_graphic_line_new());
+    BbGraphicBox *box = g_object_new(
+        BB_TYPE_GRAPHIC_BOX,
+        "x0", 0,
+        "y0", 0,
+        "x1", 100,
+        "y1", 100,
+        NULL
+        );
+
+    schematic->items = g_slist_append(NULL, box);
 }
 
 
@@ -344,6 +367,34 @@ __attribute__((constructor)) void
 bb_schematic_register()
 {
     bb_schematic_get_type();
+}
+
+
+void
+bb_schematic_render(
+    BbSchematic *schematic,
+    BbItemRenderer *renderer
+    )
+{
+    RenderCapture capture;
+
+    capture.renderer = renderer;
+
+    g_slist_foreach(
+        schematic->items,
+        (GFunc) bb_schematic_render_lambda,
+        &capture
+        );
+}
+
+
+static void
+bb_schematic_render_lambda(BbSchematicItem *item, RenderCapture *capture)
+{
+    g_return_if_fail(BB_IS_SCHEMATIC_ITEM(item));
+    g_return_if_fail(capture != NULL);
+
+    bb_schematic_item_render(item, BB_ITEM_RENDERER(capture->renderer));
 }
 
 
