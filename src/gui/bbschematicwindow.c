@@ -66,6 +66,8 @@ struct _BbSchematicWindow
 
     GFile *file;
 
+    cairo_matrix_t matrix;
+
     GSList *redo_stack;
 
     gboolean reveal;
@@ -487,7 +489,17 @@ bb_schematic_window_draw_cb(BbSchematicWindowInner *inner, cairo_t *cairo, BbSch
 
     if (outer->drawing_tool != NULL)
     {
+        cairo_save(cairo);
+        cairo_transform(cairo, &outer->matrix);
+
         bb_drawing_tool_draw(outer->drawing_tool, graphics);
+
+        cairo_set_source_rgb(cairo, 0.0, 1.0, 0.0);
+        cairo_move_to(cairo, 0, 0);
+        cairo_line_to(cairo, 100, 100);
+        cairo_stroke(cairo);
+
+        cairo_restore(cairo);
     }
 
     cairo_stroke(cairo);
@@ -768,6 +780,8 @@ bb_schematic_window_init(BbSchematicWindow *window)
     window->redo_stack = NULL;
     window->selection = g_hash_table_new(g_direct_hash, g_direct_equal);
     window->undo_stack = NULL;
+
+    cairo_matrix_init_identity(&window->matrix);
 
     gtk_widget_add_events(
         GTK_WIDGET(window->inner_window),
@@ -1181,7 +1195,34 @@ bb_schematic_window_undo(BbClipboardSubject *clipboard_subject)
 static void
 bb_schematic_window_zoom_extents(BbZoomSubject *zoom_subject)
 {
-    g_message("bb_schematic_window_zoom_extents");
+    BbSchematicWindow *window = BB_SCHEMATIC_WINDOW(zoom_subject);
+    g_return_if_fail(window != NULL);
+
+    int width = gtk_widget_get_allocated_width(GTK_WIDGET(window->inner_window));
+    int height = gtk_widget_get_allocated_height(GTK_WIDGET(window->inner_window));
+
+    // TODO calculate the bounds of the schematic
+    double min_x = 0.0;
+    double min_y = 0.0;
+    double max_x = 100.0;
+    double max_y = 100.0;
+
+    double scale_x = 0.9 * width / MAX(abs(max_x - min_x), 100.0);
+    double scale_y = 0.9 * height / MAX(abs(max_y - min_y), 100.0);
+    double scale = MIN(scale_x, scale_y);
+
+    cairo_matrix_t matrix;
+    cairo_matrix_init_identity(&matrix);
+    cairo_matrix_translate(&matrix, width / 2.0, height / 2.0);
+    cairo_matrix_scale(&matrix, scale, -scale);
+    cairo_matrix_translate(&matrix, (max_x + min_x) / -2.0, (max_y + min_y) / -2.0);
+
+    matrix.x0 = round(matrix.x0);
+    matrix.y0 = round(matrix.y0);
+
+    window->matrix = matrix;
+
+    gtk_widget_queue_draw(GTK_WIDGET(window->inner_window));
 }
 
 
