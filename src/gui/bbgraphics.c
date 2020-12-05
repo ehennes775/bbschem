@@ -26,6 +26,7 @@ enum
 {
     PROP_0,
     PROP_CAIRO,
+    PROP_WIDGET_MATRIX,
     PROP_STYLE,
     N_PROPERTIES
 };
@@ -38,6 +39,11 @@ struct _BbGraphics
     cairo_t *cairo;
 
     GtkStyleContext *style;
+
+    /**
+     * A matrix for converting widget coordinates to window coordinates
+     */
+    cairo_matrix_t widget_matrix;
 };
 
 
@@ -86,6 +92,9 @@ bb_graphics_set_property(GObject *object, guint property_id, const GValue *value
 static void
 bb_graphics_set_style(BbGraphics *graphics, GtkStyleContext *style);
 
+static void
+bb_graphics_set_widget_matrix(BbGraphics *graphics, cairo_matrix_t *widget_matrix);
+
 
 GParamSpec *properties[N_PROPERTIES];
 
@@ -111,6 +120,17 @@ bb_graphics_class_init(BbGraphicsClass *klasse)
         PROP_CAIRO,
         g_param_spec_pointer(
             "cairo",
+            "",
+            "",
+            G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY
+            )
+        );
+
+    properties[PROP_WIDGET_MATRIX] = bb_object_class_install_property(
+        G_OBJECT_CLASS(klasse),
+        PROP_WIDGET_MATRIX,
+        g_param_spec_pointer(
+            "widget-matrix",
             "",
             "",
             G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY
@@ -156,6 +176,9 @@ bb_graphics_draw_select_box(BbGraphics *graphics, int x0, int y0, int x1, int y1
     gtk_style_context_save(graphics->style);
     gtk_style_context_add_class(graphics->style, "schematicselectrubber");
 
+    cairo_save(graphics->cairo);
+    cairo_set_matrix(graphics->cairo, &graphics->widget_matrix);
+
     int x = MIN(x0, x1);
     int y = MIN(y0, y1);
     int w = abs(x1 - x0);
@@ -165,6 +188,7 @@ bb_graphics_draw_select_box(BbGraphics *graphics, int x0, int y0, int x1, int y1
     gtk_render_frame(graphics->style, graphics->cairo, x, y, w, h);
 
     gtk_style_context_restore(graphics->style);
+    cairo_restore(graphics->cairo);
 }
 
 
@@ -176,6 +200,9 @@ bb_graphics_draw_zoom_box(BbGraphics *graphics, int x0, int y0, int x1, int y1)
     gtk_style_context_save(graphics->style);
     gtk_style_context_add_class(graphics->style, "schematiczoomrubber");
 
+    cairo_save(graphics->cairo);
+    cairo_set_matrix(graphics->cairo, &graphics->widget_matrix);
+
     int x = MIN(x0, x1);
     int y = MIN(y0, y1);
     int w = abs(x1 - x0) + 1;
@@ -185,6 +212,7 @@ bb_graphics_draw_zoom_box(BbGraphics *graphics, int x0, int y0, int x1, int y1)
     gtk_render_frame(graphics->style, graphics->cairo, x, y, w, h);
 
     gtk_style_context_restore(graphics->style);
+    cairo_restore(graphics->cairo);
 }
 
 
@@ -216,6 +244,10 @@ bb_graphics_get_property(GObject *object, guint property_id, GValue *value, GPar
             g_value_set_object(value, bb_graphics_get_style(BB_GRAPHICS(object)));
             break;
 
+        case PROP_WIDGET_MATRIX:
+            g_value_set_pointer(value, bb_graphics_get_widget_matrix(BB_GRAPHICS(object)));
+            break;
+
         default:
             G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
     }
@@ -230,6 +262,15 @@ bb_graphics_get_style(BbGraphics *graphics)
 }
 
 
+cairo_matrix_t*
+bb_graphics_get_widget_matrix(BbGraphics *graphics)
+{
+    g_return_val_if_fail(BB_IS_GRAPHICS(graphics), NULL);
+
+    return &graphics->widget_matrix;
+}
+
+
 static void
 bb_graphics_init(BbGraphics *graphics)
 {
@@ -237,11 +278,12 @@ bb_graphics_init(BbGraphics *graphics)
 
 
 BbGraphics*
-bb_graphics_new(cairo_t *cairo, GtkStyleContext *style)
+bb_graphics_new(cairo_t *cairo, cairo_matrix_t *widget_matrix, GtkStyleContext *style)
 {
     return BB_GRAPHICS(g_object_new(
         BB_TYPE_GRAPHICS,
         "cairo", cairo,
+        "widget-matrix", widget_matrix,
         "style", style,
         NULL
         ));
@@ -392,6 +434,8 @@ bb_graphics_set_cairo(BbGraphics *graphics, cairo_t* cairo)
         {
             cairo_reference(graphics->cairo);
         }
+
+        g_object_notify_by_pspec(G_OBJECT(graphics), properties[PROP_CAIRO]);
     }
 }
 
@@ -407,6 +451,10 @@ bb_graphics_set_property(GObject *object, guint property_id, const GValue *value
 
         case PROP_STYLE:
             bb_graphics_set_style(BB_GRAPHICS(object), g_value_get_object(value));
+            break;
+
+        case PROP_WIDGET_MATRIX:
+            bb_graphics_set_widget_matrix(BB_GRAPHICS(object), g_value_get_pointer(value));
             break;
 
         default:
@@ -433,5 +481,19 @@ bb_graphics_set_style(BbGraphics *graphics, GtkStyleContext *style)
         {
             g_object_ref(graphics->style);
         }
+
+        g_object_notify_by_pspec(G_OBJECT(graphics), properties[PROP_STYLE]);
     }
+}
+
+
+static void
+bb_graphics_set_widget_matrix(BbGraphics *graphics, cairo_matrix_t *widget_matrix)
+{
+    g_return_if_fail(BB_IS_GRAPHICS(graphics));
+    g_return_if_fail(widget_matrix != NULL);
+
+    graphics->widget_matrix = *widget_matrix;
+
+    g_object_notify_by_pspec(G_OBJECT(graphics), properties[PROP_WIDGET_MATRIX]);
 }

@@ -530,8 +530,11 @@ bb_schematic_window_draw_cb(BbSchematicWindowInner *inner, cairo_t *cairo, BbSch
     g_return_if_fail(cairo != NULL);
     g_return_if_fail(BB_IS_SCHEMATIC_WINDOW(outer));
 
+    cairo_matrix_t widget_matrix;
+    cairo_get_matrix(cairo, &widget_matrix);
+
     GtkStyleContext *style = gtk_widget_get_style_context(GTK_WIDGET(outer));
-    BbGraphics *graphics = bb_graphics_new(cairo, style);
+    BbGraphics *graphics = bb_graphics_new(cairo, &widget_matrix, style);
 
     if (outer->drawing_tool != NULL)
     {

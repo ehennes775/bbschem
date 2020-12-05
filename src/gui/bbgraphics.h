@@ -30,12 +30,43 @@ bb_graphics_get_cairo(BbGraphics *graphics);
 GtkStyleContext*
 bb_graphics_get_style(BbGraphics *graphics);
 
-BbGraphics*
-bb_graphics_new(cairo_t *cairo, GtkStyleContext *style);
+cairo_matrix_t*
+bb_graphics_get_widget_matrix(BbGraphics *graphics);
 
+
+/**
+ *
+ * @param cairo
+ * @param widget_matrix A matrix for converting widget coordinates to window coordinates
+ * @param style
+ * @return
+ */
+BbGraphics*
+bb_graphics_new(cairo_t *cairo, cairo_matrix_t *widget_matrix, GtkStyleContext *style);
+
+
+/**
+ * Draw a selection box
+ *
+ * @param graphics
+ * @param x0 The x coordinate of the first corner in widget coordinates
+ * @param y0 The y coordinate of the first corner in widget coordinates
+ * @param x1 The x coordinate of the second corner in widget coordinates
+ * @param y1 The y coordinate of the second corner in widget coordinates
+ */
 void
 bb_graphics_draw_select_box(BbGraphics *graphics, int x0, int y0, int x1, int y1);
 
+
+/**
+ * Draw a zoom box
+ *
+ * @param graphics
+ * @param x0 The x coordinate of the first corner in widget coordinates
+ * @param y0 The y coordinate of the first corner in widget coordinates
+ * @param x1 The x coordinate of the second corner in widget coordinates
+ * @param y1 The y coordinate of the second corner in widget coordinates
+ */
 void
 bb_graphics_draw_zoom_box(BbGraphics *graphics, int x0, int y0, int x1, int y1);
 
