@@ -66,6 +66,11 @@ add_library(bbgui
         bblinetoolpanel.h
         bbmainwindow.c
         bbmainwindow.h
+        bbpanaction.c
+        bbpanaction.h
+        bbpandirection.h
+        bbpanpointaction.c
+        bbpanpointaction.h
         bbpasteaction.c
         bbpasteaction.h
         bbpinpropertyeditor.c

@@ -20,6 +20,7 @@
 
 #include <gtk/gtk.h>
 #include "bbzoomdirection.h"
+#include "bbpandirection.h"
 
 #define BB_TYPE_ZOOM_SUBJECT bb_zoom_subject_get_type()
 G_DECLARE_INTERFACE(BbZoomSubject, bb_zoom_subject, BB, ZOOM_SUBJECT, GObject)
@@ -28,6 +29,8 @@ struct _BbZoomSubjectInterface
 {
     GTypeInterface g_iface;
 
+    void (*pan)(BbZoomSubject *zoom_subject, BbPanDirection direction);
+    void (*pan_point)(BbZoomSubject *zoom_subject);
     void (*zoom_extents)(BbZoomSubject *zoom_subject);
     void (*zoom_in)(BbZoomSubject *zoom_subject);
     void (*zoom_out)(BbZoomSubject *zoom_subject);
@@ -60,6 +63,25 @@ bb_zoom_subject_get_can_zoom_in(BbZoomSubject *zoom_subject);
  */
 gboolean
 bb_zoom_subject_get_can_zoom_out(BbZoomSubject *zoom_subject);
+
+
+/**
+ * Pan the window contents in a direction
+ *
+ * @param zoom_subject The object to perform the pan operation
+ * @param direction The direction to pan the window
+ */
+void
+bb_zoom_subject_pan(BbZoomSubject *zoom_subject, BbPanDirection direction);
+
+
+/**
+ * Center the location of the mouse cursor on the screen
+ *
+ * @param zoom_subject The object to perform the pan operation
+ */
+void
+bb_zoom_subject_pan_point(BbZoomSubject *zoom_subject);
 
 
 /**

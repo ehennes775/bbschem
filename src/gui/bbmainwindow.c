@@ -61,6 +61,9 @@
 #include "bbrevealaction.h"
 #include "bbzoompointaction.h"
 #include "bbzoomdirection.h"
+#include "bbpanaction.h"
+#include "bbpandirection.h"
+#include "bbpanpointaction.h"
 
 
 enum
@@ -114,6 +117,8 @@ G_DEFINE_TYPE(BbMainWindow, bb_main_window, GTK_TYPE_APPLICATION_WINDOW)
 static gboolean
 bb_main_window_key_pressed_cb(GtkWidget *unused, GdkEvent *event, BbMainWindow *window)
 {
+    /* temporary key handling */
+
     switch (event->key.keyval)
     {
         case GDK_KEY_Z:
@@ -129,6 +134,48 @@ bb_main_window_key_pressed_cb(GtkWidget *unused, GdkEvent *event, BbMainWindow *
                 G_ACTION_GROUP(window),
                 "zoom-point",
                 g_variant_ref(g_variant_new_int32(BB_ZOOM_DIRECTION_IN))
+                );
+            return TRUE;
+
+        /* WASD for now, the default handler is intercepting the arrow keys */
+
+        case GDK_KEY_a:
+            g_action_group_activate_action(
+                G_ACTION_GROUP(window),
+                "pan",
+                g_variant_ref(g_variant_new_int32(BB_PAN_DIRECTION_LEFT))
+                );
+            return TRUE;
+
+        case GDK_KEY_d:
+            g_action_group_activate_action(
+                G_ACTION_GROUP(window),
+                "pan",
+                g_variant_ref(g_variant_new_int32(BB_PAN_DIRECTION_RIGHT))
+                );
+            return TRUE;
+
+        case GDK_KEY_w:
+            g_action_group_activate_action(
+                G_ACTION_GROUP(window),
+                "pan",
+                g_variant_ref(g_variant_new_int32(BB_PAN_DIRECTION_UP))
+                );
+            return TRUE;
+
+        case GDK_KEY_s:
+            g_action_group_activate_action(
+                G_ACTION_GROUP(window),
+                "pan",
+                g_variant_ref(g_variant_new_int32(BB_PAN_DIRECTION_DOWN))
+                );
+            return TRUE;
+
+        case GDK_KEY_p:
+            g_action_group_activate_action(
+                G_ACTION_GROUP(window),
+                "pan-point",
+                NULL
                 );
             return TRUE;
 
@@ -402,6 +449,16 @@ bb_main_window_init(BbMainWindow *window)
         GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK
         );
 
+    g_action_map_add_action(
+        G_ACTION_MAP(window),
+        G_ACTION(bb_pan_action_new(window))
+        );
+
+    g_action_map_add_action(
+        G_ACTION_MAP(window),
+        G_ACTION(bb_pan_point_action_new(window))
+        );
+
     g_signal_connect_after(
         window,
         "key-press-event",
@@ -411,7 +468,7 @@ bb_main_window_init(BbMainWindow *window)
 
     g_signal_connect_after(
         window,
-        "key-press-release",
+        "key-release-event",
         G_CALLBACK(bb_main_window_key_released_cb),
         window
         );

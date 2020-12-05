@@ -21,6 +21,12 @@
 
 
 static void
+bb_zoom_subject_pan_missing(BbZoomSubject *zoom_subject, BbPanDirection direction);
+
+static void
+bb_zoom_subject_pan_point_missing(BbZoomSubject *zoom_subject);
+
+static void
 bb_zoom_subject_zoom_extents_missing(BbZoomSubject *zoom_subject);
 
 static void
@@ -45,6 +51,8 @@ bb_zoom_subject_default_init(BbZoomSubjectInterface *iface)
 {
     g_return_if_fail(iface != NULL);
 
+    iface->pan = bb_zoom_subject_pan_missing;
+    iface->pan_point = bb_zoom_subject_pan_point_missing;
     iface->zoom_extents = bb_zoom_subject_zoom_extents_missing;
     iface->zoom_in = bb_zoom_subject_zoom_in_missing;
     iface->zoom_out = bb_zoom_subject_zoom_out_missing;
@@ -133,6 +141,43 @@ bb_zoom_subject_get_can_zoom_out(BbZoomSubject *zoom_subject)
     );
 
     return can_zoom_out;
+}
+
+void
+bb_zoom_subject_pan(BbZoomSubject *zoom_subject, BbPanDirection direction)
+{
+    BbZoomSubjectInterface *iface = BB_ZOOM_SUBJECT_GET_IFACE(zoom_subject);
+
+    g_return_if_fail(iface != NULL);
+    g_return_if_fail(iface->pan != NULL);
+
+    return iface->pan(zoom_subject, direction);
+}
+
+
+static void
+bb_zoom_subject_pan_missing(BbZoomSubject *zoom_subject, BbPanDirection direction)
+{
+    g_error("bb_zoom_subject_pan() not overridden");
+}
+
+
+void
+bb_zoom_subject_pan_point(BbZoomSubject *zoom_subject)
+{
+    BbZoomSubjectInterface *iface = BB_ZOOM_SUBJECT_GET_IFACE(zoom_subject);
+
+    g_return_if_fail(iface != NULL);
+    g_return_if_fail(iface->pan_point != NULL);
+
+    return iface->pan_point(zoom_subject);
+}
+
+
+static void
+bb_zoom_subject_pan_point_missing(BbZoomSubject *zoom_subject)
+{
+    g_error("bb_zoom_subject_pan_point() not overridden");
 }
 
 

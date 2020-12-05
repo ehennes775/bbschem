@@ -29,11 +29,12 @@
 #include "bbrevealsubject.h"
 #include "bbgridsubject.h"
 #include "bbclipboardsubject.h"
+#include "bbpandirection.h"
 
 
+#define BB_PAN_ZOOM_FACTOR (1.0)
 #define BB_ZOOM_IN_FACTOR (1.25)
 #define BB_ZOOM_OUT_FACTOR (0.8)
-
 
 enum
 {
@@ -964,6 +965,53 @@ bb_schematic_window_motion_notify_cb(GtkWidget *widget, GdkEvent *event, gpointe
 }
 
 
+static void
+bb_schematic_window_pan(BbZoomSubject *zoom_subject, BbPanDirection direction)
+{
+    BbSchematicWindow *window = BB_SCHEMATIC_WINDOW(zoom_subject);
+    g_return_if_fail(window != NULL);
+
+    double center_x = gtk_widget_get_allocated_width(GTK_WIDGET(window->inner_window)) / 2.0;
+    double center_y = gtk_widget_get_allocated_height(GTK_WIDGET(window->inner_window)) / 2.0;
+
+    double step = 100.0;
+
+    switch (direction)
+    {
+        case BB_PAN_DIRECTION_DOWN:
+            center_y += step;
+            break;
+
+        case BB_PAN_DIRECTION_LEFT:
+            center_x -= step;
+            break;
+
+        case BB_PAN_DIRECTION_RIGHT:
+            center_x += step;
+            break;
+
+        case BB_PAN_DIRECTION_UP:
+            center_y -= step;
+            break;
+
+        default:
+            g_return_if_reached();
+    }
+
+    bb_schematic_window_zoom_point(window, center_x, center_y, BB_PAN_ZOOM_FACTOR);
+}
+
+
+static void
+bb_schematic_window_pan_point(BbZoomSubject *zoom_subject)
+{
+    BbSchematicWindow *window = BB_SCHEMATIC_WINDOW(zoom_subject);
+    g_return_if_fail(window != NULL);
+
+    bb_schematic_window_zoom_point(window, window->last_x, window->last_y, BB_PAN_ZOOM_FACTOR);
+}
+
+
 void
 bb_schematic_window_paste(BbClipboardSubject *clipboard_subject)
 {
@@ -1271,8 +1319,9 @@ bb_schematic_window_zoom_extents(BbZoomSubject *zoom_subject)
     cairo_matrix_scale(&matrix, scale, -scale);
     cairo_matrix_translate(&matrix, (max_x + min_x) / -2.0, (max_y + min_y) / -2.0);
 
-    matrix.x0 = round(matrix.x0);
-    matrix.y0 = round(matrix.y0);
+    /* Snap coordinate translation to even pixels */
+    matrix.x0 = floor(matrix.x0) + 0.5;
+    matrix.y0 = floor(matrix.y0) + 0.5;
 
     window->matrix = matrix;
 
@@ -1312,39 +1361,30 @@ bb_schematic_window_zoom_out(BbZoomSubject *zoom_subject)
  * @param window
  * @param x The x coordinate in widget space
  * @param y The y coordinate in widget space
- * @param factor
+ * @param factor The relative zoom factor
  */
 static void
 bb_schematic_window_zoom_point(BbSchematicWindow *window, double x, double y, double factor)
 {
-    g_message("bb_schematic_window_zoom_point");
+    cairo_matrix_t matrix;
 
-    cairo_matrix_t inverse = window->matrix;
-    cairo_status_t status = cairo_matrix_invert(&inverse);
+    double center_x = gtk_widget_get_allocated_width(GTK_WIDGET(window->inner_window)) / 2.0;
+    double center_y = gtk_widget_get_allocated_height(GTK_WIDGET(window->inner_window)) / 2.0;
 
-    g_return_if_fail(status == CAIRO_STATUS_SUCCESS);
+    cairo_matrix_init_identity(&matrix);
+    cairo_matrix_multiply(&matrix, &matrix, &window->matrix);
 
-    double scale = floor(factor * 100.0 * window->matrix.xx);
-    scale = CLAMP(scale, 4.0, 1000.0);
-    scale /= (100.0 * window->matrix.xx);
+    matrix.xx *= factor;
+    matrix.yy *= factor;
 
-    cairo_matrix_scale(&window->matrix, scale, scale);
+    matrix.x0 = factor * (matrix.x0 - x) + center_x;
+    matrix.y0 = factor * (matrix.y0 - y) + center_y;
 
-    int width = gtk_widget_get_allocated_width(GTK_WIDGET(window->inner_window));
-    int height = gtk_widget_get_allocated_height(GTK_WIDGET(window->inner_window));
+    /* Snap coordinate translation to even pixels */
+    matrix.x0 = floor(matrix.x0) + 0.5;
+    matrix.y0 = floor(matrix.y0) + 0.5;
 
-    window->matrix.x0 = (int) round(width / 2.0);
-    window->matrix.y0 = (int) round(height / 2.0);
-
-    double dx = x;
-    double dy = y;
-
-    cairo_matrix_transform_point(&inverse, &dx, &dy);
-
-    cairo_matrix_translate(&window->matrix, -dx, -dy);
-
-    window->matrix.x0 = round(window->matrix.x0);
-    window->matrix.y0 = round(window->matrix.y0);
+    window->matrix = matrix;
 
     gtk_widget_queue_draw(GTK_WIDGET(window->inner_window));
 }
@@ -1377,6 +1417,8 @@ bb_schematic_window_zoom_subject_init(BbZoomSubjectInterface *iface)
 {
     g_return_if_fail(iface != NULL);
 
+    iface->pan = bb_schematic_window_pan;
+    iface->pan_point = bb_schematic_window_pan_point;
     iface->zoom_extents = bb_schematic_window_zoom_extents;
     iface->zoom_in = bb_schematic_window_zoom_in;
     iface->zoom_out = bb_schematic_window_zoom_out;
