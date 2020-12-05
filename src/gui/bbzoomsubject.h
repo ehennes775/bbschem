@@ -19,6 +19,7 @@
  */
 
 #include <gtk/gtk.h>
+#include "bbzoomdirection.h"
 
 #define BB_TYPE_ZOOM_SUBJECT bb_zoom_subject_get_type()
 G_DECLARE_INTERFACE(BbZoomSubject, bb_zoom_subject, BB, ZOOM_SUBJECT, GObject)
@@ -30,24 +31,78 @@ struct _BbZoomSubjectInterface
     void (*zoom_extents)(BbZoomSubject *zoom_subject);
     void (*zoom_in)(BbZoomSubject *zoom_subject);
     void (*zoom_out)(BbZoomSubject *zoom_subject);
+    void (*zoom_point)(BbZoomSubject *zoom_subject, BbZoomDirection direction);
 };
 
+
+/**
+ * Indicates the zoom extents action operation can be performed
+ *
+ * @param zoom_subject The object to test
+ */
 gboolean
 bb_zoom_subject_get_can_zoom_extents(BbZoomSubject *zoom_subject);
 
+
+/**
+ * Indicates the zoom in action operation can be performed
+ *
+ * @param zoom_subject The object to test
+ */
 gboolean
 bb_zoom_subject_get_can_zoom_in(BbZoomSubject *zoom_subject);
 
+
+/**
+ * Indicates the zoom out action operation can be performed
+ *
+ * @param zoom_subject The object to test
+ */
 gboolean
 bb_zoom_subject_get_can_zoom_out(BbZoomSubject *zoom_subject);
 
+
+/**
+ * Zoom to fit the contents into the visible window
+ *
+ * @param zoom_subject The object to perform the zoom extents
+ */
 void
 bb_zoom_subject_zoom_extents(BbZoomSubject *zoom_subject);
 
+
+/**
+ * Zoom to in at the center of the window
+ *
+ * Zoom in and zoom out actions are separate, since they can be enabled and disabled independently.
+ *
+ * @param zoom_subject The object to perform the zoom extents
+ */
 void
 bb_zoom_subject_zoom_in(BbZoomSubject *zoom_subject);
 
+
+/**
+ * Zoom to out on the center of the window
+ *
+ * Zoom in and zoom out actions are separate, since they can be enabled and disabled independently.
+ *
+ * @param zoom_subject The object to perform the zoom extents
+ */
 void
 bb_zoom_subject_zoom_out(BbZoomSubject *zoom_subject);
+
+
+/**
+ * Zoom in or out at the location of the mouse cursor
+ *
+ * Zooming in or out at a point expects to be activated by a hot key. A corresponding can-zoom-point doesn't exist. If
+ * the operation cannot be performed, the action is ignored.
+ *
+ * @param zoom_subject The object to perform the zoom in or out
+ * @param direction Indicates whether to zoom in or out
+ */
+void
+bb_zoom_subject_zoom_point(BbZoomSubject *zoom_subject, BbZoomDirection direction);
 
 #endif

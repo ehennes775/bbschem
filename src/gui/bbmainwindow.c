@@ -59,6 +59,8 @@
 #include "bbzoominaction.h"
 #include "bbzoomoutaction.h"
 #include "bbrevealaction.h"
+#include "bbzoompointaction.h"
+#include "bbzoomdirection.h"
 
 
 enum
@@ -78,8 +80,11 @@ struct _BbMainWindow
 };
 
 
-G_DEFINE_TYPE(BbMainWindow, bb_main_window, GTK_TYPE_APPLICATION_WINDOW)
+static gboolean
+bb_main_window_key_pressed_cb(GtkWidget *unused, GdkEvent *event, BbMainWindow *window);
 
+static gboolean
+bb_main_window_key_released_cb(GtkWidget *unused, GdkEvent *event, BbMainWindow *window);
 
 static void
 bb_main_window_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
@@ -101,6 +106,44 @@ bb_main_window_set_property(GObject *object, guint property_id, const GValue *va
 
 static void
 bb_main_window_update(GtkWidget *child, BbMainWindow *window);
+
+
+G_DEFINE_TYPE(BbMainWindow, bb_main_window, GTK_TYPE_APPLICATION_WINDOW)
+
+
+static gboolean
+bb_main_window_key_pressed_cb(GtkWidget *unused, GdkEvent *event, BbMainWindow *window)
+{
+    switch (event->key.keyval)
+    {
+        case GDK_KEY_Z:
+            g_action_group_activate_action(
+                G_ACTION_GROUP(window),
+                "zoom-point",
+                g_variant_ref(g_variant_new_int32(BB_ZOOM_DIRECTION_OUT))
+                );
+            return TRUE;
+
+        case GDK_KEY_z:
+            g_action_group_activate_action(
+                G_ACTION_GROUP(window),
+                "zoom-point",
+                g_variant_ref(g_variant_new_int32(BB_ZOOM_DIRECTION_IN))
+                );
+            return TRUE;
+
+        default:
+            return FALSE;
+    }
+
+
+}
+
+static gboolean
+bb_main_window_key_released_cb(GtkWidget *unused, GdkEvent *event, BbMainWindow *window)
+{
+    g_message("bb_main_window_key_released_cb");
+}
 
 
 void
@@ -348,6 +391,30 @@ bb_main_window_init(BbMainWindow *window)
         G_ACTION_MAP(window),
         G_ACTION(bb_reveal_action_new(window))
         );
+
+    g_action_map_add_action(
+        G_ACTION_MAP(window),
+        G_ACTION(bb_zoom_point_action_new(window))
+        );
+
+    gtk_widget_add_events(
+        GTK_WIDGET(window),
+        GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK
+        );
+
+    g_signal_connect_after(
+        window,
+        "key-press-event",
+        G_CALLBACK(bb_main_window_key_pressed_cb),
+        window
+        );
+
+    g_signal_connect_after(
+        window,
+        "key-press-release",
+        G_CALLBACK(bb_main_window_key_released_cb),
+        window
+        );
 }
 
 
@@ -375,7 +442,7 @@ bb_main_window_notify_page_num(BbMainWindow *window, GParamSpec *pspec, GtkNoteb
         g_set_object(&window->current_page, next_page);
 
         g_signal_emit_by_name(window, "update");
-        g_object_notify(window, "current-document-window");
+        g_object_notify(G_OBJECT(window), "current-document-window");
     }
 }
 

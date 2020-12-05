@@ -31,6 +31,10 @@
 #include "bbclipboardsubject.h"
 
 
+#define BB_ZOOM_IN_FACTOR (1.25)
+#define BB_ZOOM_OUT_FACTOR (0.8)
+
+
 enum
 {
     PROP_0,
@@ -60,16 +64,39 @@ struct _BbSchematicWindow
 
     BbSchematicWindowInner *inner_window;
 
+    /**
+     * Stores the current drawing tool for this window.
+     */
     BbDrawingTool *drawing_tool;
 
     BbSchematic *schematic;
 
     GFile *file;
 
+    /**
+     * Stores the last x coordinate, in widget space, from events that provide coordinates (e.g. button and motion
+     * events). See corresponding _BbSchematicWindow.last_y. These coordinates are used to process events that
+     * don't provide coordinates (e.g. key press and key release).
+     *
+     * @ref _BbSchematicWindow.last_y
+     */
+    double last_x;
+
+    /**
+     * @ref _BbSchematicWindow.last_x
+     */
+    double last_y;
+
+    /**
+     * The matrix for converting user (i.e. schematic) coordinates to widget coordinates.
+     */
     cairo_matrix_t matrix;
 
     GSList *redo_stack;
 
+    /**
+     * Indicates that hidden objects on the schematic should be revealed.
+     */
     gboolean reveal;
 
     GHashTable *selection;
@@ -268,6 +295,9 @@ bb_schematic_window_button_pressed_cb(GtkWidget *widget, GdkEvent *event, gpoint
     BbSchematicWindow *window = BB_SCHEMATIC_WINDOW(user_data);
     g_return_val_if_fail(window != NULL, FALSE);
 
+    window->last_x = event->button.x;
+    window->last_y = event->button.y;
+
     if (window->drawing_tool != NULL)
     {
         return bb_drawing_tool_button_pressed(window->drawing_tool, event->button.x, event->button.y);
@@ -282,6 +312,9 @@ bb_schematic_window_button_released_cb(GtkWidget *widget, GdkEvent *event, gpoin
 {
     BbSchematicWindow *window = BB_SCHEMATIC_WINDOW(user_data);
     g_return_val_if_fail(window != NULL, FALSE);
+
+    window->last_x = event->button.x;
+    window->last_y = event->button.y;
 
     if (window->drawing_tool != NULL)
     {
@@ -919,6 +952,9 @@ bb_schematic_window_motion_notify_cb(GtkWidget *widget, GdkEvent *event, gpointe
     BbSchematicWindow *window = BB_SCHEMATIC_WINDOW(user_data);
     g_return_val_if_fail(window != NULL, FALSE);
 
+    window->last_x = event->motion.x;
+    window->last_y = event->motion.y;
+
     if (window->drawing_tool != NULL)
     {
         return bb_drawing_tool_motion_notify(window->drawing_tool, event->motion.x, event->motion.y);
@@ -1250,10 +1286,10 @@ bb_schematic_window_zoom_in(BbZoomSubject *zoom_subject)
     BbSchematicWindow *window = BB_SCHEMATIC_WINDOW(zoom_subject);
     g_return_if_fail(window != NULL);
 
-    int width = gtk_widget_get_allocated_width(GTK_WIDGET(window->inner_window));
-    int height = gtk_widget_get_allocated_height(GTK_WIDGET(window->inner_window));
+    double center_x = gtk_widget_get_allocated_width(GTK_WIDGET(window->inner_window)) / 2.0;
+    double center_y = gtk_widget_get_allocated_height(GTK_WIDGET(window->inner_window)) / 2.0;
 
-    bb_schematic_window_zoom_point(window, width / 2, height / 2, 1.25);
+    bb_schematic_window_zoom_point(window, center_x, center_y, BB_ZOOM_IN_FACTOR);
 }
 
 
@@ -1263,13 +1299,21 @@ bb_schematic_window_zoom_out(BbZoomSubject *zoom_subject)
     BbSchematicWindow *window = BB_SCHEMATIC_WINDOW(zoom_subject);
     g_return_if_fail(window != NULL);
 
-    int width = gtk_widget_get_allocated_width(GTK_WIDGET(window->inner_window));
-    int height = gtk_widget_get_allocated_height(GTK_WIDGET(window->inner_window));
+    double center_x = gtk_widget_get_allocated_width(GTK_WIDGET(window->inner_window)) / 2.0;
+    double center_y = gtk_widget_get_allocated_height(GTK_WIDGET(window->inner_window)) / 2.0;
 
-    bb_schematic_window_zoom_point(window, width / 2, height / 2, 0.8);
+    bb_schematic_window_zoom_point(window, center_x, center_y, BB_ZOOM_OUT_FACTOR);
 }
 
 
+/**
+ *
+ *
+ * @param window
+ * @param x The x coordinate in widget space
+ * @param y The y coordinate in widget space
+ * @param factor
+ */
 static void
 bb_schematic_window_zoom_point(BbSchematicWindow *window, double x, double y, double factor)
 {
@@ -1307,6 +1351,28 @@ bb_schematic_window_zoom_point(BbSchematicWindow *window, double x, double y, do
 
 
 static void
+bb_schematic_window_zoom_point2(BbZoomSubject *zoom_subject, BbZoomDirection direction)
+{
+    BbSchematicWindow *window = BB_SCHEMATIC_WINDOW(zoom_subject);
+    g_return_if_fail(window != NULL);
+
+    switch (direction)
+    {
+        case BB_ZOOM_DIRECTION_IN:
+            bb_schematic_window_zoom_point(window, window->last_x, window->last_y, BB_ZOOM_IN_FACTOR);
+            break;
+
+        case BB_ZOOM_DIRECTION_OUT:
+            bb_schematic_window_zoom_point(window, window->last_x, window->last_y, BB_ZOOM_OUT_FACTOR);
+            break;
+
+        default:
+            g_return_if_reached();
+    }
+}
+
+
+static void
 bb_schematic_window_zoom_subject_init(BbZoomSubjectInterface *iface)
 {
     g_return_if_fail(iface != NULL);
@@ -1314,4 +1380,5 @@ bb_schematic_window_zoom_subject_init(BbZoomSubjectInterface *iface)
     iface->zoom_extents = bb_schematic_window_zoom_extents;
     iface->zoom_in = bb_schematic_window_zoom_in;
     iface->zoom_out = bb_schematic_window_zoom_out;
+    iface->zoom_point = bb_schematic_window_zoom_point2;
 }

@@ -29,6 +29,9 @@ bb_zoom_subject_zoom_in_missing(BbZoomSubject *zoom_subject);
 static void
 bb_zoom_subject_zoom_out_missing(BbZoomSubject *zoom_subject);
 
+static void
+bb_zoom_subject_zoom_point_missing(BbZoomSubject *zoom_subject, BbZoomDirection direction);
+
 
 G_DEFINE_INTERFACE(
     BbZoomSubject,
@@ -45,6 +48,7 @@ bb_zoom_subject_default_init(BbZoomSubjectInterface *iface)
     iface->zoom_extents = bb_zoom_subject_zoom_extents_missing;
     iface->zoom_in = bb_zoom_subject_zoom_in_missing;
     iface->zoom_out = bb_zoom_subject_zoom_out_missing;
+    iface->zoom_point = bb_zoom_subject_zoom_point_missing;
 
     g_object_interface_install_property(
         iface,
@@ -186,4 +190,23 @@ static void
 bb_zoom_subject_zoom_out_missing(BbZoomSubject *zoom_subject)
 {
     g_error("bb_zoom_subject_zoom_out() not overridden");
+}
+
+
+void
+bb_zoom_subject_zoom_point(BbZoomSubject *zoom_subject, BbZoomDirection direction)
+{
+    BbZoomSubjectInterface *iface = BB_ZOOM_SUBJECT_GET_IFACE(zoom_subject);
+
+    g_return_if_fail(iface != NULL);
+    g_return_if_fail(iface->zoom_point != NULL);
+
+    return iface->zoom_point(zoom_subject, direction);
+}
+
+
+static void
+bb_zoom_subject_zoom_point_missing(BbZoomSubject *zoom_subject, BbZoomDirection direction)
+{
+    g_error("bb_zoom_subject_zoom_point() not overridden");
 }
