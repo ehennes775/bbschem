@@ -23,6 +23,12 @@ add_library(bblib
         bbcoord.h
         bbdashtype.c
         bbdashtype.h
+        bbelectricalbus.c
+        bbelectricalbus.h
+        bbelectricalnet.c
+        bbelectricalnet.h
+        bbelectricalpin.c
+        bbelectricalpin.h
         bbfillstyle.c
         bbfillstyle.h
         bbfilltype.c
@@ -67,4 +73,4 @@ add_library(bblib
         bbvaluecount.c
         bbvaluecount.h
         bblibrary.h
-        )
+        bbpintype.h)
