@@ -229,6 +229,9 @@ static void
 bb_schematic_window_undo(BbClipboardSubject *clipboard_subject);
 
 static void
+bb_schematic_window_zoom_box(BbToolSubject *tool_subject, double x0, double y0, double x1, double y1);
+
+static void
 bb_schematic_window_zoom_extents(BbZoomSubject *zoom_subject);
 
 static void
@@ -1285,6 +1288,7 @@ bb_schematic_window_tool_subject_init(BbToolSubjectInterface *iface)
 
     iface->add_item = bb_schematic_window_add_item;
     iface->invalidate_rect_dev = bb_schematic_window_invalidate_rect_dev;
+    iface->zoom_box = bb_schematic_window_zoom_box;
 }
 
 
@@ -1294,6 +1298,36 @@ bb_schematic_window_undo(BbClipboardSubject *clipboard_subject)
     g_return_if_fail(clipboard_subject != NULL);
 
     g_message("bb_schematic_window_undo");
+}
+
+
+static void
+bb_schematic_window_zoom_box(BbToolSubject *tool_subject, double x0, double y0, double x1, double y1)
+{
+    BbSchematicWindow *window = BB_SCHEMATIC_WINDOW(tool_subject);
+    g_return_if_fail(window != NULL);
+
+    double width = ABS(x1 - x0);
+    double height = ABS(y1 - y0);
+
+    if (width >= 5 && height >= 5)
+    {
+        double center_x = (x1 + x0) / 2.0;
+        double center_y = (y1 + y0) / 2.0;
+
+        int widget_width = gtk_widget_get_allocated_width(GTK_WIDGET(window->inner_window));
+        int widget_height = gtk_widget_get_allocated_height(GTK_WIDGET(window->inner_window));
+
+        double scale_x = widget_width / width;
+        double scale_y = widget_height / height;
+        double scale = MIN(scale_x, scale_y);
+
+        bb_schematic_window_zoom_point(window, center_x, center_y, scale);
+    }
+
+
+
+
 }
 
 

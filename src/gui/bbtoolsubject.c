@@ -27,6 +27,9 @@ bb_tool_subject_add_item_missing(BbToolSubject *subject, BbSchematicItem *item);
 static void
 bb_tool_subject_invalidate_rect_dev_missing(BbToolSubject *subject, double x0, double y0, double x1, double y1);
 
+static void
+bb_tool_subject_zoom_box_missing(BbToolSubject *subject, double x0, double y0, double x1, double y1);
+
 
 G_DEFINE_INTERFACE(BbToolSubject, bb_tool_subject, G_TYPE_OBJECT)
 
@@ -38,6 +41,7 @@ bb_tool_subject_default_init(BbToolSubjectInterface *iface)
 
     iface->add_item = bb_tool_subject_add_item_missing;
     iface->invalidate_rect_dev = bb_tool_subject_invalidate_rect_dev_missing;
+    iface->zoom_box = bb_tool_subject_zoom_box_missing;
 }
 
 
@@ -80,4 +84,25 @@ static void
 bb_tool_subject_invalidate_rect_dev_missing(BbToolSubject *subject, double x0, double y0, double x1, double y1)
 {
     g_error("bb_tool_subject_invalidate_rect_dev() not overridden");
+}
+
+
+void
+bb_tool_subject_zoom_box(BbToolSubject *subject, double x0, double y0, double x1, double y1)
+{
+    g_return_if_fail(subject != NULL);
+
+    BbToolSubjectInterface *iface = BB_TOOL_SUBJECT_GET_IFACE(subject);
+
+    g_return_if_fail(iface != NULL);
+    g_return_if_fail(iface->zoom_box != NULL);
+
+    return iface->zoom_box(subject, x0, y0, x1, y1);
+}
+
+
+static void
+bb_tool_subject_zoom_box_missing(BbToolSubject *subject, double x0, double y0, double x1, double y1)
+{
+    g_error("bb_tool_subject_zoom_box() not overridden");
 }

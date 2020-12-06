@@ -29,6 +29,7 @@ struct _BbToolSubjectInterface
 
     void (*add_item)(BbToolSubject *subject, BbSchematicItem *item);
     void (*invalidate_rect_dev)(BbToolSubject *subject, double x0, double y0, double x1, double y1);
+    void (*zoom_box)(BbToolSubject *subject, double x0, double y0, double x1, double y1);
 };
 
 
@@ -38,5 +39,16 @@ bb_tool_subject_add_item(BbToolSubject *subject, BbSchematicItem *item);
 void
 bb_tool_subject_invalidate_rect_dev(BbToolSubject *subject, double x0, double y0, double x1, double y1);
 
+/**
+ *
+ *
+ * @param subject
+ * @param x0 The x coordinate of the first corner in window coordinates
+ * @param y0 The y coordinate of the first corner in window coordinates
+ * @param x1 The x coordinate of the second corner in window coordinates
+ * @param y1 The y coordinate of the second corner in window coordinates
+ */
+void
+bb_tool_subject_zoom_box(BbToolSubject *subject, double x0, double y0, double x1, double y1);
 
 #endif

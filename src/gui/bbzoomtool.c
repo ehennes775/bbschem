@@ -238,15 +238,15 @@ bb_zoom_tool_finish(BbZoomTool *zoom_tool)
 {
     g_return_if_fail(zoom_tool != NULL);
 
-    bb_zoom_tool_reset(zoom_tool);
-
-    bb_tool_subject_invalidate_rect_dev(
+    bb_tool_subject_zoom_box(
         zoom_tool->subject,
         zoom_tool->x[0],
         zoom_tool->y[0],
         zoom_tool->x[1],
         zoom_tool->y[1]
         );
+
+    bb_zoom_tool_reset(zoom_tool);
 }
 
 
