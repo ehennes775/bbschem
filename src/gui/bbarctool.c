@@ -373,8 +373,14 @@ bb_arc_tool_reset_with_point(BbArcTool *arc_tool, gdouble x, gdouble y)
 {
     g_return_if_fail(arc_tool != NULL);
 
-    bb_graphic_arc_set_center_x(arc_tool->item, x);
-    bb_graphic_arc_set_center_y(arc_tool->item, y);
+    double ux;
+    double uy;
+
+    gboolean success = bb_tool_subject_widget_to_user(arc_tool->subject, x, y, &ux, &uy);
+    g_return_if_fail(success);
+
+    bb_graphic_arc_set_center_x(arc_tool->item, ux);
+    bb_graphic_arc_set_center_y(arc_tool->item, uy);
 
     bb_graphic_arc_set_radius(arc_tool->item, 0);
 
@@ -482,11 +488,17 @@ bb_arc_tool_update_with_point(BbArcTool *arc_tool, gdouble x, gdouble y)
 
     if (arc_tool->state == STATE_S1)
     {
+        double ux;
+        double uy;
+
+        gboolean success = bb_tool_subject_widget_to_user(arc_tool->subject, x, y, &ux, &uy);
+        g_return_if_fail(success);
+
         double distance = bb_coord_distance(
             bb_graphic_arc_get_center_x(arc_tool->item),
             bb_graphic_arc_get_center_y(arc_tool->item),
-            x,
-            y
+            ux,
+            uy
             );
 
         bb_graphic_arc_set_radius(arc_tool->item, distance);
@@ -494,11 +506,17 @@ bb_arc_tool_update_with_point(BbArcTool *arc_tool, gdouble x, gdouble y)
 
     if (arc_tool->state == STATE_S1 || arc_tool->state == STATE_S2)
     {
+        double ux;
+        double uy;
+
+        gboolean success = bb_tool_subject_widget_to_user(arc_tool->subject, x, y, &ux, &uy);
+        g_return_if_fail(success);
+
         double radians = bb_coord_radians(
             bb_graphic_arc_get_center_x(arc_tool->item),
             bb_graphic_arc_get_center_y(arc_tool->item),
-            x,
-            y
+            ux,
+            uy
             );
 
         bb_graphic_arc_set_start_angle(arc_tool->item, bb_angle_from_radians(radians));
@@ -506,11 +524,17 @@ bb_arc_tool_update_with_point(BbArcTool *arc_tool, gdouble x, gdouble y)
 
     if (arc_tool->state == STATE_S3)
     {
+        double ux;
+        double uy;
+
+        gboolean success = bb_tool_subject_widget_to_user(arc_tool->subject, x, y, &ux, &uy);
+        g_return_if_fail(success);
+
         double radians = bb_coord_radians(
             bb_graphic_arc_get_center_x(arc_tool->item),
             bb_graphic_arc_get_center_y(arc_tool->item),
-            x,
-            y
+            ux,
+            uy
             );
 
         int sweep = bb_angle_calculate_sweep(

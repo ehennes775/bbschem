@@ -361,11 +361,17 @@ bb_line_tool_reset_with_point(BbLineTool *line_tool, gdouble x, gdouble y)
 {
     g_return_if_fail(line_tool != NULL);
 
-    bb_graphic_line_set_x0(line_tool->item, x);
-    bb_graphic_line_set_y0(line_tool->item, y);
+    double ux;
+    double uy;
 
-    bb_graphic_line_set_x1(line_tool->item, x);
-    bb_graphic_line_set_y1(line_tool->item, y);
+    gboolean success = bb_tool_subject_widget_to_user(line_tool->subject, x, y, &ux, &uy);
+    g_return_if_fail(success);
+
+    bb_graphic_line_set_x0(line_tool->item, ux);
+    bb_graphic_line_set_y0(line_tool->item, uy);
+
+    bb_graphic_line_set_x1(line_tool->item, ux);
+    bb_graphic_line_set_y1(line_tool->item, uy);
 
     line_tool->state = STATE_S1;
 }
@@ -468,7 +474,13 @@ bb_line_tool_update_with_point(BbLineTool *line_tool, gdouble x, gdouble y)
 
     if (line_tool->state == STATE_S1)
     {
-        bb_graphic_line_set_x1(line_tool->item, x);
-        bb_graphic_line_set_y1(line_tool->item, y);
+        double ux;
+        double uy;
+
+        gboolean success = bb_tool_subject_widget_to_user(line_tool->subject, x, y, &ux, &uy);
+        g_return_if_fail(success);
+
+        bb_graphic_line_set_x1(line_tool->item, ux);
+        bb_graphic_line_set_y1(line_tool->item, uy);
     }
 }

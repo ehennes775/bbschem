@@ -361,11 +361,17 @@ bb_box_tool_reset_with_point(BbBoxTool *box_tool, gdouble x, gdouble y)
 {
     g_return_if_fail(box_tool != NULL);
 
-    bb_graphic_box_set_x0(box_tool->item, x);
-    bb_graphic_box_set_y0(box_tool->item, y);
+    double ux;
+    double uy;
 
-    bb_graphic_box_set_x1(box_tool->item, x);
-    bb_graphic_box_set_y1(box_tool->item, y);
+    gboolean success = bb_tool_subject_widget_to_user(box_tool->subject, x, y, &ux, &uy);
+    g_return_if_fail(success);
+
+    bb_graphic_box_set_x0(box_tool->item, ux);
+    bb_graphic_box_set_y0(box_tool->item, uy);
+
+    bb_graphic_box_set_x1(box_tool->item, ux);
+    bb_graphic_box_set_y1(box_tool->item, uy);
 
     box_tool->state = STATE_S1;
 }
@@ -468,7 +474,13 @@ bb_box_tool_update_with_point(BbBoxTool *box_tool, gdouble x, gdouble y)
 
     if (box_tool->state == STATE_S1)
     {
-        bb_graphic_box_set_x1(box_tool->item, x);
-        bb_graphic_box_set_y1(box_tool->item, y);
+        double ux;
+        double uy;
+
+        gboolean success = bb_tool_subject_widget_to_user(box_tool->subject, x, y, &ux, &uy);
+        g_return_if_fail(success);
+
+        bb_graphic_box_set_x1(box_tool->item, ux);
+        bb_graphic_box_set_y1(box_tool->item, uy);
     }
 }

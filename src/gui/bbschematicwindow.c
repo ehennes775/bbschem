@@ -228,6 +228,9 @@ bb_schematic_window_tool_subject_init(BbToolSubjectInterface *iface);
 static void
 bb_schematic_window_undo(BbClipboardSubject *clipboard_subject);
 
+static gboolean
+bb_schematic_window_widget_to_user(BbToolSubject *tool_subject, double wx, double wy, double *ux, double *uy);
+
 static void
 bb_schematic_window_zoom_box(BbToolSubject *tool_subject, double x0, double y0, double x1, double y1);
 
@@ -1288,6 +1291,7 @@ bb_schematic_window_tool_subject_init(BbToolSubjectInterface *iface)
 
     iface->add_item = bb_schematic_window_add_item;
     iface->invalidate_rect_dev = bb_schematic_window_invalidate_rect_dev;
+    iface->widget_to_user = bb_schematic_window_widget_to_user;
     iface->zoom_box = bb_schematic_window_zoom_box;
 }
 
@@ -1298,6 +1302,35 @@ bb_schematic_window_undo(BbClipboardSubject *clipboard_subject)
     g_return_if_fail(clipboard_subject != NULL);
 
     g_message("bb_schematic_window_undo");
+}
+
+
+static gboolean
+bb_schematic_window_widget_to_user(BbToolSubject *tool_subject, double wx, double wy, double *ux, double *uy)
+{
+    BbSchematicWindow *window = BB_SCHEMATIC_WINDOW(tool_subject);
+    g_return_val_if_fail(window != NULL, FALSE);
+
+    cairo_matrix_t inverse = window->matrix;
+    cairo_status_t status = cairo_matrix_invert(&inverse);
+    g_return_val_if_fail(status == CAIRO_STATUS_SUCCESS, FALSE);
+
+    double x = wx;
+    double y = wy;
+
+    cairo_matrix_transform_point(&inverse, &x, &y);
+
+    if (ux != NULL)
+    {
+        *ux = x;
+    }
+
+    if (uy != NULL)
+    {
+        *uy = y;
+    }
+
+    return TRUE;
 }
 
 

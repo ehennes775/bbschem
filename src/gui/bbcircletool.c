@@ -361,8 +361,14 @@ bb_circle_tool_reset_with_point(BbCircleTool *circle_tool, gdouble x, gdouble y)
 {
     g_return_if_fail(circle_tool != NULL);
 
-    bb_graphic_circle_set_center_x(circle_tool->item, x);
-    bb_graphic_circle_set_center_y(circle_tool->item, y);
+    double ux;
+    double uy;
+
+    gboolean success = bb_tool_subject_widget_to_user(circle_tool->subject, x, y, &ux, &uy);
+    g_return_if_fail(success);
+
+    bb_graphic_circle_set_center_x(circle_tool->item, ux);
+    bb_graphic_circle_set_center_y(circle_tool->item, uy);
 
     bb_graphic_circle_set_radius(circle_tool->item, 0);
 
@@ -467,11 +473,17 @@ bb_circle_tool_update_with_point(BbCircleTool *circle_tool, gdouble x, gdouble y
 
     if (circle_tool->state == STATE_S1)
     {
+        double ux;
+        double uy;
+
+        gboolean success = bb_tool_subject_widget_to_user(circle_tool->subject, x, y, &ux, &uy);
+        g_return_if_fail(success);
+
         double distance = bb_coord_distance(
             bb_graphic_circle_get_center_x(circle_tool->item),
             bb_graphic_circle_get_center_y(circle_tool->item),
-            x,
-            y
+            ux,
+            uy
             );
 
         bb_graphic_circle_set_radius(circle_tool->item, distance);
