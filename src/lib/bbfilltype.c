@@ -16,4 +16,64 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <gtk/gtk.h>
 #include "bbfilltype.h"
+
+
+gboolean
+bb_fill_type_uses_fill_width(BbFillType fill_type)
+{
+    switch (fill_type)
+    {
+        case BB_FILL_TYPE_HOLLOW:
+        case BB_FILL_TYPE_SOLID:
+            return FALSE;
+
+        case BB_FILL_TYPE_MESH:
+        case BB_FILL_TYPE_HATCH:
+            return TRUE;
+
+        default:
+            g_return_val_if_reached(FALSE);
+    }
+}
+
+
+gboolean
+bb_fill_type_uses_first_set(BbFillType fill_type)
+{
+    switch (fill_type)
+    {
+        case BB_FILL_TYPE_HOLLOW:
+        case BB_FILL_TYPE_SOLID:
+            return FALSE;
+
+        case BB_FILL_TYPE_MESH:
+        case BB_FILL_TYPE_HATCH:
+            return TRUE;
+
+        default:
+            g_return_val_if_reached(FALSE);
+    }
+}
+
+
+gboolean
+bb_fill_type_uses_second_set(BbFillType fill_type)
+{
+    switch (fill_type)
+    {
+        case BB_FILL_TYPE_HOLLOW:
+        case BB_FILL_TYPE_SOLID:
+            return FALSE;
+
+        case BB_FILL_TYPE_MESH:
+            return TRUE;
+
+        case BB_FILL_TYPE_HATCH:
+            return FALSE;
+
+        default:
+            g_return_val_if_reached(FALSE);
+    }
+}

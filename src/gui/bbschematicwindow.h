@@ -52,26 +52,6 @@ bb_schematic_window_get_can_reload(BbSchematicWindow *window);
 
 
 /**
- * Indicates a the document can be saved
- *
- * @param window This window
- * @return TRUE if the operation can be performed
- */
-gboolean
-bb_schematic_window_get_can_save(BbSchematicWindow *window);
-
-
-/**
- * Indicates a the document can be saved with an alternate filename
- *
- * @param window This window
- * @return TRUE if the operation can be performed
- */
-gboolean
-bb_schematic_window_get_can_save_as(BbSchematicWindow *window);
-
-
-/**
  * Get the drawing tool for this window
  *
  * @param window This window
@@ -98,24 +78,6 @@ bb_schematic_window_query_selection(BbSchematicWindow *window, BbQueryFunc func,
  */
 void
 bb_schematic_window_reload(BbSchematicWindow *window, GError **error);
-
-
-/**
- * Save the underlying document
- *
- * @param window This window
- */
-void
-bb_schematic_window_save(BbSchematicWindow *window, GCancellable *cancellable, GError **error);
-
-
-/**
- * Save the underlying document
- *
- * @param window This window
- */
-void
-bb_schematic_window_save_as(BbSchematicWindow *window, GError **error);
 
 
 /**

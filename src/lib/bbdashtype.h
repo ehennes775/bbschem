@@ -33,4 +33,12 @@ enum _BbDashType
 };
 
 
+int
+bb_dash_type_uses_dash_length(BbDashType dash_type);
+
+
+int
+bb_dash_type_uses_dash_space(BbDashType dash_type);
+
+
 #endif

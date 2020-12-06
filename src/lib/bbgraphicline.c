@@ -25,6 +25,9 @@
 #include "bbadjustableitemcolor.h"
 
 
+#define BB_GRAPHIC_LINE_TOKEN "L"
+
+
 enum
 {
     PROP_0,
@@ -136,6 +139,9 @@ bb_graphic_line_set_property(GObject *object, guint property_id, const GValue *v
 static void
 bb_graphic_line_translate(BbSchematicItem *item, int dx, int dy);
 
+static gboolean
+bb_graphic_line_write(BbSchematicItem *item, GOutputStream *stream, GCancellable *cancellable, GError **error);
+
 static void
 bb_graphic_line_write_async(
     BbSchematicItem *item,
@@ -211,6 +217,7 @@ bb_graphic_line_class_init(BbGraphicLineClass *klasse)
     BB_SCHEMATIC_ITEM_CLASS(klasse)->clone = bb_graphic_line_clone;
     BB_SCHEMATIC_ITEM_CLASS(klasse)->render = bb_graphic_line_render;
     BB_SCHEMATIC_ITEM_CLASS(klasse)->translate = bb_graphic_line_translate;
+    BB_SCHEMATIC_ITEM_CLASS(klasse)->write = bb_graphic_line_write;
     BB_SCHEMATIC_ITEM_CLASS(klasse)->write_async = bb_graphic_line_write_async;
     BB_SCHEMATIC_ITEM_CLASS(klasse)->write_finish = bb_graphic_line_write_finish;
 
@@ -787,6 +794,45 @@ bb_graphic_line_translate(BbSchematicItem *item, int dx, int dy)
     g_object_notify_by_pspec(G_OBJECT(line), properties[PROP_Y0]);
     g_object_notify_by_pspec(G_OBJECT(line), properties[PROP_X1]);
     g_object_notify_by_pspec(G_OBJECT(line), properties[PROP_Y1]);
+}
+
+
+static gboolean
+bb_graphic_line_write(BbSchematicItem *item, GOutputStream *stream, GCancellable *cancellable, GError **error)
+{
+    BbGraphicLine *line = BB_GRAPHIC_LINE(item);
+    g_return_val_if_fail(line != NULL, FALSE);
+
+    GString *params = g_string_new(NULL);
+
+    g_string_printf(
+        params,
+        "%s %d %d %d %d %d %d %d %d %d %d\n",
+        BB_GRAPHIC_LINE_TOKEN,
+        line->x[0],
+        line->y[0],
+        line->x[1],
+        line->y[1],
+        line->color,
+        line->line_style->line_width,
+        line->line_style->cap_type,
+        line->line_style->dash_type,
+        bb_line_style_get_dash_length_for_file(line->line_style),
+        bb_line_style_get_dash_space_for_file(line->line_style)
+        );
+
+    gboolean result = g_output_stream_write_all(
+        stream,
+        params->str,
+        params->len,
+        NULL,
+        cancellable,
+        error
+    );
+
+    g_string_free(params, TRUE);
+
+    return result;
 }
 
 

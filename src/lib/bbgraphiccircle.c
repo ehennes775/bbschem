@@ -26,6 +26,9 @@
 #include "bbadjustableitemcolor.h"
 
 
+#define BB_GRAPHIC_CIRCLE_TOKEN "V"
+
+
 enum
 {
     PROP_0,
@@ -168,6 +171,9 @@ bb_graphic_circle_set_property(GObject *object, guint property_id, const GValue 
 static void
 bb_graphic_circle_translate(BbSchematicItem *item, int dx, int dy);
 
+static gboolean
+bb_graphic_circle_write(BbSchematicItem *item, GOutputStream *stream, GCancellable *cancellable, GError **error);
+
 static void
 bb_graphic_circle_write_async(
     BbSchematicItem *item,
@@ -255,6 +261,7 @@ bb_graphic_circle_class_init(BbGraphicCircleClass *klasse)
     BB_SCHEMATIC_ITEM_CLASS(klasse)->clone = bb_graphic_circle_clone;
     BB_SCHEMATIC_ITEM_CLASS(klasse)->render = bb_graphic_circle_render;
     BB_SCHEMATIC_ITEM_CLASS(klasse)->translate = bb_graphic_circle_translate;
+    BB_SCHEMATIC_ITEM_CLASS(klasse)->write = bb_graphic_circle_write;
     BB_SCHEMATIC_ITEM_CLASS(klasse)->write_async = bb_graphic_circle_write_async;
     BB_SCHEMATIC_ITEM_CLASS(klasse)->write_finish = bb_graphic_circle_write_finish;
 
@@ -1038,6 +1045,50 @@ bb_graphic_circle_translate(BbSchematicItem *item, int dx, int dy)
 
     g_object_notify_by_pspec(G_OBJECT(circle), properties[PROP_CENTER_X]);
     g_object_notify_by_pspec(G_OBJECT(circle), properties[PROP_CENTER_Y]);
+}
+
+
+static gboolean
+bb_graphic_circle_write(BbSchematicItem *item, GOutputStream *stream, GCancellable *cancellable, GError **error)
+{
+    BbGraphicCircle *circle = BB_GRAPHIC_CIRCLE(item);
+    g_return_val_if_fail(circle != NULL, FALSE);
+
+    GString *params = g_string_new(NULL);
+
+    g_string_printf(
+        params,
+        "%s %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d\n",
+        BB_GRAPHIC_CIRCLE_TOKEN,
+        circle->center_x,
+        circle->center_y,
+        circle->radius,
+        circle->color,
+        circle->line_style->line_width,
+        circle->line_style->cap_type,
+        circle->line_style->dash_type,
+        bb_line_style_get_dash_length_for_file(circle->line_style),
+        bb_line_style_get_dash_space_for_file(circle->line_style),
+        circle->fill_style->type,
+        bb_fill_style_get_fill_width_for_file(circle->fill_style),
+        bb_fill_style_get_fill_angle_1_for_file(circle->fill_style),
+        bb_fill_style_get_fill_pitch_1_for_file(circle->fill_style),
+        bb_fill_style_get_fill_angle_2_for_file(circle->fill_style),
+        bb_fill_style_get_fill_pitch_2_for_file(circle->fill_style)
+        );
+
+    gboolean result = g_output_stream_write_all(
+        stream,
+        params->str,
+        params->len,
+        NULL,
+        cancellable,
+        error
+        );
+
+    g_string_free(params, TRUE);
+
+    return result;
 }
 
 

@@ -29,4 +29,15 @@ enum _BbFillType
 };
 
 
+gboolean
+bb_fill_type_uses_fill_width(BbFillType fill_type);
+
+
+gboolean
+bb_fill_type_uses_first_set(BbFillType fill_type);
+
+
+gboolean
+bb_fill_type_uses_second_set(BbFillType fill_type);
+
 #endif

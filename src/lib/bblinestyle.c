@@ -21,6 +21,8 @@
 #include "bbdashtype.h"
 #include "bbcaptype.h"
 
+#define BB_LINE_STYLE_UNUSED_NUMBER (-1)
+
 
 BbLineStyle*
 bb_line_style_copy(BbLineStyle* style)
@@ -33,6 +35,24 @@ void
 bb_line_style_free(BbLineStyle* style)
 {
     g_slice_free(BbLineStyle, style);
+}
+
+
+int
+bb_line_style_get_dash_length_for_file(BbLineStyle *line_style)
+{
+    g_return_val_if_fail(line_style != NULL, BB_LINE_STYLE_UNUSED_NUMBER);
+
+    return bb_dash_type_uses_dash_length(line_style->dash_type) ? line_style->dash_length : BB_LINE_STYLE_UNUSED_NUMBER;
+}
+
+
+int
+bb_line_style_get_dash_space_for_file(BbLineStyle *line_style)
+{
+    g_return_val_if_fail(line_style != NULL, BB_LINE_STYLE_UNUSED_NUMBER);
+
+    return bb_dash_type_uses_dash_space(line_style->dash_type) ? line_style->dash_space : BB_LINE_STYLE_UNUSED_NUMBER;
 }
 
 

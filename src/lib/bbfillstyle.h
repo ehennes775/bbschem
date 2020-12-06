@@ -40,6 +40,20 @@ bb_fill_style_copy(BbFillStyle* style);
 void
 bb_fill_style_free(BbFillStyle* style);
 
+int
+bb_fill_style_get_fill_width_for_file(BbFillStyle *fill_style);
+
+int
+bb_fill_style_get_fill_angle_1_for_file(BbFillStyle *fill_style);
+
+int
+bb_fill_style_get_fill_pitch_1_for_file(BbFillStyle *fill_style);
+
+int
+bb_fill_style_get_fill_angle_2_for_file(BbFillStyle *fill_style);
+
+int
+bb_fill_style_get_fill_pitch_2_for_file(BbFillStyle *fill_style);
 
 BbFillStyle*
 bb_fill_style_new();

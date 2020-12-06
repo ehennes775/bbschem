@@ -24,6 +24,8 @@
 #include "bbadjustablelinestyle.h"
 #include "bblibrary.h"
 
+#define BB_GRAPHIC_ARC_TOKEN "A"
+
 
 enum
 {
@@ -854,12 +856,37 @@ bb_graphic_arc_write(BbSchematicItem *item, GOutputStream *stream, GCancellable 
     BbGraphicArc *arc = BB_GRAPHIC_ARC(item);
     g_return_val_if_fail(arc != NULL, FALSE);
 
-    bb_item_params_write(
-        arc->params,
+    GString *params = g_string_new(NULL);
+
+    g_string_printf(
+        params,
+        "%s %d %d %d %d %d %d %d %d %d %d %d\n",
+        BB_GRAPHIC_ARC_TOKEN,
+        arc->center_x,
+        arc->center_y,
+        arc->radius,
+        arc->start_angle,
+        arc->sweep_angle,
+        arc->color,
+        arc->line_style->line_width,
+        arc->line_style->cap_type,
+        arc->line_style->dash_type,
+        bb_line_style_get_dash_length_for_file(arc->line_style),
+        bb_line_style_get_dash_space_for_file(arc->line_style)
+        );
+
+    gboolean result = g_output_stream_write_all(
         stream,
+        params->str,
+        params->len,
+        NULL,
         cancellable,
         error
         );
+
+    g_string_free(params, TRUE);
+
+    return result;
 }
 
 

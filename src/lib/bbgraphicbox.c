@@ -25,6 +25,7 @@
 #include "bbadjustableitemcolor.h"
 #include "bbadjustablelinestyle.h"
 
+#define BB_GRAPHIC_BOX_TOKEN "B"
 
 enum
 {
@@ -149,6 +150,9 @@ bb_graphic_box_set_property(GObject *object, guint property_id, const GValue *va
 static void
 bb_graphic_box_translate(BbSchematicItem *item, int dx, int dy);
 
+static gboolean
+bb_graphic_box_write(BbSchematicItem *item, GOutputStream *stream, GCancellable *cancellable, GError **error);
+
 static void
 bb_graphic_box_write_async(
     BbSchematicItem *item,
@@ -233,6 +237,7 @@ bb_graphic_box_class_init(BbGraphicBoxClass *klasse)
     BB_SCHEMATIC_ITEM_CLASS(klasse)->clone = bb_graphic_box_clone;
     BB_SCHEMATIC_ITEM_CLASS(klasse)->render = bb_graphic_box_render;
     BB_SCHEMATIC_ITEM_CLASS(klasse)->translate = bb_graphic_box_translate;
+    BB_SCHEMATIC_ITEM_CLASS(klasse)->write = bb_graphic_box_write;
     BB_SCHEMATIC_ITEM_CLASS(klasse)->write_async = bb_graphic_box_write_async;
     BB_SCHEMATIC_ITEM_CLASS(klasse)->write_finish = bb_graphic_box_write_finish;
 
@@ -1059,6 +1064,51 @@ bb_graphic_box_translate(BbSchematicItem *item, int dx, int dy)
     g_object_notify_by_pspec(G_OBJECT(box), properties[PROP_Y0]);
     g_object_notify_by_pspec(G_OBJECT(box), properties[PROP_X1]);
     g_object_notify_by_pspec(G_OBJECT(box), properties[PROP_Y1]);
+}
+
+
+static gboolean
+bb_graphic_box_write(BbSchematicItem *item, GOutputStream *stream, GCancellable *cancellable, GError **error)
+{
+    BbGraphicBox *box = BB_GRAPHIC_BOX(item);
+    g_return_val_if_fail(box != NULL, FALSE);
+
+    GString *params = g_string_new(NULL);
+
+    g_string_printf(
+        params,
+        "%s %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d\n",
+        BB_GRAPHIC_BOX_TOKEN,
+        MIN(box->x[0], box->x[1]),
+        MIN(box->y[0], box->y[1]),
+        ABS(box->x[0] - box->x[1]),
+        ABS(box->y[0] - box->y[1]),
+        box->color,
+        box->line_style->line_width,
+        box->line_style->cap_type,
+        box->line_style->dash_type,
+        bb_line_style_get_dash_length_for_file(box->line_style),
+        bb_line_style_get_dash_space_for_file(box->line_style),
+        box->fill_style->type,
+        bb_fill_style_get_fill_width_for_file(box->fill_style),
+        bb_fill_style_get_fill_angle_1_for_file(box->fill_style),
+        bb_fill_style_get_fill_pitch_1_for_file(box->fill_style),
+        bb_fill_style_get_fill_angle_2_for_file(box->fill_style),
+        bb_fill_style_get_fill_pitch_2_for_file(box->fill_style)
+        );
+
+    gboolean result = g_output_stream_write_all(
+        stream,
+        params->str,
+        params->len,
+        NULL,
+        cancellable,
+        error
+        );
+
+    g_string_free(params, TRUE);
+
+    return result;
 }
 
 

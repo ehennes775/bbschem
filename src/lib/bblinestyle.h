@@ -42,6 +42,11 @@ bb_line_style_copy(BbLineStyle* style);
 void
 bb_line_style_free(BbLineStyle* style);
 
+int
+bb_line_style_get_dash_length_for_file(BbLineStyle *line_style);
+
+int
+bb_line_style_get_dash_space_for_file(BbLineStyle *line_style);
 
 BbLineStyle*
 bb_line_style_new();

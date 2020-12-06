@@ -18,3 +18,43 @@
 
 #include <gtk/gtk.h>
 #include "bbdashtype.h"
+
+
+int
+bb_dash_type_uses_dash_length(BbDashType dash_type)
+{
+    switch (dash_type)
+    {
+        case BB_DASH_TYPE_SOLID:
+        case BB_DASH_TYPE_DOTTED:
+            return FALSE;
+
+        case BB_DASH_TYPE_DASHED:
+        case BB_DASH_TYPE_CENTER:
+        case BB_DASH_TYPE_PHANTOM:
+            return TRUE;
+
+        default:
+            g_return_val_if_reached(FALSE);
+    }
+}
+
+
+int
+bb_dash_type_uses_dash_space(BbDashType dash_type)
+{
+    switch (dash_type)
+    {
+        case BB_DASH_TYPE_SOLID:
+            return FALSE;
+
+        case BB_DASH_TYPE_DOTTED:
+        case BB_DASH_TYPE_DASHED:
+        case BB_DASH_TYPE_CENTER:
+        case BB_DASH_TYPE_PHANTOM:
+            return TRUE;
+
+        default:
+            g_return_val_if_reached(FALSE);
+    }
+}

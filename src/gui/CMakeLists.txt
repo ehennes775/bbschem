@@ -93,6 +93,8 @@ add_library(bbgui
         bbsaveallaction.h
         bbsaveasaction.c
         bbsaveasaction.h
+        bbsavesubject.c
+        bbsavesubject.h
         bbselectallaction.c
         bbselectallaction.h
         bbselectnoneaction.c

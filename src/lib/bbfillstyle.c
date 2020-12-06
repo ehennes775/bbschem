@@ -20,6 +20,9 @@
 #include "bbfillstyle.h"
 
 
+#define BB_FILL_STYLE_UNUSED_NUMBER (-1)
+
+
 BbFillStyle*
 bb_fill_style_copy(BbFillStyle* style)
 {
@@ -31,6 +34,50 @@ void
 bb_fill_style_free(BbFillStyle* style)
 {
     g_slice_free(BbFillStyle, style);
+}
+
+int
+bb_fill_style_get_fill_width_for_file(BbFillStyle *fill_style)
+{
+    g_return_val_if_fail(fill_style != NULL, BB_FILL_STYLE_UNUSED_NUMBER);
+
+    return bb_fill_type_uses_fill_width(fill_style->type) ? fill_style->width : BB_FILL_STYLE_UNUSED_NUMBER;
+}
+
+
+int
+bb_fill_style_get_fill_angle_1_for_file(BbFillStyle *fill_style)
+{
+    g_return_val_if_fail(fill_style != NULL, BB_FILL_STYLE_UNUSED_NUMBER);
+
+    return bb_fill_type_uses_first_set(fill_style->type) ? fill_style->angle[0] : BB_FILL_STYLE_UNUSED_NUMBER;
+}
+
+
+int
+bb_fill_style_get_fill_pitch_1_for_file(BbFillStyle *fill_style)
+{
+    g_return_val_if_fail(fill_style != NULL, BB_FILL_STYLE_UNUSED_NUMBER);
+
+    return bb_fill_type_uses_first_set(fill_style->type) ? fill_style->pitch[0] : BB_FILL_STYLE_UNUSED_NUMBER;
+}
+
+
+int
+bb_fill_style_get_fill_angle_2_for_file(BbFillStyle *fill_style)
+{
+    g_return_val_if_fail(fill_style != NULL, BB_FILL_STYLE_UNUSED_NUMBER);
+
+    return bb_fill_type_uses_second_set(fill_style->type) ? fill_style->angle[1] : BB_FILL_STYLE_UNUSED_NUMBER;
+}
+
+
+int
+bb_fill_style_get_fill_pitch_2_for_file(BbFillStyle *fill_style)
+{
+    g_return_val_if_fail(fill_style != NULL, BB_FILL_STYLE_UNUSED_NUMBER);
+
+    return bb_fill_type_uses_second_set(fill_style->type) ? fill_style->pitch[1] : BB_FILL_STYLE_UNUSED_NUMBER;
 }
 
 

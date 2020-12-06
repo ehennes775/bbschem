@@ -36,8 +36,8 @@ bb_adjustable_item_color_default_init(BbAdjustableItemColorInterface *class)
             "The Color of this Item",
             0,
             G_MAXINT,
-            0,
-            G_PARAM_READWRITE
+            3,
+            G_PARAM_READWRITE | G_PARAM_CONSTRUCT
             )
         );
 }

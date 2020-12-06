@@ -30,6 +30,7 @@
 #include "bbgridsubject.h"
 #include "bbclipboardsubject.h"
 #include "bbpandirection.h"
+#include "bbsavesubject.h"
 
 
 #define BB_PAN_ZOOM_FACTOR (1.0)
@@ -202,6 +203,9 @@ static void
 bb_schematic_window_reveal_subject_init(BbRevealSubjectInterface *iface);
 
 static void
+bb_schematic_window_save_subject_init(BbSaveSubjectInterface *iface);
+
+static void
 bb_schematic_window_scale_down(BbGridSubject *grid_subject);
 
 static void
@@ -259,9 +263,10 @@ G_DEFINE_TYPE_WITH_CODE(
     BB_TYPE_DOCUMENT_WINDOW,
     G_IMPLEMENT_INTERFACE(BB_TYPE_CLIPBOARD_SUBJECT, bb_schematic_window_clipboard_subject_init)
     G_IMPLEMENT_INTERFACE(BB_TYPE_GRID_SUBJECT, bb_schematic_window_grid_subject_init)
+    G_IMPLEMENT_INTERFACE(BB_TYPE_REVEAL_SUBJECT, bb_schematic_window_reveal_subject_init)
+    G_IMPLEMENT_INTERFACE(BB_TYPE_SAVE_SUBJECT, bb_schematic_window_save_subject_init)
     G_IMPLEMENT_INTERFACE(BB_TYPE_TOOL_SUBJECT, bb_schematic_window_tool_subject_init)
     G_IMPLEMENT_INTERFACE(BB_TYPE_ZOOM_SUBJECT, bb_schematic_window_zoom_subject_init)
-    G_IMPLEMENT_INTERFACE(BB_TYPE_REVEAL_SUBJECT, bb_schematic_window_reveal_subject_init)
     )
 
 
@@ -629,18 +634,20 @@ bb_schematic_window_get_can_reload(BbSchematicWindow *window)
 
 
 gboolean
-bb_schematic_window_get_can_save(BbSchematicWindow *window)
+bb_schematic_window_get_can_save(BbSaveSubject *subject)
 {
-    g_warn_if_fail(window != NULL);
+    BbSchematicWindow *window = BB_SCHEMATIC_WINDOW(subject);
+    g_return_val_if_fail(window != NULL, FALSE);
 
     return TRUE;
 }
 
 
 gboolean
-bb_schematic_window_get_can_save_as(BbSchematicWindow *window)
+bb_schematic_window_get_can_save_as(BbSaveSubject *subject)
 {
-    g_warn_if_fail(window != NULL);
+    BbSchematicWindow *window = BB_SCHEMATIC_WINDOW(subject);
+    g_return_val_if_fail(window != NULL, FALSE);
 
     return TRUE;
 }
@@ -1078,40 +1085,109 @@ bb_schematic_window_reveal_subject_init(BbRevealSubjectInterface *iface)
 }
 
 
-void
-bb_schematic_window_save(BbSchematicWindow *window, GCancellable *cancellable, GError **error)
+static void
+bb_schematic_window_save(BbSaveSubject *subject, GError **error)
 {
+    BbSchematicWindow *window = BB_SCHEMATIC_WINDOW(subject);
     g_return_if_fail(window != NULL);
     g_return_if_fail(window->file != NULL);
     g_return_if_fail(window->schematic != NULL);
+
+    GError *local_error = NULL;
 
     GFileOutputStream *stream = g_file_replace(
         window->file,
         NULL,
         TRUE,
         G_FILE_CREATE_NONE,
-        cancellable,
-        error
+        NULL,
+        &local_error
         );
 
-    if (error == NULL || *error == NULL)
+    if (local_error == NULL)
     {
         bb_schematic_write(
             window->schematic,
             G_OUTPUT_STREAM(stream),
-            cancellable,
-            error
+            NULL,
+            &local_error
             );
+    }
+
+    g_clear_object(&stream);
+
+    if (local_error != NULL)
+    {
+        g_propagate_error(error, local_error);
     }
 }
 
 
-void
-bb_schematic_window_save_as(BbSchematicWindow *window, GError **error)
+static void
+bb_schematic_window_save_as(BbSaveSubject *subject, GError **error)
 {
+    BbSchematicWindow *window = BB_SCHEMATIC_WINDOW(subject);
     g_return_if_fail(window != NULL);
 
-    g_message("bb_schematic_window_save_as");
+    GError *local_error = NULL;
+
+    GtkWidget *dialog = gtk_file_chooser_dialog_new(
+        "Save Schematic As",
+        GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(window))),
+        GTK_FILE_CHOOSER_ACTION_SAVE,
+        "_Cancel", GTK_RESPONSE_CANCEL,
+        "_Save", GTK_RESPONSE_ACCEPT,
+        NULL
+        );
+
+    gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(dialog), TRUE);
+
+    // TODO Add file filters
+
+    if (window->file == NULL)
+    {
+        gtk_file_chooser_set_current_name(
+            GTK_FILE_CHOOSER(dialog),
+            bb_document_window_get_tab(BB_DOCUMENT_WINDOW(window))
+            );
+    }
+    else
+    {
+        gtk_file_chooser_set_file(
+            GTK_FILE_CHOOSER(dialog),
+            window->file,
+            &local_error
+            );
+    }
+
+    if (local_error == NULL)
+    {
+        if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT)
+        {
+            window->file = gtk_file_chooser_get_file(GTK_FILE_CHOOSER(dialog));
+
+            bb_schematic_window_save(subject, &local_error);
+        }
+    }
+
+    gtk_widget_destroy(dialog);
+
+    if (local_error != NULL)
+    {
+        g_propagate_error(error, local_error);
+    }
+}
+
+
+static void
+bb_schematic_window_save_subject_init(BbSaveSubjectInterface *iface)
+{
+    g_return_if_fail(iface != NULL);
+
+    iface->get_can_save = bb_schematic_window_get_can_save;
+    iface->get_can_save_as = bb_schematic_window_get_can_save_as;
+    iface->save = bb_schematic_window_save;
+    iface->save_as = bb_schematic_window_save_as;
 }
 
 

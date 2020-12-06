@@ -20,6 +20,7 @@
 #include <bbextensions.h>
 #include "bbsaveasaction.h"
 #include "bbschematicwindow.h"
+#include "bbsavesubject.h"
 
 
 enum
@@ -112,15 +113,15 @@ bb_save_as_action_action_init(GActionInterface *iface)
 static void
 bb_save_as_action_activate(GAction *action, GVariant *parameter)
 {
-    GtkWidget *window = bb_main_window_get_current_document_window(
+    GObject *subject = G_OBJECT(bb_main_window_get_current_document_window(
         bb_save_as_action_get_window(BB_SAVE_AS_ACTION(action))
-        );
+        ));
 
-    if (BB_IS_SCHEMATIC_WINDOW(window))
+    if (BB_IS_SAVE_SUBJECT(subject))
     {
         GError *error = NULL;
 
-        bb_schematic_window_save_as(BB_SCHEMATIC_WINDOW(window), &error);
+        bb_save_subject_save_as(BB_SAVE_SUBJECT(subject), &error);
 
         g_clear_error(&error);
     }
@@ -203,13 +204,13 @@ bb_save_as_action_get_enabled(GAction *action)
 {
     g_return_val_if_fail(action != NULL, FALSE);
 
-    GtkWidget *window = bb_main_window_get_current_document_window(
+    GObject *subject = G_OBJECT(bb_main_window_get_current_document_window(
         bb_save_as_action_get_window(BB_SAVE_AS_ACTION(action))
-        );
+        ));
 
     return
-        BB_IS_SCHEMATIC_WINDOW(window) &&
-        bb_schematic_window_get_can_save_as(BB_SCHEMATIC_WINDOW(window));
+        BB_IS_SAVE_SUBJECT(subject) &&
+        bb_save_subject_get_can_save_as(BB_SAVE_SUBJECT(subject));
 }
 
 
