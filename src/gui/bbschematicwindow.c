@@ -45,6 +45,8 @@ enum
     PROP_CAN_DELETE,
     PROP_CAN_PASTE,
     PROP_CAN_REDO,
+    PROP_CAN_SAVE,
+    PROP_CAN_SAVE_AS,
     PROP_CAN_SCALE_DOWN,
     PROP_CAN_SCALE_UP,
     PROP_CAN_SELECT_ALL,
@@ -456,6 +458,20 @@ bb_schematic_window_class_init(BbSchematicWindowClass *klasse)
         "reveal"
         );
 
+    /* From BbSaveSubject */
+
+    properties[PROP_CAN_SAVE] = bb_object_class_override_property(
+        object_class,
+        PROP_CAN_SAVE,
+        "can-save"
+        );
+
+    properties[PROP_CAN_SAVE_AS] = bb_object_class_override_property(
+        object_class,
+        PROP_CAN_SAVE_AS,
+        "can-save-as"
+        );
+
     /* From BbZoomSubject */
 
     properties[PROP_CAN_ZOOM_EXTENTS] = bb_object_class_override_property(
@@ -768,6 +784,14 @@ bb_schematic_window_get_property(GObject *object, guint property_id, GValue *val
 
         case PROP_CAN_REDO:
             g_value_set_boolean(value, bb_schematic_window_get_can_redo(BB_CLIPBOARD_SUBJECT(object)));
+            break;
+
+        case PROP_CAN_SAVE:
+            g_value_set_boolean(value, bb_schematic_window_get_can_save(BB_SAVE_SUBJECT(object)));
+            break;
+
+        case PROP_CAN_SAVE_AS:
+            g_value_set_boolean(value, bb_schematic_window_get_can_save_as(BB_SAVE_SUBJECT(object)));
             break;
 
         case PROP_CAN_SCALE_DOWN:
