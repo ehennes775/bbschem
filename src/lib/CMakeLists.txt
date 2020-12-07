@@ -19,6 +19,8 @@ add_library(bblib
         bbboundscalculator.h
         bbcaptype.c
         bbcaptype.h
+        bbclosepath.c
+        bbclosepath.h
         bbcoord.c
         bbcoord.h
         bbdashtype.c

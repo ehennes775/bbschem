@@ -573,6 +573,9 @@ bb_schematic_window_draw_cb(BbSchematicWindowInner *inner, cairo_t *cairo, BbSch
             bb_schematic_render(outer->schematic, BB_ITEM_RENDERER(graphics));
         }
 
+        // TODO remove
+        cairo_stroke(cairo);
+
         if (outer->drawing_tool != NULL)
         {
             bb_drawing_tool_draw(outer->drawing_tool, graphics);
