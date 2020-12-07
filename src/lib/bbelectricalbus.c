@@ -22,6 +22,7 @@
 #include "bbcoord.h"
 #include "bbitemparams.h"
 #include "bbadjustableitemcolor.h"
+#include "bbcolors.h"
 
 
 #define BB_ELECTRICAL_BUS_TOKEN "U"
@@ -383,6 +384,8 @@ static void
 bb_electrical_bus_init(BbElectricalBus *bus)
 {
     g_return_if_fail(bus != NULL);
+
+    bb_electrical_bus_set_item_color(bus, BB_COLOR_BUS);
 }
 
 

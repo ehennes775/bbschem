@@ -25,6 +25,7 @@
 #include "bbelectricalnet.h"
 #include "bbelectricalbus.h"
 #include "bbpintype.h"
+#include "bbcolors.h"
 
 
 #define BB_ELECTRICAL_PIN_TOKEN "P"
@@ -377,6 +378,8 @@ static void
 bb_electrical_pin_init(BbElectricalPin *pin)
 {
     g_return_if_fail(pin != NULL);
+
+    bb_electrical_pin_set_item_color(pin, BB_COLOR_PIN);
 }
 
 

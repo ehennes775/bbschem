@@ -22,6 +22,7 @@
 #include "bbcoord.h"
 #include "bbitemparams.h"
 #include "bbadjustableitemcolor.h"
+#include "bbcolors.h"
 
 
 #define BB_ELECTRICAL_NET_TOKEN "N"
@@ -349,6 +350,8 @@ static void
 bb_electrical_net_init(BbElectricalNet *net)
 {
     g_return_if_fail(net != NULL);
+
+    bb_electrical_net_set_item_color(net, BB_COLOR_NET);
 }
 
 

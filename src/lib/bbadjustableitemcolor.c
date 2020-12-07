@@ -18,6 +18,7 @@
 
 #include <gtk/gtk.h>
 #include "bbadjustableitemcolor.h"
+#include "bbcolors.h"
 
 
 G_DEFINE_INTERFACE(BbAdjustableItemColor, bb_adjustable_item_color, G_TYPE_OBJECT)
@@ -36,7 +37,7 @@ bb_adjustable_item_color_default_init(BbAdjustableItemColorInterface *class)
             "The Color of this Item",
             0,
             G_MAXINT,
-            3,
+            BB_COLOR_GRAPHIC,
             G_PARAM_READWRITE | G_PARAM_CONSTRUCT
             )
         );

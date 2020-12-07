@@ -73,4 +73,4 @@ add_library(bblib
         bbvaluecount.c
         bbvaluecount.h
         bblibrary.h
-        bbpintype.h)
+        bbpintype.h bbcolors.h)
