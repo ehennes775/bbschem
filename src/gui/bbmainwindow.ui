@@ -335,7 +335,7 @@
                                                     </packing>
                                                 </child>
                                                 <child>
-                                                    <object class="GtkLabel" id ="bus_panel">
+                                                    <object class="BbBusToolPanel" id ="bus_panel">
                                                         <property name="label">Bus</property>
                                                     </object>
                                                     <packing>
@@ -379,7 +379,7 @@
                                                     </packing>
                                                 </child>
                                                 <child>
-                                                    <object class="GtkLabel" id ="net_panel">
+                                                    <object class="BbNetToolPanel" id ="net_panel">
                                                         <property name="label">Net</property>
                                                     </object>
                                                     <packing>
@@ -395,7 +395,7 @@
                                                     </packing>
                                                 </child>
                                                 <child>
-                                                    <object class="GtkLabel" id ="pin_panel">
+                                                    <object class="BbPinToolPanel" id ="pin_panel">
                                                         <property name="label">Pin</property>
                                                     </object>
                                                     <packing>

@@ -40,6 +40,10 @@ add_library(bbgui
         bbcutaction.h
         bbblocktoolpanel.c
         bbblocktoolpanel.h
+        bbbustool.c
+        bbbustool.h
+        bbbustoolpanel.c
+        bbbustoolpanel.h
         bbcomponentselectorplugin.c
         bbcomponentselectorplugin.h
         bbdeleteaction.c
@@ -66,6 +70,10 @@ add_library(bbgui
         bblinetoolpanel.h
         bbmainwindow.c
         bbmainwindow.h
+        bbnettool.c
+        bbnettool.h
+        bbnettoolpanel.c
+        bbbustoolpanel.h
         bbpanaction.c
         bbpanaction.h
         bbpandirection.h
@@ -75,6 +83,10 @@ add_library(bbgui
         bbpasteaction.h
         bbpinpropertyeditor.c
         bbpinpropertyeditor.h
+        bbpintool.c
+        bbpintool.h
+        bbpintoolpanel.c
+        bbpintoolpanel.h
         bbpropertycombobox.c
         bbpropertycombobox.h
         bbquitaction.c

@@ -64,6 +64,9 @@
 #include "bbpanaction.h"
 #include "bbpandirection.h"
 #include "bbpanpointaction.h"
+#include "bbpintoolpanel.h"
+#include "bbbustoolpanel.h"
+#include "bbnettoolpanel.h"
 
 
 enum
@@ -229,6 +232,9 @@ bb_main_window_class_init(BbMainWindowClass *class)
     BB_TYPE_TEXT_TOOL_PANEL;
     BB_TYPE_ZOOM_TOOL_PANEL;
     BB_TYPE_SELECT_TOOL_PANEL;
+    BB_TYPE_PIN_TOOL_PANEL;
+    BB_TYPE_BUS_TOOL_PANEL;
+    BB_TYPE_NET_TOOL_PANEL;
 
 
     G_OBJECT_CLASS(class)->dispose = bb_main_window_dispose;
