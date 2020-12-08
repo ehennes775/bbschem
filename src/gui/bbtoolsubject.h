@@ -19,6 +19,7 @@
  */
 
 #include <gtk/gtk.h>
+#include <bblibrary.h>
 
 #define BB_TYPE_TOOL_SUBJECT bb_tool_subject_get_type()
 G_DECLARE_INTERFACE(BbToolSubject, bb_tool_subject, BB, TOOL_SUBJECT, GObject)

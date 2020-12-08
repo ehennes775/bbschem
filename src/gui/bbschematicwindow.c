@@ -31,6 +31,7 @@
 #include "bbclipboardsubject.h"
 #include "bbpandirection.h"
 #include "bbsavesubject.h"
+#include "bbgrid.h"
 
 
 #define BB_PAN_ZOOM_FACTOR (1.0)
@@ -76,6 +77,11 @@ struct _BbSchematicWindow
     BbSchematic *schematic;
 
     GFile *file;
+
+    /**
+     * The grid for this schematic window
+     */
+    BbGrid *grid;
 
     /**
      * Stores the last x coordinate, in widget space, from events that provide coordinates (e.g. button and motion
@@ -678,7 +684,7 @@ bb_schematic_window_get_can_scale_down(BbGridSubject *grid_subject)
     BbSchematicWindow *window = BB_SCHEMATIC_WINDOW(grid_subject);
     g_return_val_if_fail(window != NULL, FALSE);
 
-    return TRUE;
+    return bb_grid_get_can_scale_down(window->grid);
 }
 
 
@@ -688,7 +694,7 @@ bb_schematic_window_get_can_scale_up(BbGridSubject *grid_subject)
     BbSchematicWindow *window = BB_SCHEMATIC_WINDOW(grid_subject);
     g_return_val_if_fail(window != NULL, FALSE);
 
-    return TRUE;
+    return bb_grid_get_can_scale_up(window->grid);
 }
 
 
@@ -871,7 +877,7 @@ bb_schematic_window_init(BbSchematicWindow *window)
     gtk_widget_init_template(GTK_WIDGET(window));
 
     window->schematic = bb_schematic_new();
-
+    window->grid = bb_grid_new(BB_TOOL_SUBJECT(window));
     window->redo_stack = NULL;
     window->selection = g_hash_table_new(g_direct_hash, g_direct_equal);
     window->undo_stack = NULL;
@@ -1221,14 +1227,20 @@ bb_schematic_window_save_subject_init(BbSaveSubjectInterface *iface)
 static void
 bb_schematic_window_scale_down(BbGridSubject *grid_subject)
 {
-    g_message("bb_schematic_window_scale_down");
+    BbSchematicWindow *window = BB_SCHEMATIC_WINDOW(grid_subject);
+    g_return_if_fail(window != NULL);
+
+    bb_grid_scale_down(window->grid);
 }
 
 
 static void
 bb_schematic_window_scale_up(BbGridSubject *grid_subject)
 {
-    g_message("bb_schematic_window_scale_up");
+    BbSchematicWindow *window = BB_SCHEMATIC_WINDOW(grid_subject);
+    g_return_if_fail(window != NULL);
+
+    bb_grid_scale_up(window->grid);
 }
 
 

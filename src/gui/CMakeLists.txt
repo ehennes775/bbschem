@@ -58,6 +58,8 @@ add_library(bbgui
         bbfillstyleeditor.h
         bbgraphics.c
         bbgraphics.h
+        bbgrid.c
+        bbgrid.h
         bbgridsubject.c
         bbgridsubject.h
         bbint32combobox.c
