@@ -133,9 +133,9 @@ bb_grid_class_init(BbGridClass *klasse)
             "draw-size",
             "",
             "",
-            BB_GRID_DEFAULT_SIZE,
             bb_grid_sizes[0],
             bb_grid_sizes[BB_GRID_SIZE_COUNT-1],
+            BB_GRID_DEFAULT_SIZE,
             G_PARAM_READABLE
             )
         );
@@ -147,9 +147,9 @@ bb_grid_class_init(BbGridClass *klasse)
             "snap-size",
             "",
             "",
-            BB_GRID_DEFAULT_SIZE,
             bb_grid_sizes[0],
             bb_grid_sizes[BB_GRID_SIZE_COUNT-1],
+            BB_GRID_DEFAULT_SIZE,
             G_PARAM_READABLE
         )
     );

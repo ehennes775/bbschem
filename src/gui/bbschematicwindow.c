@@ -447,13 +447,13 @@ bb_schematic_window_class_init(BbSchematicWindowClass *klasse)
     properties[PROP_CAN_SCALE_DOWN] = bb_object_class_override_property(
         object_class,
         PROP_CAN_SCALE_DOWN,
-        "scale-down"
+        "can-scale-down"
         );
 
     properties[PROP_CAN_SCALE_UP] = bb_object_class_override_property(
         object_class,
         PROP_CAN_SCALE_UP,
-        "scale-up"
+        "can-scale-up"
         );
 
     /* From BbRevealSubject */
