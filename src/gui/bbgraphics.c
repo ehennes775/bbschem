@@ -16,6 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <math.h>
 #include <gtk/gtk.h>
 #include <bblibrary.h>
 #include <bbextensions.h>
@@ -165,6 +166,100 @@ bb_graphics_close_path(BbItemRenderer *renderer)
 static void
 bb_graphics_dispose(GObject *object)
 {
+}
+
+void
+bb_graphics_draw_grid(BbGraphics *graphics, int grid_size)
+{
+    {
+        cairo_save(graphics->cairo);
+
+        cairo_matrix_t matrix;
+        cairo_get_matrix(graphics->cairo, &matrix);
+        matrix.xx *= grid_size;
+        cairo_set_matrix(graphics->cairo, &matrix);
+
+        cairo_set_line_width(graphics->cairo, ABS(1.0 / matrix.xx));
+
+        double x[2];
+        double y[2];
+        cairo_clip_extents(graphics->cairo, &x[0], &y[0], &x[1], &y[1]);
+
+        int min_x = ceil(MIN(x[0], x[1]));
+        int max_x = floor(MAX(x[0], x[1]));
+
+        for (int xx = min_x; xx <= max_x; xx += 1)
+        {
+            if (xx == 0)
+            {
+                continue;
+            }
+            else if (ABS(xx) % 5 == 0)
+            {
+                cairo_set_source_rgb(graphics->cairo, 0.125, 0.125, 0.125);
+            }
+            else
+            {
+                cairo_set_source_rgb(graphics->cairo, 0.09, 0.09, 0.09);
+            }
+
+            cairo_move_to(graphics->cairo, xx, y[0]);
+            cairo_line_to(graphics->cairo, xx, y[1]);
+            cairo_stroke(graphics->cairo);
+        }
+
+        cairo_set_source_rgb(graphics->cairo, 0.25, 0.25, 0.25);
+        cairo_move_to(graphics->cairo, 0, y[0]);
+        cairo_line_to(graphics->cairo, 0, y[1]);
+        cairo_stroke(graphics->cairo);
+
+        cairo_restore(graphics->cairo);
+    }
+
+    {
+        cairo_save(graphics->cairo);
+
+        cairo_matrix_t matrix;
+        cairo_get_matrix(graphics->cairo, &matrix);
+        matrix.yy *= grid_size;
+        cairo_set_matrix(graphics->cairo, &matrix);
+
+        cairo_set_line_width(graphics->cairo, ABS(1.0 / matrix.yy));
+
+        double x[2];
+        double y[2];
+        cairo_clip_extents(graphics->cairo, &x[0], &y[0], &x[1], &y[1]);
+
+        int min_y = ceil(MIN(y[0], y[1]));
+        int max_y = floor(MAX(y[0], y[1]));
+
+        for (int yy = min_y; yy <= max_y; yy += 1)
+        {
+            if (yy == 0)
+            {
+                continue;
+            }
+            else if (ABS(yy) % 5 == 0)
+            {
+                cairo_set_source_rgb(graphics->cairo, 0.125, 0.125, 0.125);
+            }
+            else
+            {
+                cairo_set_source_rgb(graphics->cairo, 0.09, 0.09, 0.09);
+            }
+
+            cairo_move_to(graphics->cairo, x[0], yy);
+            cairo_line_to(graphics->cairo, x[1], yy);
+            cairo_stroke(graphics->cairo);
+        }
+
+        cairo_set_source_rgb(graphics->cairo, 0.25, 0.25, 0.25);
+        cairo_move_to(graphics->cairo, x[0], 0);
+        cairo_line_to(graphics->cairo, x[1], 0);
+        cairo_stroke(graphics->cairo);
+
+        cairo_restore(graphics->cairo);
+    }
 }
 
 

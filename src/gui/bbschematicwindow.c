@@ -586,6 +586,11 @@ bb_schematic_window_draw_cb(BbSchematicWindowInner *inner, cairo_t *cairo, BbSch
         cairo_save(cairo);
         cairo_transform(cairo, &outer->matrix);
 
+        if (TRUE)
+        {
+            bb_graphics_draw_grid(graphics, 100);
+        }
+
         if (outer->schematic != NULL)
         {
             bb_schematic_render(outer->schematic, BB_ITEM_RENDERER(graphics));
