@@ -48,14 +48,45 @@ struct _BbGraphics
 };
 
 
+typedef gboolean (*GridShowFunc)(int value);
+
+
+typedef struct _GridGeometry GridGeometry;
+
+struct _GridGeometry
+{
+    cairo_matrix_t matrix;
+    double width;
+    double min_x;
+    double min_y;
+    double max_x;
+    double max_y;
+};
+
+
 static void
 bb_graphics_dispose(GObject *object);
+
+static void
+bb_graphics_draw_grid_horizontal(BbGraphics *graphics, GridGeometry *geometry, GridShowFunc show);
+
+static void
+bb_graphics_draw_grid_vertical(BbGraphics *graphics, GridGeometry *geometry, GridShowFunc show);
 
 static void
 bb_graphics_finalize(GObject *object);
 
 static void
 bb_graphics_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
+
+static gboolean
+bb_graphics_is_major(int value);
+
+static gboolean
+bb_graphics_is_minor(int value);
+
+static gboolean
+bb_graphics_is_origin(int value);
 
 static void
 bb_graphics_item_renderer_init(BbItemRendererInterface *iface);
@@ -168,98 +199,86 @@ bb_graphics_dispose(GObject *object)
 {
 }
 
+
 void
 bb_graphics_draw_grid(BbGraphics *graphics, int grid_size)
 {
+    cairo_save(graphics->cairo);
+
+    GridGeometry horizontal;
+    GridGeometry vertical;
+
+    cairo_get_matrix(graphics->cairo, &horizontal.matrix);
+    horizontal.matrix.xx *= grid_size;
+    horizontal.width = ABS(1.0 / horizontal.matrix.xx);
+
+    cairo_get_matrix(graphics->cairo, &vertical.matrix);
+    vertical.matrix.yy *= grid_size;
+    vertical.width = ABS(1.0 / vertical.matrix.yy);
+
+    double x[2];
+    cairo_set_matrix(graphics->cairo, &horizontal.matrix);
+    cairo_clip_extents(graphics->cairo, &x[0], &horizontal.min_y, &x[1], &horizontal.max_y);
+    horizontal.min_x = ceil(MIN(x[0], x[1]));
+    horizontal.max_x = floor(MAX(x[0], x[1]));
+
+    double y[2];
+    cairo_set_matrix(graphics->cairo, &vertical.matrix);
+    cairo_clip_extents(graphics->cairo, &vertical.min_x, &y[0], &vertical.max_x, &y[1]);
+    vertical.min_y = ceil(MIN(y[0], y[1]));
+    vertical.max_y = floor(MAX(y[0], y[1]));
+
+    cairo_set_source_rgb(graphics->cairo, 0.09, 0.09, 0.09);
+    bb_graphics_draw_grid_horizontal(graphics, &horizontal, bb_graphics_is_minor);
+    bb_graphics_draw_grid_vertical(graphics, &vertical, bb_graphics_is_minor);
+
+    cairo_set_source_rgb(graphics->cairo, 0.125, 0.125, 0.125);
+    bb_graphics_draw_grid_horizontal(graphics, &horizontal, bb_graphics_is_major);
+    bb_graphics_draw_grid_vertical(graphics, &vertical, bb_graphics_is_major);
+
+    cairo_set_source_rgb(graphics->cairo, 0.25, 0.25, 0.25);
+    bb_graphics_draw_grid_horizontal(graphics, &horizontal, bb_graphics_is_origin);
+    bb_graphics_draw_grid_vertical(graphics, &vertical, bb_graphics_is_origin);
+
+    cairo_restore(graphics->cairo);
+}
+
+
+static void
+bb_graphics_draw_grid_horizontal(BbGraphics *graphics, GridGeometry *geometry, GridShowFunc show)
+{
+    cairo_set_matrix(graphics->cairo, &geometry->matrix);
+    cairo_set_line_width(graphics->cairo, geometry->width);
+
+    for (int x = geometry->min_x; x <= geometry->max_x; x++)
     {
-        cairo_save(graphics->cairo);
-
-        cairo_matrix_t matrix;
-        cairo_get_matrix(graphics->cairo, &matrix);
-        matrix.xx *= grid_size;
-        cairo_set_matrix(graphics->cairo, &matrix);
-
-        cairo_set_line_width(graphics->cairo, ABS(1.0 / matrix.xx));
-
-        double x[2];
-        double y[2];
-        cairo_clip_extents(graphics->cairo, &x[0], &y[0], &x[1], &y[1]);
-
-        int min_x = ceil(MIN(x[0], x[1]));
-        int max_x = floor(MAX(x[0], x[1]));
-
-        for (int xx = min_x; xx <= max_x; xx += 1)
+        if (show(x))
         {
-            if (xx == 0)
-            {
-                continue;
-            }
-            else if (ABS(xx) % 5 == 0)
-            {
-                cairo_set_source_rgb(graphics->cairo, 0.125, 0.125, 0.125);
-            }
-            else
-            {
-                cairo_set_source_rgb(graphics->cairo, 0.09, 0.09, 0.09);
-            }
-
-            cairo_move_to(graphics->cairo, xx, y[0]);
-            cairo_line_to(graphics->cairo, xx, y[1]);
-            cairo_stroke(graphics->cairo);
+            cairo_move_to(graphics->cairo, x, geometry->min_y);
+            cairo_line_to(graphics->cairo, x, geometry->max_y);
         }
-
-        cairo_set_source_rgb(graphics->cairo, 0.25, 0.25, 0.25);
-        cairo_move_to(graphics->cairo, 0, y[0]);
-        cairo_line_to(graphics->cairo, 0, y[1]);
-        cairo_stroke(graphics->cairo);
-
-        cairo_restore(graphics->cairo);
     }
 
+    cairo_stroke(graphics->cairo);
+}
+
+
+static void
+bb_graphics_draw_grid_vertical(BbGraphics *graphics, GridGeometry *geometry, GridShowFunc show)
+{
+    cairo_set_matrix(graphics->cairo, &geometry->matrix);
+    cairo_set_line_width(graphics->cairo, geometry->width);
+
+    for (int y = geometry->min_y; y <= geometry->max_y; y++)
     {
-        cairo_save(graphics->cairo);
-
-        cairo_matrix_t matrix;
-        cairo_get_matrix(graphics->cairo, &matrix);
-        matrix.yy *= grid_size;
-        cairo_set_matrix(graphics->cairo, &matrix);
-
-        cairo_set_line_width(graphics->cairo, ABS(1.0 / matrix.yy));
-
-        double x[2];
-        double y[2];
-        cairo_clip_extents(graphics->cairo, &x[0], &y[0], &x[1], &y[1]);
-
-        int min_y = ceil(MIN(y[0], y[1]));
-        int max_y = floor(MAX(y[0], y[1]));
-
-        for (int yy = min_y; yy <= max_y; yy += 1)
+        if (show(y))
         {
-            if (yy == 0)
-            {
-                continue;
-            }
-            else if (ABS(yy) % 5 == 0)
-            {
-                cairo_set_source_rgb(graphics->cairo, 0.125, 0.125, 0.125);
-            }
-            else
-            {
-                cairo_set_source_rgb(graphics->cairo, 0.09, 0.09, 0.09);
-            }
-
-            cairo_move_to(graphics->cairo, x[0], yy);
-            cairo_line_to(graphics->cairo, x[1], yy);
-            cairo_stroke(graphics->cairo);
+            cairo_move_to(graphics->cairo, geometry->min_x, y);
+            cairo_line_to(graphics->cairo, geometry->max_x, y);
         }
-
-        cairo_set_source_rgb(graphics->cairo, 0.25, 0.25, 0.25);
-        cairo_move_to(graphics->cairo, x[0], 0);
-        cairo_line_to(graphics->cairo, x[1], 0);
-        cairo_stroke(graphics->cairo);
-
-        cairo_restore(graphics->cairo);
     }
+
+    cairo_stroke(graphics->cairo);
 }
 
 
@@ -369,6 +388,27 @@ bb_graphics_get_widget_matrix(BbGraphics *graphics)
 static void
 bb_graphics_init(BbGraphics *graphics)
 {
+}
+
+
+static gboolean
+bb_graphics_is_major(int value)
+{
+    return !bb_graphics_is_origin(value) && ((ABS(value) % 5) == 0);
+}
+
+
+static gboolean
+bb_graphics_is_minor(int value)
+{
+    return !bb_graphics_is_major(value);
+}
+
+
+static gboolean
+bb_graphics_is_origin(int value)
+{
+    return (value == 0);
 }
 
 
