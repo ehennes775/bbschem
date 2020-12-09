@@ -109,6 +109,9 @@ add_library(bbgui
         bbsaveasaction.h
         bbsavesubject.c
         bbsavesubject.h
+        bbscalegridaction.c
+        bbscalegridaction.h
+        bbscalegriddirection.h
         bbselectallaction.c
         bbselectallaction.h
         bbselectnoneaction.c

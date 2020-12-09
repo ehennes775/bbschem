@@ -21,10 +21,16 @@
 
 
 static gboolean
+bb_grid_subject_get_can_scale_missing(BbGridSubject *grid_subject, BbScaleGridDirection direction);
+
+static gboolean
 bb_grid_subject_get_can_scale_down_missing(BbGridSubject *grid_subject);
 
 static gboolean
 bb_grid_subject_get_can_scale_up_missing(BbGridSubject *grid_subject);
+
+static void
+bb_grid_subject_scale_missing(BbGridSubject *grid_subject, BbScaleGridDirection direction);
 
 static void
 bb_grid_subject_scale_down_missing(BbGridSubject *grid_subject);
@@ -45,8 +51,10 @@ bb_grid_subject_default_init(BbGridSubjectInterface *iface)
 {
     g_return_if_fail(iface != NULL);
 
+    iface->can_scale = bb_grid_subject_get_can_scale_missing;
     iface->can_scale_down = bb_grid_subject_get_can_scale_down_missing;
     iface->can_scale_up = bb_grid_subject_get_can_scale_up_missing;
+    iface->scale = bb_grid_subject_scale_missing;
     iface->scale_down = bb_grid_subject_scale_down_missing;
     iface->scale_up = bb_grid_subject_scale_up_missing;
 
@@ -71,6 +79,24 @@ bb_grid_subject_default_init(BbGridSubjectInterface *iface)
             G_PARAM_READABLE | G_PARAM_STATIC_STRINGS
             )
         );
+}
+
+gboolean
+bb_grid_subject_get_can_scale(BbGridSubject *grid_subject, BbScaleGridDirection direction)
+{
+    BbGridSubjectInterface *iface = BB_GRID_SUBJECT_GET_IFACE(grid_subject);
+
+    g_return_val_if_fail(iface != NULL, FALSE);
+    g_return_val_if_fail(iface->can_scale != NULL, FALSE);
+
+    return iface->can_scale(grid_subject, direction);
+}
+
+
+static gboolean
+bb_grid_subject_get_can_scale_missing(BbGridSubject *grid_subject, BbScaleGridDirection direction)
+{
+    g_error("bb_grid_subject_get_can_scale() not overridden");
 }
 
 
@@ -109,6 +135,26 @@ bb_grid_subject_get_can_scale_up_missing(BbGridSubject *grid_subject)
 {
     g_error("bb_grid_subject_get_can_scale_up() not overridden");
 }
+
+
+void
+bb_grid_subject_scale(BbGridSubject *grid_subject, BbScaleGridDirection direction)
+{
+    BbGridSubjectInterface *iface = BB_GRID_SUBJECT_GET_IFACE(grid_subject);
+
+    g_return_if_fail(iface != NULL);
+    g_return_if_fail(iface->scale != NULL);
+
+    iface->scale(grid_subject, direction);
+}
+
+
+static void
+bb_grid_subject_scale_missing(BbGridSubject *grid_subject, BbScaleGridDirection direction)
+{
+    g_error("bb_grid_subject_scale() not overridden");
+}
+
 
 void
 bb_grid_subject_scale_down(BbGridSubject *grid_subject)

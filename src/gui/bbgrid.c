@@ -197,12 +197,42 @@ bb_grid_new(BbToolSubject *tool_subject)
 
 
 gboolean
+bb_grid_get_can_scale(BbGrid *grid, BbScaleGridDirection direction)
+{
+    switch (direction)
+    {
+        case BB_SCALE_GRID_DIRECTION_DOWN:
+            return bb_grid_get_can_scale_down(grid);
+
+        case BB_SCALE_GRID_DIRECTION_RESET:
+            return bb_grid_get_can_scale_reset(grid);
+
+        case BB_SCALE_GRID_DIRECTION_UP:
+            return bb_grid_get_can_scale_up(grid);
+
+        default:
+            g_return_val_if_reached(FALSE);
+    }
+}
+
+
+gboolean
 bb_grid_get_can_scale_down(BbGrid *grid)
 {
     g_return_val_if_fail(grid != NULL, FALSE);
 
     return grid->snap_size > 0;
 }
+
+
+gboolean
+bb_grid_get_can_scale_reset(BbGrid *grid)
+{
+    g_warn_if_fail(grid != NULL);
+
+    return TRUE;
+}
+
 
 gboolean
 bb_grid_get_can_scale_up(BbGrid *grid)
@@ -269,10 +299,34 @@ bb_grid_init(BbGrid *grid)
     grid->draw_size = 3;
 }
 
+void
+bb_grid_scale(BbGrid *grid, BbScaleGridDirection direction)
+{
+    switch (direction)
+    {
+        case BB_SCALE_GRID_DIRECTION_DOWN:
+            bb_grid_scale_down(grid);
+            break;
+
+        case BB_SCALE_GRID_DIRECTION_RESET:
+            bb_grid_scale_reset(grid);
+            break;
+
+        case BB_SCALE_GRID_DIRECTION_UP:
+            bb_grid_scale_up(grid);
+            break;
+
+        default:
+            g_warn_if_reached();
+    }
+}
+
 
 void
 bb_grid_scale_down(BbGrid *grid)
 {
+    g_message("bb_grid_scale_down");
+
     g_return_if_fail(grid != NULL);
     g_return_if_fail(bb_grid_get_can_scale_down(grid));
 
@@ -290,8 +344,31 @@ bb_grid_scale_down(BbGrid *grid)
 
 
 void
+bb_grid_scale_reset(BbGrid *grid)
+{
+    g_message("bb_grid_scale_reset");
+
+    g_return_if_fail(grid != NULL);
+    g_return_if_fail(bb_grid_get_can_scale_down(grid));
+
+    grid->snap_size = 3;
+
+    int draw_size = grid->snap_size;
+
+    while (FALSE && draw_size < BB_GRID_SIZE_COUNT)
+    {
+        draw_size++;
+    }
+
+    grid->draw_size = draw_size;
+}
+
+
+void
 bb_grid_scale_up(BbGrid *grid)
 {
+    g_message("bb_grid_scale_up");
+
     g_return_if_fail(grid != NULL);
     g_return_if_fail(bb_grid_get_can_scale_down(grid));
 

@@ -1,5 +1,5 @@
-#ifndef __BBGRID__
-#define __BBGRID__
+#ifndef __BBSCALEGRIDACTION__
+#define __BBSCALEGRIDACTION__
 /*
  * bbschem
  * Copyright (C) 2020 Edward C. Hennessy
@@ -19,47 +19,22 @@
  */
 
 #include <gtk/gtk.h>
-#include "bbtoolsubject.h"
 #include "bbscalegriddirection.h"
+#include "bbmainwindow.h"
 
-#define BB_TYPE_GRID bb_grid_get_type()
-G_DECLARE_FINAL_TYPE(BbGrid, bb_grid, BB, GRID, GObject)
+#define BB_TYPE_SCALE_GRID_ACTION bb_scale_grid_action_get_type()
+G_DECLARE_FINAL_TYPE(BbScaleGridAction, bb_scale_grid_action, BB, SCALE_GRID_ACTION, GObject)
 
 
-gboolean
-bb_grid_get_can_scale(BbGrid *grid, BbScaleGridDirection direction);
+GObject*
+bb_scale_grid_action_get_subject(BbScaleGridAction *action);
 
-gboolean
-bb_grid_get_can_scale_down(BbGrid *grid);
 
-gboolean
-bb_grid_get_can_scale_reset(BbGrid *grid);
+BbScaleGridDirection
+bb_scale_grid_action_get_direction(BbScaleGridAction *action);
 
-gboolean
-bb_grid_get_can_scale_up(BbGrid *grid);
 
-int
-bb_grid_get_draw_size(BbGrid *grid);
-
-int
-bb_grid_get_snap_size(BbGrid *grid);
-
-BbToolSubject*
-bb_grid_get_subject(BbGrid *grid);
-
-BbGrid*
-bb_grid_new(BbToolSubject *tool_subject);
-
-void
-bb_grid_scale(BbGrid *grid, BbScaleGridDirection direction);
-
-void
-bb_grid_scale_down(BbGrid *grid);
-
-void
-bb_grid_scale_reset(BbGrid *grid);
-
-void
-bb_grid_scale_up(BbGrid *grid);
+BbScaleGridAction*
+bb_scale_grid_action_new(BbMainWindow *main_window, BbScaleGridDirection direction);
 
 #endif

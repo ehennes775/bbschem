@@ -19,6 +19,7 @@
  */
 
 #include <gtk/gtk.h>
+#include "bbscalegriddirection.h"
 
 #define BB_TYPE_GRID_SUBJECT bb_grid_subject_get_type()
 G_DECLARE_INTERFACE(BbGridSubject, bb_grid_subject, BB, GRID_SUBJECT, GObject)
@@ -27,21 +28,37 @@ struct _BbGridSubjectInterface
 {
     GTypeInterface g_iface;
 
+    gboolean (*can_scale)(BbGridSubject *grid_subject, BbScaleGridDirection direction);
     gboolean (*can_scale_down)(BbGridSubject *grid_subject);
+    gboolean (*can_scale_reset)(BbGridSubject *grid_subject);
     gboolean (*can_scale_up)(BbGridSubject *grid_subject);
+    void (*scale)(BbGridSubject *grid_subject, BbScaleGridDirection direction);
     void (*scale_down)(BbGridSubject *grid_subject);
+    void (*scale_reset)(BbGridSubject *grid_subject);
     void (*scale_up)(BbGridSubject *grid_subject);
 };
 
 
 gboolean
+bb_grid_subject_get_can_scale(BbGridSubject *grid_subject, BbScaleGridDirection direction);
+
+gboolean
 bb_grid_subject_get_can_scale_down(BbGridSubject *grid_subject);
+
+gboolean
+bb_grid_subject_get_can_scale_reset(BbGridSubject *grid_subject);
 
 gboolean
 bb_grid_subject_get_can_scale_up(BbGridSubject *grid_subject);
 
 void
+bb_grid_subject_scale(BbGridSubject *grid_subject, BbScaleGridDirection direction);
+
+void
 bb_grid_subject_scale_down(BbGridSubject *grid_subject);
+
+void
+bb_grid_subject_scale_reset(BbGridSubject *grid_subject);
 
 void
 bb_grid_subject_scale_up(BbGridSubject *grid_subject);

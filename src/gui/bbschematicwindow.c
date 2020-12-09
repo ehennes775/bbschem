@@ -172,7 +172,13 @@ static void
 bb_schematic_window_finalize(GObject *object);
 
 static gboolean
+bb_schematic_window_get_can_scale(BbGridSubject *grid_subject, BbScaleGridDirection direction);
+
+static gboolean
 bb_schematic_window_get_can_scale_down(BbGridSubject *grid_subject);
+
+static gboolean
+bb_schematic_window_get_can_scale_reset(BbGridSubject *grid_subject);
 
 static gboolean
 bb_schematic_window_get_can_scale_up(BbGridSubject *grid_subject);
@@ -214,7 +220,13 @@ static void
 bb_schematic_window_save_subject_init(BbSaveSubjectInterface *iface);
 
 static void
+bb_schematic_window_scale(BbGridSubject *grid_subject, BbScaleGridDirection direction);
+
+static void
 bb_schematic_window_scale_down(BbGridSubject *grid_subject);
+
+static void
+bb_schematic_window_scale_reset(BbGridSubject *grid_subject);
 
 static void
 bb_schematic_window_scale_up(BbGridSubject *grid_subject);
@@ -679,12 +691,32 @@ bb_schematic_window_get_can_save_as(BbSaveSubject *subject)
 
 
 static gboolean
+bb_schematic_window_get_can_scale(BbGridSubject *grid_subject, BbScaleGridDirection direction)
+{
+    BbSchematicWindow *window = BB_SCHEMATIC_WINDOW(grid_subject);
+    g_return_val_if_fail(window != NULL, FALSE);
+
+    return bb_grid_get_can_scale(window->grid, direction);
+}
+
+
+static gboolean
 bb_schematic_window_get_can_scale_down(BbGridSubject *grid_subject)
 {
     BbSchematicWindow *window = BB_SCHEMATIC_WINDOW(grid_subject);
     g_return_val_if_fail(window != NULL, FALSE);
 
     return bb_grid_get_can_scale_down(window->grid);
+}
+
+
+static gboolean
+bb_schematic_window_get_can_scale_reset(BbGridSubject *grid_subject)
+{
+    BbSchematicWindow *window = BB_SCHEMATIC_WINDOW(grid_subject);
+    g_return_val_if_fail(window != NULL, FALSE);
+
+    return bb_grid_get_can_scale_reset(window->grid);
 }
 
 
@@ -864,8 +896,11 @@ bb_schematic_window_grid_subject_init(BbGridSubjectInterface *iface)
 {
     g_return_if_fail(iface != NULL);
 
+    iface->can_scale = bb_schematic_window_get_can_scale;
     iface->can_scale_down = bb_schematic_window_get_can_scale_down;
+    iface->can_scale_reset = bb_schematic_window_get_can_scale_reset;
     iface->can_scale_up = bb_schematic_window_get_can_scale_up;
+    iface->scale = bb_schematic_window_scale;
     iface->scale_down = bb_schematic_window_scale_down;
     iface->scale_up = bb_schematic_window_scale_up;
 }
@@ -1225,12 +1260,32 @@ bb_schematic_window_save_subject_init(BbSaveSubjectInterface *iface)
 
 
 static void
+bb_schematic_window_scale(BbGridSubject *grid_subject, BbScaleGridDirection direction)
+{
+    BbSchematicWindow *window = BB_SCHEMATIC_WINDOW(grid_subject);
+    g_return_if_fail(window != NULL);
+
+    bb_grid_scale(window->grid, direction);
+}
+
+
+static void
 bb_schematic_window_scale_down(BbGridSubject *grid_subject)
 {
     BbSchematicWindow *window = BB_SCHEMATIC_WINDOW(grid_subject);
     g_return_if_fail(window != NULL);
 
     bb_grid_scale_down(window->grid);
+}
+
+
+static void
+bb_schematic_window_scale_reset(BbGridSubject *grid_subject)
+{
+    BbSchematicWindow *window = BB_SCHEMATIC_WINDOW(grid_subject);
+    g_return_if_fail(window != NULL);
+
+    bb_grid_scale_reset(window->grid);
 }
 
 
