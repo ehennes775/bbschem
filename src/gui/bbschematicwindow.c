@@ -63,6 +63,13 @@ enum
 };
 
 
+enum
+{
+    SIG_GRID_CHANGED,
+    N_SIGNALS
+};
+
+
 struct _BbSchematicWindow
 {
     BbDocumentWindow parent;
@@ -241,6 +248,9 @@ static void
 bb_schematic_window_select_none(BbClipboardSubject *clipboard_subject);
 
 static void
+bb_schematic_window_set_grid(BbSchematicWindow *window, BbGrid *grid);
+
+static void
 bb_schematic_window_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
 
 static void
@@ -278,6 +288,7 @@ bb_schematic_window_zoom_subject_init(BbZoomSubjectInterface *iface);
 
 
 static GParamSpec *properties[N_PROPERTIES];
+static guint signals[N_SIGNALS];
 
 
 G_DEFINE_TYPE_WITH_CODE(
@@ -512,6 +523,11 @@ bb_schematic_window_class_init(BbSchematicWindowClass *klasse)
         PROP_CAN_ZOOM_OUT,
         "can-zoom-out"
         );
+
+    signals[SIG_GRID_CHANGED] = g_signal_lookup(
+        "grid-changed",
+        BB_TYPE_GRID_SUBJECT
+        );
 }
 
 static void
@@ -584,36 +600,31 @@ bb_schematic_window_draw_cb(BbSchematicWindowInner *inner, cairo_t *cairo, BbSch
     GtkStyleContext *style = gtk_widget_get_style_context(GTK_WIDGET(outer));
     BbGraphics *graphics = bb_graphics_new(cairo, &widget_matrix, style);
 
-    if (outer->drawing_tool != NULL)
+    cairo_save(cairo);
+    cairo_transform(cairo, &outer->matrix);
+
+    if (outer->grid != NULL)
     {
-        cairo_save(cairo);
-        cairo_transform(cairo, &outer->matrix);
-
-        if (outer->grid != NULL)
-        {
-            bb_grid_draw(outer->grid, graphics);
-        }
-
-        if (outer->schematic != NULL)
-        {
-            bb_schematic_render(outer->schematic, BB_ITEM_RENDERER(graphics));
-        }
-
-        // TODO remove
-        cairo_stroke(cairo);
-
-        if (outer->drawing_tool != NULL)
-        {
-            bb_drawing_tool_draw(outer->drawing_tool, graphics);
-        }
-
-        // TODO remove
-        cairo_stroke(cairo);
-
-        cairo_restore(cairo);
+        bb_grid_draw(outer->grid, graphics);
     }
 
+    if (outer->schematic != NULL)
+    {
+        bb_schematic_render(outer->schematic, BB_ITEM_RENDERER(graphics));
+    }
+
+    // TODO remove
     cairo_stroke(cairo);
+
+    if (outer->drawing_tool != NULL)
+    {
+        bb_drawing_tool_draw(outer->drawing_tool, graphics);
+    }
+
+    // TODO remove
+    cairo_stroke(cairo);
+
+    cairo_restore(cairo);
 }
 
 
@@ -920,7 +931,7 @@ bb_schematic_window_init(BbSchematicWindow *window)
     gtk_widget_init_template(GTK_WIDGET(window));
 
     window->schematic = bb_schematic_new();
-    window->grid = bb_grid_new(BB_TOOL_SUBJECT(window));
+    bb_schematic_window_set_grid(window, bb_grid_new(BB_TOOL_SUBJECT(window)));
     window->redo_stack = NULL;
     window->selection = g_hash_table_new(g_direct_hash, g_direct_equal);
     window->undo_stack = NULL;
@@ -1066,6 +1077,13 @@ bb_schematic_window_motion_notify_cb(GtkWidget *widget, GdkEvent *event, gpointe
     }
 
     return FALSE;
+}
+
+
+static void
+bb_schematic_window_notify_grid_cb(BbGrid *grid, GParamSpec *pspec, BbSchematicWindow *window)
+{
+    g_signal_emit(window, signals[SIG_GRID_CHANGED], 0);
 }
 
 
@@ -1397,6 +1415,43 @@ bb_schematic_window_set_drawing_tool(BbSchematicWindow *window, BbDrawingTool *t
         }
 
         g_object_notify_by_pspec(G_OBJECT(window), properties[PROP_DRAWING_TOOL]);
+    }
+}
+
+void
+bb_schematic_window_set_grid(BbSchematicWindow *window, BbGrid *grid)
+{
+    g_return_if_fail(BB_IS_SCHEMATIC_WINDOW(window));
+
+    if (window->grid != grid)
+    {
+        if (window->grid != NULL)
+        {
+            g_signal_handlers_disconnect_by_func(
+                window->grid,
+                G_CALLBACK(bb_schematic_window_invalidate_item_cb),
+                window
+                );
+
+            g_object_unref(window->grid);
+        }
+
+        window->grid = grid;
+
+        if (window->grid != NULL)
+        {
+            g_object_ref(window->grid);
+
+            g_signal_connect_object(
+                window->grid,
+                "notify",
+                G_CALLBACK(bb_schematic_window_notify_grid_cb),
+                window,
+                0
+                );
+        }
+
+        //g_object_notify_by_pspec(G_OBJECT(window), properties[PROP_GRID]);
     }
 }
 

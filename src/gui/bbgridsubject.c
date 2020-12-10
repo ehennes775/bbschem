@@ -79,6 +79,18 @@ bb_grid_subject_default_init(BbGridSubjectInterface *iface)
             G_PARAM_READABLE | G_PARAM_STATIC_STRINGS
             )
         );
+
+    g_signal_new(
+        "grid-changed",
+        BB_TYPE_GRID_SUBJECT,
+        0,
+        0,
+        NULL,
+        NULL,
+        g_cclosure_marshal_VOID__VOID,
+        G_TYPE_NONE,
+        0
+        );
 }
 
 gboolean

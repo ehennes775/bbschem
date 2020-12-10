@@ -94,7 +94,7 @@ static void
 bb_scale_grid_action_set_subject(BbScaleGridAction *action, GObject* subject);
 
 
-GParamSpec *properties[N_PROPERTIES];
+static GParamSpec *properties[N_PROPERTIES];
 
 
 G_DEFINE_TYPE_WITH_CODE(
@@ -119,6 +119,12 @@ bb_scale_grid_action_action_init(GActionInterface *iface)
 }
 
 
+/**
+ * A hotkey can call can activate the action even when enabled is false
+ *
+ * @param action A BbScaleGridAction
+ * @param parameter Unused and must be NULL
+ */
 static void
 bb_scale_grid_action_activate(GAction *action, GVariant *parameter)
 {
@@ -129,10 +135,12 @@ bb_scale_grid_action_activate(GAction *action, GVariant *parameter)
 
     if (BB_IS_GRID_SUBJECT(subject))
     {
-        bb_grid_subject_scale(
-            BB_GRID_SUBJECT(subject),
-            bb_scale_grid_action_get_direction(BB_SCALE_GRID_ACTION(action))
-            );
+        BbScaleGridDirection direction = bb_scale_grid_action_get_direction(BB_SCALE_GRID_ACTION(action));
+
+        if (bb_grid_subject_get_can_scale(BB_GRID_SUBJECT(subject), direction))
+        {
+            bb_grid_subject_scale(BB_GRID_SUBJECT(subject), direction);
+        }
     }
 }
 
@@ -367,6 +375,15 @@ bb_scale_grid_action_get_subject(BbScaleGridAction *action)
 
 
 static void
+bb_scale_grid_action_grid_changed_cb(BbGridSubject *subject, BbScaleGridAction *action)
+{
+    g_return_if_fail(BB_IS_SCALE_GRID_ACTION(action));
+
+    g_object_notify_by_pspec(G_OBJECT(action), properties[PROP_ENABLED]);
+}
+
+
+static void
 bb_scale_grid_action_init(BbScaleGridAction *window)
 {
 }
@@ -442,6 +459,12 @@ bb_scale_grid_action_set_subject(BbScaleGridAction *action, GObject* subject)
     {
         if (action->subject != NULL)
         {
+            g_signal_handlers_disconnect_by_func(
+                action->subject,
+                bb_scale_grid_action_grid_changed_cb,
+                action
+                );
+
             g_object_unref(action->subject);
         }
 
@@ -450,6 +473,13 @@ bb_scale_grid_action_set_subject(BbScaleGridAction *action, GObject* subject)
         if (action->subject != NULL)
         {
             g_object_ref(action->subject);
+
+            g_signal_connect(
+                action->subject,
+                "grid-changed",
+                G_CALLBACK(bb_scale_grid_action_grid_changed_cb),
+                action
+                );
         }
 
         g_object_notify_by_pspec(G_OBJECT(action), properties[PROP_SUBJECT]);

@@ -234,7 +234,7 @@ bb_grid_get_can_scale(BbGrid *grid, BbScaleGridDirection direction)
 gboolean
 bb_grid_get_can_scale_down(BbGrid *grid)
 {
-    g_return_val_if_fail(grid != NULL, FALSE);
+    g_return_val_if_fail(BB_IS_GRID(grid), FALSE);
 
     return grid->snap_index > 0;
 }
@@ -252,17 +252,18 @@ bb_grid_get_can_scale_reset(BbGrid *grid)
 gboolean
 bb_grid_get_can_scale_up(BbGrid *grid)
 {
-    g_return_val_if_fail(grid != NULL, FALSE);
+    g_return_val_if_fail(BB_IS_GRID(grid), FALSE);
 
     int next_size_up = bb_grid_calculate_size(grid->snap_index + 1);
 
     return next_size_up <= BB_GRID_MAXIMUM_SIZE;
 }
 
+
 int
 bb_grid_get_draw_size(BbGrid *grid)
 {
-    g_return_val_if_fail(grid != NULL, BB_GRID_DEFAULT_SIZE);
+    g_return_val_if_fail(BB_IS_GRID(grid), BB_GRID_DEFAULT_SIZE);
 
     return bb_grid_calculate_size(grid->draw_index);
 }
@@ -296,7 +297,7 @@ bb_grid_get_snap_size(BbGrid *grid)
 {
     g_return_val_if_fail(grid != NULL, BB_GRID_DEFAULT_SIZE);
 
-    return grid->snap_index;
+    return bb_grid_calculate_size(grid->snap_index);
 }
 
 
@@ -342,7 +343,7 @@ bb_grid_scale(BbGrid *grid, BbScaleGridDirection direction)
 void
 bb_grid_scale_down(BbGrid *grid)
 {
-    g_return_if_fail(grid != NULL);
+    g_return_if_fail(BB_IS_GRID(grid));
     g_return_if_fail(bb_grid_get_can_scale_down(grid));
 
     grid->snap_index--;
@@ -351,10 +352,10 @@ bb_grid_scale_down(BbGrid *grid)
 
     bb_tool_subject_invalidate_all(grid->subject);
 
-    g_object_notify(G_OBJECT(grid), properties[PROP_CAN_SCALE_UP]);
-    g_object_notify(G_OBJECT(grid), properties[PROP_CAN_SCALE_DOWN]);
-    g_object_notify(G_OBJECT(grid), properties[PROP_DRAW_SIZE]);
-    g_object_notify(G_OBJECT(grid), properties[PROP_SNAP_SIZE]);
+    g_object_notify_by_pspec(G_OBJECT(grid), properties[PROP_CAN_SCALE_UP]);
+    g_object_notify_by_pspec(G_OBJECT(grid), properties[PROP_CAN_SCALE_DOWN]);
+    g_object_notify_by_pspec(G_OBJECT(grid), properties[PROP_DRAW_SIZE]);
+    g_object_notify_by_pspec(G_OBJECT(grid), properties[PROP_SNAP_SIZE]);
 }
 
 
@@ -379,10 +380,10 @@ bb_grid_scale_reset(BbGrid *grid)
 
     bb_tool_subject_invalidate_all(grid->subject);
 
-    g_object_notify(G_OBJECT(grid), properties[PROP_CAN_SCALE_UP]);
-    g_object_notify(G_OBJECT(grid), properties[PROP_CAN_SCALE_DOWN]);
-    g_object_notify(G_OBJECT(grid), properties[PROP_DRAW_SIZE]);
-    g_object_notify(G_OBJECT(grid), properties[PROP_SNAP_SIZE]);
+    g_object_notify_by_pspec(G_OBJECT(grid), properties[PROP_CAN_SCALE_UP]);
+    g_object_notify_by_pspec(G_OBJECT(grid), properties[PROP_CAN_SCALE_DOWN]);
+    g_object_notify_by_pspec(G_OBJECT(grid), properties[PROP_DRAW_SIZE]);
+    g_object_notify_by_pspec(G_OBJECT(grid), properties[PROP_SNAP_SIZE]);
 }
 
 
@@ -399,10 +400,10 @@ bb_grid_scale_up(BbGrid *grid)
 
     bb_tool_subject_invalidate_all(grid->subject);
 
-    g_object_notify(G_OBJECT(grid), properties[PROP_CAN_SCALE_UP]);
-    g_object_notify(G_OBJECT(grid), properties[PROP_CAN_SCALE_DOWN]);
-    g_object_notify(G_OBJECT(grid), properties[PROP_DRAW_SIZE]);
-    g_object_notify(G_OBJECT(grid), properties[PROP_SNAP_SIZE]);
+    g_object_notify_by_pspec(G_OBJECT(grid), properties[PROP_CAN_SCALE_UP]);
+    g_object_notify_by_pspec(G_OBJECT(grid), properties[PROP_CAN_SCALE_DOWN]);
+    g_object_notify_by_pspec(G_OBJECT(grid), properties[PROP_DRAW_SIZE]);
+    g_object_notify_by_pspec(G_OBJECT(grid), properties[PROP_SNAP_SIZE]);
 }
 
 
