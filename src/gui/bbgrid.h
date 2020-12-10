@@ -21,6 +21,7 @@
 #include <gtk/gtk.h>
 #include "bbtoolsubject.h"
 #include "bbscalegriddirection.h"
+#include "bbgraphics.h"
 
 #define BB_TYPE_GRID bb_grid_get_type()
 G_DECLARE_FINAL_TYPE(BbGrid, bb_grid, BB, GRID, GObject)
@@ -55,6 +56,9 @@ bb_grid_scale(BbGrid *grid, BbScaleGridDirection direction);
 
 void
 bb_grid_scale_down(BbGrid *grid);
+
+void
+bb_grid_draw(BbGrid *grid, BbGraphics *graphics);
 
 void
 bb_grid_scale_reset(BbGrid *grid);

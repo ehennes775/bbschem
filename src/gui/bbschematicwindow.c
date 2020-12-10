@@ -193,6 +193,9 @@ static void
 bb_schematic_window_grid_subject_init(BbGridSubjectInterface *iface);
 
 static void
+bb_schematic_window_invalidate_all(BbToolSubject *tool_subject);
+
+static void
 bb_schematic_window_invalidate_item_cb(BbDrawingTool *tool, BbSchematicItem *item, BbSchematicWindow *window);
 
 static void
@@ -586,9 +589,9 @@ bb_schematic_window_draw_cb(BbSchematicWindowInner *inner, cairo_t *cairo, BbSch
         cairo_save(cairo);
         cairo_transform(cairo, &outer->matrix);
 
-        if (TRUE)
+        if (outer->grid != NULL)
         {
-            bb_graphics_draw_grid(graphics, 100);
+            bb_grid_draw(outer->grid, graphics);
         }
 
         if (outer->schematic != NULL)
@@ -974,6 +977,18 @@ bb_schematic_window_init(BbSchematicWindow *window)
         G_CALLBACK(bb_schematic_window_draw_cb),
         window
         );
+}
+
+
+static void
+bb_schematic_window_invalidate_all(BbToolSubject *tool_subject)
+{
+    BbSchematicWindow *window = BB_SCHEMATIC_WINDOW(tool_subject);
+
+    g_return_if_fail(window != NULL);
+    g_return_if_fail(window->inner_window != NULL);
+
+    gtk_widget_queue_draw(GTK_WIDGET(window->inner_window));
 }
 
 
@@ -1465,6 +1480,7 @@ bb_schematic_window_tool_subject_init(BbToolSubjectInterface *iface)
     g_return_if_fail(iface != NULL);
 
     iface->add_item = bb_schematic_window_add_item;
+    iface->invalidate_all = bb_schematic_window_invalidate_all;
     iface->invalidate_rect_dev = bb_schematic_window_invalidate_rect_dev;
     iface->widget_to_user = bb_schematic_window_widget_to_user;
     iface->zoom_box = bb_schematic_window_zoom_box;

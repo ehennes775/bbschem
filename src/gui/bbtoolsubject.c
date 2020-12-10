@@ -71,6 +71,27 @@ bb_tool_subject_add_item_missing(BbToolSubject *subject, BbSchematicItem *item)
 
 
 void
+bb_tool_subject_invalidate_all(BbToolSubject *subject)
+{
+    g_return_if_fail(subject != NULL);
+
+    BbToolSubjectInterface *iface = BB_TOOL_SUBJECT_GET_IFACE(subject);
+
+    g_return_if_fail(iface != NULL);
+    g_return_if_fail(iface->invalidate_all != NULL);
+
+    return iface->invalidate_all(subject);
+}
+
+
+static void
+bb_tool_subject_invalidate_all_missing(BbToolSubject *subject)
+{
+    g_error("bb_tool_subject_invalidate_all() not overridden");
+}
+
+
+void
 bb_tool_subject_invalidate_rect_dev(BbToolSubject *subject, double x0, double y0, double x1, double y1)
 {
     g_return_if_fail(subject != NULL);

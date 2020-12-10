@@ -29,6 +29,7 @@ struct _BbToolSubjectInterface
     GTypeInterface g_iface;
 
     void (*add_item)(BbToolSubject *subject, BbSchematicItem *item);
+    void (*invalidate_all)(BbToolSubject *subject);
     void (*invalidate_rect_dev)(BbToolSubject *subject, double x0, double y0, double x1, double y1);
     gboolean (*widget_to_user)(BbToolSubject *subject, double wx, double wy, double *ux, double *uy);
     void (*zoom_box)(BbToolSubject *subject, double x0, double y0, double x1, double y1);
@@ -37,6 +38,10 @@ struct _BbToolSubjectInterface
 
 void
 bb_tool_subject_add_item(BbToolSubject *subject, BbSchematicItem *item);
+
+
+void
+bb_tool_subject_invalidate_all(BbToolSubject *subject);
 
 
 /**

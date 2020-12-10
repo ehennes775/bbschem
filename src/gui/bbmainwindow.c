@@ -183,6 +183,23 @@ bb_main_window_key_pressed_cb(GtkWidget *unused, GdkEvent *event, BbMainWindow *
                 );
             return TRUE;
 
+        case GDK_KEY_bracketleft:
+            g_action_group_activate_action(
+                G_ACTION_GROUP(window),
+                "scale-down",
+                NULL
+            );
+            return TRUE;
+
+
+        case GDK_KEY_bracketright:
+            g_action_group_activate_action(
+                G_ACTION_GROUP(window),
+                "scale-up",
+                NULL
+            );
+            return TRUE;
+
         default:
             return FALSE;
     }

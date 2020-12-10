@@ -21,6 +21,8 @@
 #include "bbgrid.h"
 
 #define BB_GRID_DEFAULT_SIZE (100)
+#define BB_GRID_MAXIMUM_SIZE (102400)
+#define BB_GRID_MINIMUM_SIZE (25)
 
 enum
 {
@@ -38,32 +40,19 @@ struct _BbGrid
 {
     GObject parent;
 
-    int snap_size;
+    int snap_index;
 
-    int draw_size;
+    int draw_index;
 
     BbToolSubject *subject;
 };
 
 
-static const int bb_grid_sizes[] =
-{
-    /*  0 */     25,
-    /*  1 */     50,
-    /*  2 */    100,
-    /*  3 */    200,
-    /*  4 */    400,
-    /*  5 */    800,
-    /*  6 */   1600,
-    /*  7 */   3200,
-    /*  8 */   6400,
-    /*  9 */  12800,
-    /* 10 */  25600,
-    /* 11 */ 102400
-};
+static int
+bb_grid_calculate_draw_index(BbGrid *grid, int snap_index);
 
-#define BB_GRID_SIZE_COUNT (sizeof(bb_grid_sizes) / sizeof(int))
-
+static int
+bb_grid_calculate_size(int index);
 
 static void
 bb_grid_dispose(GObject *object);
@@ -89,6 +78,32 @@ G_DEFINE_TYPE(
     bb_grid,
     G_TYPE_OBJECT
     )
+
+
+
+static int
+bb_grid_calculate_draw_index(BbGrid *grid, int snap_index)
+{
+    int draw_index = snap_index;
+    int draw_size = bb_grid_calculate_size(draw_index);
+
+    // TODO Add condition if grid lines would be too close together to go to next higher grid
+    while (draw_size <= BB_GRID_MAXIMUM_SIZE && FALSE)
+    {
+        draw_index++;
+
+        draw_size = bb_grid_calculate_size(draw_index);
+    }
+
+    return draw_index;
+}
+
+
+static int
+bb_grid_calculate_size(int index)
+{
+    return BB_GRID_MINIMUM_SIZE * (1 << index);
+}
 
 
 static void
@@ -133,8 +148,8 @@ bb_grid_class_init(BbGridClass *klasse)
             "draw-size",
             "",
             "",
-            bb_grid_sizes[0],
-            bb_grid_sizes[BB_GRID_SIZE_COUNT-1],
+            BB_GRID_MINIMUM_SIZE,
+            BB_GRID_MAXIMUM_SIZE,
             BB_GRID_DEFAULT_SIZE,
             G_PARAM_READABLE
             )
@@ -147,8 +162,8 @@ bb_grid_class_init(BbGridClass *klasse)
             "snap-size",
             "",
             "",
-            bb_grid_sizes[0],
-            bb_grid_sizes[BB_GRID_SIZE_COUNT-1],
+            BB_GRID_MINIMUM_SIZE,
+            BB_GRID_MAXIMUM_SIZE,
             BB_GRID_DEFAULT_SIZE,
             G_PARAM_READABLE
         )
@@ -221,7 +236,7 @@ bb_grid_get_can_scale_down(BbGrid *grid)
 {
     g_return_val_if_fail(grid != NULL, FALSE);
 
-    return grid->snap_size > 0;
+    return grid->snap_index > 0;
 }
 
 
@@ -239,7 +254,9 @@ bb_grid_get_can_scale_up(BbGrid *grid)
 {
     g_return_val_if_fail(grid != NULL, FALSE);
 
-    return grid->snap_size < (BB_GRID_SIZE_COUNT - 1);
+    int next_size_up = bb_grid_calculate_size(grid->snap_index + 1);
+
+    return next_size_up <= BB_GRID_MAXIMUM_SIZE;
 }
 
 int
@@ -247,7 +264,7 @@ bb_grid_get_draw_size(BbGrid *grid)
 {
     g_return_val_if_fail(grid != NULL, BB_GRID_DEFAULT_SIZE);
 
-    return grid->draw_size;
+    return bb_grid_calculate_size(grid->draw_index);
 }
 
 
@@ -279,7 +296,7 @@ bb_grid_get_snap_size(BbGrid *grid)
 {
     g_return_val_if_fail(grid != NULL, BB_GRID_DEFAULT_SIZE);
 
-    return grid->snap_size;
+    return grid->snap_index;
 }
 
 
@@ -295,8 +312,8 @@ bb_grid_get_subject(BbGrid *grid)
 static void
 bb_grid_init(BbGrid *grid)
 {
-    grid->snap_size = 3;
-    grid->draw_size = 3;
+    grid->snap_index = 3;
+    grid->draw_index = 3;
 }
 
 void
@@ -325,63 +342,67 @@ bb_grid_scale(BbGrid *grid, BbScaleGridDirection direction)
 void
 bb_grid_scale_down(BbGrid *grid)
 {
-    g_message("bb_grid_scale_down");
-
     g_return_if_fail(grid != NULL);
     g_return_if_fail(bb_grid_get_can_scale_down(grid));
 
-    grid->snap_size--;
+    grid->snap_index--;
 
-    int draw_size = grid->snap_size;
+    grid->draw_index = bb_grid_calculate_draw_index(grid, grid->snap_index);
 
-    while (FALSE && draw_size < BB_GRID_SIZE_COUNT)
-    {
-        draw_size++;
-    }
+    bb_tool_subject_invalidate_all(grid->subject);
 
-    grid->draw_size = draw_size;
+    g_object_notify(G_OBJECT(grid), properties[PROP_CAN_SCALE_UP]);
+    g_object_notify(G_OBJECT(grid), properties[PROP_CAN_SCALE_DOWN]);
+    g_object_notify(G_OBJECT(grid), properties[PROP_DRAW_SIZE]);
+    g_object_notify(G_OBJECT(grid), properties[PROP_SNAP_SIZE]);
+}
+
+
+void
+bb_grid_draw(BbGrid *grid, BbGraphics *graphics)
+{
+    g_return_if_fail(BB_IS_GRID(grid));
+
+    bb_graphics_draw_grid(graphics, bb_grid_get_draw_size(grid));
 }
 
 
 void
 bb_grid_scale_reset(BbGrid *grid)
 {
-    g_message("bb_grid_scale_reset");
-
     g_return_if_fail(grid != NULL);
     g_return_if_fail(bb_grid_get_can_scale_down(grid));
 
-    grid->snap_size = 3;
+    grid->snap_index = 3;
 
-    int draw_size = grid->snap_size;
+    grid->draw_index = bb_grid_calculate_draw_index(grid, grid->snap_index);
 
-    while (FALSE && draw_size < BB_GRID_SIZE_COUNT)
-    {
-        draw_size++;
-    }
+    bb_tool_subject_invalidate_all(grid->subject);
 
-    grid->draw_size = draw_size;
+    g_object_notify(G_OBJECT(grid), properties[PROP_CAN_SCALE_UP]);
+    g_object_notify(G_OBJECT(grid), properties[PROP_CAN_SCALE_DOWN]);
+    g_object_notify(G_OBJECT(grid), properties[PROP_DRAW_SIZE]);
+    g_object_notify(G_OBJECT(grid), properties[PROP_SNAP_SIZE]);
 }
 
 
 void
 bb_grid_scale_up(BbGrid *grid)
 {
-    g_message("bb_grid_scale_up");
 
     g_return_if_fail(grid != NULL);
-    g_return_if_fail(bb_grid_get_can_scale_down(grid));
+    g_return_if_fail(bb_grid_get_can_scale_up(grid));
 
-    grid->snap_size++;
+    grid->snap_index++;
 
-    int draw_size = grid->snap_size;
+    grid->draw_index = bb_grid_calculate_draw_index(grid, grid->snap_index);
 
-    while (FALSE && draw_size < BB_GRID_SIZE_COUNT)
-    {
-        draw_size++;
-    }
+    bb_tool_subject_invalidate_all(grid->subject);
 
-    grid->draw_size = draw_size;
+    g_object_notify(G_OBJECT(grid), properties[PROP_CAN_SCALE_UP]);
+    g_object_notify(G_OBJECT(grid), properties[PROP_CAN_SCALE_DOWN]);
+    g_object_notify(G_OBJECT(grid), properties[PROP_DRAW_SIZE]);
+    g_object_notify(G_OBJECT(grid), properties[PROP_SNAP_SIZE]);
 }
 
 
@@ -422,3 +443,5 @@ bb_grid_set_subject(BbGrid *grid, BbToolSubject *subject)
         g_object_notify_by_pspec(G_OBJECT(grid), properties[PROP_SUBJECT]);
     }
 }
+
+
