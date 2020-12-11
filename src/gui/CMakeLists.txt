@@ -60,6 +60,8 @@ add_library(bbgui
         bbgraphics.h
         bbgrid.c
         bbgrid.h
+        bbgridcontrol.c
+        bbgridcontrol.h
         bbgridsubject.c
         bbgridsubject.h
         bbint32combobox.c
@@ -124,6 +126,8 @@ add_library(bbgui
         bbschematicwindow.h
         bbschematicwindowinner.c
         bbschematicwindowinner.h
+        bbshowgridaction.c
+        bbshowgridaction.h
         bbtextpropertyeditor.c
         bbtextpropertyeditor.h
         bbtoolchanger.c

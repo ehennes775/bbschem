@@ -32,6 +32,7 @@
 #include "bbpandirection.h"
 #include "bbsavesubject.h"
 #include "bbgrid.h"
+#include "bbgridcontrol.h"
 
 
 #define BB_PAN_ZOOM_FACTOR (1.0)
@@ -58,7 +59,10 @@ enum
     PROP_CAN_ZOOM_OUT,
     PROP_DRAWING_TOOL,
     PROP_REVEAL,
+
+    PROP_GRID_CONTROL,
     PROP_TOOL_CHANGER,
+
     N_PROPERTIES
 };
 
@@ -89,6 +93,11 @@ struct _BbSchematicWindow
      * The grid for this schematic window
      */
     BbGrid *grid;
+
+    /**
+     *
+     */
+    BbGridControl *grid_control;
 
     /**
      * Stores the last x coordinate, in widget space, from events that provide coordinates (e.g. button and motion
@@ -190,6 +199,9 @@ bb_schematic_window_get_can_scale_reset(BbGridSubject *grid_subject);
 static gboolean
 bb_schematic_window_get_can_scale_up(BbGridSubject *grid_subject);
 
+static BbGridControl*
+bb_schematic_window_get_grid_control(BbSchematicWindow *grid_control);
+
 static void
 bb_schematic_window_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
 
@@ -216,6 +228,9 @@ bb_schematic_window_key_released_cb(GtkWidget *widget, GdkEvent *event, gpointer
 
 static gboolean
 bb_schematic_window_motion_notify_cb(GtkWidget *widget, GdkEvent  *event, gpointer user_data);
+
+static void
+bb_schematic_window_notify_grid_control_cb(BbGrid *grid, GParamSpec *pspec, BbSchematicWindow *window);
 
 static void
 bb_schematic_window_paste(BbClipboardSubject *clipboard_subject);
@@ -249,6 +264,9 @@ bb_schematic_window_select_none(BbClipboardSubject *clipboard_subject);
 
 static void
 bb_schematic_window_set_grid(BbSchematicWindow *window, BbGrid *grid);
+
+static void
+bb_schematic_window_set_grid_control(BbSchematicWindow *window, BbGridControl *grid_control);
 
 static void
 bb_schematic_window_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
@@ -391,6 +409,18 @@ bb_schematic_window_class_init(BbSchematicWindowClass *klasse)
             "",
             "",
             BB_TYPE_DRAWING_TOOL,
+            G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS
+            )
+        );
+
+    properties[PROP_GRID_CONTROL] = bb_object_class_install_property(
+        object_class,
+        PROP_GRID_CONTROL,
+        g_param_spec_object(
+            "grid-control",
+            "",
+            "",
+            BB_TYPE_TOOL_CHANGER,
             G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS
             )
         );
@@ -584,7 +614,6 @@ bb_schematic_window_delete(BbClipboardSubject *clipboard_subject)
 static void
 bb_schematic_window_dispose(GObject *object)
 {
-    //BbSchematicWindow* privat = BBSCHEMATIC_WINDOW_GET_PRIVATE(object);
 }
 
 
@@ -603,7 +632,7 @@ bb_schematic_window_draw_cb(BbSchematicWindowInner *inner, cairo_t *cairo, BbSch
     cairo_save(cairo);
     cairo_transform(cairo, &outer->matrix);
 
-    if (outer->grid != NULL)
+    if (outer->grid != NULL & (outer->grid_control == NULL || bb_grid_control_get_grid_visible(outer->grid_control)))
     {
         bb_grid_draw(outer->grid, graphics);
     }
@@ -818,6 +847,15 @@ bb_schematic_window_get_drawing_tool(BbSchematicWindow *window)
 }
 
 
+static BbGridControl*
+bb_schematic_window_get_grid_control(BbSchematicWindow *window)
+{
+    g_return_val_if_fail(BB_IS_SCHEMATIC_WINDOW(window), NULL);
+
+    return window->grid_control;
+}
+
+
 static void
 bb_schematic_window_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec)
 {
@@ -884,6 +922,10 @@ bb_schematic_window_get_property(GObject *object, guint property_id, GValue *val
 
         case PROP_CAN_ZOOM_OUT:
             g_value_set_boolean(value, bb_schematic_window_get_can_zoom_out(window));
+            break;
+
+        case PROP_GRID_CONTROL:
+            g_value_set_object(value, bb_schematic_window_get_grid_control(window));
             break;
 
         case PROP_REVEAL:
@@ -1084,6 +1126,13 @@ static void
 bb_schematic_window_notify_grid_cb(BbGrid *grid, GParamSpec *pspec, BbSchematicWindow *window)
 {
     g_signal_emit(window, signals[SIG_GRID_CHANGED], 0);
+}
+
+
+static void
+bb_schematic_window_notify_grid_control_cb(BbGrid *grid, GParamSpec *pspec, BbSchematicWindow *window)
+{
+    gtk_widget_queue_draw(GTK_WIDGET(window));
 }
 
 
@@ -1340,13 +1389,16 @@ bb_schematic_window_scale_up(BbGridSubject *grid_subject)
 static void
 bb_schematic_window_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec)
 {
-    BbSchematicWindow *window = BB_SCHEMATIC_WINDOW(object);
-    g_return_if_fail(window != NULL);
+    g_return_if_fail(BB_IS_SCHEMATIC_WINDOW(object));
 
     switch (property_id)
     {
         case PROP_DRAWING_TOOL:
             bb_schematic_window_set_drawing_tool(BB_SCHEMATIC_WINDOW(object), g_value_get_object(value));
+            break;
+
+        case PROP_GRID_CONTROL:
+            bb_schematic_window_set_grid_control(BB_SCHEMATIC_WINDOW(object), g_value_get_object(value));
             break;
 
         case PROP_REVEAL:
@@ -1452,6 +1504,42 @@ bb_schematic_window_set_grid(BbSchematicWindow *window, BbGrid *grid)
         }
 
         //g_object_notify_by_pspec(G_OBJECT(window), properties[PROP_GRID]);
+    }
+}
+
+static void
+bb_schematic_window_set_grid_control(BbSchematicWindow *window, BbGridControl *grid_control)
+{
+    g_return_if_fail(BB_IS_SCHEMATIC_WINDOW(window));
+
+    if (window->grid_control != grid_control)
+    {
+        if (window->grid_control != NULL)
+        {
+            g_signal_handlers_disconnect_by_func(
+                window->grid_control,
+                G_CALLBACK(bb_schematic_window_notify_grid_control_cb),
+                window
+                );
+
+            g_object_unref(window->grid_control);
+        }
+
+        window->grid_control = grid_control;
+
+        if (window->grid_control != NULL)
+        {
+            g_object_ref(window->grid_control);
+
+            g_signal_connect(
+                window->grid_control,
+                "notify::grid-visible",
+                G_CALLBACK(bb_schematic_window_notify_grid_control_cb),
+                window
+                );
+        }
+
+        g_object_notify_by_pspec(G_OBJECT(window), properties[PROP_GRID_CONTROL]);
     }
 }
 

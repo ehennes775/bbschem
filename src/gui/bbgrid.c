@@ -371,8 +371,7 @@ bb_grid_draw(BbGrid *grid, BbGraphics *graphics)
 void
 bb_grid_scale_reset(BbGrid *grid)
 {
-    g_return_if_fail(grid != NULL);
-    g_return_if_fail(bb_grid_get_can_scale_down(grid));
+    g_return_if_fail(BB_IS_GRID(grid));
 
     grid->snap_index = 3;
 

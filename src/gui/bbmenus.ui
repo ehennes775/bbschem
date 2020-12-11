@@ -179,6 +179,14 @@
                         <attribute name="label" translatable="yes">Scale Grid Up</attribute>
                         <attribute name="action">win.scale-up</attribute>
                     </item>
+                    <item>
+                        <attribute name="label" translatable="yes">Reset Grid</attribute>
+                        <attribute name="action">win.scale-reset</attribute>
+                    </item>
+                    <item>
+                        <attribute name="label" translatable="yes">Grid Visible</attribute>
+                        <attribute name="action">win.grid-visible</attribute>
+                    </item>
                 </section>
             </submenu>
         </section>

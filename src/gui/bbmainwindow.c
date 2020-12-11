@@ -68,6 +68,7 @@
 #include "bbbustoolpanel.h"
 #include "bbnettoolpanel.h"
 #include "bbscalegridaction.h"
+#include "bbshowgridaction.h"
 
 
 enum
@@ -363,6 +364,7 @@ bb_main_window_init(BbMainWindow *window)
 
     bb_main_window_add_page(window, g_object_new(
         BB_TYPE_SCHEMATIC_WINDOW,
+        "grid-control", window->tool_stack,
         "tool-changer", window->tool_stack,
         NULL
         ));
@@ -496,6 +498,11 @@ bb_main_window_init(BbMainWindow *window)
     g_action_map_add_action(
         G_ACTION_MAP(window),
         G_ACTION(bb_scale_grid_action_new(window, BB_SCALE_GRID_DIRECTION_UP))
+        );
+
+    g_action_map_add_action(
+        G_ACTION_MAP(window),
+        G_ACTION(bb_show_grid_action_new(BB_GRID_CONTROL(window->tool_stack)))
         );
 
     g_signal_connect_after(
