@@ -23,6 +23,10 @@
 #include "bbscalegriddirection.h"
 #include "bbgraphics.h"
 
+
+#define BB_GRID_DEFAULT_SIZE (100)
+
+
 #define BB_TYPE_GRID bb_grid_get_type()
 G_DECLARE_FINAL_TYPE(BbGrid, bb_grid, BB, GRID, GObject)
 

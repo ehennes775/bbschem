@@ -51,6 +51,15 @@ bb_coord_rotate(int cx, int cy, int angle, int *x, int *y);
 
 
 /**
+ * Round coordinate to nearest integer
+ *
+ * @param c The input coordinate (either x or y)
+ */
+int
+bb_coord_round(double c);
+
+
+/**
  * Calculate the shortest distance between a point and a line
  *
  * @param x0 The x coordinate of the first endpoint on the line

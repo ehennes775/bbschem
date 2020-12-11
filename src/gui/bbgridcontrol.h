@@ -37,11 +37,14 @@ struct _BbGridControlInterface
 gboolean
 bb_grid_control_get_grid_visible(BbGridControl *grid_control);
 
+
 gboolean
 bb_grid_control_get_snap_active(BbGridControl *grid_control);
 
+
 void
 bb_grid_control_set_grid_visible(BbGridControl *grid_control, gboolean visible);
+
 
 void
 bb_grid_control_set_snap_active(BbGridControl *grid_control, gboolean active);

@@ -31,6 +31,7 @@ struct _BbToolSubjectInterface
     void (*add_item)(BbToolSubject *subject, BbSchematicItem *item);
     void (*invalidate_all)(BbToolSubject *subject);
     void (*invalidate_rect_dev)(BbToolSubject *subject, double x0, double y0, double x1, double y1);
+    void (*snap_coordinate)(BbToolSubject *subject, int x0, int y0, int *x1, int *y1);
     gboolean (*widget_to_user)(BbToolSubject *subject, double wx, double wy, double *ux, double *uy);
     void (*zoom_box)(BbToolSubject *subject, double x0, double y0, double x1, double y1);
 };
@@ -55,6 +56,21 @@ bb_tool_subject_invalidate_all(BbToolSubject *subject);
  */
 void
 bb_tool_subject_invalidate_rect_dev(BbToolSubject *subject, double x0, double y0, double x1, double y1);
+
+
+/**
+ * Snap a coordinate to the rectangular grid
+ *
+ * The input and output points can be the same variable.
+ *
+ * @param subject A BbToolSubject
+ * @param x0 The x coordinate of the input point
+ * @param y0 The y coordinate of the input point
+ * @param x1 The x coordinate of the output point
+ * @param y1 The y coordinate of the output point
+ */
+void
+bb_tool_subject_snap_coordinate(BbToolSubject *subject, int x0, int y0, int *x1, int *y1);
 
 
 /**

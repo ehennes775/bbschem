@@ -20,7 +20,6 @@
 #include <bbextensions.h>
 #include "bbgrid.h"
 
-#define BB_GRID_DEFAULT_SIZE (100)
 #define BB_GRID_MAXIMUM_SIZE (102400)
 #define BB_GRID_MINIMUM_SIZE (25)
 

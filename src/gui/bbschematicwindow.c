@@ -275,6 +275,9 @@ static void
 bb_schematic_window_set_reveal(BbRevealSubject *reveal_subject, gboolean reveal);
 
 static void
+bb_schematic_window_snap_coordinate(BbToolSubject *subject, int x0, int y0, int *x1, int *y1);
+
+static void
 bb_schematic_window_tool_changed_cb(BbToolChanger *changer, BbSchematicWindow *window);
 
 static void
@@ -1605,6 +1608,39 @@ bb_schematic_window_set_tool_changer(BbSchematicWindow *window, BbToolChanger *t
 
 
 static void
+bb_schematic_window_snap_coordinate(BbToolSubject *subject, int x0, int y0, int *x1, int *y1)
+{
+    BbSchematicWindow *window = BB_SCHEMATIC_WINDOW(subject);
+
+    int grid_size = BB_GRID_DEFAULT_SIZE;
+
+    if (window != NULL && window->grid != NULL)
+    {
+        grid_size = bb_grid_get_snap_size(window->grid);
+    }
+
+    int x = x0;
+    int y = y0;
+
+    if (window != NULL && window->grid_control != NULL)
+    {
+        x = bb_coord_snap(x0, grid_size);
+        y = bb_coord_snap(y0, grid_size);
+    }
+
+    if (x1 != NULL)
+    {
+        *x1 = x;
+    }
+
+    if (y1 != NULL)
+    {
+        *y1 = y;
+    }
+}
+
+
+static void
 bb_schematic_window_tool_changed_cb(BbToolChanger *changer, BbSchematicWindow *window)
 {
     bb_schematic_window_set_drawing_tool(
@@ -1625,6 +1661,7 @@ bb_schematic_window_tool_subject_init(BbToolSubjectInterface *iface)
     iface->add_item = bb_schematic_window_add_item;
     iface->invalidate_all = bb_schematic_window_invalidate_all;
     iface->invalidate_rect_dev = bb_schematic_window_invalidate_rect_dev;
+    iface->snap_coordinate = bb_schematic_window_snap_coordinate;
     iface->widget_to_user = bb_schematic_window_widget_to_user;
     iface->zoom_box = bb_schematic_window_zoom_box;
 }

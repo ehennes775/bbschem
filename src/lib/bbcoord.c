@@ -75,6 +75,13 @@ bb_coord_rotate(int cx, int cy, int angle, int *x, int *y)
 }
 
 
+int
+bb_coord_round(double c)
+{
+    return (int) round(c);
+}
+
+
 /**
  * Calculate the shortest distance between a point and a line
  *
