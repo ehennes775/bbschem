@@ -368,11 +368,16 @@ bb_net_tool_reset_with_point(BbNetTool *net_tool, gdouble x, gdouble y)
     gboolean success = bb_tool_subject_widget_to_user(net_tool->subject, x, y, &ux, &uy);
     g_return_if_fail(success);
 
-    bb_electrical_net_set_x0(net_tool->item, ux);
-    bb_electrical_net_set_y0(net_tool->item, uy);
+    int sx;
+    int sy;
 
-    bb_electrical_net_set_x1(net_tool->item, ux);
-    bb_electrical_net_set_y1(net_tool->item, uy);
+    bb_tool_subject_snap_coordinate(net_tool->subject, bb_coord_round(ux), bb_coord_round(uy), &sx, &sy);
+
+    bb_electrical_net_set_x0(net_tool->item, sx);
+    bb_electrical_net_set_y0(net_tool->item, sy);
+
+    bb_electrical_net_set_x1(net_tool->item, sx);
+    bb_electrical_net_set_y1(net_tool->item, sy);
 
     net_tool->state = STATE_S1;
 }
@@ -481,7 +486,12 @@ bb_net_tool_update_with_point(BbNetTool *net_tool, gdouble x, gdouble y)
         gboolean success = bb_tool_subject_widget_to_user(net_tool->subject, x, y, &ux, &uy);
         g_return_if_fail(success);
 
-        bb_electrical_net_set_x1(net_tool->item, ux);
-        bb_electrical_net_set_y1(net_tool->item, uy);
+        int sx;
+        int sy;
+
+        bb_tool_subject_snap_coordinate(net_tool->subject, bb_coord_round(ux), bb_coord_round(uy), &sx, &sy);
+
+        bb_electrical_net_set_x1(net_tool->item, sx);
+        bb_electrical_net_set_y1(net_tool->item, sy);
     }
 }

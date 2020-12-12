@@ -368,11 +368,16 @@ bb_pin_tool_reset_with_point(BbPinTool *pin_tool, gdouble x, gdouble y)
     gboolean success = bb_tool_subject_widget_to_user(pin_tool->subject, x, y, &ux, &uy);
     g_return_if_fail(success);
 
-    bb_electrical_pin_set_x0(pin_tool->item, ux);
-    bb_electrical_pin_set_y0(pin_tool->item, uy);
+    int sx;
+    int sy;
 
-    bb_electrical_pin_set_x1(pin_tool->item, ux);
-    bb_electrical_pin_set_y1(pin_tool->item, uy);
+    bb_tool_subject_snap_coordinate(pin_tool->subject, bb_coord_round(ux), bb_coord_round(uy), &sx, &sy);
+
+    bb_electrical_pin_set_x0(pin_tool->item, sx);
+    bb_electrical_pin_set_y0(pin_tool->item, sy);
+
+    bb_electrical_pin_set_x1(pin_tool->item, sx);
+    bb_electrical_pin_set_y1(pin_tool->item, sy);
 
     pin_tool->state = STATE_S1;
 }
@@ -481,7 +486,12 @@ bb_pin_tool_update_with_point(BbPinTool *pin_tool, gdouble x, gdouble y)
         gboolean success = bb_tool_subject_widget_to_user(pin_tool->subject, x, y, &ux, &uy);
         g_return_if_fail(success);
 
-        bb_electrical_pin_set_x1(pin_tool->item, ux);
-        bb_electrical_pin_set_y1(pin_tool->item, uy);
+        int sx;
+        int sy;
+
+        bb_tool_subject_snap_coordinate(pin_tool->subject, bb_coord_round(ux), bb_coord_round(uy), &sx, &sy);
+
+        bb_electrical_pin_set_x1(pin_tool->item, sx);
+        bb_electrical_pin_set_y1(pin_tool->item, sy);
     }
 }

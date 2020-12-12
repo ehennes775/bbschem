@@ -33,6 +33,9 @@ bb_tool_subject_invalidate_rect_dev_missing(BbToolSubject *subject, double x0, d
 static void
 bb_tool_subject_snap_coordinate_missing(BbToolSubject *subject, int x0, int y0, int *x1, int *y1);
 
+static void
+bb_tool_subject_user_to_widget_distance_missing(BbToolSubject *subject, double ux, double uy, double *wx, double *wy);
+
 gboolean
 bb_tool_subject_widget_to_user_missing(BbToolSubject *subject, double wx, double wy, double *ux, double *uy);
 
@@ -52,6 +55,7 @@ bb_tool_subject_default_init(BbToolSubjectInterface *iface)
     iface->invalidate_all = bb_tool_subject_invalidate_all_missing;
     iface->invalidate_rect_dev = bb_tool_subject_invalidate_rect_dev_missing;
     iface->snap_coordinate = bb_tool_subject_snap_coordinate_missing;
+    iface->user_to_widget_distance = bb_tool_subject_user_to_widget_distance_missing;
     iface->widget_to_user = bb_tool_subject_widget_to_user_missing;
     iface->zoom_box = bb_tool_subject_zoom_box_missing;
 }
@@ -138,6 +142,27 @@ static void
 bb_tool_subject_snap_coordinate_missing(BbToolSubject *subject, int x0, int y0, int *x1, int *y1)
 {
     g_error("bb_tool_subject_snap_coordinate() not overridden");
+}
+
+
+void
+bb_tool_subject_user_to_widget_distance(BbToolSubject *subject, double ux, double uy, double *wx, double *wy)
+{
+    g_return_if_fail(subject != NULL);
+
+    BbToolSubjectInterface *iface = BB_TOOL_SUBJECT_GET_IFACE(subject);
+
+    g_return_if_fail(iface != NULL);
+    g_return_if_fail(iface->user_to_widget_distance != NULL);
+
+    iface->user_to_widget_distance(subject, ux, uy, wx, wy);
+}
+
+
+static void
+bb_tool_subject_user_to_widget_distance_missing(BbToolSubject *subject, double ux, double uy, double *wx, double *wy)
+{
+    g_error("bb_tool_subject_user_to_widget_distance() not overridden");
 }
 
 

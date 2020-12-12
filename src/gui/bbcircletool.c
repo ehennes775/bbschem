@@ -367,8 +367,13 @@ bb_circle_tool_reset_with_point(BbCircleTool *circle_tool, gdouble x, gdouble y)
     gboolean success = bb_tool_subject_widget_to_user(circle_tool->subject, x, y, &ux, &uy);
     g_return_if_fail(success);
 
-    bb_graphic_circle_set_center_x(circle_tool->item, ux);
-    bb_graphic_circle_set_center_y(circle_tool->item, uy);
+    int sx;
+    int sy;
+
+    bb_tool_subject_snap_coordinate(circle_tool->subject, bb_coord_round(ux), bb_coord_round(uy), &sx, &sy);
+
+    bb_graphic_circle_set_center_x(circle_tool->item, sx);
+    bb_graphic_circle_set_center_y(circle_tool->item, sy);
 
     bb_graphic_circle_set_radius(circle_tool->item, 0);
 

@@ -85,13 +85,29 @@ bb_grid_calculate_draw_index(BbGrid *grid, int snap_index)
 {
     int draw_index = snap_index;
     int draw_size = bb_grid_calculate_size(draw_index);
+    double pixels;
 
-    // TODO Add condition if grid lines would be too close together to go to next higher grid
-    while (draw_size <= BB_GRID_MAXIMUM_SIZE && FALSE)
+    bb_tool_subject_user_to_widget_distance(
+        grid->subject,
+        draw_size,
+        draw_size,
+        &pixels,
+        NULL
+        );
+
+    while (draw_size <= BB_GRID_MAXIMUM_SIZE && pixels < 5.0)
     {
         draw_index++;
 
         draw_size = bb_grid_calculate_size(draw_index);
+
+        bb_tool_subject_user_to_widget_distance(
+            grid->subject,
+            draw_size,
+            draw_size,
+            &pixels,
+            NULL
+            );
     }
 
     return draw_index;
@@ -263,6 +279,8 @@ int
 bb_grid_get_draw_size(BbGrid *grid)
 {
     g_return_val_if_fail(BB_IS_GRID(grid), BB_GRID_DEFAULT_SIZE);
+
+    g_message("draw_size = %d", bb_grid_calculate_size(grid->draw_index));
 
     return bb_grid_calculate_size(grid->draw_index);
 }

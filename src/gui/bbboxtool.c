@@ -367,11 +367,16 @@ bb_box_tool_reset_with_point(BbBoxTool *box_tool, gdouble x, gdouble y)
     gboolean success = bb_tool_subject_widget_to_user(box_tool->subject, x, y, &ux, &uy);
     g_return_if_fail(success);
 
-    bb_graphic_box_set_x0(box_tool->item, ux);
-    bb_graphic_box_set_y0(box_tool->item, uy);
+    int sx;
+    int sy;
 
-    bb_graphic_box_set_x1(box_tool->item, ux);
-    bb_graphic_box_set_y1(box_tool->item, uy);
+    bb_tool_subject_snap_coordinate(box_tool->subject, bb_coord_round(ux), bb_coord_round(uy), &sx, &sy);
+
+    bb_graphic_box_set_x0(box_tool->item, sx);
+    bb_graphic_box_set_y0(box_tool->item, sy);
+
+    bb_graphic_box_set_x1(box_tool->item, sx);
+    bb_graphic_box_set_y1(box_tool->item, sy);
 
     box_tool->state = STATE_S1;
 }
@@ -480,7 +485,12 @@ bb_box_tool_update_with_point(BbBoxTool *box_tool, gdouble x, gdouble y)
         gboolean success = bb_tool_subject_widget_to_user(box_tool->subject, x, y, &ux, &uy);
         g_return_if_fail(success);
 
-        bb_graphic_box_set_x1(box_tool->item, ux);
-        bb_graphic_box_set_y1(box_tool->item, uy);
+        int sx;
+        int sy;
+
+        bb_tool_subject_snap_coordinate(box_tool->subject, bb_coord_round(ux), bb_coord_round(uy), &sx, &sy);
+
+        bb_graphic_box_set_x1(box_tool->item, sx);
+        bb_graphic_box_set_y1(box_tool->item, sy);
     }
 }

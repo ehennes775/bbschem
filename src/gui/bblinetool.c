@@ -372,7 +372,7 @@ bb_line_tool_reset_with_point(BbLineTool *line_tool, gdouble x, gdouble y)
 
     bb_tool_subject_snap_coordinate(line_tool->subject, bb_coord_round(ux), bb_coord_round(uy), &sx, &sy);
 
-    bb_graphic_line_set_x0(line_tool->item, sy);
+    bb_graphic_line_set_x0(line_tool->item, sx);
     bb_graphic_line_set_y0(line_tool->item, sy);
 
     bb_graphic_line_set_x1(line_tool->item, sx);

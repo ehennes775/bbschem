@@ -32,6 +32,7 @@ struct _BbToolSubjectInterface
     void (*invalidate_all)(BbToolSubject *subject);
     void (*invalidate_rect_dev)(BbToolSubject *subject, double x0, double y0, double x1, double y1);
     void (*snap_coordinate)(BbToolSubject *subject, int x0, int y0, int *x1, int *y1);
+    void (*user_to_widget_distance)(BbToolSubject *subject, double ux, double uy, double *wx, double *wy);
     gboolean (*widget_to_user)(BbToolSubject *subject, double wx, double wy, double *ux, double *uy);
     void (*zoom_box)(BbToolSubject *subject, double x0, double y0, double x1, double y1);
 };
@@ -71,6 +72,10 @@ bb_tool_subject_invalidate_rect_dev(BbToolSubject *subject, double x0, double y0
  */
 void
 bb_tool_subject_snap_coordinate(BbToolSubject *subject, int x0, int y0, int *x1, int *y1);
+
+
+void
+bb_tool_subject_user_to_widget_distance(BbToolSubject *subject, double ux, double uy, double *wx, double *wy);
 
 
 /**

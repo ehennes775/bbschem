@@ -35,13 +35,12 @@
 #include "bbgridcontrol.h"
 
 
-#define BB_PAN_ZOOM_FACTOR (1.0)
-#define BB_ZOOM_IN_FACTOR (1.25)
-#define BB_ZOOM_OUT_FACTOR (0.8)
 
 
 /**
  * The limit of zooming out
+ *
+ * This value must be greater than 1 / (1 - BB_ZOOM_IN_FACTOR) to be able to zoom back out again.
  */
 #define BB_LIMIT_ZOOM_OUT (5.0)
 
@@ -53,9 +52,30 @@
 
 
 /**
+ * The zoom factor for a pan operation (i.e. no zoom)
+ */
+#define BB_PAN_ZOOM_FACTOR (1.0)
+
+
+/**
+ * The zoom factor for zooming in with actions from hotkeys or menu items
+ */
+#define BB_ZOOM_IN_FACTOR (1.25)
+
+
+/**
+ * The zoom factor for zooming out with actions from hotkeys or menu items
+ */
+#define BB_ZOOM_OUT_FACTOR (0.8)
+
+
+/**
  * A number used to snap the grid to even pixels
+ *
+ * The ratio of BB_LIMIT_ZOOM_OUT to this value limits how far the user can zoom out.
  */
 #define BB_ZOOM_QUANTIZE (200.0)
+
 
 enum
 {
@@ -303,6 +323,9 @@ bb_schematic_window_tool_subject_init(BbToolSubjectInterface *iface);
 
 static void
 bb_schematic_window_undo(BbClipboardSubject *clipboard_subject);
+
+static void
+bb_schematic_window_user_to_widget_distance(BbToolSubject *subject, double ux, double uy, double *wx, double *wy);
 
 static gboolean
 bb_schematic_window_widget_to_user(BbToolSubject *tool_subject, double wx, double wy, double *ux, double *uy);
@@ -652,6 +675,12 @@ bb_schematic_window_draw_cb(BbSchematicWindowInner *inner, cairo_t *cairo, BbSch
 
     cairo_save(cairo);
     cairo_transform(cairo, &outer->matrix);
+
+    cairo_matrix_t temp2;
+    cairo_get_matrix(cairo, &temp2);
+
+    cairo_matrix_t temp = widget_matrix;
+    cairo_transform(&temp, &outer->matrix);
 
     if (outer->grid != NULL & (outer->grid_control == NULL || bb_grid_control_get_grid_visible(outer->grid_control)))
     {
@@ -1680,6 +1709,7 @@ bb_schematic_window_tool_subject_init(BbToolSubjectInterface *iface)
     iface->invalidate_all = bb_schematic_window_invalidate_all;
     iface->invalidate_rect_dev = bb_schematic_window_invalidate_rect_dev;
     iface->snap_coordinate = bb_schematic_window_snap_coordinate;
+    iface->user_to_widget_distance = bb_schematic_window_user_to_widget_distance;
     iface->widget_to_user = bb_schematic_window_widget_to_user;
     iface->zoom_box = bb_schematic_window_zoom_box;
 }
@@ -1691,6 +1721,29 @@ bb_schematic_window_undo(BbClipboardSubject *clipboard_subject)
     g_return_if_fail(clipboard_subject != NULL);
 
     g_message("bb_schematic_window_undo");
+}
+
+
+static void
+bb_schematic_window_user_to_widget_distance(BbToolSubject *subject, double ux, double uy, double *wx, double *wy)
+{
+    BbSchematicWindow *window = BB_SCHEMATIC_WINDOW(subject);
+    g_return_if_fail(window != NULL);
+
+    double x = ux;
+    double y = uy;
+
+    cairo_matrix_transform_distance(&window->matrix, &x, &y);
+
+    if (wx != NULL)
+    {
+        *wx = x;
+    }
+
+    if (wy != NULL)
+    {
+        *wy = y;
+    }
 }
 
 
