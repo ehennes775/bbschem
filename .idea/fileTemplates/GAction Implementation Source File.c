@@ -119,7 +119,7 @@ ${moduleLowerSnake}_${actionLowerSnake}_action_activate(GAction *action, GVarian
 static void
 ${moduleLowerSnake}_${actionLowerSnake}_action_change_state(GAction *action, GVariant *value)
 {
-
+    g_warn_if_reached();
 }
 
 
@@ -174,7 +174,7 @@ static void
 ${moduleLowerSnake}_${actionLowerSnake}_action_dispose(GObject *object)
 {
     ${modulePascalCase}${actionPascalCase}Action *${actionLowerSnake}_action = ${actionUpperSnake}_ACTION(object);
-    g_return_if_fail(${moduleUpperSnake}_IS_${actionUpperSnake}_ACTION}(${actionLowerSnake}_action));
+    g_return_if_fail(${moduleUpperSnake}_IS_${actionUpperSnake}_ACTION(${actionLowerSnake}_action));
 }
 
 
@@ -182,14 +182,14 @@ static void
 ${moduleLowerSnake}_${actionLowerSnake}_action_finalize(GObject *object)
 {
     ${modulePascalCase}${actionPascalCase}Action *${actionLowerSnake}_action = ${actionUpperSnake}_ACTION(object);
-g_return_if_fail(${moduleUpperSnake}_IS_${actionUpperSnake}_ACTION}(${actionLowerSnake}_action));
+g_return_if_fail(${moduleUpperSnake}_IS_${actionUpperSnake}_ACTION(${actionLowerSnake}_action));
 }
 
 
 static gboolean
 ${moduleLowerSnake}_${actionLowerSnake}_action_get_enabled(GAction *action)
 {
-    g_return_val_if_fail(action != NULL, FALSE);
+    g_return_val_if_fail(${moduleUpperSnake}_IS_${actionUpperSnake}_ACTION(action), FALSE);
 
     return TRUE;
 }
@@ -198,7 +198,7 @@ ${moduleLowerSnake}_${actionLowerSnake}_action_get_enabled(GAction *action)
 static const gchar*
 ${moduleLowerSnake}_${actionLowerSnake}_action_get_name(GAction *action)
 {
-    g_warn_if_fail(${moduleUpperSnake}_IS_${actionUpperSnake}_ACTION}(action));
+    g_warn_if_fail(${moduleUpperSnake}_IS_${actionUpperSnake}_ACTION(action));
 
     return "${actionLowerSnake}";
 }
@@ -207,7 +207,7 @@ ${moduleLowerSnake}_${actionLowerSnake}_action_get_name(GAction *action)
 static const GVariantType*
 ${moduleLowerSnake}_${actionLowerSnake}_action_get_parameter_type(GAction *action)
 {
-    g_warn_if_fail(${moduleUpperSnake}_IS_${actionUpperSnake}_ACTION}(action));
+    g_warn_if_fail(${moduleUpperSnake}_IS_${actionUpperSnake}_ACTION(action));
 
     return NULL;
 }
@@ -251,7 +251,7 @@ ${moduleLowerSnake}_${actionLowerSnake}_action_get_property(GObject *object, gui
 static GVariant *
 ${moduleLowerSnake}_${actionLowerSnake}_action_get_state(GAction *action)
 {
-    g_return_if_fail(${moduleUpperSnake}_IS_${actionUpperSnake}_ACTION}(${actionLowerSnake}_action));
+    g_return_if_fail(${moduleUpperSnake}_IS_${actionUpperSnake}_ACTION(action));
 
     return NULL;
 }
@@ -260,7 +260,7 @@ ${moduleLowerSnake}_${actionLowerSnake}_action_get_state(GAction *action)
 static GVariant*
 ${moduleLowerSnake}_${actionLowerSnake}_action_get_state_hint(GAction *action)
 {
-    g_return_if_fail(${moduleUpperSnake}_IS_${actionUpperSnake}_ACTION}(${actionLowerSnake}_action));
+    g_return_if_fail(${moduleUpperSnake}_IS_${actionUpperSnake}_ACTION(action));
 
     return NULL;
 }
@@ -276,15 +276,19 @@ ${moduleLowerSnake}_${actionLowerSnake}_action_get_state_type(GAction *action)
 
 
 static void
-${moduleLowerSnake}_${actionLowerSnake}_action_init(${modulePascalCase}${actionPascalCase}Action *window)
+${moduleLowerSnake}_${actionLowerSnake}_action_init(${modulePascalCase}${actionPascalCase}Action *${actionLowerSnake}_action)
 {
+    g_return_if_fail(${moduleUpperSnake}_IS_${actionUpperSnake}_ACTION}(${actionLowerSnake}_action));
 }
 
 
 ${modulePascalCase}${actionPascalCase}Action*
 ${moduleLowerSnake}_${actionLowerSnake}_action_new()
 {
-    return ${moduleUpperSnake}_${actionUpperSnake}_ACTION(g_object_new(${moduleUpperSnake}_TYPE_${actionUpperSnake}_ACTION, NULL));
+    return ${moduleUpperSnake}_${actionUpperSnake}_ACTION(g_object_new(
+        ${moduleUpperSnake}_TYPE_${actionUpperSnake}_ACTION,
+        NULL
+        ));
 }
 
 

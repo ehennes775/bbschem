@@ -78,6 +78,8 @@ add_library(bbgui
         bbnettool.h
         bbnettoolpanel.c
         bbbustoolpanel.h
+        bbnewaction.c
+        bbnewaction.h
         bbopenaction.c
         bbopenaction.h
         bbpanaction.c
