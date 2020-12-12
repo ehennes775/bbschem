@@ -217,6 +217,35 @@ bb_schematic_apply_item_property_lambda(BbSchematicItem *item, ApplyItemProperty
 }
 
 
+void
+bb_schematic_calculate_bounds(
+    BbSchematic *schematic,
+    BbPred where_pred,
+    gpointer where_user_data,
+    BbBoundsCalculator *calculator,
+    BbBounds *bounds
+    )
+{
+    GSList *iter = schematic->items;
+
+    while (iter != NULL)
+    {
+        if (where_pred(iter->data , where_user_data))
+        {
+            BbBounds *temp = bb_schematic_item_calculate_bounds(iter->data, calculator);
+
+            bounds->min_x = MIN(bounds->min_x, temp->min_x);
+            bounds->min_y = MIN(bounds->min_y, temp->min_y);
+            bounds->max_x = MAX(bounds->max_x, temp->max_x);
+            bounds->max_y = MAX(bounds->max_y, temp->max_y);
+
+            bb_bounds_free(temp);
+        }
+
+        iter = g_slist_next(iter);
+    }
+}
+
 static void
 bb_schematic_class_init(BbSchematicClass *klasse)
 {

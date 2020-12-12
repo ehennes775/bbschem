@@ -174,11 +174,17 @@ struct _BbSchematicWindow
 static void
 bb_schematic_window_add_item(BbToolSubject *subject, BbSchematicItem *item);
 
+static void
+bb_schematic_window_bounds_calculator_init(BbBoundsCalculatorInterface *iface);
+
 static gboolean
 bb_schematic_window_button_pressed_cb(GtkWidget *widget, GdkEvent *event, gpointer user_data);
 
 static gboolean
 bb_schematic_window_button_released_cb(GtkWidget *widget, GdkEvent *event, gpointer user_data);
+
+static BbBounds*
+bb_schematic_window_calculate_from_corners(BbBoundsCalculator *calculator, int x0, int y0, int x1, int y1);
 
 static void
 bb_schematic_window_clipboard_subject_init(BbClipboardSubjectInterface *iface);
@@ -357,6 +363,7 @@ G_DEFINE_TYPE_WITH_CODE(
     BbSchematicWindow,
     bb_schematic_window,
     BB_TYPE_DOCUMENT_WINDOW,
+    G_IMPLEMENT_INTERFACE(BB_TYPE_BOUNDS_CALCULATOR, bb_schematic_window_bounds_calculator_init)
     G_IMPLEMENT_INTERFACE(BB_TYPE_CLIPBOARD_SUBJECT, bb_schematic_window_clipboard_subject_init)
     G_IMPLEMENT_INTERFACE(BB_TYPE_GRID_SUBJECT, bb_schematic_window_grid_subject_init)
     G_IMPLEMENT_INTERFACE(BB_TYPE_REVEAL_SUBJECT, bb_schematic_window_reveal_subject_init)
@@ -396,6 +403,13 @@ bb_schematic_window_apply_selection(BbSchematicWindow *window, BbApplyFunc func,
         );
 }
 
+static void
+bb_schematic_window_bounds_calculator_init(BbBoundsCalculatorInterface *iface)
+{
+    g_return_if_fail(iface != NULL);
+
+    iface->calculate_from_corners = bb_schematic_window_calculate_from_corners;
+}
 
 static gboolean
 bb_schematic_window_button_pressed_cb(GtkWidget *widget, GdkEvent *event, gpointer user_data)
@@ -430,6 +444,15 @@ bb_schematic_window_button_released_cb(GtkWidget *widget, GdkEvent *event, gpoin
     }
 
     return FALSE;
+}
+
+
+static BbBounds*
+bb_schematic_window_calculate_from_corners(BbBoundsCalculator *calculator, int x0, int y0, int x1, int y1)
+{
+    BbBounds *temp = bb_bounds_new_with_points(x0, y0, x1, y1);
+
+    return temp;
 }
 
 
@@ -1809,21 +1832,28 @@ bb_schematic_window_zoom_extents(BbZoomSubject *zoom_subject)
     int width = gtk_widget_get_allocated_width(GTK_WIDGET(window->inner_window));
     int height = gtk_widget_get_allocated_height(GTK_WIDGET(window->inner_window));
 
-    // TODO calculate the bounds of the schematic
-    double min_x = 0.0;
-    double min_y = 0.0;
-    double max_x = 100.0;
-    double max_y = 100.0;
+    BbBounds *bounds = bb_bounds_new_with_points(0, 0, 100, 100);
 
-    double scale_x = 0.9 * width / MAX(abs(max_x - min_x), 100.0);
-    double scale_y = 0.9 * height / MAX(abs(max_y - min_y), 100.0);
+    if (window->schematic != NULL)
+    {
+        bb_schematic_calculate_bounds(
+            window->schematic,
+            bb_pred_always,
+            NULL,
+            window,
+            bounds
+            );
+    }
+
+    double scale_x = 0.9 * width / MAX(abs(bounds->max_x - bounds->min_x), 100.0);
+    double scale_y = 0.9 * height / MAX(abs(bounds->max_y - bounds->min_y), 100.0);
     double scale = MIN(scale_x, scale_y);
 
     cairo_matrix_t matrix;
     cairo_matrix_init_identity(&matrix);
     cairo_matrix_translate(&matrix, width / 2.0, height / 2.0);
     cairo_matrix_scale(&matrix, scale, -scale);
-    cairo_matrix_translate(&matrix, (max_x + min_x) / -2.0, (max_y + min_y) / -2.0);
+    cairo_matrix_translate(&matrix, (bounds->max_x + bounds->min_x) / -2.0, (bounds->max_y + bounds->min_y) / -2.0);
 
     /* Snap zoom to even pixels and clamp to maximum zoom out */
     matrix.xx = CLAMP(trunc(matrix.xx * BB_ZOOM_QUANTIZE), BB_LIMIT_ZOOM_OUT, BB_LIMIT_ZOOM_IN) / BB_ZOOM_QUANTIZE;

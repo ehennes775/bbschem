@@ -40,6 +40,16 @@ void
 bb_schematic_foreach(BbSchematic *schematic, GFunc func, gpointer user_data);
 
 
+void
+bb_schematic_calculate_bounds(
+    BbSchematic *schematic,
+    BbPred where_pred,
+    gpointer where_user_data,
+    BbBoundsCalculator *calculator,
+    BbBounds *bounds
+    );
+
+
 /**
  * Query items in the schematic
  *

@@ -22,7 +22,16 @@
 
 #define BB_TYPE_BOUNDS bb_bounds_get_type()
 
+
 typedef struct _BbBounds BbBounds;
+
+struct _BbBounds
+{
+    int min_x;
+    int min_y;
+    int max_x;
+    int max_y;
+};
 
 
 BbBounds*

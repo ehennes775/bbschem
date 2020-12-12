@@ -20,15 +20,6 @@
 #include "bbbounds.h"
 
 
-struct _BbBounds
-{
-    int min_x;
-    int min_y;
-    int max_x;
-    int max_y;
-};
-
-
 G_DEFINE_BOXED_TYPE(BbBounds, bb_bounds, bb_bounds_copy, bb_bounds_free)
 
 
@@ -66,7 +57,7 @@ bb_bounds_new_with_points(int x0, int y0, int x1, int y1)
     BbBounds *bounds = g_new(BbBounds, 1);
 
     bounds->min_x = MIN(x0, x1);
-    bounds->min_x = MIN(y0, y1);
+    bounds->min_y = MIN(y0, y1);
     bounds->max_x = MAX(x0, x1);
     bounds->max_y = MAX(y0, y1);
 

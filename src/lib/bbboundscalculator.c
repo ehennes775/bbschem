@@ -30,6 +30,8 @@ G_DEFINE_INTERFACE(BbBoundsCalculator, bb_bounds_calculator, G_TYPE_OBJECT)
 BbBounds*
 bb_bounds_calculator_calculate_from_corners(BbBoundsCalculator *calculator, int x0, int y0, int x1, int y1, int width)
 {
+    g_return_val_if_fail(calculator != NULL, NULL);
+
     BbBoundsCalculatorInterface *iface = BB_BOUNDS_CALCULATOR_GET_IFACE(calculator);
 
     g_return_val_if_fail(iface != NULL, NULL);
