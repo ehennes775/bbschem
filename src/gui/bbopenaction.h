@@ -24,6 +24,10 @@
 #define BB_TYPE_OPEN_ACTION bb_open_action_get_type()
 G_DECLARE_FINAL_TYPE(BbOpenAction, bb_open_action, BB, OPEN_ACTION, GObject)
 
+BbMainWindow*
+bb_open_action_get_window(BbOpenAction *open_action);
+
+
 BbOpenAction*
 bb_open_action_new(BbMainWindow *window);
 

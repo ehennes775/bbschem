@@ -17,6 +17,7 @@
  */
 
 #include <gtk/gtk.h>
+#include <bbextensions.h>
 #include "bbopenaction.h"
 
 
@@ -35,7 +36,7 @@ enum
     
     /* From BbOpenAction */
 
-    PROP_SUBJECT,
+    PROP_WINDOW,
     
     N_PROPERTIES
 };
@@ -57,6 +58,9 @@ bb_open_action_activate(GAction *action, GVariant *parameter);
 
 static void
 bb_open_action_change_state(GAction *action, GVariant *value);
+
+GtkWidget*
+bb_open_action_create_dialog(BbOpenAction *open_action);
 
 static void
 bb_open_action_dispose(GObject *object);
@@ -86,7 +90,16 @@ static const GVariantType*
 bb_open_action_get_state_type(GAction *action);
 
 static void
+bb_open_action_open_uris(BbOpenAction *open_action, GSList *uris);
+
+static void
+bb_open_action_open_uris_lambda(const char *uri, BbOpenAction *open_action);
+
+static void
 bb_open_action_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
+
+static void
+bb_open_action_set_window(BbOpenAction *open_action, BbMainWindow *window);
 
 
 static GParamSpec *properties[N_PROPERTIES];
@@ -117,14 +130,31 @@ bb_open_action_action_init(GActionInterface *iface)
 static void
 bb_open_action_activate(GAction *action, GVariant *parameter)
 {
-    g_message("bb_open_action_activate");
+    BbOpenAction *open_action = BB_OPEN_ACTION(action);
+    g_return_if_fail(BB_IS_OPEN_ACTION(open_action));
+
+    GtkWidget *dialog = bb_open_action_create_dialog(open_action);
+    g_return_if_fail(dialog != NULL);
+
+    int response = gtk_dialog_run(GTK_DIALOG(dialog));
+
+    if (response == GTK_RESPONSE_ACCEPT)
+    {
+        GSList *uris = gtk_file_chooser_get_filenames(GTK_FILE_CHOOSER(dialog));
+
+        bb_open_action_open_uris(open_action, uris);
+
+        g_slist_free_full(g_steal_pointer(&uris), g_free);
+    }
+
+    gtk_widget_destroy(dialog);
 }
 
 
 static void
 bb_open_action_change_state(GAction *action, GVariant *value)
 {
-
+    g_warn_if_reached();
 }
 
 
@@ -172,6 +202,40 @@ bb_open_action_class_init(BbOpenActionClass *klasse)
         );
         
     /* From BbOpenAction */
+
+    properties[PROP_WINDOW] = bb_object_class_install_property(
+        object_class,
+        PROP_WINDOW,
+        g_param_spec_object(
+            "window",
+            "",
+            "",
+            BB_TYPE_MAIN_WINDOW,
+            G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS
+            )
+        );
+}
+
+
+GtkWidget*
+bb_open_action_create_dialog(BbOpenAction *open_action)
+{
+    g_return_val_if_fail(BB_IS_OPEN_ACTION(open_action), NULL);
+
+    GtkWidget *dialog = gtk_file_chooser_dialog_new (
+        "Open Files",
+        GTK_WINDOW(open_action->window),
+        GTK_FILE_CHOOSER_ACTION_OPEN,
+        "Cancel",
+        GTK_RESPONSE_CANCEL,
+        "Open",
+        GTK_RESPONSE_ACCEPT,
+        NULL
+    );
+
+    gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(dialog), TRUE);
+
+    return dialog;
 }
 
 
@@ -249,6 +313,10 @@ bb_open_action_get_property(GObject *object, guint property_id, GValue *value, G
             g_value_set_boxed(value, bb_open_action_get_state_type(G_ACTION(object)));
             break;
 
+        case PROP_WINDOW:
+            g_value_set_object(value, bb_open_action_get_window(BB_OPEN_ACTION(object)));
+            break;
+
         default:
             G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
     }
@@ -282,9 +350,19 @@ bb_open_action_get_state_type(GAction *action)
 }
 
 
+BbMainWindow*
+bb_open_action_get_window(BbOpenAction *open_action)
+{
+    g_return_val_if_fail(BB_IS_OPEN_ACTION(open_action), NULL);
+
+    return open_action->window;
+}
+
+
 static void
 bb_open_action_init(BbOpenAction *open_action)
 {
+    g_return_if_fail(BB_IS_OPEN_ACTION(open_action));
 }
 
 
@@ -300,11 +378,92 @@ bb_open_action_new(BbMainWindow *window)
 
 
 static void
+bb_open_action_open_uris(BbOpenAction *open_action, GSList *uris)
+{
+    g_slist_foreach(uris, (GFunc) bb_open_action_open_uris_lambda, open_action);
+}
+
+
+static void
+bb_open_action_open_uris_lambda(const char *uri, BbOpenAction *open_action)
+{
+    g_return_if_fail(uri != NULL);
+    g_return_if_fail(BB_IS_OPEN_ACTION(open_action));
+
+    GError *error = NULL;
+    BbDocumentWindow *page = NULL;
+
+    /* TODO: Call function to create document window */
+
+    if (page == NULL)
+    {
+        g_warning(
+            "Opener returned %p when opening %s",
+            page,
+            uri
+            );
+    }
+    else if (error != NULL)
+    {
+        GtkWidget *dialog = gtk_message_dialog_new(
+            GTK_WINDOW(open_action->window),
+            GTK_DIALOG_MODAL,
+            GTK_MESSAGE_ERROR,
+            GTK_BUTTONS_OK,
+            "Cannot open file: \n\n    %s\n\n    Domain: %s\n\n    Code: %d\n\n    Message: %s",
+            uri,
+            g_quark_to_string(error->code),
+            error->code,
+            error->message
+            );
+
+        gtk_dialog_run(GTK_DIALOG(dialog));
+
+        gtk_widget_destroy(dialog);
+    }
+    else
+    {
+        bb_main_window_add_page(open_action->window, page);
+    }
+
+    g_clear_error(&error);
+}
+
+
+static void
 bb_open_action_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec)
 {
     switch (property_id)
     {
+        case PROP_WINDOW:
+            bb_open_action_set_window(BB_OPEN_ACTION(object), g_value_get_object(value));
+            break;
+
         default:
             G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
+    }
+}
+
+
+static void
+bb_open_action_set_window(BbOpenAction *open_action, BbMainWindow *window)
+{
+    g_return_if_fail(BB_IS_OPEN_ACTION(open_action));
+
+    if (open_action->window != window)
+    {
+        if (open_action->window != NULL)
+        {
+            g_object_unref(open_action->window);
+        }
+
+        open_action->window = window;
+
+        if (open_action->window != NULL)
+        {
+            g_object_ref(open_action->window);
+        }
+
+        g_object_notify_by_pspec(G_OBJECT(open_action), properties[PROP_WINDOW]);
     }
 }
