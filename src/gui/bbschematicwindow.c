@@ -39,6 +39,24 @@
 #define BB_ZOOM_IN_FACTOR (1.25)
 #define BB_ZOOM_OUT_FACTOR (0.8)
 
+
+/**
+ * The limit of zooming out
+ */
+#define BB_LIMIT_ZOOM_OUT (5.0)
+
+
+/**
+ * The upper limit of zooming in
+ */
+#define BB_LIMIT_ZOOM_IN (4000.0)
+
+
+/**
+ * A number used to snap the grid to even pixels
+ */
+#define BB_ZOOM_QUANTIZE (200.0)
+
 enum
 {
     PROP_0,
@@ -828,7 +846,7 @@ bb_schematic_window_get_can_zoom_in(BbSchematicWindow *window)
 {
     g_return_val_if_fail(window != NULL, FALSE);
 
-    return TRUE;
+    return BB_ZOOM_QUANTIZE * window->matrix.xx < BB_LIMIT_ZOOM_IN;
 }
 
 
@@ -837,7 +855,7 @@ bb_schematic_window_get_can_zoom_out(BbSchematicWindow *window)
 {
     g_return_val_if_fail(window != NULL, FALSE);
 
-    return TRUE;
+    return BB_ZOOM_QUANTIZE * window->matrix.xx > BB_LIMIT_ZOOM_OUT;
 }
 
 
@@ -1760,11 +1778,18 @@ bb_schematic_window_zoom_extents(BbZoomSubject *zoom_subject)
     cairo_matrix_scale(&matrix, scale, -scale);
     cairo_matrix_translate(&matrix, (max_x + min_x) / -2.0, (max_y + min_y) / -2.0);
 
+    /* Snap zoom to even pixels and clamp to maximum zoom out */
+    matrix.xx = CLAMP(trunc(matrix.xx * BB_ZOOM_QUANTIZE), BB_LIMIT_ZOOM_OUT, BB_LIMIT_ZOOM_IN) / BB_ZOOM_QUANTIZE;
+    matrix.yy = CLAMP(trunc(matrix.yy * BB_ZOOM_QUANTIZE), -BB_LIMIT_ZOOM_IN, -BB_LIMIT_ZOOM_OUT) / BB_ZOOM_QUANTIZE;
+
     /* Snap coordinate translation to even pixels */
     matrix.x0 = floor(matrix.x0) + 0.5;
     matrix.y0 = floor(matrix.y0) + 0.5;
 
     window->matrix = matrix;
+
+    g_object_notify_by_pspec(G_OBJECT(window), properties[PROP_CAN_ZOOM_IN]);
+    g_object_notify_by_pspec(G_OBJECT(window), properties[PROP_CAN_ZOOM_OUT]);
 
     gtk_widget_queue_draw(GTK_WIDGET(window->inner_window));
 }
@@ -1807,6 +1832,9 @@ bb_schematic_window_zoom_out(BbZoomSubject *zoom_subject)
 static void
 bb_schematic_window_zoom_point(BbSchematicWindow *window, double x, double y, double factor)
 {
+    g_return_if_fail((factor <= 1.0) || bb_schematic_window_get_can_zoom_in(window));
+    g_return_if_fail((factor >= 1.0) || bb_schematic_window_get_can_zoom_out(window));
+
     cairo_matrix_t matrix;
 
     double center_x = gtk_widget_get_allocated_width(GTK_WIDGET(window->inner_window)) / 2.0;
@@ -1821,11 +1849,18 @@ bb_schematic_window_zoom_point(BbSchematicWindow *window, double x, double y, do
     matrix.x0 = factor * (matrix.x0 - x) + center_x;
     matrix.y0 = factor * (matrix.y0 - y) + center_y;
 
+    /* Snap zoom to even pixels and clamp to maximum zoom out */
+    matrix.xx = CLAMP(trunc(matrix.xx * BB_ZOOM_QUANTIZE), BB_LIMIT_ZOOM_OUT, BB_LIMIT_ZOOM_IN) / BB_ZOOM_QUANTIZE;
+    matrix.yy = CLAMP(trunc(matrix.yy * BB_ZOOM_QUANTIZE), -BB_LIMIT_ZOOM_IN, -BB_LIMIT_ZOOM_OUT) / BB_ZOOM_QUANTIZE;
+
     /* Snap coordinate translation to even pixels */
     matrix.x0 = floor(matrix.x0) + 0.5;
     matrix.y0 = floor(matrix.y0) + 0.5;
 
     window->matrix = matrix;
+
+    g_object_notify_by_pspec(G_OBJECT(window), properties[PROP_CAN_ZOOM_IN]);
+    g_object_notify_by_pspec(G_OBJECT(window), properties[PROP_CAN_ZOOM_OUT]);
 
     gtk_widget_queue_draw(GTK_WIDGET(window->inner_window));
 }
