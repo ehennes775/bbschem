@@ -676,12 +676,6 @@ bb_schematic_window_draw_cb(BbSchematicWindowInner *inner, cairo_t *cairo, BbSch
     cairo_save(cairo);
     cairo_transform(cairo, &outer->matrix);
 
-    cairo_matrix_t temp2;
-    cairo_get_matrix(cairo, &temp2);
-
-    cairo_matrix_t temp = widget_matrix;
-    cairo_transform(&temp, &outer->matrix);
-
     if (outer->grid != NULL & (outer->grid_control == NULL || bb_grid_control_get_grid_visible(outer->grid_control)))
     {
         bb_grid_draw(outer->grid, graphics);
@@ -1669,7 +1663,7 @@ bb_schematic_window_snap_coordinate(BbToolSubject *subject, int x0, int y0, int 
     int x = x0;
     int y = y0;
 
-    if (window != NULL && window->grid_control != NULL)
+    if (window != NULL && window->grid_control != NULL && bb_grid_control_get_snap_active(window->grid_control))
     {
         x = bb_coord_snap(x0, grid_size);
         y = bb_coord_snap(y0, grid_size);

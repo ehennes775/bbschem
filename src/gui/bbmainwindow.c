@@ -69,6 +69,7 @@
 #include "bbnettoolpanel.h"
 #include "bbscalegridaction.h"
 #include "bbshowgridaction.h"
+#include "bbsnapactiveaction.h"
 
 
 enum
@@ -503,6 +504,11 @@ bb_main_window_init(BbMainWindow *window)
     g_action_map_add_action(
         G_ACTION_MAP(window),
         G_ACTION(bb_show_grid_action_new(BB_GRID_CONTROL(window->tool_stack)))
+        );
+
+    g_action_map_add_action(
+        G_ACTION_MAP(window),
+        G_ACTION(bb_snap_active_action_new(BB_GRID_CONTROL(window->tool_stack)))
         );
 
     g_signal_connect_after(

@@ -128,6 +128,8 @@ add_library(bbgui
         bbschematicwindowinner.h
         bbshowgridaction.c
         bbshowgridaction.h
+        bbsnapactiveaction.c
+        bbsnapactiveaction.h
         bbtextpropertyeditor.c
         bbtextpropertyeditor.h
         bbtoolchanger.c

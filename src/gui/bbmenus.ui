@@ -187,6 +187,10 @@
                         <attribute name="label" translatable="yes">Grid Visible</attribute>
                         <attribute name="action">win.grid-visible</attribute>
                     </item>
+                    <item>
+                        <attribute name="label" translatable="yes">Snap Active</attribute>
+                        <attribute name="action">win.snap-active</attribute>
+                    </item>
                 </section>
             </submenu>
         </section>

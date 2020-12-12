@@ -280,8 +280,6 @@ bb_grid_get_draw_size(BbGrid *grid)
 {
     g_return_val_if_fail(BB_IS_GRID(grid), BB_GRID_DEFAULT_SIZE);
 
-    g_message("draw_size = %d", bb_grid_calculate_size(grid->draw_index));
-
     return bb_grid_calculate_size(grid->draw_index);
 }
 
