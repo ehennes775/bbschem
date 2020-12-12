@@ -18,15 +18,22 @@
 #[[#include]]# <gtk/gtk.h>
 #[[#include]]# "$modulePascalCase.toLowerCase()${actionPascalCase.toLowerCase()}action.h"
 
+
 enum
 {
     PROP_0,
+    
+    /* From GAction */
+    
     PROP_ENABLED,
     PROP_NAME,
     PROP_PARAMETER_TYPE,
     PROP_STATE,
     PROP_STATE_HINT,
     PROP_STATE_TYPE,
+    
+    /* From ${modulePascalCase}${actionPascalCase}Action */
+    
     N_PROPERTIES
 };
 
@@ -77,7 +84,7 @@ static void
 ${moduleLowerSnake}_${actionLowerSnake}_action_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
 
 
-GParamSpec *properties[N_PROPERTIES];
+static GParamSpec *properties[N_PROPERTIES];
 
 
 G_DEFINE_TYPE_WITH_CODE(
@@ -119,10 +126,15 @@ ${moduleLowerSnake}_${actionLowerSnake}_action_change_state(GAction *action, GVa
 static void
 ${moduleLowerSnake}_${actionLowerSnake}_action_class_init(${modulePascalCase}${actionPascalCase}ActionClass *klasse)
 {
-    G_OBJECT_CLASS(klasse)->dispose = ${moduleLowerSnake}_${actionLowerSnake}_action_dispose;
-    G_OBJECT_CLASS(klasse)->finalize = ${moduleLowerSnake}_${actionLowerSnake}_action_finalize;
-    G_OBJECT_CLASS(klasse)->get_property = ${moduleLowerSnake}_${actionLowerSnake}_action_get_property;
-    G_OBJECT_CLASS(klasse)->set_property = ${moduleLowerSnake}_${actionLowerSnake}_action_set_property;
+    GObjectClass *object_class = G_OBJECT_CLASS(klasse);
+    g_return_if_fail(G_IS_GOBJECT_CLASS(object_class));
+    
+    object_class->dispose = ${moduleLowerSnake}_${actionLowerSnake}_action_dispose;
+    object_class->finalize = ${moduleLowerSnake}_${actionLowerSnake}_action_finalize;
+    object_class->get_property = ${moduleLowerSnake}_${actionLowerSnake}_action_get_property;
+    object_class->set_property = ${moduleLowerSnake}_${actionLowerSnake}_action_set_property;
+
+    /* From GAction */
 
     g_object_class_override_property(
         klasse,
@@ -148,31 +160,29 @@ ${moduleLowerSnake}_${actionLowerSnake}_action_class_init(${modulePascalCase}${a
         "state"
         );
 
-    //g_object_class_override_property(
-    //    klasse,
-    //    PROP_STATE_HINT,
-    //    "state-hint"
-    //    );
-
     g_object_class_override_property(
         klasse,
         PROP_STATE_TYPE,
         "state-type"
         );
+        
+    /* From ${modulePascalCase}${actionPascalCase}Action */
 }
 
 
 static void
 ${moduleLowerSnake}_${actionLowerSnake}_action_dispose(GObject *object)
 {
-    // ${modulePascalCase}${actionPascalCase}Action* privat = ${modulePascalCase}${actionPascalCase}_ACTION_GET_PRIVATE(object);
+    ${modulePascalCase}${actionPascalCase}Action *${actionLowerSnake}_action = ${actionUpperSnake}_ACTION(object);
+    g_return_if_fail(${moduleUpperSnake}_IS_${actionUpperSnake}_ACTION}(${actionLowerSnake}_action));
 }
 
 
 static void
 ${moduleLowerSnake}_${actionLowerSnake}_action_finalize(GObject *object)
 {
-    // ${modulePascalCase}${actionPascalCase}Action* privat = ${modulePascalCase}${actionPascalCase}_ACTION_GET_PRIVATE(object);
+    ${modulePascalCase}${actionPascalCase}Action *${actionLowerSnake}_action = ${actionUpperSnake}_ACTION(object);
+g_return_if_fail(${moduleUpperSnake}_IS_${actionUpperSnake}_ACTION}(${actionLowerSnake}_action));
 }
 
 
@@ -188,18 +198,16 @@ ${moduleLowerSnake}_${actionLowerSnake}_action_get_enabled(GAction *action)
 static const gchar*
 ${moduleLowerSnake}_${actionLowerSnake}_action_get_name(GAction *action)
 {
-    const gchar* name = "${actionPascalCase}";
+    g_warn_if_fail(${moduleUpperSnake}_IS_${actionUpperSnake}_ACTION}(action));
 
-    g_return_val_if_fail(action != NULL, name);
-
-    return name;
+    return "${actionLowerSnake}";
 }
 
 
 static const GVariantType*
 ${moduleLowerSnake}_${actionLowerSnake}_action_get_parameter_type(GAction *action)
 {
-    g_return_val_if_fail(action != NULL, NULL);
+    g_warn_if_fail(${moduleUpperSnake}_IS_${actionUpperSnake}_ACTION}(action));
 
     return NULL;
 }
@@ -243,7 +251,7 @@ ${moduleLowerSnake}_${actionLowerSnake}_action_get_property(GObject *object, gui
 static GVariant *
 ${moduleLowerSnake}_${actionLowerSnake}_action_get_state(GAction *action)
 {
-    g_return_val_if_fail(action != NULL, NULL);
+    g_return_if_fail(${moduleUpperSnake}_IS_${actionUpperSnake}_ACTION}(${actionLowerSnake}_action));
 
     return NULL;
 }
@@ -252,7 +260,7 @@ ${moduleLowerSnake}_${actionLowerSnake}_action_get_state(GAction *action)
 static GVariant*
 ${moduleLowerSnake}_${actionLowerSnake}_action_get_state_hint(GAction *action)
 {
-    g_return_val_if_fail(action != NULL, NULL);
+    g_return_if_fail(${moduleUpperSnake}_IS_${actionUpperSnake}_ACTION}(${actionLowerSnake}_action));
 
     return NULL;
 }
@@ -261,7 +269,7 @@ ${moduleLowerSnake}_${actionLowerSnake}_action_get_state_hint(GAction *action)
 static const GVariantType*
 ${moduleLowerSnake}_${actionLowerSnake}_action_get_state_type(GAction *action)
 {
-    g_return_val_if_fail(action != NULL, NULL);
+    g_warn_if_fail(${moduleUpperSnake}_IS_${actionUpperSnake}_ACTION}(action));
 
     return NULL;
 }
@@ -277,13 +285,6 @@ ${modulePascalCase}${actionPascalCase}Action*
 ${moduleLowerSnake}_${actionLowerSnake}_action_new()
 {
     return ${moduleUpperSnake}_${actionUpperSnake}_ACTION(g_object_new(${moduleUpperSnake}_TYPE_${actionUpperSnake}_ACTION, NULL));
-}
-
-
-__attribute__((constructor)) void
-${moduleLowerSnake}_${actionLowerSnake}_action_register()
-{
-    ${moduleLowerSnake}_${actionLowerSnake}_action_get_type();
 }
 
 
