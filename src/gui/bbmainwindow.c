@@ -221,15 +221,17 @@ bb_main_window_key_released_cb(GtkWidget *unused, GdkEvent *event, BbMainWindow 
 void
 bb_main_window_add_page(BbMainWindow *window, BbDocumentWindow *page)
 {
-    g_return_if_fail(window != NULL);
+    g_return_if_fail(BB_IS_MAIN_WINDOW(window));
     g_return_if_fail(window->document_notebook != NULL);
-    g_return_if_fail(page != NULL);
+    g_return_if_fail(BB_IS_DOCUMENT_WINDOW(page));
 
     gtk_notebook_append_page(
         window->document_notebook,
         GTK_WIDGET(page),
         GTK_WIDGET(bb_document_window_tab_new(page))
         );
+
+    gtk_widget_show_all(GTK_WIDGET(page));
 }
 
 
@@ -365,18 +367,21 @@ bb_main_window_init(BbMainWindow *window)
 {
     gtk_widget_init_template(GTK_WIDGET(window));
 
-    bb_main_window_add_page(window, g_object_new(
-        BB_TYPE_SCHEMATIC_WINDOW,
-        "grid-control", window->tool_stack,
-        "tool-changer", window->tool_stack,
-        NULL
-        ));
+//    bb_main_window_add_page(window, g_object_new(
+//        BB_TYPE_SCHEMATIC_WINDOW,
+//        "grid-control", window->tool_stack,
+//        "tool-changer", window->tool_stack,
+//        NULL
+//        ));
+//
+//    bb_main_window_add_page(window, g_object_new(
+//        BB_TYPE_SCHEMATIC_WINDOW,
+//        "tool-changer", window->tool_stack,
+//        NULL
+//        ));
 
-    bb_main_window_add_page(window, g_object_new(
-        BB_TYPE_SCHEMATIC_WINDOW,
-        "tool-changer", window->tool_stack,
-        NULL
-        ));
+    BbDocumentWindow *temp = g_object_new(BB_TYPE_SCHEMATIC_WINDOW, NULL);
+    bb_main_window_add_page(window, temp);
 
     g_action_map_add_action(
         G_ACTION_MAP(window),

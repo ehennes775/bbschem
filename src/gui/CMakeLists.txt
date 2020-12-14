@@ -56,6 +56,10 @@ add_library(bbgui
         bbdrawingtool.h
         bbfillstyleeditor.c
         bbfillstyleeditor.h
+        bbgedaschematicreader.c
+        bbgedaschematicreader.h
+        bbgeneralopener.c
+        bbgeneralopener.h
         bbgraphics.c
         bbgraphics.h
         bbgrid.c

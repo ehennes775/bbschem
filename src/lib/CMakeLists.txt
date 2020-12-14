@@ -31,6 +31,8 @@ add_library(bblib
         bbelectricalnet.h
         bbelectricalpin.c
         bbelectricalpin.h
+        bberror.c
+        bberror.h
         bbfillstyle.c
         bbfillstyle.h
         bbfilltype.c
@@ -53,6 +55,8 @@ add_library(bblib
         bbitemrenderer.h
         bblinestyle.c
         bblinestyle.h
+        bbparams.c
+        bbparams.h
         bbpathcommand.c
         bbpathcommand.h
         bbpred.c

@@ -19,6 +19,8 @@
 #include <gtk/gtk.h>
 #include <bbextensions.h>
 #include "bbopenaction.h"
+#include "bbgeneralopener.h"
+#include "bbschematicwindow.h"
 
 
 enum
@@ -46,6 +48,7 @@ struct _BbOpenAction
 {
     GObject parent;
 
+    BbGeneralOpener *opener;
     BbMainWindow *window;
 };
 
@@ -94,6 +97,9 @@ bb_open_action_open_uris(BbOpenAction *open_action, GSList *uris);
 
 static void
 bb_open_action_open_uris_lambda(const char *uri, BbOpenAction *open_action);
+
+static void
+bb_open_action_open_uris_lambda_ready(BbGeneralOpener *opener, GAsyncResult *result, BbOpenAction *open_action);
 
 static void
 bb_open_action_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
@@ -148,6 +154,10 @@ bb_open_action_activate(GAction *action, GVariant *parameter)
     }
 
     gtk_widget_destroy(dialog);
+
+    BbDocumentWindow *temp = g_object_new(BB_TYPE_SCHEMATIC_WINDOW, NULL);
+    bb_main_window_add_page(open_action->window, temp);
+
 }
 
 
@@ -363,6 +373,8 @@ static void
 bb_open_action_init(BbOpenAction *open_action)
 {
     g_return_if_fail(BB_IS_OPEN_ACTION(open_action));
+
+    open_action->opener = bb_general_opener_new();
 }
 
 
@@ -390,20 +402,37 @@ bb_open_action_open_uris_lambda(const char *uri, BbOpenAction *open_action)
     g_return_if_fail(uri != NULL);
     g_return_if_fail(BB_IS_OPEN_ACTION(open_action));
 
-    GError *error = NULL;
-    BbDocumentWindow *page = NULL;
+    GFile *file = g_file_new_for_path(uri);
 
-    /* TODO: Call function to create document window */
+    BbDocumentWindow *page = bb_general_opener_open_async(
+        open_action->opener,
+        file,
+        NULL,
+        (GAsyncReadyCallback) bb_open_action_open_uris_lambda_ready,
+        open_action
+        );
 
     if (page == NULL)
     {
-        g_warning(
-            "Opener returned %p when opening %s",
-            page,
-            uri
-            );
+        g_warning("Opener returned %p when opening %s", page, uri);
     }
-    else if (error != NULL)
+    else
+    {
+        bb_main_window_add_page(open_action->window, page);
+    }
+
+    g_clear_object(&file);
+}
+
+
+static void
+bb_open_action_open_uris_lambda_ready(BbGeneralOpener *opener, GAsyncResult *result, BbOpenAction *open_action)
+{
+    GError *local_error = NULL;
+
+    bb_general_opener_open_finish(opener, result, &local_error);
+
+    if (local_error != NULL)
     {
         GtkWidget *dialog = gtk_message_dialog_new(
             GTK_WINDOW(open_action->window),
@@ -411,22 +440,18 @@ bb_open_action_open_uris_lambda(const char *uri, BbOpenAction *open_action)
             GTK_MESSAGE_ERROR,
             GTK_BUTTONS_OK,
             "Cannot open file: \n\n    %s\n\n    Domain: %s\n\n    Code: %d\n\n    Message: %s",
-            uri,
-            g_quark_to_string(error->code),
-            error->code,
-            error->message
+            "unknown",
+            g_quark_to_string(local_error->code),
+            local_error->code,
+            local_error->message
             );
 
         gtk_dialog_run(GTK_DIALOG(dialog));
 
         gtk_widget_destroy(dialog);
     }
-    else
-    {
-        bb_main_window_add_page(open_action->window, page);
-    }
 
-    g_clear_error(&error);
+    g_clear_error(&local_error);
 }
 
 

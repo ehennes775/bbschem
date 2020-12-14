@@ -19,9 +19,12 @@
  */
 
 #include "bbapplyfunc.h"
+#include "bberror.h"
 #include "bbpred.h"
 #include "bbqueryfunc.h"
 #include "bbvaluecount.h"
+
+#include "bbparams.h"
 
 #include "bbangle.h"
 #include "bbbounds.h"
