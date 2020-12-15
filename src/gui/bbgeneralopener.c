@@ -39,9 +39,6 @@ struct _BbGeneralOpener
 };
 
 
-G_DEFINE_TYPE(BbGeneralOpener, bb_general_opener, G_TYPE_OBJECT);
-
-
 static void
 bb_general_opener_dispose(GObject *object);
 
@@ -64,6 +61,9 @@ bb_general_opener_set_property(GObject *object, guint property_id, const GValue 
 GParamSpec *properties[N_PROPERTIES];
 
 
+G_DEFINE_TYPE(BbGeneralOpener, bb_general_opener, G_TYPE_OBJECT);
+
+
 static void
 bb_general_opener_class_init(BbGeneralOpenerClass *klasse)
 {
@@ -77,14 +77,12 @@ bb_general_opener_class_init(BbGeneralOpenerClass *klasse)
 static void
 bb_general_opener_dispose(GObject *object)
 {
-    // BbGeneralOpener* privat = BBGENERAL_OPENER_GET_PRIVATE(object);
 }
 
 
 static void
 bb_general_opener_finalize(GObject *object)
 {
-    // BbGeneralOpener* privat = BBGENERAL_OPENER_GET_PRIVATE(object);
 }
 
 
@@ -153,11 +151,19 @@ bb_general_opener_open_async(
     gpointer user_data
     )
 {
+    BbSchematic *schematic = bb_schematic_new();
+
     GTask *task = g_task_new(
         opener,
         cancellable,
         callback,
         user_data
+        );
+
+    g_task_set_task_data(
+        task,
+        schematic,
+        NULL
         );
 
     g_file_read_async(
@@ -168,12 +174,9 @@ bb_general_opener_open_async(
         task
         );
 
-    return g_object_new(
-        BB_TYPE_SCHEMATIC_WINDOW,
-        "grid-control", NULL,  // TODO
-        "tool-changer", NULL,    // TODO
-        NULL
-        );
+    return BB_DOCUMENT_WINDOW(bb_schematic_window_new(
+        schematic
+        ));
 }
 
 
@@ -206,6 +209,7 @@ bb_general_opener_open_open_ready(GFile *file, GAsyncResult *result, GTask *task
         bb_geda_schematic_reader_read_async(
             reader,
             data_stream,
+            BB_SCHEMATIC(g_task_get_task_data(task)),
             g_task_get_cancellable(task),
             (GAsyncReadyCallback) bb_general_opener_open_read_ready,
             task

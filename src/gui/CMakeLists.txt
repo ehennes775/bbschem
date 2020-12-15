@@ -56,6 +56,8 @@ add_library(bbgui
         bbdrawingtool.h
         bbfillstyleeditor.c
         bbfillstyleeditor.h
+        bbgedaopener.c
+        bbgedaopener.h
         bbgedaschematicreader.c
         bbgedaschematicreader.h
         bbgeneralopener.c
@@ -138,6 +140,8 @@ add_library(bbgui
         bbshowgridaction.h
         bbsnapactiveaction.c
         bbsnapactiveaction.h
+        bbspecificopener.c
+        bbspecificopener.h
         bbtextpropertyeditor.c
         bbtextpropertyeditor.h
         bbtoolchanger.c
@@ -171,4 +175,5 @@ add_library(bbgui
         bbzoomtool.h
         bbzoomtoolpanel.c
         bbzoomtoolpanel.h
-        bbzoomdirection.h)
+        bbzoomdirection.h
+        )

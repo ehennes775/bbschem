@@ -154,10 +154,6 @@ bb_open_action_activate(GAction *action, GVariant *parameter)
     }
 
     gtk_widget_destroy(dialog);
-
-    BbDocumentWindow *temp = g_object_new(BB_TYPE_SCHEMATIC_WINDOW, NULL);
-    bb_main_window_add_page(open_action->window, temp);
-
 }
 
 

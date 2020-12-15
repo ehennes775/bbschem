@@ -60,6 +60,10 @@ BbDrawingTool*
 bb_schematic_window_get_drawing_tool(BbSchematicWindow *window);
 
 
+BbSchematicWindow*
+bb_schematic_window_new(BbSchematic *schematic);
+
+
 /**
  * Perform an operation to query all items in the selection
  *

@@ -128,6 +128,7 @@ void
 bb_geda_schematic_reader_read_async(
     BbGedaSchematicReader *reader,
     GDataInputStream *stream,
+    BbSchematic *schematic,
     GCancellable *cancellable,
     GAsyncReadyCallback callback,
     gpointer user_data
@@ -138,6 +139,12 @@ bb_geda_schematic_reader_read_async(
         cancellable,
         callback,
         user_data
+        );
+
+    g_task_set_task_data(
+        task,
+        schematic,
+        NULL
         );
 
     g_data_input_stream_read_line_async(

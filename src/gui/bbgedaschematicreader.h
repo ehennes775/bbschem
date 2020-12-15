@@ -28,6 +28,7 @@
  */
 
 #include <gtk/gtk.h>
+#include <bblibrary.h>
 
 
 #define BB_TYPE_GEDA_SCHEMATIC_READER bb_geda_schematic_reader_get_type()
@@ -49,6 +50,7 @@ void
 bb_geda_schematic_reader_read_async(
     BbGedaSchematicReader *reader,
     GDataInputStream *stream,
+    BbSchematic *schematic,
     GCancellable *cancellable,
     GAsyncReadyCallback callback,
     gpointer user_data

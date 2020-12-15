@@ -99,6 +99,7 @@ enum
     PROP_REVEAL,
 
     PROP_GRID_CONTROL,
+    PROP_SCHEMATIC,
     PROP_TOOL_CHANGER,
 
     N_PROPERTIES
@@ -319,6 +320,9 @@ static void
 bb_schematic_window_set_reveal(BbRevealSubject *reveal_subject, gboolean reveal);
 
 static void
+bb_schematic_window_set_schematic(BbSchematicWindow *window, BbSchematic *schematic);
+
+static void
 bb_schematic_window_snap_coordinate(BbToolSubject *subject, int x0, int y0, int *x1, int *y1);
 
 static void
@@ -477,6 +481,22 @@ bb_schematic_window_class_init(BbSchematicWindowClass *klasse)
             "",
             BB_TYPE_DRAWING_TOOL,
             G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS
+            )
+        );
+
+    /*
+     * The schematic property remains hidden so the undo functionality is not bypassed with direct calls to the
+     * schematic object.
+     */
+    properties[PROP_SCHEMATIC] = bb_object_class_install_property(
+        object_class,
+        PROP_SCHEMATIC,
+        g_param_spec_object(
+            "schematic",
+            "",
+            "",
+            BB_TYPE_SCHEMATIC,
+            G_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS
             )
         );
 
@@ -1189,6 +1209,17 @@ bb_schematic_window_motion_notify_cb(GtkWidget *widget, GdkEvent *event, gpointe
 }
 
 
+BbSchematicWindow*
+bb_schematic_window_new(BbSchematic *schematic)
+{
+    return BB_SCHEMATIC_WINDOW(g_object_new(
+        BB_TYPE_SCHEMATIC_WINDOW,
+        "schematic", schematic,
+        NULL
+        ));
+}
+
+
 static void
 bb_schematic_window_notify_grid_cb(BbGrid *grid, GParamSpec *pspec, BbSchematicWindow *window)
 {
@@ -1472,6 +1503,10 @@ bb_schematic_window_set_property(GObject *object, guint property_id, const GValu
             bb_schematic_window_set_reveal(BB_REVEAL_SUBJECT(object), g_value_get_boolean(value));
             break;
 
+        case PROP_SCHEMATIC:
+            bb_schematic_window_set_schematic(BB_SCHEMATIC_WINDOW(object), g_value_get_object(value));
+            break;
+
         case PROP_TOOL_CHANGER:
             bb_schematic_window_set_tool_changer(BB_SCHEMATIC_WINDOW(object), g_value_get_object(value));
             break;
@@ -1622,6 +1657,30 @@ bb_schematic_window_set_reveal(BbRevealSubject *reveal_subject, gboolean reveal)
         window->reveal = reveal;
 
         g_object_notify_by_pspec(G_OBJECT(window), properties[PROP_REVEAL]);
+    }
+}
+
+
+static void
+bb_schematic_window_set_schematic(BbSchematicWindow *window, BbSchematic *schematic)
+{
+    g_return_if_fail(BB_IS_SCHEMATIC_WINDOW(window));
+
+    if (window->schematic != schematic)
+    {
+        if (window->schematic != NULL)
+        {
+            g_object_unref(window->schematic);
+        }
+
+        window->schematic = schematic;
+
+        if (window->schematic != NULL)
+        {
+            g_object_ref(window->schematic);
+        }
+
+        g_object_notify_by_pspec(G_OBJECT(window), properties[PROP_SCHEMATIC]);
     }
 }
 
