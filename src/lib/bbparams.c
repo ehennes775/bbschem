@@ -18,6 +18,7 @@
 
 #include <gtk/gtk.h>
 #include "bbparams.h"
+#include "bberror.h"
 
 
 struct _BbParams
@@ -35,6 +36,57 @@ bb_params_free(BbParams *params)
     }
 
     g_slice_free(BbParams, params);
+}
+
+
+int
+bb_params_get_int(BbParams *params, int index, GError **error)
+{
+    GError *local_error = NULL;
+    gint64 value = 0;
+
+    if (index >= g_strv_length(params->params))
+    {
+        local_error = g_error_new(
+            BB_ERROR_DOMAIN,
+            ERROR_TOO_FEW_PARAMETERS,
+            "Too few parameters"
+            );
+    }
+    else
+    {
+        const gchar *ptr0 = *(params->params + index);
+        gchar *ptr1;
+
+        value = g_ascii_strtoll(ptr0, &ptr1, 10);
+
+        if ((value == 0) && (ptr0 == ptr1))
+        {
+            local_error = g_error_new(
+                BB_ERROR_DOMAIN,
+                ERROR_INTEGER_EXPECTED,
+                "Integer expected at parameter %" G_GINT32_FORMAT,
+                index
+                );
+        }
+        else if ((value < G_MININT) || (value > G_MAXINT))
+        {
+            local_error = g_error_new(
+                BB_ERROR_DOMAIN,
+                ERROR_VALUE_OUT_OF_RANGE,
+                "Value %" G_GINT64_FORMAT " out of range at parameter %" G_GINT32_FORMAT,
+                value,
+                index
+                );
+        }
+    }
+
+    if (error != NULL)
+    {
+        g_propagate_error(error, local_error);
+    }
+
+    return CLAMP(value, G_MININT, G_MAXINT);
 }
 
 

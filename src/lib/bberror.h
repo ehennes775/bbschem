@@ -24,4 +24,15 @@ GQuark bb_error_quark();
 
 #define BB_ERROR_DOMAIN (bb_error_quark())
 
+enum
+{
+    ERROR_EXPECTED_VERSION,
+    ERROR_INTEGER_EXPECTED,
+    ERROR_TOO_FEW_PARAMETERS,
+    ERROR_VALUE_OUT_OF_RANGE,
+    ERROR_UNEXPECTED_EMPTY_LINE,
+    ERROR_UNEXPECTED_EOF
+};
+
+
 #endif

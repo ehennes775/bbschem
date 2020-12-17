@@ -34,6 +34,18 @@ bb_params_free(BbParams *params);
 
 
 /**
+ * Parse a 32 bit integer parameter
+ *
+ * @param params A BbParams
+ * @param index The zero based index of the parameter
+ * @param error
+ * @return The 32 bit integer, or 0, G_MININT, G_MAXINT on error.
+ */
+int
+bb_params_get_int(BbParams *params, int index, GError **error);
+
+
+/**
  *
  * Returns FALSE and leaves error unset on programming errors
  *
