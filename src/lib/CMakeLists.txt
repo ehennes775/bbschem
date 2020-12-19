@@ -37,12 +37,24 @@ add_library(bblib
         bbfillstyle.h
         bbfilltype.c
         bbfilltype.h
+        bbgedaarcfactory.c
+        bbgedaarcfactory.h
+        bbgedaboxfactory.c
+        bbgedaboxfactory.h
+        bbgedabusfactory.c
+        bbgedabusfactory.h
+        bbgedacirclefactory.c
+        bbgedacirclefactory.h
         bbgedafactory.c
         bbgedafactory.h
         bbgedaitemfactory.c
         bbgedaitemfactory.h
         bbgedalinefactory.c
         bbgedalinefactory.h
+        bbgedanetfactory.c
+        bbgedanetfactory.h
+        bbgedapinfactory.c
+        bbgedapinfactory.h
         bbgedaversion.c
         bbgedaversion.h
         bbgraphicarc.c

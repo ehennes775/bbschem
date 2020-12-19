@@ -17,7 +17,7 @@
  */
 
 #include <gtk/gtk.h>
-#include "bbgedalinefactory.h"
+#include "bbgedaboxfactory.h"
 #include "bbgedaitemfactory.h"
 #include "bberror.h"
 
@@ -32,14 +32,14 @@ enum
 };
 
 
-struct _BbGedaLineFactory
+struct _BbGedaBoxFactory
 {
     GObject parent;
 };
 
 
 BbSchematicItem*
-bb_geda_line_factory_create(
+bb_geda_box_factory_create(
     BbGedaItemFactory *factory,
     BbGedaVersion *version,
     BbParams *params,
@@ -48,7 +48,7 @@ bb_geda_line_factory_create(
     );
 
 static void
-bb_geda_line_factory_create_async(
+bb_geda_box_factory_create_async(
     BbGedaItemFactory *factory,
     BbGedaVersion *version,
     BbParams *params,
@@ -59,34 +59,34 @@ bb_geda_line_factory_create_async(
     );
 
 static void
-bb_geda_line_factory_dispose(GObject *object);
+bb_geda_box_factory_dispose(GObject *object);
 
 static void
-bb_geda_line_factory_finalize(GObject *object);
+bb_geda_box_factory_finalize(GObject *object);
 
 static void
-bb_geda_line_factory_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
+bb_geda_box_factory_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
 
 static void
-bb_geda_line_factory_item_factory_init(BbGedaItemFactoryInterface *iface);
+bb_geda_box_factory_item_factory_init(BbGedaItemFactoryInterface *iface);
 
 static void
-bb_geda_line_factory_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
+bb_geda_box_factory_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
 
 
 GParamSpec *properties[N_PROPERTIES];
 
 
 G_DEFINE_TYPE_WITH_CODE(
-    BbGedaLineFactory,
-    bb_geda_line_factory,
+    BbGedaBoxFactory,
+    bb_geda_box_factory,
     G_TYPE_OBJECT,
-    G_IMPLEMENT_INTERFACE(BB_TYPE_GEDA_ITEM_FACTORY, bb_geda_line_factory_item_factory_init)
+    G_IMPLEMENT_INTERFACE(BB_TYPE_GEDA_ITEM_FACTORY, bb_geda_box_factory_item_factory_init)
     );
 
 
 BbSchematicItem*
-bb_geda_line_factory_create(
+bb_geda_box_factory_create(
     BbGedaItemFactory *factory,
     BbGedaVersion *version,
     BbParams *params,
@@ -94,12 +94,12 @@ bb_geda_line_factory_create(
     GError **error
     )
 {
-    return BB_SCHEMATIC_ITEM(bb_graphic_line_new_with_params(params, error));
+    return BB_SCHEMATIC_ITEM(bb_graphic_box_new_with_params(params, error));
 }
 
 
 static void
-bb_geda_line_factory_create_async(
+bb_geda_box_factory_create_async(
     BbGedaItemFactory *factory,
     BbGedaVersion *version,
     BbParams *params,
@@ -113,7 +113,7 @@ bb_geda_line_factory_create_async(
 
     GError *local_error = NULL;
 
-    BbGraphicLine *line = bb_graphic_line_new_with_params(params, &local_error);
+    BbGraphicBox *box = bb_graphic_box_new_with_params(params, &local_error);
 
     if (!g_task_return_error_if_cancelled(task))
     {
@@ -121,7 +121,7 @@ bb_geda_line_factory_create_async(
         {
             g_task_return_error(task, local_error);
         }
-        else if (line == NULL)
+        else if (box == NULL)
         {
             g_task_return_new_error(
                 task,
@@ -132,7 +132,7 @@ bb_geda_line_factory_create_async(
         }
         else
         {
-            g_task_return_pointer(task, line, NULL);
+            g_task_return_pointer(task, box, NULL);
         }
     }
 
@@ -141,29 +141,29 @@ bb_geda_line_factory_create_async(
 
 
 static void
-bb_geda_line_factory_class_init(BbGedaLineFactoryClass *klasse)
+bb_geda_box_factory_class_init(BbGedaBoxFactoryClass *klasse)
 {
-    G_OBJECT_CLASS(klasse)->dispose = bb_geda_line_factory_dispose;
-    G_OBJECT_CLASS(klasse)->finalize = bb_geda_line_factory_finalize;
-    G_OBJECT_CLASS(klasse)->get_property = bb_geda_line_factory_get_property;
-    G_OBJECT_CLASS(klasse)->set_property = bb_geda_line_factory_set_property;
+    G_OBJECT_CLASS(klasse)->dispose = bb_geda_box_factory_dispose;
+    G_OBJECT_CLASS(klasse)->finalize = bb_geda_box_factory_finalize;
+    G_OBJECT_CLASS(klasse)->get_property = bb_geda_box_factory_get_property;
+    G_OBJECT_CLASS(klasse)->set_property = bb_geda_box_factory_set_property;
 }
 
 
 static void
-bb_geda_line_factory_dispose(GObject *object)
-{
-}
-
-
-static void
-bb_geda_line_factory_finalize(GObject *object)
+bb_geda_box_factory_dispose(GObject *object)
 {
 }
 
 
 static void
-bb_geda_line_factory_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec)
+bb_geda_box_factory_finalize(GObject *object)
+{
+}
+
+
+static void
+bb_geda_box_factory_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec)
 {
     switch (property_id)
     {
@@ -183,30 +183,30 @@ bb_geda_line_factory_get_property(GObject *object, guint property_id, GValue *va
 
 
 static void
-bb_geda_line_factory_init(BbGedaLineFactory *window)
+bb_geda_box_factory_init(BbGedaBoxFactory *window)
 {
 }
 
 
 static void
-bb_geda_line_factory_item_factory_init(BbGedaItemFactoryInterface *iface)
+bb_geda_box_factory_item_factory_init(BbGedaItemFactoryInterface *iface)
 {
-    iface->create = bb_geda_line_factory_create;
-    iface->create_async = bb_geda_line_factory_create_async;
+    iface->create = bb_geda_box_factory_create;
+    iface->create_async = bb_geda_box_factory_create_async;
 }
 
 BbGedaItemFactory*
-bb_geda_line_factory_new()
+bb_geda_box_factory_new()
 {
     return BB_GEDA_ITEM_FACTORY(g_object_new(
-        BB_TYPE_GEDA_LINE_FACTORY,
+        BB_TYPE_GEDA_BOX_FACTORY,
         NULL
         ));
 }
 
 
 static void
-bb_geda_line_factory_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec)
+bb_geda_box_factory_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec)
 {
     switch (property_id)
     {

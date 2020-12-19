@@ -19,7 +19,12 @@
  */
 
 #include <gtk/gtk.h>
+#include "bbparams.h"
 #include "bbschematicitem.h"
+
+
+#define BB_ELECTRICAL_PIN_TOKEN "P"
+
 
 #define BB_TYPE_ELECTRICAL_PIN bb_electrical_pin_get_type()
 G_DECLARE_FINAL_TYPE(BbElectricalPin, bb_electrical_pin, BB, ELECTRICAL_PIN, BbSchematicItem)
@@ -43,6 +48,10 @@ bb_electrical_pin_get_y1(BbElectricalPin *pin);
 
 BbElectricalPin*
 bb_electrical_pin_new();
+
+
+BbElectricalPin*
+bb_electrical_pin_new_with_params(BbParams *params, GError **error);
 
 
 void

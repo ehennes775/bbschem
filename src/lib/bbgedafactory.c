@@ -21,6 +21,15 @@
 #include "bbgedafactory.h"
 #include "bbgedaitemfactory.h"
 #include "bbgedalinefactory.h"
+#include "bbgraphicarc.h"
+#include "bbgedaarcfactory.h"
+#include "bbgraphicbox.h"
+#include "bbgraphiccircle.h"
+#include "bbgedacirclefactory.h"
+#include "bbgedaboxfactory.h"
+#include "bbgedabusfactory.h"
+#include "bbgedanetfactory.h"
+#include "bbgedapinfactory.h"
 
 
 enum
@@ -281,16 +290,52 @@ bb_geda_factory_init(BbGedaFactory *factory)
     g_return_if_fail(BB_IS_GEDA_FACTORY(factory));
 
     factory->table = g_hash_table_new_full(
-        (GHashFunc) g_string_hash,
-        (GEqualFunc) g_string_equal,
+        g_str_hash,
+        g_str_equal,
         g_free,
         g_object_unref
         );
 
     bb_geda_factory_add_factory(
         factory,
-        "L",
+        BB_GRAPHIC_ARC_TOKEN,
+        bb_geda_arc_factory_new()
+        );
+
+    bb_geda_factory_add_factory(
+        factory,
+        BB_GRAPHIC_BOX_TOKEN,
+        bb_geda_box_factory_new()
+        );
+
+    bb_geda_factory_add_factory(
+        factory,
+        BB_GRAPHIC_CIRCLE_TOKEN,
+        bb_geda_circle_factory_new()
+        );
+
+    bb_geda_factory_add_factory(
+        factory,
+        BB_GRAPHIC_LINE_TOKEN,
         bb_geda_line_factory_new()
+        );
+
+    bb_geda_factory_add_factory(
+        factory,
+        BB_ELECTRICAL_BUS_TOKEN,
+        bb_geda_bus_factory_new()
+        );
+
+    bb_geda_factory_add_factory(
+        factory,
+        BB_ELECTRICAL_NET_TOKEN,
+        bb_geda_net_factory_new()
+        );
+
+    bb_geda_factory_add_factory(
+        factory,
+        BB_ELECTRICAL_PIN_TOKEN,
+        bb_geda_pin_factory_new()
         );
 }
 

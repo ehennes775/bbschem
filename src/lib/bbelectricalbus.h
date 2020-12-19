@@ -19,10 +19,14 @@
  */
 
 #include <gtk/gtk.h>
+#include "bbparams.h"
 #include "bbschematicitem.h"
 
 
 #define BB_ELECTRICAL_BUS_WIDTH (30)
+
+
+#define BB_ELECTRICAL_BUS_TOKEN "U"
 
 
 #define BB_TYPE_ELECTRICAL_BUS bb_electrical_bus_get_type()
@@ -47,6 +51,10 @@ bb_electrical_bus_get_y1(BbElectricalBus *bus);
 
 BbElectricalBus*
 bb_electrical_bus_new();
+
+
+BbElectricalBus*
+bb_electrical_bus_new_with_params(BbParams *params, GError **error);
 
 
 void

@@ -22,6 +22,10 @@
 #include "bbparams.h"
 #include "bbschematicitem.h"
 
+
+#define BB_GRAPHIC_LINE_TOKEN "L"
+
+
 #define BB_TYPE_GRAPHIC_LINE bb_graphic_line_get_type()
 G_DECLARE_FINAL_TYPE(BbGraphicLine, bb_graphic_line, BB, GRAPHIC_LINE, BbSchematicItem)
 

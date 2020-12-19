@@ -19,7 +19,12 @@
  */
 
 #include <gtk/gtk.h>
+#include "bbparams.h"
 #include "bbschematicitem.h"
+
+
+#define BB_GRAPHIC_ARC_TOKEN "A"
+
 
 #define BB_TYPE_GRAPHIC_ARC bb_graphic_arc_get_type()
 G_DECLARE_FINAL_TYPE(BbGraphicArc, bb_graphic_arc, BB, GRAPHIC_ARC, BbSchematicItem)
@@ -43,6 +48,10 @@ bb_graphic_arc_get_start_angle(BbGraphicArc *arc);
 
 int
 bb_graphic_arc_get_sweep_angle(BbGraphicArc *arc);
+
+
+BbGraphicArc*
+bb_graphic_arc_new_with_params(BbParams *params, GError **error);
 
 
 void

@@ -19,10 +19,14 @@
  */
 
 #include <gtk/gtk.h>
+#include "bbparams.h"
 #include "bbschematicitem.h"
 
 
+#define BB_ELECTRICAL_NET_TOKEN "N"
+
 #define BB_ELECTRICAL_NET_WIDTH (10)
+
 
 
 #define BB_TYPE_ELECTRICAL_NET bb_electrical_net_get_type()
@@ -47,6 +51,10 @@ bb_electrical_net_get_y1(BbElectricalNet *net);
 
 BbElectricalNet*
 bb_electrical_net_new();
+
+
+BbElectricalNet*
+bb_electrical_net_new_with_params(BbParams *params, GError **error);
 
 
 void

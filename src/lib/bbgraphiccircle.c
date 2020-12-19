@@ -24,9 +24,32 @@
 #include "bbadjustablelinestyle.h"
 #include "bbadjustablefillstyle.h"
 #include "bbadjustableitemcolor.h"
+#include "bbparams.h"
 
 
-#define BB_GRAPHIC_CIRCLE_TOKEN "V"
+/**
+ * The positions of parameters in the file format
+ */
+enum
+{
+    PARAM_TOKEN,
+    PARAM_CENTER_X,
+    PARAM_CENTER_Y,
+    PARAM_RADIUS,
+    PARAM_COLOR,
+    PARAM_LINE_WIDTH,
+    PARAM_CAP_TYPE,
+    PARAM_DASH_TYPE,
+    PARAM_DASH_LENGTH,
+    PARAM_DASH_SPACE,
+    PARAM_FILL_TYPE,
+    PARAM_FILL_WIDTH,
+    PARAM_FILL_ANGLE_1,
+    PARAM_FILL_PITCH_1,
+    PARAM_FILL_ANGLE_2,
+    PARAM_FILL_PITCH_2,
+    N_PARAMETERS
+};
 
 
 enum
@@ -674,10 +697,53 @@ bb_graphic_circle_new()
 }
 
 
-__attribute__((constructor)) void
-bb_graphic_circle_register()
+BbGraphicCircle*
+bb_graphic_circle_new_with_params(BbParams *params, GError **error)
 {
-    bb_graphic_circle_get_type();
+    GError *local_error[N_PARAMETERS] = { NULL };
+
+    g_return_val_if_fail(bb_params_token_matches(params, BB_GRAPHIC_CIRCLE_TOKEN), NULL);
+
+    BbGraphicCircle *circle = BB_GRAPHIC_CIRCLE(g_object_new(
+        BB_TYPE_GRAPHIC_CIRCLE,
+        "center-x", bb_params_get_int(params, PARAM_CENTER_X, &local_error[PARAM_CENTER_X]),
+        "center-y", bb_params_get_int(params, PARAM_CENTER_Y, &local_error[PARAM_CENTER_Y]),
+        "radius", bb_params_get_int(params, PARAM_RADIUS, &local_error[PARAM_RADIUS]),
+
+        "item-color", bb_params_get_int(params, PARAM_COLOR, &local_error[PARAM_COLOR]),
+
+        "line-width",  bb_params_get_int(params, PARAM_LINE_WIDTH, &local_error[PARAM_LINE_WIDTH]),
+        "cap-type",  bb_params_get_int(params, PARAM_CAP_TYPE, &local_error[PARAM_CAP_TYPE]),
+        "dash_type",  bb_params_get_int(params, PARAM_DASH_TYPE, &local_error[PARAM_DASH_TYPE]),
+        "dash-length", bb_params_get_int(params, PARAM_DASH_LENGTH, &local_error[PARAM_DASH_LENGTH]),
+        "dash-space", bb_params_get_int(params, PARAM_DASH_SPACE, &local_error[PARAM_DASH_SPACE]),
+
+        "fill-type", bb_params_get_int(params, PARAM_FILL_TYPE, &local_error[PARAM_FILL_TYPE]),
+        "fill-width", bb_params_get_int(params, PARAM_FILL_WIDTH, &local_error[PARAM_FILL_WIDTH]),
+        "angle-1", bb_params_get_int(params, PARAM_FILL_ANGLE_1, &local_error[PARAM_FILL_ANGLE_1]),
+        "pitch-1", bb_params_get_int(params, PARAM_FILL_PITCH_1, &local_error[PARAM_FILL_PITCH_1]),
+        "angle-2", bb_params_get_int(params, PARAM_FILL_ANGLE_2, &local_error[PARAM_FILL_ANGLE_2]),
+        "pitch-2", bb_params_get_int(params, PARAM_FILL_PITCH_2, &local_error[PARAM_FILL_PITCH_2]),
+        NULL
+    ));
+
+    for (int index=0; index < N_PARAMETERS; index++)
+    {
+        if (local_error[index] != NULL)
+        {
+            g_propagate_error(error, local_error[index]);
+            local_error[index] = NULL;
+            g_clear_object(&circle);
+            break;
+        }
+    }
+
+    for (int index=0; index < N_PARAMETERS; index++)
+    {
+        g_clear_error(&local_error[index]);
+    }
+
+    return circle;
 }
 
 

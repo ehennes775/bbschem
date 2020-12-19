@@ -19,7 +19,12 @@
  */
 
 #include <gtk/gtk.h>
+#include "bbparams.h"
 #include "bbschematicitem.h"
+
+
+#define BB_GRAPHIC_CIRCLE_TOKEN "V"
+
 
 #define BB_TYPE_GRAPHIC_CIRCLE bb_graphic_circle_get_type()
 G_DECLARE_FINAL_TYPE(BbGraphicCircle, bb_graphic_circle, BB, GRAPHIC_CIRCLE, BbSchematicItem)
@@ -39,6 +44,10 @@ bb_graphic_circle_get_radius(BbGraphicCircle *circle);
 
 BbGraphicCircle*
 bb_graphic_circle_new();
+
+
+BbGraphicCircle*
+bb_graphic_circle_new_with_params(BbParams *params, GError **error);
 
 
 void

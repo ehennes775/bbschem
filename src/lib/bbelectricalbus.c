@@ -23,9 +23,26 @@
 #include "bbitemparams.h"
 #include "bbadjustableitemcolor.h"
 #include "bbcolors.h"
+#include "bbparams.h"
 
 
-#define BB_ELECTRICAL_BUS_TOKEN "U"
+/**
+ * The positions of parameters in the file format
+ */
+enum
+{
+    PARAM_TOKEN,
+    PARAM_X0,
+    PARAM_Y0,
+    PARAM_X1,
+    PARAM_Y1,
+
+    PARAM_COLOR,
+
+    PARAM_DIRECTION,
+
+    N_PARAMETERS
+};
 
 
 enum
@@ -33,12 +50,14 @@ enum
     PROP_0,
 
     PROP_X0,
-    PROP_X1,
     PROP_Y0,
+    PROP_X1,
     PROP_Y1,
 
     /* From AdjustableItemColor */
     PROP_ITEM_COLOR,
+
+    PROP_DIRECTION,
 
     N_PROPERTIES
 };
@@ -393,6 +412,46 @@ BbElectricalBus*
 bb_electrical_bus_new()
 {
     return g_object_new(BB_TYPE_ELECTRICAL_BUS, NULL);
+}
+
+
+BbElectricalBus*
+bb_electrical_bus_new_with_params(BbParams *params, GError **error)
+{
+    GError *local_error[N_PARAMETERS] = { NULL };
+
+    g_return_val_if_fail(bb_params_token_matches(params, BB_ELECTRICAL_BUS_TOKEN), NULL);
+
+    BbElectricalBus *bus = BB_ELECTRICAL_BUS(g_object_new(
+        BB_TYPE_ELECTRICAL_BUS,
+        "x0", bb_params_get_int(params, PARAM_X0, &local_error[PARAM_X0]),
+        "y0", bb_params_get_int(params, PARAM_Y0, &local_error[PARAM_Y0]),
+        "x1", bb_params_get_int(params, PARAM_X1, &local_error[PARAM_X1]),
+        "y1", bb_params_get_int(params, PARAM_Y1, &local_error[PARAM_Y1]),
+
+        "item-color", bb_params_get_int(params, PARAM_COLOR, &local_error[PARAM_COLOR]),
+
+        "direction",  bb_params_get_int(params, PARAM_DIRECTION, &local_error[PARAM_DIRECTION]),
+        NULL
+    ));
+
+    for (int index=0; index < N_PARAMETERS; index++)
+    {
+        if (local_error[index] != NULL)
+        {
+            g_propagate_error(error, local_error[index]);
+            local_error[index] = NULL;
+            g_clear_object(&bus);
+            break;
+        }
+    }
+
+    for (int index=0; index < N_PARAMETERS; index++)
+    {
+        g_clear_error(&local_error[index]);
+    }
+
+    return bus;
 }
 
 

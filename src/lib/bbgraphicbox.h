@@ -19,7 +19,12 @@
  */
 
 #include <gtk/gtk.h>
+#include "bbparams.h"
 #include "bbschematicitem.h"
+
+
+#define BB_GRAPHIC_BOX_TOKEN "B"
+
 
 #define BB_TYPE_GRAPHIC_BOX bb_graphic_box_get_type()
 G_DECLARE_FINAL_TYPE(BbGraphicBox, bb_graphic_box, BB, GRAPHIC_BOX, BbSchematicItem)
@@ -43,6 +48,10 @@ bb_graphic_box_get_y1(BbGraphicBox *box);
 
 BbGraphicBox*
 bb_graphic_box_new();
+
+
+BbGraphicBox*
+bb_graphic_box_new_with_params(BbParams *params, GError **error);
 
 
 void

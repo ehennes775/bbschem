@@ -25,9 +25,9 @@
 #include "bbadjustableitemcolor.h"
 
 
-#define BB_GRAPHIC_LINE_TOKEN "L"
-
-
+/**
+ * The positions of parameters in the file format
+ */
 enum
 {
     PARAM_TOKEN,

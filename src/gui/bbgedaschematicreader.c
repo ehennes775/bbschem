@@ -22,7 +22,7 @@
 #include "bbgedaschematicreader.h"
 
 
-#define VERSION_TOKEN "V"
+#define VERSION_TOKEN "v"
 #define OPEN_ATTRIBUTES_TOKEN "{"
 #define CLOSE_ATTRIBUTES_TOKEN "}"
 

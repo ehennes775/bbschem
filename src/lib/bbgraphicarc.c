@@ -24,7 +24,26 @@
 #include "bbadjustablelinestyle.h"
 #include "bblibrary.h"
 
-#define BB_GRAPHIC_ARC_TOKEN "A"
+
+/**
+ * The positions of parameters in the file format
+ */
+enum
+{
+    PARAM_TOKEN,
+    PARAM_CENTER_X,
+    PARAM_CENTER_Y,
+    PARAM_RADIUS,
+    PARAM_START_ANGLE,
+    PARAM_SWEEP_ANGLE,
+    PARAM_COLOR,
+    PARAM_LINE_WIDTH,
+    PARAM_CAP_TYPE,
+    PARAM_DASH_TYPE,
+    PARAM_DASH_LENGTH,
+    PARAM_DASH_SPACE,
+    N_PARAMETERS
+};
 
 
 enum
@@ -556,6 +575,51 @@ bb_graphic_arc_init(BbGraphicArc *arc)
     g_return_if_fail(arc != NULL);
 
     arc->line_style = bb_line_style_new();
+}
+
+
+BbGraphicArc*
+bb_graphic_arc_new_with_params(BbParams *params, GError **error)
+{
+    GError *local_error[N_PARAMETERS] = { NULL };
+
+    g_return_val_if_fail(bb_params_token_matches(params, BB_GRAPHIC_ARC_TOKEN), NULL);
+
+    BbGraphicArc *arc = BB_GRAPHIC_ARC(g_object_new(
+        BB_TYPE_GRAPHIC_ARC,
+        "center-x", bb_params_get_int(params, PARAM_CENTER_X, &local_error[PARAM_CENTER_X]),
+        "center-y", bb_params_get_int(params, PARAM_CENTER_Y, &local_error[PARAM_CENTER_Y]),
+        "radius", bb_params_get_int(params, PARAM_RADIUS, &local_error[PARAM_RADIUS]),
+        "start-angle", bb_params_get_int(params, PARAM_START_ANGLE, &local_error[PARAM_START_ANGLE]),
+        "sweep-angle", bb_params_get_int(params, PARAM_SWEEP_ANGLE, &local_error[PARAM_SWEEP_ANGLE]),
+
+        "item-color", bb_params_get_int(params, PARAM_COLOR, &local_error[PARAM_COLOR]),
+
+        "line-width",  bb_params_get_int(params, PARAM_LINE_WIDTH, &local_error[PARAM_LINE_WIDTH]),
+        "cap-type",  bb_params_get_int(params, PARAM_CAP_TYPE, &local_error[PARAM_CAP_TYPE]),
+        "dash_type",  bb_params_get_int(params, PARAM_DASH_TYPE, &local_error[PARAM_DASH_TYPE]),
+        "dash-length", bb_params_get_int(params, PARAM_DASH_LENGTH, &local_error[PARAM_DASH_LENGTH]),
+        "dash-space", bb_params_get_int(params, PARAM_DASH_SPACE, &local_error[PARAM_DASH_SPACE]),
+        NULL
+    ));
+
+    for (int index=0; index < N_PARAMETERS; index++)
+    {
+        if (local_error[index] != NULL)
+        {
+            g_propagate_error(error, local_error[index]);
+            local_error[index] = NULL;
+            g_clear_object(&arc);
+            break;
+        }
+    }
+
+    for (int index=0; index < N_PARAMETERS; index++)
+    {
+        g_clear_error(&local_error[index]);
+    }
+
+    return arc;
 }
 
 
