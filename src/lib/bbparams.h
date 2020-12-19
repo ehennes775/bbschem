@@ -45,6 +45,10 @@ int
 bb_params_get_int(BbParams *params, int index, GError **error);
 
 
+const gchar*
+bb_params_get_token(BbParams *params);
+
+
 /**
  *
  * Returns FALSE and leaves error unset on programming errors

@@ -169,9 +169,21 @@ static GParamSpec *properties[N_PROPERTIES];
 
 
 void
+bb_schematic_add_item(BbSchematic *schematic, BbSchematicItem *item)
+{
+    g_return_if_fail(BB_IS_SCHEMATIC(schematic));
+    g_return_if_fail(BB_IS_SCHEMATIC_ITEM(item));
+
+    GSList *items = g_slist_append(NULL, item);
+
+    bb_schematic_add_items(schematic, items);
+}
+
+
+void
 bb_schematic_add_items(BbSchematic *schematic, GSList *items)
 {
-    g_return_if_fail(schematic != NULL);
+    g_return_if_fail(BB_IS_SCHEMATIC(schematic));
 
     g_slist_foreach(items, (GFunc) bb_schematic_add_items_lambda, schematic);
 
@@ -182,6 +194,9 @@ bb_schematic_add_items(BbSchematic *schematic, GSList *items)
 static void
 bb_schematic_add_items_lambda(BbSchematicItem *item, BbSchematic *schematic)
 {
+    g_return_if_fail(BB_IS_SCHEMATIC(schematic));
+    g_return_if_fail(BB_IS_SCHEMATIC_ITEM(item));
+
     g_object_ref(item);
 
     /* attach signal handlers */

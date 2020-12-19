@@ -61,4 +61,7 @@
 #include "bbuniversalblock.h"
 #include "bbuniversaltext.h"
 
+#include "bbgedaitemfactory.h"
+#include "bbgedafactory.h"
+
 #endif

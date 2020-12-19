@@ -42,6 +42,10 @@ bb_params_free(BbParams *params)
 int
 bb_params_get_int(BbParams *params, int index, GError **error)
 {
+    g_return_val_if_fail(params != NULL, 0);
+    g_return_val_if_fail(params->params != NULL, 0);
+    g_return_val_if_fail(index >= 0, 0);
+
     GError *local_error = NULL;
     gint64 value = 0;
 
@@ -81,12 +85,23 @@ bb_params_get_int(BbParams *params, int index, GError **error)
         }
     }
 
-    if (error != NULL)
+    if (local_error != NULL)
     {
         g_propagate_error(error, local_error);
     }
 
     return CLAMP(value, G_MININT, G_MAXINT);
+}
+
+
+const gchar*
+bb_params_get_token(BbParams *params)
+{
+    g_return_val_if_fail(params != NULL, NULL);
+    g_return_val_if_fail(params->params != NULL, NULL);
+    g_return_val_if_fail(g_strv_length(params->params) > 0, NULL);
+
+    return *params->params;
 }
 
 

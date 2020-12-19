@@ -1,5 +1,5 @@
-#ifndef __BBERROR__
-#define __BBERROR__
+#ifndef __BBGEDAVERSION__
+#define __BBGEDAVERSION__
 /*
  * bbschem
  * Copyright (C) 2020 Edward C. Hennessy
@@ -19,21 +19,14 @@
  */
 
 #include <gtk/gtk.h>
+#include "bbparams.h"
 
-GQuark bb_error_quark();
+#define BB_TYPE_GEDA_VERSION bb_geda_version_get_type()
+G_DECLARE_FINAL_TYPE(BbGedaVersion, bb_geda_version, BB, GEDA_VERSION, GObject)
 
-#define BB_ERROR_DOMAIN (bb_error_quark())
 
-enum
-{
-    ERROR_EXPECTED_VERSION,
-    ERROR_INTEGER_EXPECTED,
-    ERROR_TOO_FEW_PARAMETERS,
-    ERROR_VALUE_OUT_OF_RANGE,
-    ERROR_UNEXPECTED_EMPTY_LINE,
-    ERROR_UNEXPECTED_EOF,
-    ERROR_UNKNOWN_ITEM_TOKEN
-};
+BbGedaVersion*
+bb_geda_version_new(BbParams *params, GError *error);
 
 
 #endif

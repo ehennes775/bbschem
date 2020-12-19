@@ -1,5 +1,5 @@
-#ifndef __BBERROR__
-#define __BBERROR__
+#ifndef __BBGEDALINEFACTORY__
+#define __BBGEDALINEFACTORY__
 /*
  * bbschem
  * Copyright (C) 2020 Edward C. Hennessy
@@ -19,21 +19,14 @@
  */
 
 #include <gtk/gtk.h>
+#include "bbgraphicline.h"
+#include "bbgedaversion.h"
+#include "bbgedaitemfactory.h"
 
-GQuark bb_error_quark();
+#define BB_TYPE_GEDA_LINE_FACTORY bb_geda_line_factory_get_type()
+G_DECLARE_FINAL_TYPE(BbGedaLineFactory, bb_geda_line_factory, BB, GEDA_LINE_FACTORY, GObject)
 
-#define BB_ERROR_DOMAIN (bb_error_quark())
-
-enum
-{
-    ERROR_EXPECTED_VERSION,
-    ERROR_INTEGER_EXPECTED,
-    ERROR_TOO_FEW_PARAMETERS,
-    ERROR_VALUE_OUT_OF_RANGE,
-    ERROR_UNEXPECTED_EMPTY_LINE,
-    ERROR_UNEXPECTED_EOF,
-    ERROR_UNKNOWN_ITEM_TOKEN
-};
-
+BbGedaItemFactory*
+bb_geda_line_factory_new();
 
 #endif

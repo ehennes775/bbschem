@@ -18,6 +18,7 @@
 
 #include <gtk/gtk.h>
 #include <bblibrary.h>
+#include <bbgedaitemfactory.h>
 #include "bbgedaschematicreader.h"
 
 
@@ -36,18 +37,23 @@ enum
 };
 
 
-enum
-{
-    ERROR_EXPECTED_VERSION,
-    ERROR_UNEXPECTED_EMPTY_LINE,
-    ERROR_UNEXPECTED_EOF
-};
-
-
-
 struct _BbGedaSchematicReader
 {
     GObject parent;
+
+    BbGedaFactory *factory;
+};
+
+
+typedef struct _BbTaskData BbTaskData;
+
+struct _BbTaskData
+{
+    BbGedaFactory *factory;
+
+    BbSchematic *schematic;
+
+    GDataInputStream *stream;
 };
 
 
@@ -64,7 +70,7 @@ static void
 bb_geda_schematic_reader_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
 
 static void
-bb_geda_schematic_reader_read_item_ready(GDataInputStream *stream, GAsyncResult *result, GTask *task);
+bb_geda_schematic_reader_read_item_line_ready(GDataInputStream *stream, GAsyncResult *result, GTask *task);
 
 static void
 bb_geda_schematic_reader_read_version_ready(GDataInputStream *stream, GAsyncResult *result, GTask *task);
@@ -119,8 +125,9 @@ bb_geda_schematic_reader_get_property(GObject *object, guint property_id, GValue
 
 
 static void
-bb_geda_schematic_reader_init(BbGedaSchematicReader *window)
+bb_geda_schematic_reader_init(BbGedaSchematicReader *reader)
 {
+    reader->factory = bb_geda_factory_new();
 }
 
 
@@ -141,10 +148,16 @@ bb_geda_schematic_reader_read_async(
         user_data
         );
 
+    BbTaskData *task_data = g_new0(BbTaskData, 1);
+
+    task_data->factory = reader->factory;
+    task_data->schematic = schematic;
+    task_data->stream = stream;
+
     g_task_set_task_data(
         task,
-        schematic,
-        NULL
+        task_data,
+        g_free
         );
 
     g_data_input_stream_read_line_async(
@@ -210,9 +223,9 @@ bb_geda_schematic_reader_read_attribute_ready(GDataInputStream *stream, GAsyncRe
                 stream,
                 G_PRIORITY_DEFAULT,
                 g_task_get_cancellable(task),
-                (GAsyncReadyCallback) bb_geda_schematic_reader_read_item_ready,
+                (GAsyncReadyCallback) bb_geda_schematic_reader_read_item_line_ready,
                 task
-                );
+            );
         }
         else
         {
@@ -240,11 +253,68 @@ bb_geda_schematic_reader_read_attribute_ready(GDataInputStream *stream, GAsyncRe
  * @param task
  */
 static void
-bb_geda_schematic_reader_read_item_ready(GDataInputStream *stream, GAsyncResult *result, GTask *task)
+bb_geda_schematic_reader_read_item_ready(BbGedaItemFactory *factory, GAsyncResult *result, GTask *task)
+{
+    g_assert(BB_IS_GEDA_FACTORY(factory));
+    g_assert(G_IS_ASYNC_RESULT(result));
+    g_assert(G_IS_TASK(task));
+
+    BbTaskData *task_data = g_task_get_task_data(task);
+
+    g_assert(task_data != NULL);
+
+    GError *local_error = NULL;
+
+    BbSchematicItem *item = bb_geda_item_factory_create_finish(factory, result, &local_error);
+
+    if (local_error != NULL)
+    {
+        g_task_return_error(task, local_error);
+        g_object_unref(task);
+    }
+    else if (item == NULL)
+    {
+        g_task_return_new_error(
+            task,
+            BB_ERROR_DOMAIN,
+            0,
+            "Internal error"
+            );
+
+        g_object_unref(task);
+    }
+    else
+    {
+        bb_schematic_add_item(task_data->schematic, g_object_ref(item));
+
+        g_data_input_stream_read_line_async(
+            task_data->stream,
+            G_PRIORITY_DEFAULT,
+            g_task_get_cancellable(task),
+            (GAsyncReadyCallback) bb_geda_schematic_reader_read_item_line_ready,
+            task
+            );
+    }
+}
+
+
+/**
+ *
+ *
+ * @param stream
+ * @param result
+ * @param task
+ */
+static void
+bb_geda_schematic_reader_read_item_line_ready(GDataInputStream *stream, GAsyncResult *result, GTask *task)
 {
     g_assert(G_IS_DATA_INPUT_STREAM(stream));
     g_assert(G_IS_ASYNC_RESULT(result));
     g_assert(G_IS_TASK(task));
+
+    BbTaskData *task_data = g_task_get_task_data(task);
+
+    g_assert(task_data != NULL);
 
     GError *error = NULL;
     gsize length;
@@ -293,9 +363,11 @@ bb_geda_schematic_reader_read_item_ready(GDataInputStream *stream, GAsyncResult 
         {
             g_message("Item: %s", line);
 
-            g_data_input_stream_read_line_async(
+            bb_geda_item_factory_create_async(
+                BB_GEDA_ITEM_FACTORY(task_data->factory),
+                NULL,
+                params,
                 stream,
-                G_PRIORITY_DEFAULT,
                 g_task_get_cancellable(task),
                 (GAsyncReadyCallback) bb_geda_schematic_reader_read_item_ready,
                 task
@@ -364,9 +436,9 @@ bb_geda_schematic_reader_read_version_ready(GDataInputStream *stream, GAsyncResu
                 stream,
                 G_PRIORITY_DEFAULT,
                 g_task_get_cancellable(task),
-                (GAsyncReadyCallback) bb_geda_schematic_reader_read_item_ready,
+                (GAsyncReadyCallback) bb_geda_schematic_reader_read_item_line_ready,
                 task
-                );
+            );
         }
         else
         {

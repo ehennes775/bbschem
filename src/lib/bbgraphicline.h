@@ -19,6 +19,7 @@
  */
 
 #include <gtk/gtk.h>
+#include "bbparams.h"
 #include "bbschematicitem.h"
 
 #define BB_TYPE_GRAPHIC_LINE bb_graphic_line_get_type()
@@ -43,6 +44,10 @@ bb_graphic_line_get_y1(BbGraphicLine *line);
 
 BbGraphicLine*
 bb_graphic_line_new();
+
+
+BbGraphicLine*
+bb_graphic_line_new_with_params(BbParams *params, GError **error);
 
 
 void

@@ -30,6 +30,23 @@
 
 enum
 {
+    PARAM_TOKEN,
+    PARAM_X0,
+    PARAM_Y0,
+    PARAM_X1,
+    PARAM_Y1,
+    PARAM_COLOR,
+    PARAM_LINE_WIDTH,
+    PARAM_CAP_TYPE,
+    PARAM_DASH_TYPE,
+    PARAM_DASH_LENGTH,
+    PARAM_DASH_SPACE,
+    N_PARAMETERS
+};
+
+
+enum
+{
     PROP_0,
 
     PROP_X0,
@@ -523,10 +540,47 @@ bb_graphic_line_new()
 }
 
 
-__attribute__((constructor)) void
-bb_graphic_line_register()
+BbGraphicLine*
+bb_graphic_line_new_with_params(BbParams *params, GError **error)
 {
-    bb_graphic_line_get_type();
+    GError *local_error[N_PARAMETERS] = { NULL };
+
+    g_return_val_if_fail(bb_params_token_matches(params, BB_GRAPHIC_LINE_TOKEN), NULL);
+
+    BbGraphicLine *line = BB_GRAPHIC_LINE(g_object_new(
+        BB_TYPE_GRAPHIC_LINE,
+        "x0", bb_params_get_int(params, PARAM_X0, &local_error[PARAM_X0]),
+        "y0", bb_params_get_int(params, PARAM_Y0, &local_error[PARAM_Y0]),
+        "x1", bb_params_get_int(params, PARAM_X1, &local_error[PARAM_X1]),
+        "y1", bb_params_get_int(params, PARAM_Y1, &local_error[PARAM_Y1]),
+
+        "item-color", bb_params_get_int(params, PARAM_COLOR, &local_error[PARAM_COLOR]),
+
+        "line-width",  bb_params_get_int(params, PARAM_LINE_WIDTH, &local_error[PARAM_LINE_WIDTH]),
+        "cap-type",  bb_params_get_int(params, PARAM_CAP_TYPE, &local_error[PARAM_CAP_TYPE]),
+        "dash_type",  bb_params_get_int(params, PARAM_DASH_TYPE, &local_error[PARAM_DASH_TYPE]),
+        "dash-length", bb_params_get_int(params, PARAM_DASH_LENGTH, &local_error[PARAM_DASH_LENGTH]),
+        "dash-space", bb_params_get_int(params, PARAM_DASH_SPACE, &local_error[PARAM_DASH_SPACE]),
+        NULL
+        ));
+
+    for (int index=0; index < N_PARAMETERS; index++)
+    {
+        if (local_error[index] != NULL)
+        {
+            g_propagate_error(error, local_error[index]);
+            local_error[index] = NULL;
+            g_clear_object(&line);
+            break;
+        }
+    }
+
+    for (int index=0; index < N_PARAMETERS; index++)
+    {
+        g_clear_error(&local_error[index]);
+    }
+
+    return line;
 }
 
 
