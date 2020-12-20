@@ -32,17 +32,12 @@
 enum
 {
     PARAM_TOKEN,
-
     PARAM_INSERT_X,
     PARAM_INSERT_Y,
-
     PARAM_SELECTABLE,
-
     PARAM_ROTATION,
     PARAM_MIRROR,
-
     PARAM_NAME,
-
     N_PARAMETERS
 };
 
@@ -50,17 +45,12 @@ enum
 enum
 {
     PROP_0,
-
     PROP_INSERT_X,
     PROP_INSERT_Y,
-
     PROP_SELECTABLE,
-
     PROP_ROTATION,
     PROP_MIRROR,
-
     PROP_NAME,
-
     N_PROPERTIES
 };
 
@@ -76,22 +66,37 @@ struct _BbGedaBlock
 {
     BbGedaItem parent;
 
-    BbItemParams *params;
-
+    /**
+     * The x coordinate of the insertion point
+     */
     int insert_x;
+
+    /**
+     * The y coordinate of the insertion point
+     */
     int insert_y;
 
+    /**
+     * Indicates the instantiated symbol is selectable.
+     */
     gboolean selectable;
 
+    /**
+     * The rotation angle of the symbol, in degrees
+     */
     int rotation;
+
+    /**
+     * Indicates to mirror the symbol on the x coordinate of the insertion point.
+     */
     gboolean mirror;
 
+    /**
+     * The basename of the symbol file (e.g. diode-1.sym)
+     */
     gchar *name;
 };
 
-
-static void
-bb_geda_block_adjustable_item_color_init(BbAdjustableItemColorInterface *iface);
 
 static BbBounds*
 bb_geda_block_calculate_bounds(BbGedaItem *item, BbBoundsCalculator *calculator);
@@ -111,18 +116,17 @@ bb_geda_block_get_name_regex();
 static void
 bb_geda_block_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
 
-
 static void
 bb_geda_block_render(BbGedaItem *item, BbItemRenderer *renderer);
-
-static void
-bb_geda_block_set_item_color(BbGedaBlock *block, int color);
 
 static void
 bb_geda_block_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
 
 static void
 bb_geda_block_translate(BbGedaItem *item, int dx, int dy);
+
+static gboolean
+bb_geda_block_write(BbGedaItem *item, GOutputStream *stream, GCancellable *cancellable, GError **error);
 
 static void
 bb_geda_block_write_async(
@@ -152,13 +156,6 @@ G_DEFINE_TYPE(
     bb_geda_block,
     BB_TYPE_GEDA_ITEM
     )
-
-
-static void
-bb_geda_block_adjustable_item_color_init(BbAdjustableItemColorInterface *iface)
-{
-    g_return_if_fail(iface != NULL);
-}
 
 
 static BbBounds*
@@ -194,6 +191,7 @@ bb_geda_block_class_init(BbGedaBlockClass *klasse)
     BB_GEDA_ITEM_CLASS(klasse)->clone = bb_geda_block_clone;
     BB_GEDA_ITEM_CLASS(klasse)->render = bb_geda_block_render;
     BB_GEDA_ITEM_CLASS(klasse)->translate = bb_geda_block_translate;
+    BB_GEDA_ITEM_CLASS(klasse)->write = bb_geda_block_write;
     BB_GEDA_ITEM_CLASS(klasse)->write_async = bb_geda_block_write_async;
     BB_GEDA_ITEM_CLASS(klasse)->write_finish = bb_geda_block_write_finish;
 
@@ -243,7 +241,7 @@ bb_geda_block_class_init(BbGedaBlockClass *klasse)
         g_param_spec_int(
             "rotation",
             "The rotation angle of the symbol",
-            "",
+            "The rotation angle of the symbol",
             INT_MIN,
             INT_MAX,
             0,
@@ -263,6 +261,11 @@ bb_geda_block_class_init(BbGedaBlockClass *klasse)
             )
         );
 
+    /*
+     * The name is construct only. Changing the symbol after component instantiation will likely have problems with
+     * incorrect inherited attributes. The preferred mechanism is to completely delete the component and
+     * re-instantiate.
+     */
     properties[PROP_NAME] = bb_object_class_install_property(
         object_class,
         PROP_NAME,
@@ -276,8 +279,6 @@ bb_geda_block_class_init(BbGedaBlockClass *klasse)
         );
 
     signals[SIG_INVALIDATE] = g_signal_lookup("invalidate-item", BB_TYPE_GEDA_ITEM);
-
-    bb_geda_block_get_name_regex();
 }
 
 
@@ -288,6 +289,13 @@ bb_geda_block_clone(BbGedaItem *item)
         BB_TYPE_GEDA_BLOCK,
         "insert-x", bb_geda_block_get_insert_x(BB_GEDA_BLOCK(item)),
         "insert-y", bb_geda_block_get_insert_y(BB_GEDA_BLOCK(item)),
+
+        "selectable", bb_geda_block_get_selectable(BB_GEDA_BLOCK(item)),
+
+        "rotation", bb_geda_block_get_rotation(BB_GEDA_BLOCK(item)),
+        "mirror", bb_geda_block_get_mirror(BB_GEDA_BLOCK(item)),
+
+        "name", bb_geda_block_get_name(BB_GEDA_BLOCK(item)),
 
         NULL
         ));
@@ -318,14 +326,32 @@ bb_geda_block_get_insert_x(BbGedaBlock *block)
 int
 bb_geda_block_get_insert_y(BbGedaBlock *block)
 {
-    g_return_val_if_fail(block != NULL, 0);
+    g_return_val_if_fail(BB_IS_GEDA_BLOCK(block), 0);
 
     return block->insert_y;
 }
 
 
+gboolean
+bb_geda_block_get_mirror(BbGedaBlock *block)
+{
+    g_return_val_if_fail(BB_IS_GEDA_BLOCK(block), FALSE);
+
+    return block->mirror;
+}
+
+
+const gchar*
+bb_geda_block_get_name(BbGedaBlock *block)
+{
+    g_return_val_if_fail(BB_IS_GEDA_BLOCK(block), NULL);
+
+    return block->name;
+}
+
+
 /**
- * @brief Regular expression to extract data from the block name
+ * @brief Provides a regular expression to extract data from the block name
  *
  * The function gets called before the class initializer
  *
@@ -349,7 +375,7 @@ bb_geda_block_get_name_regex()
             0,
             0,
             &local_error
-        );
+            );
 
         g_assert(regex != NULL);
         g_assert(local_error == NULL);
@@ -374,23 +400,50 @@ bb_geda_block_get_property(GObject *object, guint property_id, GValue *value, GP
             g_value_set_int(value, bb_geda_block_get_insert_y(BB_GEDA_BLOCK(object)));
             break;
 
+        case PROP_SELECTABLE:
+            g_value_set_boolean(value, bb_geda_block_get_selectable(BB_GEDA_BLOCK(object)));
+            break;
+
+        case PROP_ROTATION:
+            g_value_set_int(value, bb_geda_block_get_rotation(BB_GEDA_BLOCK(object)));
+            break;
+
+        case PROP_MIRROR:
+            g_value_set_boolean(value, bb_geda_block_get_mirror(BB_GEDA_BLOCK(object)));
+            break;
+
+        case PROP_NAME:
+            g_value_set_string(value, bb_geda_block_get_name(BB_GEDA_BLOCK(object)));
+            break;
+
         default:
             G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
     }
 }
 
 
-static void
-bb_geda_block_init(BbGedaBlock *block)
+int
+bb_geda_block_get_rotation(BbGedaBlock *block)
 {
-    g_return_if_fail(block != NULL);
+    g_return_val_if_fail(BB_IS_GEDA_BLOCK(block), 0);
+
+    return block->rotation;
 }
 
 
-BbGedaBlock*
-bb_geda_block_new()
+gboolean
+bb_geda_block_get_selectable(BbGedaBlock *block)
 {
-    return g_object_new(BB_TYPE_GEDA_BLOCK, NULL);
+    g_return_val_if_fail(BB_IS_GEDA_BLOCK(block), TRUE);
+
+    return block->selectable;
+}
+
+
+static void
+bb_geda_block_init(BbGedaBlock *block)
+{
+    g_return_if_fail(BB_IS_GEDA_BLOCK(block));
 }
 
 
@@ -419,10 +472,21 @@ bb_geda_block_new_with_params(BbParams *params, GError **error)
 
     if (local_error == NULL)
     {
-        gint i0;
-        gint i1;
+        gint position;
+        gboolean success2;
 
-        embedded = g_match_info_fetch_named_pos(match_info, "embedded", &i0, &i1);
+        success2 = g_match_info_fetch_named_pos(match_info, "embedded", &position, NULL);
+
+        embedded = success2 && (position >= 0);
+
+        if (embedded)
+        {
+            local_error = g_error_new(
+                BB_ERROR_DOMAIN,
+                ERROR_NOT_SUPPORTED,
+                "Embedded blocks are not supported"
+                );
+        }
     }
 
     if (local_error == NULL)
@@ -641,6 +705,40 @@ bb_geda_block_translate(BbGedaItem *item, int dx, int dy)
 }
 
 
+static gboolean
+bb_geda_block_write(BbGedaItem *item, GOutputStream *stream, GCancellable *cancellable, GError **error)
+{
+    g_return_val_if_fail(BB_IS_GEDA_BLOCK(item), FALSE);
+
+    GString *params = g_string_new(NULL);
+
+    g_string_printf(
+        params,
+        "%s %d %d %d %d %d %s\n",
+        BB_GEDA_BLOCK_TOKEN,
+        bb_geda_block_get_insert_x(BB_GEDA_BLOCK(item)),
+        bb_geda_block_get_insert_y(BB_GEDA_BLOCK(item)),
+        bb_geda_block_get_selectable(BB_GEDA_BLOCK(item)),
+        bb_geda_block_get_rotation(BB_GEDA_BLOCK(item)),
+        bb_geda_block_get_mirror(BB_GEDA_BLOCK(item)),
+        bb_geda_block_get_name(BB_GEDA_BLOCK(item))
+        );
+
+    gboolean result = g_output_stream_write_all(
+        stream,
+        params->str,
+        params->len,
+        NULL,
+        cancellable,
+        error
+        );
+
+    g_string_free(params, TRUE);
+
+    return result;
+}
+
+
 static void
 bb_geda_block_write_async(
     BbGedaItem *item,
@@ -652,15 +750,6 @@ bb_geda_block_write_async(
     )
 {
     BbGedaBlock *block = BB_GEDA_BLOCK(item);
-
-    bb_item_params_write_async(
-        block->params,
-        stream,
-        io_priority,
-        cancellable,
-        callback,
-        callback_data
-        );
 }
 
 

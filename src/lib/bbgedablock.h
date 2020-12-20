@@ -38,8 +38,20 @@ int
 bb_geda_block_get_insert_y(BbGedaBlock *block);
 
 
-BbGedaBlock*
-bb_geda_block_new();
+gboolean
+bb_geda_block_get_mirror(BbGedaBlock *block);
+
+
+const gchar*
+bb_geda_block_get_name(BbGedaBlock *block);
+
+
+int
+bb_geda_block_get_rotation(BbGedaBlock *block);
+
+
+gboolean
+bb_geda_block_get_selectable(BbGedaBlock *block);
 
 
 BbGedaBlock*
