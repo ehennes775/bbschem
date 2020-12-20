@@ -50,7 +50,7 @@ struct _BbLineTool
 {
     GObject parent;
 
-    BbGraphicLine *item;
+    BbGedaLine *item;
 
     int state;
 
@@ -79,7 +79,7 @@ bb_line_tool_finalize(GObject *object);
 static void
 bb_line_tool_finish(BbLineTool *line_tool);
 
-static BbGraphicLine*
+static BbGedaLine*
 bb_line_tool_get_item(BbLineTool *tool);
 
 static void
@@ -89,7 +89,7 @@ static BbToolSubject*
 bb_line_tool_get_subject(BbLineTool *tool);
 
 static void
-bb_line_tool_invalidate_item_cb(BbSchematicItem *item, BbLineTool *line_tool);
+bb_line_tool_invalidate_item_cb(BbGedaItem *item, BbLineTool *line_tool);
 
 static void
 bb_line_tool_key_pressed(BbDrawingTool *tool);
@@ -107,7 +107,7 @@ static void
 bb_line_tool_reset_with_point(BbLineTool *tool, double x, double y);
 
 static void
-bb_line_tool_set_item(BbLineTool *tool, BbGraphicLine *item);
+bb_line_tool_set_item(BbLineTool *tool, BbGedaLine *item);
 
 static void
 bb_line_tool_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
@@ -180,7 +180,7 @@ bb_line_tool_class_init(BbLineToolClass *klasse)
             "item",
             "",
             "",
-            BB_TYPE_GRAPHIC_LINE,
+            BB_TYPE_GEDA_LINE,
             G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS
             )
         );
@@ -223,10 +223,10 @@ bb_line_tool_draw(BbDrawingTool *tool, BbGraphics *graphics)
 
     if (line_tool->state != STATE_S0)
     {
-        bb_schematic_item_render(
-            BB_SCHEMATIC_ITEM(line_tool->item),
+        bb_geda_item_render(
+            BB_GEDA_ITEM(line_tool->item),
             BB_ITEM_RENDERER(graphics)
-            );
+        );
     }
 }
 
@@ -256,7 +256,7 @@ bb_line_tool_finish(BbLineTool *line_tool)
 {
     g_return_if_fail(line_tool != NULL);
 
-    BbSchematicItem *item = bb_schematic_item_clone(BB_SCHEMATIC_ITEM(line_tool->item));
+    BbGedaItem *item = bb_geda_item_clone(BB_GEDA_ITEM(line_tool->item));
 
     bb_tool_subject_add_item(line_tool->subject, item);
 
@@ -266,7 +266,7 @@ bb_line_tool_finish(BbLineTool *line_tool)
 }
 
 
-static BbGraphicLine*
+static BbGedaLine*
 bb_line_tool_get_item(BbLineTool *tool)
 {
     g_return_val_if_fail(tool != NULL, NULL);
@@ -311,11 +311,11 @@ bb_line_tool_init(BbLineTool *line_tool)
 
 
 static void
-bb_line_tool_invalidate_item_cb(BbSchematicItem *item, BbLineTool *line_tool)
+bb_line_tool_invalidate_item_cb(BbGedaItem *item, BbLineTool *line_tool)
 {
     g_return_if_fail(line_tool != NULL);
     g_return_if_fail(line_tool->item != NULL);
-    g_return_if_fail(line_tool->item == BB_GRAPHIC_LINE(item));
+    g_return_if_fail(line_tool->item == BB_GEDA_LINE(item));
 
     g_signal_emit(line_tool, signals[SIG_INVALIDATE_ITEM], 0, item);
 }
@@ -340,7 +340,7 @@ bb_line_tool_new(BbToolSubject *subject)
 {
     return BB_LINE_TOOL(g_object_new(
         BB_TYPE_LINE_TOOL,
-        "item", g_object_new(BB_TYPE_GRAPHIC_LINE, NULL),
+        "item", g_object_new(BB_TYPE_GEDA_LINE, NULL),
         "subject", subject,
         NULL
         ));
@@ -372,11 +372,11 @@ bb_line_tool_reset_with_point(BbLineTool *line_tool, gdouble x, gdouble y)
 
     bb_tool_subject_snap_coordinate(line_tool->subject, bb_coord_round(ux), bb_coord_round(uy), &sx, &sy);
 
-    bb_graphic_line_set_x0(line_tool->item, sx);
-    bb_graphic_line_set_y0(line_tool->item, sy);
+    bb_geda_line_set_x0(line_tool->item, sx);
+    bb_geda_line_set_y0(line_tool->item, sy);
 
-    bb_graphic_line_set_x1(line_tool->item, sx);
-    bb_graphic_line_set_y1(line_tool->item, sy);
+    bb_geda_line_set_x1(line_tool->item, sx);
+    bb_geda_line_set_y1(line_tool->item, sy);
 
     line_tool->state = STATE_S1;
 }
@@ -395,7 +395,7 @@ bb_line_tool_motion_notify(BbDrawingTool *tool, gdouble x, gdouble y)
 
 
 static void
-bb_line_tool_set_item(BbLineTool *tool, BbGraphicLine *item)
+bb_line_tool_set_item(BbLineTool *tool, BbGedaLine *item)
 {
     g_return_if_fail(tool != NULL);
 
@@ -434,7 +434,7 @@ bb_line_tool_set_property(GObject *object, guint property_id, const GValue *valu
     switch (property_id)
     {
         case PROP_ITEM:
-            bb_line_tool_set_item(BB_LINE_TOOL(object), BB_GRAPHIC_LINE(g_value_get_object(value)));
+            bb_line_tool_set_item(BB_LINE_TOOL(object), BB_GEDA_LINE(g_value_get_object(value)));
             break;
 
         case PROP_SUBJECT:
@@ -490,7 +490,7 @@ bb_line_tool_update_with_point(BbLineTool *line_tool, gdouble x, gdouble y)
 
         bb_tool_subject_snap_coordinate(line_tool->subject, bb_coord_round(ux), bb_coord_round(uy), &sx, &sy);
 
-        bb_graphic_line_set_x1(line_tool->item, sx);
-        bb_graphic_line_set_y1(line_tool->item, sy);
+        bb_geda_line_set_x1(line_tool->item, sx);
+        bb_geda_line_set_y1(line_tool->item, sy);
     }
 }

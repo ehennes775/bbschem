@@ -1,5 +1,5 @@
-#ifndef __BBGRAPHICLINE__
-#define __BBGRAPHICLINE__
+#ifndef __BBGEDANET__
+#define __BBGEDANET__
 /*
  * bbsch
  * Copyright (C) 2020 Edward C. Hennessy
@@ -20,54 +20,57 @@
 
 #include <gtk/gtk.h>
 #include "bbparams.h"
-#include "bbschematicitem.h"
+#include "bbgedaitem.h"
 
 
-#define BB_GRAPHIC_LINE_TOKEN "L"
+#define BB_GEDA_NET_TOKEN "N"
+
+#define BB_GEDA_NET_WIDTH (10)
 
 
-#define BB_TYPE_GRAPHIC_LINE bb_graphic_line_get_type()
-G_DECLARE_FINAL_TYPE(BbGraphicLine, bb_graphic_line, BB, GRAPHIC_LINE, BbSchematicItem)
 
-
-int
-bb_graphic_line_get_x0(BbGraphicLine *line);
-
-
-int
-bb_graphic_line_get_x1(BbGraphicLine *line);
+#define BB_TYPE_GEDA_NET bb_geda_net_get_type()
+G_DECLARE_FINAL_TYPE(BbGedaNet, bb_geda_net, BB, GEDA_NET, BbGedaItem)
 
 
 int
-bb_graphic_line_get_y0(BbGraphicLine *line);
+bb_geda_net_get_x0(BbGedaNet *net);
 
 
 int
-bb_graphic_line_get_y1(BbGraphicLine *line);
+bb_geda_net_get_x1(BbGedaNet *net);
 
 
-BbGraphicLine*
-bb_graphic_line_new();
+int
+bb_geda_net_get_y0(BbGedaNet *net);
 
 
-BbGraphicLine*
-bb_graphic_line_new_with_params(BbParams *params, GError **error);
+int
+bb_geda_net_get_y1(BbGedaNet *net);
 
 
-void
-bb_graphic_line_set_x0(BbGraphicLine *line, int x);
+BbGedaNet*
+bb_geda_net_new();
 
 
-void
-bb_graphic_line_set_x1(BbGraphicLine *line, int x);
-
-
-void
-bb_graphic_line_set_y0(BbGraphicLine *line, int y);
+BbGedaNet*
+bb_geda_net_new_with_params(BbParams *params, GError **error);
 
 
 void
-bb_graphic_line_set_y1(BbGraphicLine *line, int y);
+bb_geda_net_set_x0(BbGedaNet *net, int x);
+
+
+void
+bb_geda_net_set_x1(BbGedaNet *net, int x);
+
+
+void
+bb_geda_net_set_y0(BbGedaNet *net, int y);
+
+
+void
+bb_geda_net_set_y1(BbGedaNet *net, int y);
 
 
 #endif

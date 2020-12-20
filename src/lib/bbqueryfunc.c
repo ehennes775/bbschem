@@ -21,14 +21,14 @@
 
 
 gboolean
-bb_query_func_always(BbSchematicItem *item, gpointer user_data)
+bb_query_func_always(BbGedaItem *item, gpointer user_data)
 {
     return TRUE;
 }
 
 
 gboolean
-bb_query_func_never(BbSchematicItem *item, gpointer user_data)
+bb_query_func_never(BbGedaItem *item, gpointer user_data)
 {
     return FALSE;
 }

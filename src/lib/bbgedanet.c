@@ -18,7 +18,7 @@
 
 #include <gtk/gtk.h>
 #include <bbextensions.h>
-#include "bbelectricalnet.h"
+#include "bbgedanet.h"
 #include "bbcoord.h"
 #include "bbitemparams.h"
 #include "bbadjustableitemcolor.h"
@@ -66,9 +66,9 @@ enum
 };
 
 
-struct _BbElectricalNet
+struct _BbGedaNet
 {
-    BbSchematicItem parent;
+    BbGedaItem parent;
 
     BbItemParams *params;
 
@@ -80,44 +80,44 @@ struct _BbElectricalNet
 
 
 static void
-bb_electrical_net_adjustable_item_color_init(BbAdjustableItemColorInterface *iface);
+bb_geda_net_adjustable_item_color_init(BbAdjustableItemColorInterface *iface);
 
 static BbBounds*
-bb_electrical_net_calculate_bounds(BbSchematicItem *item, BbBoundsCalculator *calculator);
+bb_geda_net_calculate_bounds(BbGedaItem *item, BbBoundsCalculator *calculator);
 
-static BbSchematicItem*
-bb_electrical_net_clone(BbSchematicItem *item);
-
-static void
-bb_electrical_net_dispose(GObject *object);
+static BbGedaItem*
+bb_geda_net_clone(BbGedaItem *item);
 
 static void
-bb_electrical_net_finalize(GObject *object);
+bb_geda_net_dispose(GObject *object);
+
+static void
+bb_geda_net_finalize(GObject *object);
 
 static int
-bb_electrical_net_get_item_color(BbElectricalNet *net);
+bb_geda_net_get_item_color(BbGedaNet *net);
 
 static void
-bb_electrical_net_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
+bb_geda_net_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
 
 static void
-bb_electrical_net_render(BbSchematicItem *item, BbItemRenderer *renderer);
+bb_geda_net_render(BbGedaItem *item, BbItemRenderer *renderer);
 
 static void
-bb_electrical_net_set_item_color(BbElectricalNet *net, int color);
+bb_geda_net_set_item_color(BbGedaNet *net, int color);
 
 static void
-bb_electrical_net_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
+bb_geda_net_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
 
 static void
-bb_electrical_net_translate(BbSchematicItem *item, int dx, int dy);
+bb_geda_net_translate(BbGedaItem *item, int dx, int dy);
 
 static gboolean
-bb_electrical_net_write(BbSchematicItem *item, GOutputStream *stream, GCancellable *cancellable, GError **error);
+bb_geda_net_write(BbGedaItem *item, GOutputStream *stream, GCancellable *cancellable, GError **error);
 
 static void
-bb_electrical_net_write_async(
-    BbSchematicItem *item,
+bb_geda_net_write_async(
+    BbGedaItem *item,
     GOutputStream *stream,
     int io_priority,
     GCancellable *cancellable,
@@ -126,8 +126,8 @@ bb_electrical_net_write_async(
     );
 
 static gboolean
-bb_electrical_net_write_finish(
-    BbSchematicItem *item,
+bb_geda_net_write_finish(
+    BbGedaItem *item,
     GOutputStream *stream,
     GAsyncResult *result,
     GError **error
@@ -138,24 +138,24 @@ static GParamSpec *properties[N_PROPERTIES];
 static guint signals[N_SIGNALS];
 
 G_DEFINE_TYPE_WITH_CODE(
-    BbElectricalNet,
-    bb_electrical_net,
-    BB_TYPE_SCHEMATIC_ITEM,
-    G_IMPLEMENT_INTERFACE(BB_TYPE_ADJUSTABLE_ITEM_COLOR, bb_electrical_net_adjustable_item_color_init)
+    BbGedaNet,
+    bb_geda_net,
+    BB_TYPE_GEDA_ITEM,
+    G_IMPLEMENT_INTERFACE(BB_TYPE_ADJUSTABLE_ITEM_COLOR, bb_geda_net_adjustable_item_color_init)
     )
 
 
 static void
-bb_electrical_net_adjustable_item_color_init(BbAdjustableItemColorInterface *iface)
+bb_geda_net_adjustable_item_color_init(BbAdjustableItemColorInterface *iface)
 {
     g_return_if_fail(iface != NULL);
 }
 
 
 static BbBounds*
-bb_electrical_net_calculate_bounds(BbSchematicItem *item, BbBoundsCalculator *calculator)
+bb_geda_net_calculate_bounds(BbGedaItem *item, BbBoundsCalculator *calculator)
 {
-    BbElectricalNet *net = BB_ELECTRICAL_NET(item);
+    BbGedaNet *net = BB_GEDA_NET(item);
 
     g_return_val_if_fail(net != NULL, NULL);
 
@@ -165,26 +165,26 @@ bb_electrical_net_calculate_bounds(BbSchematicItem *item, BbBoundsCalculator *ca
         net->y[0],
         net->x[1],
         net->y[1],
-        BB_ELECTRICAL_NET_WIDTH
+        BB_GEDA_NET_WIDTH
         );
 }
 
 
 static void
-bb_electrical_net_class_init(BbElectricalNetClass *klasse)
+bb_geda_net_class_init(BbGedaNetClass *klasse)
 {
-    G_OBJECT_CLASS(klasse)->dispose = bb_electrical_net_dispose;
-    G_OBJECT_CLASS(klasse)->finalize = bb_electrical_net_finalize;
-    G_OBJECT_CLASS(klasse)->get_property = bb_electrical_net_get_property;
-    G_OBJECT_CLASS(klasse)->set_property = bb_electrical_net_set_property;
+    G_OBJECT_CLASS(klasse)->dispose = bb_geda_net_dispose;
+    G_OBJECT_CLASS(klasse)->finalize = bb_geda_net_finalize;
+    G_OBJECT_CLASS(klasse)->get_property = bb_geda_net_get_property;
+    G_OBJECT_CLASS(klasse)->set_property = bb_geda_net_set_property;
 
-    BB_SCHEMATIC_ITEM_CLASS(klasse)->calculate_bounds = bb_electrical_net_calculate_bounds;
-    BB_SCHEMATIC_ITEM_CLASS(klasse)->clone = bb_electrical_net_clone;
-    BB_SCHEMATIC_ITEM_CLASS(klasse)->render = bb_electrical_net_render;
-    BB_SCHEMATIC_ITEM_CLASS(klasse)->translate = bb_electrical_net_translate;
-    BB_SCHEMATIC_ITEM_CLASS(klasse)->write = bb_electrical_net_write;
-    BB_SCHEMATIC_ITEM_CLASS(klasse)->write_async = bb_electrical_net_write_async;
-    BB_SCHEMATIC_ITEM_CLASS(klasse)->write_finish = bb_electrical_net_write_finish;
+    BB_GEDA_ITEM_CLASS(klasse)->calculate_bounds = bb_geda_net_calculate_bounds;
+    BB_GEDA_ITEM_CLASS(klasse)->clone = bb_geda_net_clone;
+    BB_GEDA_ITEM_CLASS(klasse)->render = bb_geda_net_render;
+    BB_GEDA_ITEM_CLASS(klasse)->translate = bb_geda_net_translate;
+    BB_GEDA_ITEM_CLASS(klasse)->write = bb_geda_net_write;
+    BB_GEDA_ITEM_CLASS(klasse)->write_async = bb_geda_net_write_async;
+    BB_GEDA_ITEM_CLASS(klasse)->write_finish = bb_geda_net_write_finish;
 
     /* From AdjustableItemColor */
     properties[PROP_ITEM_COLOR] = bb_object_class_override_property(
@@ -249,22 +249,22 @@ bb_electrical_net_class_init(BbElectricalNetClass *klasse)
             )
         );
 
-    signals[SIG_INVALIDATE] = g_signal_lookup("invalidate-item", BB_TYPE_SCHEMATIC_ITEM);
+    signals[SIG_INVALIDATE] = g_signal_lookup("invalidate-item", BB_TYPE_GEDA_ITEM);
 }
 
 
-static BbSchematicItem*
-bb_electrical_net_clone(BbSchematicItem *item)
+static BbGedaItem*
+bb_geda_net_clone(BbGedaItem *item)
 {
-    return BB_SCHEMATIC_ITEM(g_object_new(
-        BB_TYPE_ELECTRICAL_NET,
-        "x0", bb_electrical_net_get_x0(BB_ELECTRICAL_NET(item)),
-        "x1", bb_electrical_net_get_x1(BB_ELECTRICAL_NET(item)),
-        "y0", bb_electrical_net_get_y0(BB_ELECTRICAL_NET(item)),
-        "y1", bb_electrical_net_get_y1(BB_ELECTRICAL_NET(item)),
+    return BB_GEDA_ITEM(g_object_new(
+        BB_TYPE_GEDA_NET,
+        "x0", bb_geda_net_get_x0(BB_GEDA_NET(item)),
+        "x1", bb_geda_net_get_x1(BB_GEDA_NET(item)),
+        "y0", bb_geda_net_get_y0(BB_GEDA_NET(item)),
+        "y1", bb_geda_net_get_y1(BB_GEDA_NET(item)),
 
         /* From AdjustableItemColor */
-        "item-color", bb_electrical_net_get_item_color(BB_ELECTRICAL_NET(item)),
+        "item-color", bb_geda_net_get_item_color(BB_GEDA_NET(item)),
 
         NULL
     ));
@@ -272,22 +272,22 @@ bb_electrical_net_clone(BbSchematicItem *item)
 
 
 static void
-bb_electrical_net_dispose(GObject *object)
+bb_geda_net_dispose(GObject *object)
 {
 }
 
 
 static void
-bb_electrical_net_finalize(GObject *object)
+bb_geda_net_finalize(GObject *object)
 {
-    BbElectricalNet *net = BB_ELECTRICAL_NET(object);
+    BbGedaNet *net = BB_GEDA_NET(object);
 
     g_return_if_fail(net != NULL);
 }
 
 
 static int
-bb_electrical_net_get_item_color(BbElectricalNet *net)
+bb_geda_net_get_item_color(BbGedaNet *net)
 {
     g_return_val_if_fail(net != NULL, 0);
 
@@ -296,28 +296,28 @@ bb_electrical_net_get_item_color(BbElectricalNet *net)
 
 
 static void
-bb_electrical_net_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec)
+bb_geda_net_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec)
 {
     switch (property_id)
     {
         case PROP_ITEM_COLOR:
-            g_value_set_int(value, bb_electrical_net_get_item_color(BB_ELECTRICAL_NET(object)));
+            g_value_set_int(value, bb_geda_net_get_item_color(BB_GEDA_NET(object)));
             break;
 
         case PROP_X0:
-            g_value_set_int(value, bb_electrical_net_get_x0(BB_ELECTRICAL_NET(object)));
+            g_value_set_int(value, bb_geda_net_get_x0(BB_GEDA_NET(object)));
             break;
 
         case PROP_X1:
-            g_value_set_int(value, bb_electrical_net_get_x1(BB_ELECTRICAL_NET(object)));
+            g_value_set_int(value, bb_geda_net_get_x1(BB_GEDA_NET(object)));
             break;
 
         case PROP_Y0:
-            g_value_set_int(value, bb_electrical_net_get_y0(BB_ELECTRICAL_NET(object)));
+            g_value_set_int(value, bb_geda_net_get_y0(BB_GEDA_NET(object)));
             break;
 
         case PROP_Y1:
-            g_value_set_int(value, bb_electrical_net_get_y1(BB_ELECTRICAL_NET(object)));
+            g_value_set_int(value, bb_geda_net_get_y1(BB_GEDA_NET(object)));
             break;
 
         default:
@@ -327,7 +327,7 @@ bb_electrical_net_get_property(GObject *object, guint property_id, GValue *value
 
 
 int
-bb_electrical_net_get_x0(BbElectricalNet *net)
+bb_geda_net_get_x0(BbGedaNet *net)
 {
     g_return_val_if_fail(net != NULL, 0);
 
@@ -336,7 +336,7 @@ bb_electrical_net_get_x0(BbElectricalNet *net)
 
 
 int
-bb_electrical_net_get_x1(BbElectricalNet *net)
+bb_geda_net_get_x1(BbGedaNet *net)
 {
     g_return_val_if_fail(net != NULL, 0);
 
@@ -345,7 +345,7 @@ bb_electrical_net_get_x1(BbElectricalNet *net)
 
 
 int
-bb_electrical_net_get_y0(BbElectricalNet *net)
+bb_geda_net_get_y0(BbGedaNet *net)
 {
     g_return_val_if_fail(net != NULL, 0);
 
@@ -354,7 +354,7 @@ bb_electrical_net_get_y0(BbElectricalNet *net)
 
 
 int
-bb_electrical_net_get_y1(BbElectricalNet *net)
+bb_geda_net_get_y1(BbGedaNet *net)
 {
     g_return_val_if_fail(net != NULL, 0);
 
@@ -363,30 +363,30 @@ bb_electrical_net_get_y1(BbElectricalNet *net)
 
 
 static void
-bb_electrical_net_init(BbElectricalNet *net)
+bb_geda_net_init(BbGedaNet *net)
 {
     g_return_if_fail(net != NULL);
 
-    bb_electrical_net_set_item_color(net, BB_COLOR_NET);
+    bb_geda_net_set_item_color(net, BB_COLOR_NET);
 }
 
 
-BbElectricalNet*
-bb_electrical_net_new()
+BbGedaNet*
+bb_geda_net_new()
 {
-    return g_object_new(BB_TYPE_ELECTRICAL_NET, NULL);
+    return g_object_new(BB_TYPE_GEDA_NET, NULL);
 }
 
 
-BbElectricalNet*
-bb_electrical_net_new_with_params(BbParams *params, GError **error)
+BbGedaNet*
+bb_geda_net_new_with_params(BbParams *params, GError **error)
 {
     GError *local_error[N_PARAMETERS] = { NULL };
 
-    g_return_val_if_fail(bb_params_token_matches(params, BB_ELECTRICAL_NET_TOKEN), NULL);
+    g_return_val_if_fail(bb_params_token_matches(params, BB_GEDA_NET_TOKEN), NULL);
 
-    BbElectricalNet *net = BB_ELECTRICAL_NET(g_object_new(
-        BB_TYPE_ELECTRICAL_NET,
+    BbGedaNet *net = BB_GEDA_NET(g_object_new(
+        BB_TYPE_GEDA_NET,
         "x0", bb_params_get_int(params, PARAM_X0, &local_error[PARAM_X0]),
         "y0", bb_params_get_int(params, PARAM_Y0, &local_error[PARAM_Y0]),
         "x1", bb_params_get_int(params, PARAM_X1, &local_error[PARAM_X1]),
@@ -418,9 +418,9 @@ bb_electrical_net_new_with_params(BbParams *params, GError **error)
 
 
 static void
-bb_electrical_net_render(BbSchematicItem *item, BbItemRenderer *renderer)
+bb_geda_net_render(BbGedaItem *item, BbItemRenderer *renderer)
 {
-    BbElectricalNet *net = BB_ELECTRICAL_NET(item);
+    BbGedaNet *net = BB_GEDA_NET(item);
 
     g_return_if_fail(net != NULL);
 
@@ -441,7 +441,7 @@ bb_electrical_net_render(BbSchematicItem *item, BbItemRenderer *renderer)
 
 
 static void
-bb_electrical_net_set_item_color(BbElectricalNet *net, int color)
+bb_geda_net_set_item_color(BbGedaNet *net, int color)
 {
     g_return_if_fail(net != NULL);
 
@@ -457,28 +457,28 @@ bb_electrical_net_set_item_color(BbElectricalNet *net, int color)
 
 
 static void
-bb_electrical_net_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec)
+bb_geda_net_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec)
 {
     switch (property_id)
     {
         case PROP_ITEM_COLOR:
-            bb_electrical_net_set_item_color(BB_ELECTRICAL_NET(object), g_value_get_int(value));
+            bb_geda_net_set_item_color(BB_GEDA_NET(object), g_value_get_int(value));
             break;
 
         case PROP_X0:
-            bb_electrical_net_set_x0(BB_ELECTRICAL_NET(object), g_value_get_int(value));
+            bb_geda_net_set_x0(BB_GEDA_NET(object), g_value_get_int(value));
             break;
 
         case PROP_X1:
-            bb_electrical_net_set_x1(BB_ELECTRICAL_NET(object), g_value_get_int(value));
+            bb_geda_net_set_x1(BB_GEDA_NET(object), g_value_get_int(value));
             break;
 
         case PROP_Y0:
-            bb_electrical_net_set_y0(BB_ELECTRICAL_NET(object), g_value_get_int(value));
+            bb_geda_net_set_y0(BB_GEDA_NET(object), g_value_get_int(value));
             break;
 
         case PROP_Y1:
-            bb_electrical_net_set_y1(BB_ELECTRICAL_NET(object), g_value_get_int(value));
+            bb_geda_net_set_y1(BB_GEDA_NET(object), g_value_get_int(value));
             break;
 
         default:
@@ -488,7 +488,7 @@ bb_electrical_net_set_property(GObject *object, guint property_id, const GValue 
 
 
 void
-bb_electrical_net_set_x0(BbElectricalNet *net, int x)
+bb_geda_net_set_x0(BbGedaNet *net, int x)
 {
     g_return_if_fail(net != NULL);
 
@@ -506,7 +506,7 @@ bb_electrical_net_set_x0(BbElectricalNet *net, int x)
 
 
 void
-bb_electrical_net_set_x1(BbElectricalNet *net, int x)
+bb_geda_net_set_x1(BbGedaNet *net, int x)
 {
     g_return_if_fail(net != NULL);
 
@@ -524,7 +524,7 @@ bb_electrical_net_set_x1(BbElectricalNet *net, int x)
 
 
 void
-bb_electrical_net_set_y0(BbElectricalNet *net, int y)
+bb_geda_net_set_y0(BbGedaNet *net, int y)
 {
     g_return_if_fail(net != NULL);
 
@@ -542,7 +542,7 @@ bb_electrical_net_set_y0(BbElectricalNet *net, int y)
 
 
 void
-bb_electrical_net_set_y1(BbElectricalNet *net, int y)
+bb_geda_net_set_y1(BbGedaNet *net, int y)
 {
     g_return_if_fail(net != NULL);
 
@@ -560,9 +560,9 @@ bb_electrical_net_set_y1(BbElectricalNet *net, int y)
 
 
 static void
-bb_electrical_net_translate(BbSchematicItem *item, int dx, int dy)
+bb_geda_net_translate(BbGedaItem *item, int dx, int dy)
 {
-    BbElectricalNet *net = BB_ELECTRICAL_NET(item);
+    BbGedaNet *net = BB_GEDA_NET(item);
     g_return_if_fail(net != NULL);
 
     bb_coord_translate(dx, dy, net->x, net->y, 2);
@@ -575,9 +575,9 @@ bb_electrical_net_translate(BbSchematicItem *item, int dx, int dy)
 
 
 static gboolean
-bb_electrical_net_write(BbSchematicItem *item, GOutputStream *stream, GCancellable *cancellable, GError **error)
+bb_geda_net_write(BbGedaItem *item, GOutputStream *stream, GCancellable *cancellable, GError **error)
 {
-    BbElectricalNet *net = BB_ELECTRICAL_NET(item);
+    BbGedaNet *net = BB_GEDA_NET(item);
     g_return_val_if_fail(net != NULL, FALSE);
 
     GString *params = g_string_new(NULL);
@@ -585,7 +585,7 @@ bb_electrical_net_write(BbSchematicItem *item, GOutputStream *stream, GCancellab
     g_string_printf(
         params,
         "%s %d %d %d %d %d\n",
-        BB_ELECTRICAL_NET_TOKEN,
+        BB_GEDA_NET_TOKEN,
         net->x[0],
         net->y[0],
         net->x[1],
@@ -609,8 +609,8 @@ bb_electrical_net_write(BbSchematicItem *item, GOutputStream *stream, GCancellab
 
 
 static void
-bb_electrical_net_write_async(
-    BbSchematicItem *item,
+bb_geda_net_write_async(
+    BbGedaItem *item,
     GOutputStream *stream,
     int io_priority,
     GCancellable *cancellable,
@@ -618,7 +618,7 @@ bb_electrical_net_write_async(
     gpointer callback_data
     )
 {
-    BbElectricalNet *net = BB_ELECTRICAL_NET(item);
+    BbGedaNet *net = BB_GEDA_NET(item);
 
     bb_item_params_write_async(
         net->params,
@@ -632,8 +632,8 @@ bb_electrical_net_write_async(
 
 
 static gboolean
-bb_electrical_net_write_finish(
-    BbSchematicItem *item,
+bb_geda_net_write_finish(
+    BbGedaItem *item,
     GOutputStream *stream,
     GAsyncResult *result,
     GError **error

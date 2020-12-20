@@ -54,31 +54,31 @@ static void
 bb_line_style_editor_apply_cap_type(BbPropertyComboBox *combo, BbLineStyleEditor *editor);
 
 static void
-bb_line_style_editor_apply_cap_type_lambda(BbSchematicItem *item, gpointer user_data);
+bb_line_style_editor_apply_cap_type_lambda(BbGedaItem *item, gpointer user_data);
 
 static void
 bb_line_style_editor_apply_dash_length(BbInt32ComboBox *combo, BbLineStyleEditor *editor);
 
 static void
-bb_line_style_editor_apply_dash_length_lambda(BbSchematicItem *item, gpointer user_data);
+bb_line_style_editor_apply_dash_length_lambda(BbGedaItem *item, gpointer user_data);
 
 static void
 bb_line_style_editor_apply_dash_space(BbInt32ComboBox *combo, BbLineStyleEditor *editor);
 
 static void
-bb_line_style_editor_apply_dash_space_lambda(BbSchematicItem *item, gpointer user_data);
+bb_line_style_editor_apply_dash_space_lambda(BbGedaItem *item, gpointer user_data);
 
 static void
 bb_line_style_editor_apply_dash_type(BbPropertyComboBox *combo, BbLineStyleEditor *editor);
 
 static void
-bb_line_style_editor_apply_dash_type_lambda(BbSchematicItem *item, gpointer user_data);
+bb_line_style_editor_apply_dash_type_lambda(BbGedaItem *item, gpointer user_data);
 
 static void
 bb_line_style_editor_apply_line_width(BbInt32ComboBox *combo, BbLineStyleEditor *editor);
 
 static void
-bb_line_style_editor_apply_line_width_lambda(BbSchematicItem *item, gpointer user_data);
+bb_line_style_editor_apply_line_width_lambda(BbGedaItem *item, gpointer user_data);
 
 static void
 bb_line_style_editor_get_property(GObject *object, guint param_id, GValue* value, GParamSpec* pspec);
@@ -124,7 +124,7 @@ bb_line_style_editor_apply_cap_type(BbPropertyComboBox *combo, BbLineStyleEditor
  * @param user_data The cap type
  */
 static void
-bb_line_style_editor_apply_cap_type_lambda(BbSchematicItem *item, gpointer user_data)
+bb_line_style_editor_apply_cap_type_lambda(BbGedaItem *item, gpointer user_data)
 {
     if (BB_IS_ADJUSTABLE_LINE_STYLE(item))
     {
@@ -170,7 +170,7 @@ bb_line_style_editor_apply_dash_length(BbInt32ComboBox *combo, BbLineStyleEditor
  * @param user_data The dash length
  */
 static void
-bb_line_style_editor_apply_dash_length_lambda(BbSchematicItem *item, gpointer user_data)
+bb_line_style_editor_apply_dash_length_lambda(BbGedaItem *item, gpointer user_data)
 {
     if (BB_IS_ADJUSTABLE_LINE_STYLE(item))
     {
@@ -214,7 +214,7 @@ bb_line_style_editor_apply_dash_space(BbInt32ComboBox *combo, BbLineStyleEditor 
  * @param user_data The dash space
  */
 static void
-bb_line_style_editor_apply_dash_space_lambda(BbSchematicItem *item, gpointer user_data)
+bb_line_style_editor_apply_dash_space_lambda(BbGedaItem *item, gpointer user_data)
 {
     if (BB_IS_ADJUSTABLE_LINE_STYLE(item))
     {
@@ -260,7 +260,7 @@ bb_line_style_editor_apply_dash_type(BbPropertyComboBox *combo, BbLineStyleEdito
  * @param user_data The dash type
  */
 static void
-bb_line_style_editor_apply_dash_type_lambda(BbSchematicItem *item, gpointer user_data)
+bb_line_style_editor_apply_dash_type_lambda(BbGedaItem *item, gpointer user_data)
 {
     if (BB_IS_ADJUSTABLE_LINE_STYLE(item))
     {
@@ -306,7 +306,7 @@ bb_line_style_editor_apply_line_width(BbInt32ComboBox *combo, BbLineStyleEditor 
  * @param user_data The line width
  */
 static void
-bb_line_style_editor_apply_line_width_lambda(BbSchematicItem *item, gpointer user_data)
+bb_line_style_editor_apply_line_width_lambda(BbGedaItem *item, gpointer user_data)
 {
     if (BB_IS_ADJUSTABLE_LINE_STYLE(item))
     {

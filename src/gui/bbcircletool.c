@@ -50,7 +50,7 @@ struct _BbCircleTool
 {
     GObject parent;
 
-    BbGraphicCircle *item;
+    BbGedaCircle *item;
 
     int state;
 
@@ -79,7 +79,7 @@ bb_circle_tool_finalize(GObject *object);
 static void
 bb_circle_tool_finish(BbCircleTool *circle_tool);
 
-static BbGraphicCircle*
+static BbGedaCircle*
 bb_circle_tool_get_item(BbCircleTool *tool);
 
 static void
@@ -89,7 +89,7 @@ static BbToolSubject*
 bb_circle_tool_get_subject(BbCircleTool *tool);
 
 static void
-bb_circle_tool_invalidate_item_cb(BbSchematicItem *item, BbCircleTool *circle_tool);
+bb_circle_tool_invalidate_item_cb(BbGedaItem *item, BbCircleTool *circle_tool);
 
 static void
 bb_circle_tool_key_pressed(BbDrawingTool *tool);
@@ -107,7 +107,7 @@ static void
 bb_circle_tool_reset_with_point(BbCircleTool *tool, double x, double y);
 
 static void
-bb_circle_tool_set_item(BbCircleTool *tool, BbGraphicCircle *item);
+bb_circle_tool_set_item(BbCircleTool *tool, BbGedaCircle *item);
 
 static void
 bb_circle_tool_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
@@ -180,7 +180,7 @@ bb_circle_tool_class_init(BbCircleToolClass *klasse)
             "item",
             "",
             "",
-            BB_TYPE_GRAPHIC_CIRCLE,
+            BB_TYPE_GEDA_CIRCLE,
             G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS
             )
         );
@@ -223,10 +223,10 @@ bb_circle_tool_draw(BbDrawingTool *tool, BbGraphics *graphics)
 
     if (circle_tool->state != STATE_S0)
     {
-        bb_schematic_item_render(
-            BB_SCHEMATIC_ITEM(circle_tool->item),
+        bb_geda_item_render(
+            BB_GEDA_ITEM(circle_tool->item),
             BB_ITEM_RENDERER(graphics)
-         );
+        );
     }
 }
 
@@ -256,7 +256,7 @@ bb_circle_tool_finish(BbCircleTool *circle_tool)
 {
     g_return_if_fail(circle_tool != NULL);
 
-    BbSchematicItem *item = bb_schematic_item_clone(BB_SCHEMATIC_ITEM(circle_tool->item));
+    BbGedaItem *item = bb_geda_item_clone(BB_GEDA_ITEM(circle_tool->item));
 
     bb_tool_subject_add_item(circle_tool->subject, item);
 
@@ -266,7 +266,7 @@ bb_circle_tool_finish(BbCircleTool *circle_tool)
 }
 
 
-static BbGraphicCircle*
+static BbGedaCircle*
 bb_circle_tool_get_item(BbCircleTool *tool)
 {
     g_return_val_if_fail(tool != NULL, NULL);
@@ -311,11 +311,11 @@ bb_circle_tool_init(BbCircleTool *circle_tool)
 
 
 static void
-bb_circle_tool_invalidate_item_cb(BbSchematicItem *item, BbCircleTool *circle_tool)
+bb_circle_tool_invalidate_item_cb(BbGedaItem *item, BbCircleTool *circle_tool)
 {
     g_return_if_fail(circle_tool != NULL);
     g_return_if_fail(circle_tool->item != NULL);
-    g_return_if_fail(circle_tool->item == BB_GRAPHIC_CIRCLE(item));
+    g_return_if_fail(circle_tool->item == BB_GEDA_CIRCLE(item));
 
     g_signal_emit(circle_tool, signals[SIG_INVALIDATE_ITEM], 0, item);
 }
@@ -340,7 +340,7 @@ bb_circle_tool_new(BbToolSubject *subject)
 {
     return BB_CIRCLE_TOOL(g_object_new(
         BB_TYPE_CIRCLE_TOOL,
-        "item", g_object_new(BB_TYPE_GRAPHIC_CIRCLE, NULL),
+        "item", g_object_new(BB_TYPE_GEDA_CIRCLE, NULL),
         "subject", subject,
         NULL
         ));
@@ -372,10 +372,10 @@ bb_circle_tool_reset_with_point(BbCircleTool *circle_tool, gdouble x, gdouble y)
 
     bb_tool_subject_snap_coordinate(circle_tool->subject, bb_coord_round(ux), bb_coord_round(uy), &sx, &sy);
 
-    bb_graphic_circle_set_center_x(circle_tool->item, sx);
-    bb_graphic_circle_set_center_y(circle_tool->item, sy);
+    bb_geda_circle_set_center_x(circle_tool->item, sx);
+    bb_geda_circle_set_center_y(circle_tool->item, sy);
 
-    bb_graphic_circle_set_radius(circle_tool->item, 0);
+    bb_geda_circle_set_radius(circle_tool->item, 0);
 
     circle_tool->state = STATE_S1;
 }
@@ -394,7 +394,7 @@ bb_circle_tool_motion_notify(BbDrawingTool *tool, gdouble x, gdouble y)
 
 
 static void
-bb_circle_tool_set_item(BbCircleTool *tool, BbGraphicCircle *item)
+bb_circle_tool_set_item(BbCircleTool *tool, BbGedaCircle *item)
 {
     g_return_if_fail(tool != NULL);
 
@@ -433,7 +433,7 @@ bb_circle_tool_set_property(GObject *object, guint property_id, const GValue *va
     switch (property_id)
     {
         case PROP_ITEM:
-            bb_circle_tool_set_item(BB_CIRCLE_TOOL(object), BB_GRAPHIC_CIRCLE(g_value_get_object(value)));
+            bb_circle_tool_set_item(BB_CIRCLE_TOOL(object), BB_GEDA_CIRCLE(g_value_get_object(value)));
             break;
 
         case PROP_SUBJECT:
@@ -485,12 +485,12 @@ bb_circle_tool_update_with_point(BbCircleTool *circle_tool, gdouble x, gdouble y
         g_return_if_fail(success);
 
         double distance = bb_coord_distance(
-            bb_graphic_circle_get_center_x(circle_tool->item),
-            bb_graphic_circle_get_center_y(circle_tool->item),
+            bb_geda_circle_get_center_x(circle_tool->item),
+            bb_geda_circle_get_center_y(circle_tool->item),
             ux,
             uy
             );
 
-        bb_graphic_circle_set_radius(circle_tool->item, distance);
+        bb_geda_circle_set_radius(circle_tool->item, distance);
     }
 }

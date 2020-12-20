@@ -50,7 +50,7 @@ static void
 bb_color_editor_apply(BbColorComboBox *combo, BbColorEditor *editor);
 
 static void
-bb_color_editor_apply_lambda(BbSchematicItem *item, gpointer user_data);
+bb_color_editor_apply_lambda(BbGedaItem *item, gpointer user_data);
 
 static void
 bb_color_editor_get_property(GObject *object, guint param_id, GValue* value, GParamSpec* pspec);
@@ -62,7 +62,7 @@ static void
 bb_color_editor_update(BbMainWindow *main_window, BbColorEditor *editor);
 
 static gboolean
-bb_color_editor_update_lambda(BbSchematicItem *item, gpointer user_data);
+bb_color_editor_update_lambda(BbGedaItem *item, gpointer user_data);
 
 
 /**
@@ -99,7 +99,7 @@ bb_color_editor_apply(BbColorComboBox *combo, BbColorEditor *editor)
  * @param user_data The color
  */
 static void
-bb_color_editor_apply_lambda(BbSchematicItem *item, gpointer user_data)
+bb_color_editor_apply_lambda(BbGedaItem *item, gpointer user_data)
 {
     if (BB_IS_ADJUSTABLE_ITEM_COLOR(item))
     {
@@ -293,7 +293,7 @@ bb_color_editor_update(BbMainWindow *main_window, BbColorEditor *editor)
  * @return TRUE to continue iterating and FALSE to stop iterating
  */
 static gboolean
-bb_color_editor_update_lambda(BbSchematicItem *item, gpointer user_data)
+bb_color_editor_update_lambda(BbGedaItem *item, gpointer user_data)
 {
     GHashTable *table = (GHashTable*) user_data;
 

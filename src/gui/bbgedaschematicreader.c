@@ -265,7 +265,7 @@ bb_geda_schematic_reader_read_item_ready(BbGedaItemFactory *factory, GAsyncResul
 
     GError *local_error = NULL;
 
-    BbSchematicItem *item = bb_geda_item_factory_create_finish(factory, result, &local_error);
+    BbGedaItem *item = bb_geda_item_factory_create_finish(factory, result, &local_error);
 
     if (local_error != NULL)
     {

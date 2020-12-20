@@ -43,7 +43,7 @@ struct _BbBlockTool
 {
     GObject parent;
 
-    BbUniversalBlock *item;
+    BbGedaBlock *item;
 
     BbToolSubject *subject;
 };
@@ -70,7 +70,7 @@ bb_block_tool_finalize(GObject *object);
 static void
 bb_block_tool_finish(BbBlockTool *block_tool);
 
-static BbUniversalBlock*
+static BbGedaBlock*
 bb_block_tool_get_item(BbBlockTool *tool);
 
 static void
@@ -80,7 +80,7 @@ static BbToolSubject*
 bb_block_tool_get_subject(BbBlockTool *tool);
 
 static void
-bb_block_tool_invalidate_item_cb(BbSchematicItem *item, BbBlockTool *block_tool);
+bb_block_tool_invalidate_item_cb(BbGedaItem *item, BbBlockTool *block_tool);
 
 static void
 bb_block_tool_key_pressed(BbDrawingTool *tool);
@@ -98,7 +98,7 @@ static void
 bb_block_tool_reset_with_point(BbBlockTool *tool, double x, double y);
 
 static void
-bb_block_tool_set_item(BbBlockTool *tool, BbUniversalBlock *item);
+bb_block_tool_set_item(BbBlockTool *tool, BbGedaBlock *item);
 
 static void
 bb_block_tool_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
@@ -159,7 +159,7 @@ bb_block_tool_class_init(BbBlockToolClass *klasse)
             "item",
             "",
             "",
-            BB_TYPE_UNIVERSAL_BLOCK,
+            BB_TYPE_GEDA_BLOCK,
             G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS
             )
         );
@@ -226,7 +226,7 @@ bb_block_tool_finish(BbBlockTool *block_tool)
 {
     g_return_if_fail(block_tool != NULL);
 
-    BbSchematicItem *item = bb_schematic_item_clone(BB_SCHEMATIC_ITEM(block_tool->item));
+    BbGedaItem *item = bb_geda_item_clone(BB_GEDA_ITEM(block_tool->item));
 
     bb_tool_subject_add_item(block_tool->subject, item);
 
@@ -236,7 +236,7 @@ bb_block_tool_finish(BbBlockTool *block_tool)
 }
 
 
-static BbUniversalBlock*
+static BbGedaBlock*
 bb_block_tool_get_item(BbBlockTool *tool)
 {
     g_return_val_if_fail(tool != NULL, NULL);
@@ -281,11 +281,11 @@ bb_block_tool_init(BbBlockTool *block_tool)
 
 
 static void
-bb_block_tool_invalidate_item_cb(BbSchematicItem *item, BbBlockTool *block_tool)
+bb_block_tool_invalidate_item_cb(BbGedaItem *item, BbBlockTool *block_tool)
 {
     g_return_if_fail(block_tool != NULL);
     g_return_if_fail(block_tool->item != NULL);
-    g_return_if_fail(block_tool->item == BB_UNIVERSAL_BLOCK(item));
+    g_return_if_fail(block_tool->item == BB_GEDA_BLOCK(item));
 
     g_signal_emit(block_tool, signals[SIG_INVALIDATE_ITEM], 0, item);
 }
@@ -310,7 +310,7 @@ bb_block_tool_new(BbToolSubject *subject)
 {
     return BB_BLOCK_TOOL(g_object_new(
         BB_TYPE_BLOCK_TOOL,
-        "item", g_object_new(BB_TYPE_UNIVERSAL_BLOCK, NULL),
+        "item", g_object_new(BB_TYPE_GEDA_BLOCK, NULL),
         "subject", subject,
         NULL
         ));
@@ -330,8 +330,8 @@ bb_block_tool_reset_with_point(BbBlockTool *block_tool, gdouble x, gdouble y)
     g_return_if_fail(block_tool != NULL);
     g_return_if_fail(block_tool->item != NULL);
 
-    bb_universal_block_set_insert_x(block_tool->item, x);
-    bb_universal_block_set_insert_y(block_tool->item, y);
+    bb_geda_block_set_insert_x(block_tool->item, x);
+    bb_geda_block_set_insert_y(block_tool->item, y);
 }
 
 
@@ -348,7 +348,7 @@ bb_block_tool_motion_notify(BbDrawingTool *tool, gdouble x, gdouble y)
 
 
 static void
-bb_block_tool_set_item(BbBlockTool *tool, BbUniversalBlock *item)
+bb_block_tool_set_item(BbBlockTool *tool, BbGedaBlock *item)
 {
     g_return_if_fail(tool != NULL);
 
@@ -387,7 +387,7 @@ bb_block_tool_set_property(GObject *object, guint property_id, const GValue *val
     switch (property_id)
     {
         case PROP_ITEM:
-            bb_block_tool_set_item(BB_BLOCK_TOOL(object), BB_UNIVERSAL_BLOCK(g_value_get_object(value)));
+            bb_block_tool_set_item(BB_BLOCK_TOOL(object), BB_GEDA_BLOCK(g_value_get_object(value)));
             break;
 
         case PROP_SUBJECT:
@@ -430,6 +430,6 @@ bb_block_tool_update_with_point(BbBlockTool *block_tool, gdouble x, gdouble y)
     g_return_if_fail(block_tool != NULL);
     g_return_if_fail(block_tool->item != NULL);
 
-    bb_universal_block_set_insert_x(block_tool->item, x);
-    bb_universal_block_set_insert_y(block_tool->item, y);
+    bb_geda_block_set_insert_x(block_tool->item, x);
+    bb_geda_block_set_insert_y(block_tool->item, y);
 }

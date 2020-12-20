@@ -1,3 +1,5 @@
+#ifndef __BBGRAPHICPATH__
+#define __BBGRAPHICPATH__
 /*
  * bbsch
  * Copyright (C) 2020 Edward C. Hennessy
@@ -17,10 +19,9 @@
  */
 
 #include <gtk/gtk.h>
-#include "bbapplyfunc.h"
+#include "bbgedaitem.h"
 
+#define BB_TYPE_GEDA_PATH bb_geda_path_get_type()
+G_DECLARE_FINAL_TYPE(BbGraphicPath, bb_geda_path, BB, GEDA_PATH, BbGedaItem)
 
-void
-bb_apply_func_nothing(BbGedaItem *item, gpointer user_data)
-{
-}
+#endif

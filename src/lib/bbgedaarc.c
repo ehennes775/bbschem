@@ -18,7 +18,7 @@
 
 #include <gtk/gtk.h>
 #include <bbextensions.h>
-#include "bbgraphicarc.h"
+#include "bbgedaarc.h"
 #include "bbcoord.h"
 #include "bbitemparams.h"
 #include "bbadjustablelinestyle.h"
@@ -75,9 +75,9 @@ enum
 };
 
 
-struct _BbGraphicArc
+struct _BbGedaArc
 {
-    BbSchematicItem parent;
+    BbGedaItem parent;
 
     BbItemParams *params;
 
@@ -96,77 +96,77 @@ struct _BbGraphicArc
 
 
 static void
-bb_graphic_arc_adjustable_item_color_init(BbAdjustableLineStyleInterface *iface);
+bb_geda_arc_adjustable_item_color_init(BbAdjustableLineStyleInterface *iface);
 
 static void
-bb_graphic_arc_adjustable_line_style_init(BbAdjustableLineStyleInterface *iface);
+bb_geda_arc_adjustable_line_style_init(BbAdjustableLineStyleInterface *iface);
 
 static BbBounds*
-bb_graphic_arc_calculate_bounds(BbSchematicItem *item, BbBoundsCalculator *calculator);
+bb_geda_arc_calculate_bounds(BbGedaItem *item, BbBoundsCalculator *calculator);
 
-static BbSchematicItem*
-bb_graphic_arc_clone(BbSchematicItem *item);
-
-static void
-bb_graphic_arc_dispose(GObject *object);
+static BbGedaItem*
+bb_geda_arc_clone(BbGedaItem *item);
 
 static void
-bb_graphic_arc_finalize(GObject *object);
+bb_geda_arc_dispose(GObject *object);
+
+static void
+bb_geda_arc_finalize(GObject *object);
 
 static int
-bb_graphic_arc_get_cap_type(BbGraphicArc *arc);
+bb_geda_arc_get_cap_type(BbGedaArc *arc);
 
 static int
-bb_graphic_arc_get_dash_space(BbGraphicArc *arc);
+bb_geda_arc_get_dash_space(BbGedaArc *arc);
 
 static int
-bb_graphic_arc_get_dash_length(BbGraphicArc *arc);
+bb_geda_arc_get_dash_length(BbGedaArc *arc);
 
 static int
-bb_graphic_arc_get_dash_type(BbGraphicArc *arc);
+bb_geda_arc_get_dash_type(BbGedaArc *arc);
 
 static int
-bb_graphic_arc_get_item_color(BbGraphicArc *arc);
+bb_geda_arc_get_item_color(BbGedaArc *arc);
 
 static void
-bb_graphic_arc_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
+bb_geda_arc_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
 
 static int
-bb_graphic_arc_get_line_width(BbGraphicArc *arc);
+bb_geda_arc_get_line_width(BbGedaArc *arc);
 
 static void
-bb_graphic_arc_render(BbSchematicItem *item, BbItemRenderer *renderer);
+bb_geda_arc_render(BbGedaItem *item, BbItemRenderer *renderer);
 
 static void
-bb_graphic_arc_set_cap_type(BbGraphicArc *arc, int cap_type);
+bb_geda_arc_set_cap_type(BbGedaArc *arc, int cap_type);
 
 static void
-bb_graphic_arc_set_dash_length(BbGraphicArc *arc, int dash_length);
+bb_geda_arc_set_dash_length(BbGedaArc *arc, int dash_length);
 
 static void
-bb_graphic_arc_set_dash_space(BbGraphicArc *arc, int dash_space);
+bb_geda_arc_set_dash_space(BbGedaArc *arc, int dash_space);
 
 static void
-bb_graphic_arc_set_dash_type(BbGraphicArc *arc, int dash_type);
+bb_geda_arc_set_dash_type(BbGedaArc *arc, int dash_type);
 
 static void
-bb_graphic_arc_set_item_color(BbGraphicArc *arc, int item_color);
+bb_geda_arc_set_item_color(BbGedaArc *arc, int item_color);
 
 static void
-bb_graphic_arc_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
+bb_geda_arc_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
 
 static void
-bb_graphic_arc_set_width(BbGraphicArc *arc, int width);
+bb_geda_arc_set_width(BbGedaArc *arc, int width);
 
 static void
-bb_graphic_arc_translate(BbSchematicItem *item, int dx, int dy);
+bb_geda_arc_translate(BbGedaItem *item, int dx, int dy);
 
 static gboolean
-bb_graphic_arc_write(BbSchematicItem *item, GOutputStream *stream, GCancellable *cancellable, GError **error);
+bb_geda_arc_write(BbGedaItem *item, GOutputStream *stream, GCancellable *cancellable, GError **error);
 
 static void
-bb_graphic_arc_write_async(
-    BbSchematicItem *item,
+bb_geda_arc_write_async(
+    BbGedaItem *item,
     GOutputStream *stream,
     int io_priority,
     GCancellable *cancellable,
@@ -175,8 +175,8 @@ bb_graphic_arc_write_async(
     );
 
 static gboolean
-bb_graphic_arc_write_finish(
-    BbSchematicItem *item,
+bb_geda_arc_write_finish(
+    BbGedaItem *item,
     GOutputStream *stream,
     GAsyncResult *result,
     GError **error
@@ -188,29 +188,29 @@ static guint signals[N_SIGNALS];
 
 
 G_DEFINE_TYPE_WITH_CODE(
-    BbGraphicArc,
-    bb_graphic_arc,
-    BB_TYPE_SCHEMATIC_ITEM,
-    G_IMPLEMENT_INTERFACE(BB_TYPE_ADJUSTABLE_ITEM_COLOR, bb_graphic_arc_adjustable_item_color_init)
-    G_IMPLEMENT_INTERFACE(BB_TYPE_ADJUSTABLE_LINE_STYLE, bb_graphic_arc_adjustable_line_style_init)
+    BbGedaArc,
+    bb_geda_arc,
+    BB_TYPE_GEDA_ITEM,
+    G_IMPLEMENT_INTERFACE(BB_TYPE_ADJUSTABLE_ITEM_COLOR, bb_geda_arc_adjustable_item_color_init)
+    G_IMPLEMENT_INTERFACE(BB_TYPE_ADJUSTABLE_LINE_STYLE, bb_geda_arc_adjustable_line_style_init)
     )
 
 
 static void
-bb_graphic_arc_adjustable_item_color_init(BbAdjustableLineStyleInterface *iface)
+bb_geda_arc_adjustable_item_color_init(BbAdjustableLineStyleInterface *iface)
 {
 }
 
 
 static void
-bb_graphic_arc_adjustable_line_style_init(BbAdjustableLineStyleInterface *iface)
+bb_geda_arc_adjustable_line_style_init(BbAdjustableLineStyleInterface *iface)
 {
 }
 
 static BbBounds*
-bb_graphic_arc_calculate_bounds(BbSchematicItem *item, BbBoundsCalculator *calculator)
+bb_geda_arc_calculate_bounds(BbGedaItem *item, BbBoundsCalculator *calculator)
 {
-    BbGraphicArc *arc = BB_GRAPHIC_ARC(item);
+    BbGedaArc *arc = BB_GEDA_ARC(item);
 
     g_return_val_if_fail(arc != NULL, NULL);
     g_return_val_if_fail(arc->line_style != NULL, NULL);
@@ -227,23 +227,23 @@ bb_graphic_arc_calculate_bounds(BbSchematicItem *item, BbBoundsCalculator *calcu
 
 
 static void
-bb_graphic_arc_class_init(BbGraphicArcClass *klasse)
+bb_geda_arc_class_init(BbGedaArcClass *klasse)
 {
     GObjectClass *object_class = G_OBJECT_CLASS(klasse);
     g_return_if_fail(object_class != NULL);
 
-    object_class->dispose = bb_graphic_arc_dispose;
-    object_class->finalize = bb_graphic_arc_finalize;
-    object_class->get_property = bb_graphic_arc_get_property;
-    object_class->set_property = bb_graphic_arc_set_property;
+    object_class->dispose = bb_geda_arc_dispose;
+    object_class->finalize = bb_geda_arc_finalize;
+    object_class->get_property = bb_geda_arc_get_property;
+    object_class->set_property = bb_geda_arc_set_property;
 
-    BB_SCHEMATIC_ITEM_CLASS(klasse)->calculate_bounds = bb_graphic_arc_calculate_bounds;
-    BB_SCHEMATIC_ITEM_CLASS(klasse)->clone = bb_graphic_arc_clone;
-    BB_SCHEMATIC_ITEM_CLASS(klasse)->render = bb_graphic_arc_render;
-    BB_SCHEMATIC_ITEM_CLASS(klasse)->translate = bb_graphic_arc_translate;
-    BB_SCHEMATIC_ITEM_CLASS(klasse)->write = bb_graphic_arc_write;
-    BB_SCHEMATIC_ITEM_CLASS(klasse)->write_async = bb_graphic_arc_write_async;
-    BB_SCHEMATIC_ITEM_CLASS(klasse)->write_finish = bb_graphic_arc_write_finish;
+    BB_GEDA_ITEM_CLASS(klasse)->calculate_bounds = bb_geda_arc_calculate_bounds;
+    BB_GEDA_ITEM_CLASS(klasse)->clone = bb_geda_arc_clone;
+    BB_GEDA_ITEM_CLASS(klasse)->render = bb_geda_arc_render;
+    BB_GEDA_ITEM_CLASS(klasse)->translate = bb_geda_arc_translate;
+    BB_GEDA_ITEM_CLASS(klasse)->write = bb_geda_arc_write;
+    BB_GEDA_ITEM_CLASS(klasse)->write_async = bb_geda_arc_write_async;
+    BB_GEDA_ITEM_CLASS(klasse)->write_finish = bb_geda_arc_write_finish;
 
     bb_object_class_install_property(
          object_class,
@@ -365,28 +365,28 @@ bb_graphic_arc_class_init(BbGraphicArcClass *klasse)
         "line-width"
         );
 
-    signals[SIG_INVALIDATE] = g_signal_lookup("invalidate-item", BB_TYPE_SCHEMATIC_ITEM);
+    signals[SIG_INVALIDATE] = g_signal_lookup("invalidate-item", BB_TYPE_GEDA_ITEM);
 }
 
 
-static BbSchematicItem*
-bb_graphic_arc_clone(BbSchematicItem *item)
+static BbGedaItem*
+bb_geda_arc_clone(BbGedaItem *item)
 {
-    return BB_SCHEMATIC_ITEM(g_object_new(
-        BB_TYPE_GRAPHIC_ARC,
-        "center-x", bb_graphic_arc_get_center_x(BB_GRAPHIC_ARC(item)),
-        "center-y", bb_graphic_arc_get_center_y(BB_GRAPHIC_ARC(item)),
-        "radius", bb_graphic_arc_get_radius(BB_GRAPHIC_ARC(item)),
-        "start-angle", bb_graphic_arc_get_start_angle(BB_GRAPHIC_ARC(item)),
-        "sweep-angle", bb_graphic_arc_get_sweep_angle(BB_GRAPHIC_ARC(item)),
+    return BB_GEDA_ITEM(g_object_new(
+        BB_TYPE_GEDA_ARC,
+        "center-x", bb_geda_arc_get_center_x(BB_GEDA_ARC(item)),
+        "center-y", bb_geda_arc_get_center_y(BB_GEDA_ARC(item)),
+        "radius", bb_geda_arc_get_radius(BB_GEDA_ARC(item)),
+        "start-angle", bb_geda_arc_get_start_angle(BB_GEDA_ARC(item)),
+        "sweep-angle", bb_geda_arc_get_sweep_angle(BB_GEDA_ARC(item)),
 
-        "item-color", bb_graphic_arc_get_item_color(BB_GRAPHIC_ARC(item)),
+        "item-color", bb_geda_arc_get_item_color(BB_GEDA_ARC(item)),
 
-        "cap-type", bb_graphic_arc_get_cap_type(BB_GRAPHIC_ARC(item)),
-        "dash-length", bb_graphic_arc_get_dash_length(BB_GRAPHIC_ARC(item)),
-        "dash-space", bb_graphic_arc_get_dash_space(BB_GRAPHIC_ARC(item)),
-        "dash-type", bb_graphic_arc_get_dash_type(BB_GRAPHIC_ARC(item)),
-        "line-width", bb_graphic_arc_get_line_width(BB_GRAPHIC_ARC(item)),
+        "cap-type", bb_geda_arc_get_cap_type(BB_GEDA_ARC(item)),
+        "dash-length", bb_geda_arc_get_dash_length(BB_GEDA_ARC(item)),
+        "dash-space", bb_geda_arc_get_dash_space(BB_GEDA_ARC(item)),
+        "dash-type", bb_geda_arc_get_dash_type(BB_GEDA_ARC(item)),
+        "line-width", bb_geda_arc_get_line_width(BB_GEDA_ARC(item)),
 
         NULL
         ));
@@ -394,15 +394,15 @@ bb_graphic_arc_clone(BbSchematicItem *item)
 
 
 static void
-bb_graphic_arc_dispose(GObject *object)
+bb_geda_arc_dispose(GObject *object)
 {
 }
 
 
 static void
-bb_graphic_arc_finalize(GObject *object)
+bb_geda_arc_finalize(GObject *object)
 {
-    BbGraphicArc *arc = BB_GRAPHIC_ARC(object);
+    BbGedaArc *arc = BB_GEDA_ARC(object);
 
     g_return_if_fail(arc != NULL);
 
@@ -411,7 +411,7 @@ bb_graphic_arc_finalize(GObject *object)
 
 
 static int
-bb_graphic_arc_get_cap_type(BbGraphicArc *arc)
+bb_geda_arc_get_cap_type(BbGedaArc *arc)
 {
     g_return_val_if_fail(arc != NULL, 0);
     g_return_val_if_fail(arc->line_style != NULL, 0);
@@ -421,7 +421,7 @@ bb_graphic_arc_get_cap_type(BbGraphicArc *arc)
 
 
 int
-bb_graphic_arc_get_center_x(BbGraphicArc *arc)
+bb_geda_arc_get_center_x(BbGedaArc *arc)
 {
     g_return_val_if_fail(arc != NULL, 0);
 
@@ -430,7 +430,7 @@ bb_graphic_arc_get_center_x(BbGraphicArc *arc)
 
 
 int
-bb_graphic_arc_get_center_y(BbGraphicArc *arc)
+bb_geda_arc_get_center_y(BbGedaArc *arc)
 {
     g_return_val_if_fail(arc != NULL, 0);
 
@@ -439,7 +439,7 @@ bb_graphic_arc_get_center_y(BbGraphicArc *arc)
 
 
 static int
-bb_graphic_arc_get_dash_length(BbGraphicArc *arc)
+bb_geda_arc_get_dash_length(BbGedaArc *arc)
 {
     g_return_val_if_fail(arc != NULL, 0);
     g_return_val_if_fail(arc->line_style != NULL, 0);
@@ -449,7 +449,7 @@ bb_graphic_arc_get_dash_length(BbGraphicArc *arc)
 
 
 static int
-bb_graphic_arc_get_dash_space(BbGraphicArc *arc)
+bb_geda_arc_get_dash_space(BbGedaArc *arc)
 {
     g_return_val_if_fail(arc != NULL, 0);
     g_return_val_if_fail(arc->line_style != NULL, 0);
@@ -459,7 +459,7 @@ bb_graphic_arc_get_dash_space(BbGraphicArc *arc)
 
 
 static int
-bb_graphic_arc_get_dash_type(BbGraphicArc *arc)
+bb_geda_arc_get_dash_type(BbGedaArc *arc)
 {
     g_return_val_if_fail(arc != NULL, 0);
     g_return_val_if_fail(arc->line_style != NULL, 0);
@@ -469,7 +469,7 @@ bb_graphic_arc_get_dash_type(BbGraphicArc *arc)
 
 
 static int
-bb_graphic_arc_get_item_color(BbGraphicArc *arc)
+bb_geda_arc_get_item_color(BbGedaArc *arc)
 {
     g_return_val_if_fail(arc != NULL, 0);
 
@@ -478,52 +478,52 @@ bb_graphic_arc_get_item_color(BbGraphicArc *arc)
 
 
 static void
-bb_graphic_arc_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec)
+bb_geda_arc_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec)
 {
     switch (property_id)
     {
         case PROP_CENTER_X:
-            g_value_set_int(value, bb_graphic_arc_get_center_x(BB_GRAPHIC_ARC(object)));
+            g_value_set_int(value, bb_geda_arc_get_center_x(BB_GEDA_ARC(object)));
             break;
 
         case PROP_CENTER_Y:
-            g_value_set_int(value, bb_graphic_arc_get_center_y(BB_GRAPHIC_ARC(object)));
+            g_value_set_int(value, bb_geda_arc_get_center_y(BB_GEDA_ARC(object)));
             break;
 
         case PROP_RADIUS:
-            g_value_set_int(value, bb_graphic_arc_get_radius(BB_GRAPHIC_ARC(object)));
+            g_value_set_int(value, bb_geda_arc_get_radius(BB_GEDA_ARC(object)));
             break;
 
         case PROP_START_ANGLE:
-            g_value_set_int(value, bb_graphic_arc_get_start_angle(BB_GRAPHIC_ARC(object)));
+            g_value_set_int(value, bb_geda_arc_get_start_angle(BB_GEDA_ARC(object)));
             break;
 
         case PROP_SWEEP_ANGLE:
-            g_value_set_int(value, bb_graphic_arc_get_sweep_angle(BB_GRAPHIC_ARC(object)));
+            g_value_set_int(value, bb_geda_arc_get_sweep_angle(BB_GEDA_ARC(object)));
             break;
 
         case PROP_ITEM_COLOR:
-            g_value_set_int(value, bb_graphic_arc_get_item_color(BB_GRAPHIC_ARC(object)));
+            g_value_set_int(value, bb_geda_arc_get_item_color(BB_GEDA_ARC(object)));
             break;
 
         case PROP_CAP_TYPE:
-            g_value_set_int(value, bb_graphic_arc_get_cap_type(BB_GRAPHIC_ARC(object)));
+            g_value_set_int(value, bb_geda_arc_get_cap_type(BB_GEDA_ARC(object)));
             break;
 
         case PROP_DASH_LENGTH:
-            g_value_set_int(value, bb_graphic_arc_get_dash_length(BB_GRAPHIC_ARC(object)));
+            g_value_set_int(value, bb_geda_arc_get_dash_length(BB_GEDA_ARC(object)));
             break;
 
         case PROP_DASH_SPACE:
-            g_value_set_int(value, bb_graphic_arc_get_dash_space(BB_GRAPHIC_ARC(object)));
+            g_value_set_int(value, bb_geda_arc_get_dash_space(BB_GEDA_ARC(object)));
             break;
 
         case PROP_DASH_TYPE:
-            g_value_set_int(value, bb_graphic_arc_get_dash_type(BB_GRAPHIC_ARC(object)));
+            g_value_set_int(value, bb_geda_arc_get_dash_type(BB_GEDA_ARC(object)));
             break;
 
         case PROP_LINE_WIDTH:
-            g_value_set_int(value, bb_graphic_arc_get_line_width(BB_GRAPHIC_ARC(object)));
+            g_value_set_int(value, bb_geda_arc_get_line_width(BB_GEDA_ARC(object)));
             break;
 
         default:
@@ -533,7 +533,7 @@ bb_graphic_arc_get_property(GObject *object, guint property_id, GValue *value, G
 
 
 static int
-bb_graphic_arc_get_line_width(BbGraphicArc *arc)
+bb_geda_arc_get_line_width(BbGedaArc *arc)
 {
     g_return_val_if_fail(arc != NULL, 0);
     g_return_val_if_fail(arc->line_style != NULL, 0);
@@ -543,7 +543,7 @@ bb_graphic_arc_get_line_width(BbGraphicArc *arc)
 
 
 int
-bb_graphic_arc_get_radius(BbGraphicArc *arc)
+bb_geda_arc_get_radius(BbGedaArc *arc)
 {
     g_return_val_if_fail(arc != NULL, 0);
 
@@ -552,7 +552,7 @@ bb_graphic_arc_get_radius(BbGraphicArc *arc)
 
 
 int
-bb_graphic_arc_get_start_angle(BbGraphicArc *arc)
+bb_geda_arc_get_start_angle(BbGedaArc *arc)
 {
     g_return_val_if_fail(arc != NULL, 0);
 
@@ -561,7 +561,7 @@ bb_graphic_arc_get_start_angle(BbGraphicArc *arc)
 
 
 int
-bb_graphic_arc_get_sweep_angle(BbGraphicArc *arc)
+bb_geda_arc_get_sweep_angle(BbGedaArc *arc)
 {
     g_return_val_if_fail(arc != NULL, 0);
 
@@ -570,7 +570,7 @@ bb_graphic_arc_get_sweep_angle(BbGraphicArc *arc)
 
 
 static void
-bb_graphic_arc_init(BbGraphicArc *arc)
+bb_geda_arc_init(BbGedaArc *arc)
 {
     g_return_if_fail(arc != NULL);
 
@@ -578,15 +578,15 @@ bb_graphic_arc_init(BbGraphicArc *arc)
 }
 
 
-BbGraphicArc*
-bb_graphic_arc_new_with_params(BbParams *params, GError **error)
+BbGedaArc*
+bb_geda_arc_new_with_params(BbParams *params, GError **error)
 {
     GError *local_error[N_PARAMETERS] = { NULL };
 
-    g_return_val_if_fail(bb_params_token_matches(params, BB_GRAPHIC_ARC_TOKEN), NULL);
+    g_return_val_if_fail(bb_params_token_matches(params, BB_GEDA_ARC_TOKEN), NULL);
 
-    BbGraphicArc *arc = BB_GRAPHIC_ARC(g_object_new(
-        BB_TYPE_GRAPHIC_ARC,
+    BbGedaArc *arc = BB_GEDA_ARC(g_object_new(
+        BB_TYPE_GEDA_ARC,
         "center-x", bb_params_get_int(params, PARAM_CENTER_X, &local_error[PARAM_CENTER_X]),
         "center-y", bb_params_get_int(params, PARAM_CENTER_Y, &local_error[PARAM_CENTER_Y]),
         "radius", bb_params_get_int(params, PARAM_RADIUS, &local_error[PARAM_RADIUS]),
@@ -595,9 +595,9 @@ bb_graphic_arc_new_with_params(BbParams *params, GError **error)
 
         "item-color", bb_params_get_int(params, PARAM_COLOR, &local_error[PARAM_COLOR]),
 
-        "line-width",  bb_params_get_int(params, PARAM_LINE_WIDTH, &local_error[PARAM_LINE_WIDTH]),
-        "cap-type",  bb_params_get_int(params, PARAM_CAP_TYPE, &local_error[PARAM_CAP_TYPE]),
-        "dash_type",  bb_params_get_int(params, PARAM_DASH_TYPE, &local_error[PARAM_DASH_TYPE]),
+        "line-width", bb_params_get_int(params, PARAM_LINE_WIDTH, &local_error[PARAM_LINE_WIDTH]),
+        "cap-type", bb_params_get_int(params, PARAM_CAP_TYPE, &local_error[PARAM_CAP_TYPE]),
+        "dash_type", bb_params_get_int(params, PARAM_DASH_TYPE, &local_error[PARAM_DASH_TYPE]),
         "dash-length", bb_params_get_int(params, PARAM_DASH_LENGTH, &local_error[PARAM_DASH_LENGTH]),
         "dash-space", bb_params_get_int(params, PARAM_DASH_SPACE, &local_error[PARAM_DASH_SPACE]),
         NULL
@@ -624,16 +624,16 @@ bb_graphic_arc_new_with_params(BbParams *params, GError **error)
 
 
 __attribute__((constructor)) void
-bb_graphic_arc_register()
+bb_geda_arc_register()
 {
-    bb_graphic_arc_get_type();
+    bb_geda_arc_get_type();
 }
 
 
 static void
-bb_graphic_arc_render(BbSchematicItem *item, BbItemRenderer *renderer)
+bb_geda_arc_render(BbGedaItem *item, BbItemRenderer *renderer)
 {
-    BbGraphicArc *arc = BB_GRAPHIC_ARC(item);
+    BbGedaArc *arc = BB_GEDA_ARC(item);
 
     bb_item_renderer_set_color(renderer, arc->color);
     bb_item_renderer_set_line_style(renderer, arc->line_style);
@@ -650,7 +650,7 @@ bb_graphic_arc_render(BbSchematicItem *item, BbItemRenderer *renderer)
 
 
 static void
-bb_graphic_arc_set_cap_type(BbGraphicArc *arc, int cap_type)
+bb_geda_arc_set_cap_type(BbGedaArc *arc, int cap_type)
 {
     g_return_if_fail(arc != NULL);
     g_return_if_fail(arc->line_style != NULL);
@@ -667,7 +667,7 @@ bb_graphic_arc_set_cap_type(BbGraphicArc *arc, int cap_type)
 
 
 void
-bb_graphic_arc_set_center_x(BbGraphicArc *arc, int x)
+bb_geda_arc_set_center_x(BbGedaArc *arc, int x)
 {
     g_return_if_fail(arc != NULL);
 
@@ -685,7 +685,7 @@ bb_graphic_arc_set_center_x(BbGraphicArc *arc, int x)
 
 
 void
-bb_graphic_arc_set_center_y(BbGraphicArc *arc, int y)
+bb_geda_arc_set_center_y(BbGedaArc *arc, int y)
 {
     g_return_if_fail(arc != NULL);
 
@@ -703,7 +703,7 @@ bb_graphic_arc_set_center_y(BbGraphicArc *arc, int y)
 
 
 static void
-bb_graphic_arc_set_dash_length(BbGraphicArc *arc, int dash_length)
+bb_geda_arc_set_dash_length(BbGedaArc *arc, int dash_length)
 {
     g_return_if_fail(arc != NULL);
     g_return_if_fail(arc->line_style != NULL);
@@ -720,7 +720,7 @@ bb_graphic_arc_set_dash_length(BbGraphicArc *arc, int dash_length)
 
 
 static void
-bb_graphic_arc_set_dash_space(BbGraphicArc *arc, int dash_space)
+bb_geda_arc_set_dash_space(BbGedaArc *arc, int dash_space)
 {
     g_return_if_fail(arc != NULL);
     g_return_if_fail(arc->line_style != NULL);
@@ -737,7 +737,7 @@ bb_graphic_arc_set_dash_space(BbGraphicArc *arc, int dash_space)
 
 
 static void
-bb_graphic_arc_set_dash_type(BbGraphicArc *arc, int dash_type)
+bb_geda_arc_set_dash_type(BbGedaArc *arc, int dash_type)
 {
     g_return_if_fail(arc != NULL);
     g_return_if_fail(arc->line_style != NULL);
@@ -754,7 +754,7 @@ bb_graphic_arc_set_dash_type(BbGraphicArc *arc, int dash_type)
 
 
 static void
-bb_graphic_arc_set_item_color(BbGraphicArc *arc, int color)
+bb_geda_arc_set_item_color(BbGedaArc *arc, int color)
 {
     g_return_if_fail(arc != NULL);
 
@@ -770,52 +770,52 @@ bb_graphic_arc_set_item_color(BbGraphicArc *arc, int color)
 
 
 static void
-bb_graphic_arc_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec)
+bb_geda_arc_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec)
 {
     switch (property_id)
     {
         case PROP_CENTER_X:
-            bb_graphic_arc_set_center_x(BB_GRAPHIC_ARC(object), g_value_get_int(value));
+            bb_geda_arc_set_center_x(BB_GEDA_ARC(object), g_value_get_int(value));
             break;
 
         case PROP_CENTER_Y:
-            bb_graphic_arc_set_center_y(BB_GRAPHIC_ARC(object), g_value_get_int(value));
+            bb_geda_arc_set_center_y(BB_GEDA_ARC(object), g_value_get_int(value));
             break;
 
         case PROP_RADIUS:
-            bb_graphic_arc_set_radius(BB_GRAPHIC_ARC(object), g_value_get_int(value));
+            bb_geda_arc_set_radius(BB_GEDA_ARC(object), g_value_get_int(value));
             break;
 
         case PROP_START_ANGLE:
-            bb_graphic_arc_set_start_angle(BB_GRAPHIC_ARC(object), g_value_get_int(value));
+            bb_geda_arc_set_start_angle(BB_GEDA_ARC(object), g_value_get_int(value));
             break;
 
         case PROP_SWEEP_ANGLE:
-            bb_graphic_arc_set_sweep_angle(BB_GRAPHIC_ARC(object), g_value_get_int(value));
+            bb_geda_arc_set_sweep_angle(BB_GEDA_ARC(object), g_value_get_int(value));
             break;
 
         case PROP_ITEM_COLOR:
-            bb_graphic_arc_set_item_color(BB_GRAPHIC_ARC(object), g_value_get_int(value));
+            bb_geda_arc_set_item_color(BB_GEDA_ARC(object), g_value_get_int(value));
             break;
 
         case PROP_CAP_TYPE:
-            bb_graphic_arc_set_cap_type(BB_GRAPHIC_ARC(object), g_value_get_int(value));
+            bb_geda_arc_set_cap_type(BB_GEDA_ARC(object), g_value_get_int(value));
             break;
 
         case PROP_DASH_LENGTH:
-            bb_graphic_arc_set_dash_length(BB_GRAPHIC_ARC(object), g_value_get_int(value));
+            bb_geda_arc_set_dash_length(BB_GEDA_ARC(object), g_value_get_int(value));
             break;
 
         case PROP_DASH_SPACE:
-            bb_graphic_arc_set_dash_space(BB_GRAPHIC_ARC(object), g_value_get_int(value));
+            bb_geda_arc_set_dash_space(BB_GEDA_ARC(object), g_value_get_int(value));
             break;
 
         case PROP_DASH_TYPE:
-            bb_graphic_arc_set_dash_type(BB_GRAPHIC_ARC(object), g_value_get_int(value));
+            bb_geda_arc_set_dash_type(BB_GEDA_ARC(object), g_value_get_int(value));
             break;
 
         case PROP_LINE_WIDTH:
-            bb_graphic_arc_set_width(BB_GRAPHIC_ARC(object), g_value_get_int(value));
+            bb_geda_arc_set_width(BB_GEDA_ARC(object), g_value_get_int(value));
             break;
 
         default:
@@ -825,7 +825,7 @@ bb_graphic_arc_set_property(GObject *object, guint property_id, const GValue *va
 
 
 void
-bb_graphic_arc_set_radius(BbGraphicArc *arc, int radius)
+bb_geda_arc_set_radius(BbGedaArc *arc, int radius)
 {
     g_return_if_fail(arc != NULL);
 
@@ -843,7 +843,7 @@ bb_graphic_arc_set_radius(BbGraphicArc *arc, int radius)
 
 
 void
-bb_graphic_arc_set_start_angle(BbGraphicArc *arc, int angle)
+bb_geda_arc_set_start_angle(BbGedaArc *arc, int angle)
 {
     g_return_if_fail(arc != NULL);
 
@@ -861,7 +861,7 @@ bb_graphic_arc_set_start_angle(BbGraphicArc *arc, int angle)
 
 
 void
-bb_graphic_arc_set_sweep_angle(BbGraphicArc *arc, int angle)
+bb_geda_arc_set_sweep_angle(BbGedaArc *arc, int angle)
 {
     g_return_if_fail(arc != NULL);
 
@@ -879,7 +879,7 @@ bb_graphic_arc_set_sweep_angle(BbGraphicArc *arc, int angle)
 
 
 static void
-bb_graphic_arc_set_width(BbGraphicArc *arc, int width)
+bb_geda_arc_set_width(BbGedaArc *arc, int width)
 {
     g_return_if_fail(arc != NULL);
     g_return_if_fail(arc->line_style != NULL);
@@ -898,9 +898,9 @@ bb_graphic_arc_set_width(BbGraphicArc *arc, int width)
 
 
 static void
-bb_graphic_arc_translate(BbSchematicItem *item, int dx, int dy)
+bb_geda_arc_translate(BbGedaItem *item, int dx, int dy)
 {
-    BbGraphicArc *arc = BB_GRAPHIC_ARC(item);
+    BbGedaArc *arc = BB_GEDA_ARC(item);
     g_return_if_fail(arc != NULL);
 
     g_signal_emit(arc, signals[SIG_INVALIDATE], 0);
@@ -915,9 +915,9 @@ bb_graphic_arc_translate(BbSchematicItem *item, int dx, int dy)
 
 
 static gboolean
-bb_graphic_arc_write(BbSchematicItem *item, GOutputStream *stream, GCancellable *cancellable, GError **error)
+bb_geda_arc_write(BbGedaItem *item, GOutputStream *stream, GCancellable *cancellable, GError **error)
 {
-    BbGraphicArc *arc = BB_GRAPHIC_ARC(item);
+    BbGedaArc *arc = BB_GEDA_ARC(item);
     g_return_val_if_fail(arc != NULL, FALSE);
 
     GString *params = g_string_new(NULL);
@@ -925,7 +925,7 @@ bb_graphic_arc_write(BbSchematicItem *item, GOutputStream *stream, GCancellable 
     g_string_printf(
         params,
         "%s %d %d %d %d %d %d %d %d %d %d %d\n",
-        BB_GRAPHIC_ARC_TOKEN,
+        BB_GEDA_ARC_TOKEN,
         arc->center_x,
         arc->center_y,
         arc->radius,
@@ -955,8 +955,8 @@ bb_graphic_arc_write(BbSchematicItem *item, GOutputStream *stream, GCancellable 
 
 
 static void
-bb_graphic_arc_write_async(
-    BbSchematicItem *item,
+bb_geda_arc_write_async(
+    BbGedaItem *item,
     GOutputStream *stream,
     int io_priority,
     GCancellable *cancellable,
@@ -964,7 +964,7 @@ bb_graphic_arc_write_async(
     gpointer callback_data
     )
 {
-    BbGraphicArc *arc = BB_GRAPHIC_ARC(item);
+    BbGedaArc *arc = BB_GEDA_ARC(item);
 
     bb_item_params_write_async(
         arc->params,
@@ -978,8 +978,8 @@ bb_graphic_arc_write_async(
 
 
 static gboolean
-bb_graphic_arc_write_finish(
-    BbSchematicItem *item,
+bb_geda_arc_write_finish(
+    BbGedaItem *item,
     GOutputStream *stream,
     GAsyncResult *result,
     GError **error

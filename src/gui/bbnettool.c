@@ -19,7 +19,7 @@
 #include <gtk/gtk.h>
 #include <bbextensions.h>
 #include <bblibrary.h>
-#include <bbelectricalnet.h>
+#include <bbgedanet.h>
 #include "bbnettool.h"
 #include "bbdrawingtool.h"
 
@@ -51,7 +51,7 @@ struct _BbNetTool
 {
     GObject parent;
 
-    BbElectricalNet *item;
+    BbGedaNet *item;
 
     int state;
 
@@ -80,7 +80,7 @@ bb_net_tool_finalize(GObject *object);
 static void
 bb_net_tool_finish(BbNetTool *net_tool);
 
-static BbElectricalNet*
+static BbGedaNet*
 bb_net_tool_get_item(BbNetTool *tool);
 
 static void
@@ -90,7 +90,7 @@ static BbToolSubject*
 bb_net_tool_get_subject(BbNetTool *tool);
 
 static void
-bb_net_tool_invalidate_item_cb(BbSchematicItem *item, BbNetTool *net_tool);
+bb_net_tool_invalidate_item_cb(BbGedaItem *item, BbNetTool *net_tool);
 
 static void
 bb_net_tool_key_pressed(BbDrawingTool *tool);
@@ -108,7 +108,7 @@ static void
 bb_net_tool_reset_with_point(BbNetTool *tool, double x, double y);
 
 static void
-bb_net_tool_set_item(BbNetTool *tool, BbElectricalNet *item);
+bb_net_tool_set_item(BbNetTool *tool, BbGedaNet *item);
 
 static void
 bb_net_tool_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
@@ -181,7 +181,7 @@ bb_net_tool_class_init(BbNetToolClass *klasse)
             "item",
             "",
             "",
-            BB_TYPE_ELECTRICAL_NET,
+            BB_TYPE_GEDA_NET,
             G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS
             )
         );
@@ -224,10 +224,10 @@ bb_net_tool_draw(BbDrawingTool *tool, BbGraphics *graphics)
 
     if (net_tool->state != STATE_S0)
     {
-        bb_schematic_item_render(
-            BB_SCHEMATIC_ITEM(net_tool->item),
+        bb_geda_item_render(
+            BB_GEDA_ITEM(net_tool->item),
             BB_ITEM_RENDERER(graphics)
-            );
+        );
     }
 }
 
@@ -257,7 +257,7 @@ bb_net_tool_finish(BbNetTool *net_tool)
 {
     g_return_if_fail(net_tool != NULL);
 
-    BbSchematicItem *item = bb_schematic_item_clone(BB_SCHEMATIC_ITEM(net_tool->item));
+    BbGedaItem *item = bb_geda_item_clone(BB_GEDA_ITEM(net_tool->item));
 
     bb_tool_subject_add_item(net_tool->subject, item);
 
@@ -267,7 +267,7 @@ bb_net_tool_finish(BbNetTool *net_tool)
 }
 
 
-static BbElectricalNet*
+static BbGedaNet*
 bb_net_tool_get_item(BbNetTool *tool)
 {
     g_return_val_if_fail(tool != NULL, NULL);
@@ -312,11 +312,11 @@ bb_net_tool_init(BbNetTool *net_tool)
 
 
 static void
-bb_net_tool_invalidate_item_cb(BbSchematicItem *item, BbNetTool *net_tool)
+bb_net_tool_invalidate_item_cb(BbGedaItem *item, BbNetTool *net_tool)
 {
     g_return_if_fail(net_tool != NULL);
     g_return_if_fail(net_tool->item != NULL);
-    g_return_if_fail(net_tool->item == BB_ELECTRICAL_NET(item));
+    g_return_if_fail(net_tool->item == BB_GEDA_NET(item));
 
     g_signal_emit(net_tool, signals[SIG_INVALIDATE_ITEM], 0, item);
 }
@@ -341,7 +341,7 @@ bb_net_tool_new(BbToolSubject *subject)
 {
     return BB_NET_TOOL(g_object_new(
         BB_TYPE_NET_TOOL,
-        "item", g_object_new(BB_TYPE_ELECTRICAL_NET, NULL),
+        "item", g_object_new(BB_TYPE_GEDA_NET, NULL),
         "subject", subject,
         NULL
         ));
@@ -373,11 +373,11 @@ bb_net_tool_reset_with_point(BbNetTool *net_tool, gdouble x, gdouble y)
 
     bb_tool_subject_snap_coordinate(net_tool->subject, bb_coord_round(ux), bb_coord_round(uy), &sx, &sy);
 
-    bb_electrical_net_set_x0(net_tool->item, sx);
-    bb_electrical_net_set_y0(net_tool->item, sy);
+    bb_geda_net_set_x0(net_tool->item, sx);
+    bb_geda_net_set_y0(net_tool->item, sy);
 
-    bb_electrical_net_set_x1(net_tool->item, sx);
-    bb_electrical_net_set_y1(net_tool->item, sy);
+    bb_geda_net_set_x1(net_tool->item, sx);
+    bb_geda_net_set_y1(net_tool->item, sy);
 
     net_tool->state = STATE_S1;
 }
@@ -396,7 +396,7 @@ bb_net_tool_motion_notify(BbDrawingTool *tool, gdouble x, gdouble y)
 
 
 static void
-bb_net_tool_set_item(BbNetTool *tool, BbElectricalNet *item)
+bb_net_tool_set_item(BbNetTool *tool, BbGedaNet *item)
 {
     g_return_if_fail(tool != NULL);
 
@@ -435,7 +435,7 @@ bb_net_tool_set_property(GObject *object, guint property_id, const GValue *value
     switch (property_id)
     {
         case PROP_ITEM:
-            bb_net_tool_set_item(BB_NET_TOOL(object), BB_ELECTRICAL_NET(g_value_get_object(value)));
+            bb_net_tool_set_item(BB_NET_TOOL(object), BB_GEDA_NET(g_value_get_object(value)));
             break;
 
         case PROP_SUBJECT:
@@ -491,7 +491,7 @@ bb_net_tool_update_with_point(BbNetTool *net_tool, gdouble x, gdouble y)
 
         bb_tool_subject_snap_coordinate(net_tool->subject, bb_coord_round(ux), bb_coord_round(uy), &sx, &sy);
 
-        bb_electrical_net_set_x1(net_tool->item, sx);
-        bb_electrical_net_set_y1(net_tool->item, sy);
+        bb_geda_net_set_x1(net_tool->item, sx);
+        bb_geda_net_set_y1(net_tool->item, sy);
     }
 }

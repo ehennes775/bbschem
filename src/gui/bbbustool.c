@@ -19,7 +19,7 @@
 #include <gtk/gtk.h>
 #include <bbextensions.h>
 #include <bblibrary.h>
-#include <bbelectricalbus.h>
+#include <bbgedabus.h>
 #include "bbbustool.h"
 #include "bbdrawingtool.h"
 
@@ -51,7 +51,7 @@ struct _BbBusTool
 {
     GObject parent;
 
-    BbElectricalBus *item;
+    BbGedaBus *item;
 
     int state;
 
@@ -80,7 +80,7 @@ bb_bus_tool_finalize(GObject *object);
 static void
 bb_bus_tool_finish(BbBusTool *bus_tool);
 
-static BbElectricalBus*
+static BbGedaBus*
 bb_bus_tool_get_item(BbBusTool *tool);
 
 static void
@@ -90,7 +90,7 @@ static BbToolSubject*
 bb_bus_tool_get_subject(BbBusTool *tool);
 
 static void
-bb_bus_tool_invalidate_item_cb(BbSchematicItem *item, BbBusTool *bus_tool);
+bb_bus_tool_invalidate_item_cb(BbGedaItem *item, BbBusTool *bus_tool);
 
 static void
 bb_bus_tool_key_pressed(BbDrawingTool *tool);
@@ -108,7 +108,7 @@ static void
 bb_bus_tool_reset_with_point(BbBusTool *tool, double x, double y);
 
 static void
-bb_bus_tool_set_item(BbBusTool *tool, BbElectricalBus *item);
+bb_bus_tool_set_item(BbBusTool *tool, BbGedaBus *item);
 
 static void
 bb_bus_tool_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
@@ -181,7 +181,7 @@ bb_bus_tool_class_init(BbBusToolClass *klasse)
             "item",
             "",
             "",
-            BB_TYPE_ELECTRICAL_BUS,
+            BB_TYPE_GEDA_BUS,
             G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS
             )
         );
@@ -224,10 +224,10 @@ bb_bus_tool_draw(BbDrawingTool *tool, BbGraphics *graphics)
 
     if (bus_tool->state != STATE_S0)
     {
-        bb_schematic_item_render(
-            BB_SCHEMATIC_ITEM(bus_tool->item),
+        bb_geda_item_render(
+            BB_GEDA_ITEM(bus_tool->item),
             BB_ITEM_RENDERER(graphics)
-            );
+        );
     }
 }
 
@@ -257,7 +257,7 @@ bb_bus_tool_finish(BbBusTool *bus_tool)
 {
     g_return_if_fail(bus_tool != NULL);
 
-    BbSchematicItem *item = bb_schematic_item_clone(BB_SCHEMATIC_ITEM(bus_tool->item));
+    BbGedaItem *item = bb_geda_item_clone(BB_GEDA_ITEM(bus_tool->item));
 
     bb_tool_subject_add_item(bus_tool->subject, item);
 
@@ -267,7 +267,7 @@ bb_bus_tool_finish(BbBusTool *bus_tool)
 }
 
 
-static BbElectricalBus*
+static BbGedaBus*
 bb_bus_tool_get_item(BbBusTool *tool)
 {
     g_return_val_if_fail(tool != NULL, NULL);
@@ -312,11 +312,11 @@ bb_bus_tool_init(BbBusTool *bus_tool)
 
 
 static void
-bb_bus_tool_invalidate_item_cb(BbSchematicItem *item, BbBusTool *bus_tool)
+bb_bus_tool_invalidate_item_cb(BbGedaItem *item, BbBusTool *bus_tool)
 {
     g_return_if_fail(bus_tool != NULL);
     g_return_if_fail(bus_tool->item != NULL);
-    g_return_if_fail(bus_tool->item == BB_ELECTRICAL_BUS(item));
+    g_return_if_fail(bus_tool->item == BB_GEDA_BUS(item));
 
     g_signal_emit(bus_tool, signals[SIG_INVALIDATE_ITEM], 0, item);
 }
@@ -341,7 +341,7 @@ bb_bus_tool_new(BbToolSubject *subject)
 {
     return BB_BUS_TOOL(g_object_new(
         BB_TYPE_BUS_TOOL,
-        "item", g_object_new(BB_TYPE_ELECTRICAL_BUS, NULL),
+        "item", g_object_new(BB_TYPE_GEDA_BUS, NULL),
         "subject", subject,
         NULL
         ));
@@ -373,11 +373,11 @@ bb_bus_tool_reset_with_point(BbBusTool *bus_tool, gdouble x, gdouble y)
 
     bb_tool_subject_snap_coordinate(bus_tool->subject, bb_coord_round(ux), bb_coord_round(uy), &sx, &sy);
 
-    bb_electrical_bus_set_x0(bus_tool->item, sx);
-    bb_electrical_bus_set_y0(bus_tool->item, sy);
+    bb_geda_bus_set_x0(bus_tool->item, sx);
+    bb_geda_bus_set_y0(bus_tool->item, sy);
 
-    bb_electrical_bus_set_x1(bus_tool->item, sx);
-    bb_electrical_bus_set_y1(bus_tool->item, sy);
+    bb_geda_bus_set_x1(bus_tool->item, sx);
+    bb_geda_bus_set_y1(bus_tool->item, sy);
 
     bus_tool->state = STATE_S1;
 }
@@ -396,7 +396,7 @@ bb_bus_tool_motion_notify(BbDrawingTool *tool, gdouble x, gdouble y)
 
 
 static void
-bb_bus_tool_set_item(BbBusTool *tool, BbElectricalBus *item)
+bb_bus_tool_set_item(BbBusTool *tool, BbGedaBus *item)
 {
     g_return_if_fail(tool != NULL);
 
@@ -435,7 +435,7 @@ bb_bus_tool_set_property(GObject *object, guint property_id, const GValue *value
     switch (property_id)
     {
         case PROP_ITEM:
-            bb_bus_tool_set_item(BB_BUS_TOOL(object), BB_ELECTRICAL_BUS(g_value_get_object(value)));
+            bb_bus_tool_set_item(BB_BUS_TOOL(object), BB_GEDA_BUS(g_value_get_object(value)));
             break;
 
         case PROP_SUBJECT:
@@ -491,7 +491,7 @@ bb_bus_tool_update_with_point(BbBusTool *bus_tool, gdouble x, gdouble y)
 
         bb_tool_subject_snap_coordinate(bus_tool->subject, bb_coord_round(ux), bb_coord_round(uy), &sx, &sy);
 
-        bb_electrical_bus_set_x1(bus_tool->item, sx);
-        bb_electrical_bus_set_y1(bus_tool->item, sy);
+        bb_geda_bus_set_x1(bus_tool->item, sx);
+        bb_geda_bus_set_y1(bus_tool->item, sy);
     }
 }

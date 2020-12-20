@@ -173,7 +173,7 @@ struct _BbSchematicWindow
 
 
 static void
-bb_schematic_window_add_item(BbToolSubject *subject, BbSchematicItem *item);
+bb_schematic_window_add_item(BbToolSubject *subject, BbGedaItem *item);
 
 static void
 bb_schematic_window_bounds_calculator_init(BbBoundsCalculatorInterface *iface);
@@ -260,7 +260,7 @@ static void
 bb_schematic_window_invalidate_all(BbToolSubject *tool_subject);
 
 static void
-bb_schematic_window_invalidate_item_cb(BbDrawingTool *tool, BbSchematicItem *item, BbSchematicWindow *window);
+bb_schematic_window_invalidate_item_cb(BbDrawingTool *tool, BbGedaItem *item, BbSchematicWindow *window);
 
 static void
 bb_schematic_window_invalidate_rect_dev(BbToolSubject *tool_subject, double x0, double y0, double x1, double y1);
@@ -378,7 +378,7 @@ G_DEFINE_TYPE_WITH_CODE(
 
 
 static void
-bb_schematic_window_add_item(BbToolSubject *subject, BbSchematicItem *item)
+bb_schematic_window_add_item(BbToolSubject *subject, BbGedaItem *item)
 {
     g_message("bb_schematic_window_add_item");
 
@@ -1133,7 +1133,7 @@ bb_schematic_window_invalidate_all(BbToolSubject *tool_subject)
 
 
 static void
-bb_schematic_window_invalidate_item_cb(BbDrawingTool *tool, BbSchematicItem *item, BbSchematicWindow *window)
+bb_schematic_window_invalidate_item_cb(BbDrawingTool *tool, BbGedaItem *item, BbSchematicWindow *window)
 {
     g_return_if_fail(window != NULL);
     g_return_if_fail(window->inner_window != NULL);

@@ -43,7 +43,7 @@ struct _BbTextTool
 {
     GObject parent;
 
-    BbUniversalText *item;
+    BbGedaText *item;
 
     BbToolSubject *subject;
 };
@@ -70,7 +70,7 @@ bb_text_tool_finalize(GObject *object);
 static void
 bb_text_tool_finish(BbTextTool *text_tool);
 
-static BbUniversalText*
+static BbGedaText*
 bb_text_tool_get_item(BbTextTool *tool);
 
 static void
@@ -80,7 +80,7 @@ static BbToolSubject*
 bb_text_tool_get_subject(BbTextTool *tool);
 
 static void
-bb_text_tool_invalidate_item_cb(BbSchematicItem *item, BbTextTool *text_tool);
+bb_text_tool_invalidate_item_cb(BbGedaItem *item, BbTextTool *text_tool);
 
 static void
 bb_text_tool_key_pressed(BbDrawingTool *tool);
@@ -98,7 +98,7 @@ static void
 bb_text_tool_reset_with_point(BbTextTool *tool, double x, double y);
 
 static void
-bb_text_tool_set_item(BbTextTool *tool, BbUniversalText *item);
+bb_text_tool_set_item(BbTextTool *tool, BbGedaText *item);
 
 static void
 bb_text_tool_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
@@ -158,7 +158,7 @@ bb_text_tool_class_init(BbTextToolClass *klasse)
             "item",
             "",
             "",
-            BB_TYPE_UNIVERSAL_TEXT,
+            BB_TYPE_GEDA_TEXT,
             G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS
             )
         );
@@ -225,7 +225,7 @@ bb_text_tool_finish(BbTextTool *text_tool)
 {
     g_return_if_fail(text_tool != NULL);
 
-    BbSchematicItem *item = bb_schematic_item_clone(BB_SCHEMATIC_ITEM(text_tool->item));
+    BbGedaItem *item = bb_geda_item_clone(BB_GEDA_ITEM(text_tool->item));
 
     bb_tool_subject_add_item(text_tool->subject, item);
 
@@ -235,7 +235,7 @@ bb_text_tool_finish(BbTextTool *text_tool)
 }
 
 
-static BbUniversalText*
+static BbGedaText*
 bb_text_tool_get_item(BbTextTool *tool)
 {
     g_return_val_if_fail(tool != NULL, NULL);
@@ -280,11 +280,11 @@ bb_text_tool_init(BbTextTool *text_tool)
 
 
 static void
-bb_text_tool_invalidate_item_cb(BbSchematicItem *item, BbTextTool *text_tool)
+bb_text_tool_invalidate_item_cb(BbGedaItem *item, BbTextTool *text_tool)
 {
     g_return_if_fail(text_tool != NULL);
     g_return_if_fail(text_tool->item != NULL);
-    g_return_if_fail(text_tool->item == BB_UNIVERSAL_TEXT(item));
+    g_return_if_fail(text_tool->item == BB_GEDA_TEXT(item));
 
     g_signal_emit(text_tool, signals[SIG_INVALIDATE_ITEM], 0, item);
 }
@@ -309,7 +309,7 @@ bb_text_tool_new(BbToolSubject *subject)
 {
     return BB_TEXT_TOOL(g_object_new(
         BB_TYPE_TEXT_TOOL,
-        "item", g_object_new(BB_TYPE_UNIVERSAL_TEXT, NULL),
+        "item", g_object_new(BB_TYPE_GEDA_TEXT, NULL),
         "subject", subject,
         NULL
         ));
@@ -329,8 +329,8 @@ bb_text_tool_reset_with_point(BbTextTool *text_tool, gdouble x, gdouble y)
     g_return_if_fail(text_tool != NULL);
     g_return_if_fail(text_tool->item != NULL);
 
-    bb_universal_text_set_insert_x(text_tool->item, x);
-    bb_universal_text_set_insert_y(text_tool->item, y);
+    bb_geda_text_set_insert_x(text_tool->item, x);
+    bb_geda_text_set_insert_y(text_tool->item, y);
 }
 
 
@@ -347,7 +347,7 @@ bb_text_tool_motion_notify(BbDrawingTool *tool, gdouble x, gdouble y)
 
 
 static void
-bb_text_tool_set_item(BbTextTool *tool, BbUniversalText *item)
+bb_text_tool_set_item(BbTextTool *tool, BbGedaText *item)
 {
     g_return_if_fail(tool != NULL);
 
@@ -386,7 +386,7 @@ bb_text_tool_set_property(GObject *object, guint property_id, const GValue *valu
     switch (property_id)
     {
         case PROP_ITEM:
-            bb_text_tool_set_item(BB_TEXT_TOOL(object), BB_UNIVERSAL_TEXT(g_value_get_object(value)));
+            bb_text_tool_set_item(BB_TEXT_TOOL(object), BB_GEDA_TEXT(g_value_get_object(value)));
             break;
 
         case PROP_SUBJECT:
@@ -429,6 +429,6 @@ bb_text_tool_update_with_point(BbTextTool *text_tool, gdouble x, gdouble y)
     g_return_if_fail(text_tool != NULL);
     g_return_if_fail(text_tool->item != NULL);
 
-    bb_universal_text_set_insert_x(text_tool->item, x);
-    bb_universal_text_set_insert_y(text_tool->item, y);
+    bb_geda_text_set_insert_x(text_tool->item, x);
+    bb_geda_text_set_insert_y(text_tool->item, y);
 }

@@ -20,7 +20,7 @@
 #include <bbextensions.h>
 #include "bbcoord.h"
 #include "bbitemparams.h"
-#include "bbgraphiccircle.h"
+#include "bbgedacircle.h"
 #include "bbadjustablelinestyle.h"
 #include "bbadjustablefillstyle.h"
 #include "bbadjustableitemcolor.h"
@@ -89,9 +89,9 @@ enum
 };
 
 
-struct _BbGraphicCircle
+struct _BbGedaCircle
 {
-    BbSchematicItem parent;
+    BbGedaItem parent;
 
     BbItemParams *params;
 
@@ -108,98 +108,98 @@ struct _BbGraphicCircle
 
 
 static void
-bb_graphic_circle_adjustable_fill_style_init(BbAdjustableFillStyleInterface *iface);
+bb_geda_circle_adjustable_fill_style_init(BbAdjustableFillStyleInterface *iface);
 
 static void
-bb_graphic_circle_adjustable_item_color_init(BbAdjustableItemColorInterface *iface);
+bb_geda_circle_adjustable_item_color_init(BbAdjustableItemColorInterface *iface);
 
 static void
-bb_graphic_circle_adjustable_line_style_init(BbAdjustableLineStyleInterface *iface);
+bb_geda_circle_adjustable_line_style_init(BbAdjustableLineStyleInterface *iface);
 
 static BbBounds*
-bb_graphic_circle_calculate_bounds(BbSchematicItem *item, BbBoundsCalculator *calculator);
+bb_geda_circle_calculate_bounds(BbGedaItem *item, BbBoundsCalculator *calculator);
 
-static BbSchematicItem*
-bb_graphic_circle_clone(BbSchematicItem *item);
-
-static void
-bb_graphic_circle_dispose(GObject *object);
+static BbGedaItem*
+bb_geda_circle_clone(BbGedaItem *item);
 
 static void
-bb_graphic_circle_finalize(GObject *object);
-
-static int
-bb_graphic_circle_get_angle_1(BbGraphicCircle *circle);
-
-static int
-bb_graphic_circle_get_angle_2(BbGraphicCircle *circle);
-
-static int
-bb_graphic_circle_get_cap_type(BbGraphicCircle *circle);
-
-static int
-bb_graphic_circle_get_dash_length(BbGraphicCircle *circle);
-
-static int
-bb_graphic_circle_get_dash_space(BbGraphicCircle *circle);
-
-static int
-bb_graphic_circle_get_dash_type(BbGraphicCircle *circle);
-
-static int
-bb_graphic_circle_get_fill_type(BbGraphicCircle *circle);
-
-static int
-bb_graphic_circle_get_fill_width(BbGraphicCircle *circle);
-
-static int
-bb_graphic_circle_get_item_color(BbGraphicCircle *circle);
-
-static int
-bb_graphic_circle_get_line_width(BbGraphicCircle *circle);
-
-static int
-bb_graphic_circle_get_pitch_1(BbGraphicCircle *circle);
-
-static int
-bb_graphic_circle_get_pitch_2(BbGraphicCircle *circle);
+bb_geda_circle_dispose(GObject *object);
 
 static void
-bb_graphic_circle_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
+bb_geda_circle_finalize(GObject *object);
+
+static int
+bb_geda_circle_get_angle_1(BbGedaCircle *circle);
+
+static int
+bb_geda_circle_get_angle_2(BbGedaCircle *circle);
+
+static int
+bb_geda_circle_get_cap_type(BbGedaCircle *circle);
+
+static int
+bb_geda_circle_get_dash_length(BbGedaCircle *circle);
+
+static int
+bb_geda_circle_get_dash_space(BbGedaCircle *circle);
+
+static int
+bb_geda_circle_get_dash_type(BbGedaCircle *circle);
+
+static int
+bb_geda_circle_get_fill_type(BbGedaCircle *circle);
+
+static int
+bb_geda_circle_get_fill_width(BbGedaCircle *circle);
+
+static int
+bb_geda_circle_get_item_color(BbGedaCircle *circle);
+
+static int
+bb_geda_circle_get_line_width(BbGedaCircle *circle);
+
+static int
+bb_geda_circle_get_pitch_1(BbGedaCircle *circle);
+
+static int
+bb_geda_circle_get_pitch_2(BbGedaCircle *circle);
 
 static void
-bb_graphic_circle_render(BbSchematicItem *item, BbItemRenderer *renderer);
+bb_geda_circle_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
 
 static void
-bb_graphic_circle_set_cap_type(BbGraphicCircle *circle, int type);
+bb_geda_circle_render(BbGedaItem *item, BbItemRenderer *renderer);
 
 static void
-bb_graphic_circle_set_dash_length(BbGraphicCircle *circle, int length);
+bb_geda_circle_set_cap_type(BbGedaCircle *circle, int type);
 
 static void
-bb_graphic_circle_set_dash_space(BbGraphicCircle *circle, int space);
+bb_geda_circle_set_dash_length(BbGedaCircle *circle, int length);
 
 static void
-bb_graphic_circle_set_dash_type(BbGraphicCircle *circle, int type);
+bb_geda_circle_set_dash_space(BbGedaCircle *circle, int space);
 
 static void
-bb_graphic_circle_set_item_color(BbGraphicCircle *circle, int color);
+bb_geda_circle_set_dash_type(BbGedaCircle *circle, int type);
 
 static void
-bb_graphic_circle_set_line_width(BbGraphicCircle *line, int width);
+bb_geda_circle_set_item_color(BbGedaCircle *circle, int color);
 
 static void
-bb_graphic_circle_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
+bb_geda_circle_set_line_width(BbGedaCircle *line, int width);
 
 static void
-bb_graphic_circle_translate(BbSchematicItem *item, int dx, int dy);
+bb_geda_circle_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
+
+static void
+bb_geda_circle_translate(BbGedaItem *item, int dx, int dy);
 
 static gboolean
-bb_graphic_circle_write(BbSchematicItem *item, GOutputStream *stream, GCancellable *cancellable, GError **error);
+bb_geda_circle_write(BbGedaItem *item, GOutputStream *stream, GCancellable *cancellable, GError **error);
 
 static void
-bb_graphic_circle_write_async(
-    BbSchematicItem *item,
+bb_geda_circle_write_async(
+    BbGedaItem *item,
     GOutputStream *stream,
     int io_priority,
     GCancellable *cancellable,
@@ -208,8 +208,8 @@ bb_graphic_circle_write_async(
     );
 
 static gboolean
-bb_graphic_circle_write_finish(
-    BbSchematicItem *item,
+bb_geda_circle_write_finish(
+    BbGedaItem *item,
     GOutputStream *stream,
     GAsyncResult *result,
     GError **error
@@ -221,40 +221,40 @@ static guint signals[N_SIGNALS];
 
 
 G_DEFINE_TYPE_WITH_CODE(
-    BbGraphicCircle,
-    bb_graphic_circle,
-    BB_TYPE_SCHEMATIC_ITEM,
-    G_IMPLEMENT_INTERFACE(BB_TYPE_ADJUSTABLE_FILL_STYLE, bb_graphic_circle_adjustable_fill_style_init)
-    G_IMPLEMENT_INTERFACE(BB_TYPE_ADJUSTABLE_ITEM_COLOR, bb_graphic_circle_adjustable_item_color_init)
-    G_IMPLEMENT_INTERFACE(BB_TYPE_ADJUSTABLE_LINE_STYLE, bb_graphic_circle_adjustable_line_style_init)
+    BbGedaCircle,
+    bb_geda_circle,
+    BB_TYPE_GEDA_ITEM,
+    G_IMPLEMENT_INTERFACE(BB_TYPE_ADJUSTABLE_FILL_STYLE, bb_geda_circle_adjustable_fill_style_init)
+    G_IMPLEMENT_INTERFACE(BB_TYPE_ADJUSTABLE_ITEM_COLOR, bb_geda_circle_adjustable_item_color_init)
+    G_IMPLEMENT_INTERFACE(BB_TYPE_ADJUSTABLE_LINE_STYLE, bb_geda_circle_adjustable_line_style_init)
     )
 
 
 static void
-bb_graphic_circle_adjustable_fill_style_init(BbAdjustableFillStyleInterface *iface)
+bb_geda_circle_adjustable_fill_style_init(BbAdjustableFillStyleInterface *iface)
 {
     g_return_if_fail(iface != NULL);
 }
 
 
 static void
-bb_graphic_circle_adjustable_item_color_init(BbAdjustableItemColorInterface *iface)
+bb_geda_circle_adjustable_item_color_init(BbAdjustableItemColorInterface *iface)
 {
     g_return_if_fail(iface != NULL);
 }
 
 
 static void
-bb_graphic_circle_adjustable_line_style_init(BbAdjustableLineStyleInterface *iface)
+bb_geda_circle_adjustable_line_style_init(BbAdjustableLineStyleInterface *iface)
 {
     g_return_if_fail(iface != NULL);
 }
 
 
 static BbBounds*
-bb_graphic_circle_calculate_bounds(BbSchematicItem *item, BbBoundsCalculator *calculator)
+bb_geda_circle_calculate_bounds(BbGedaItem *item, BbBoundsCalculator *calculator)
 {
-    BbGraphicCircle *circle = BB_GRAPHIC_CIRCLE(item);
+    BbGedaCircle *circle = BB_GEDA_CIRCLE(item);
 
     g_return_val_if_fail(circle != NULL, NULL);
 
@@ -270,23 +270,23 @@ bb_graphic_circle_calculate_bounds(BbSchematicItem *item, BbBoundsCalculator *ca
 
 
 static void
-bb_graphic_circle_class_init(BbGraphicCircleClass *klasse)
+bb_geda_circle_class_init(BbGedaCircleClass *klasse)
 {
     GObjectClass *object_class = G_OBJECT_CLASS(klasse);
     g_return_if_fail(object_class != NULL);
 
-    object_class->dispose = bb_graphic_circle_dispose;
-    object_class->finalize = bb_graphic_circle_finalize;
-    object_class->get_property = bb_graphic_circle_get_property;
-    object_class->set_property = bb_graphic_circle_set_property;
+    object_class->dispose = bb_geda_circle_dispose;
+    object_class->finalize = bb_geda_circle_finalize;
+    object_class->get_property = bb_geda_circle_get_property;
+    object_class->set_property = bb_geda_circle_set_property;
 
-    BB_SCHEMATIC_ITEM_CLASS(klasse)->calculate_bounds = bb_graphic_circle_calculate_bounds;
-    BB_SCHEMATIC_ITEM_CLASS(klasse)->clone = bb_graphic_circle_clone;
-    BB_SCHEMATIC_ITEM_CLASS(klasse)->render = bb_graphic_circle_render;
-    BB_SCHEMATIC_ITEM_CLASS(klasse)->translate = bb_graphic_circle_translate;
-    BB_SCHEMATIC_ITEM_CLASS(klasse)->write = bb_graphic_circle_write;
-    BB_SCHEMATIC_ITEM_CLASS(klasse)->write_async = bb_graphic_circle_write_async;
-    BB_SCHEMATIC_ITEM_CLASS(klasse)->write_finish = bb_graphic_circle_write_finish;
+    BB_GEDA_ITEM_CLASS(klasse)->calculate_bounds = bb_geda_circle_calculate_bounds;
+    BB_GEDA_ITEM_CLASS(klasse)->clone = bb_geda_circle_clone;
+    BB_GEDA_ITEM_CLASS(klasse)->render = bb_geda_circle_render;
+    BB_GEDA_ITEM_CLASS(klasse)->translate = bb_geda_circle_translate;
+    BB_GEDA_ITEM_CLASS(klasse)->write = bb_geda_circle_write;
+    BB_GEDA_ITEM_CLASS(klasse)->write_async = bb_geda_circle_write_async;
+    BB_GEDA_ITEM_CLASS(klasse)->write_finish = bb_geda_circle_write_finish;
 
     /* Properties from BbAdjustableFillStyle */
 
@@ -409,36 +409,36 @@ bb_graphic_circle_class_init(BbGraphicCircleClass *klasse)
             )
         );
 
-    signals[SIG_INVALIDATE] = g_signal_lookup("invalidate-item", BB_TYPE_SCHEMATIC_ITEM);
+    signals[SIG_INVALIDATE] = g_signal_lookup("invalidate-item", BB_TYPE_GEDA_ITEM);
 }
 
 
-static BbSchematicItem*
-bb_graphic_circle_clone(BbSchematicItem *item)
+static BbGedaItem*
+bb_geda_circle_clone(BbGedaItem *item)
 {
-    return BB_SCHEMATIC_ITEM(g_object_new(
-        BB_TYPE_GRAPHIC_CIRCLE,
-        "center-x", bb_graphic_circle_get_center_x(BB_GRAPHIC_CIRCLE(item)),
-        "center-y", bb_graphic_circle_get_center_y(BB_GRAPHIC_CIRCLE(item)),
-        "radius", bb_graphic_circle_get_radius(BB_GRAPHIC_CIRCLE(item)),
+    return BB_GEDA_ITEM(g_object_new(
+        BB_TYPE_GEDA_CIRCLE,
+        "center-x", bb_geda_circle_get_center_x(BB_GEDA_CIRCLE(item)),
+        "center-y", bb_geda_circle_get_center_y(BB_GEDA_CIRCLE(item)),
+        "radius", bb_geda_circle_get_radius(BB_GEDA_CIRCLE(item)),
 
         /* From AdjustableFillStyle */
-        "angle-1", bb_graphic_circle_get_angle_1(BB_GRAPHIC_CIRCLE(item)),
-        "angle-2", bb_graphic_circle_get_angle_2(BB_GRAPHIC_CIRCLE(item)),
-        "fill-type", bb_graphic_circle_get_fill_type(BB_GRAPHIC_CIRCLE(item)),
-        "fill-width", bb_graphic_circle_get_fill_width(BB_GRAPHIC_CIRCLE(item)),
-        "pitch-1", bb_graphic_circle_get_pitch_1(BB_GRAPHIC_CIRCLE(item)),
-        "pitch-2", bb_graphic_circle_get_pitch_2(BB_GRAPHIC_CIRCLE(item)),
+        "angle-1", bb_geda_circle_get_angle_1(BB_GEDA_CIRCLE(item)),
+        "angle-2", bb_geda_circle_get_angle_2(BB_GEDA_CIRCLE(item)),
+        "fill-type", bb_geda_circle_get_fill_type(BB_GEDA_CIRCLE(item)),
+        "fill-width", bb_geda_circle_get_fill_width(BB_GEDA_CIRCLE(item)),
+        "pitch-1", bb_geda_circle_get_pitch_1(BB_GEDA_CIRCLE(item)),
+        "pitch-2", bb_geda_circle_get_pitch_2(BB_GEDA_CIRCLE(item)),
 
         /* From AdjustableItemColor */
-        "item-color", bb_graphic_circle_get_item_color(BB_GRAPHIC_CIRCLE(item)),
+        "item-color", bb_geda_circle_get_item_color(BB_GEDA_CIRCLE(item)),
 
         /* From AdjustableLineStyle */
-        "cap-type", bb_graphic_circle_get_cap_type(BB_GRAPHIC_CIRCLE(item)),
-        "dash-length", bb_graphic_circle_get_dash_length(BB_GRAPHIC_CIRCLE(item)),
-        "dash-space", bb_graphic_circle_get_dash_space(BB_GRAPHIC_CIRCLE(item)),
-        "dash-type", bb_graphic_circle_get_dash_type(BB_GRAPHIC_CIRCLE(item)),
-        "line-width", bb_graphic_circle_get_line_width(BB_GRAPHIC_CIRCLE(item)),
+        "cap-type", bb_geda_circle_get_cap_type(BB_GEDA_CIRCLE(item)),
+        "dash-length", bb_geda_circle_get_dash_length(BB_GEDA_CIRCLE(item)),
+        "dash-space", bb_geda_circle_get_dash_space(BB_GEDA_CIRCLE(item)),
+        "dash-type", bb_geda_circle_get_dash_type(BB_GEDA_CIRCLE(item)),
+        "line-width", bb_geda_circle_get_line_width(BB_GEDA_CIRCLE(item)),
 
         NULL
         ));
@@ -446,15 +446,15 @@ bb_graphic_circle_clone(BbSchematicItem *item)
 
 
 static void
-bb_graphic_circle_dispose(GObject *object)
+bb_geda_circle_dispose(GObject *object)
 {
 }
 
 
 static void
-bb_graphic_circle_finalize(GObject *object)
+bb_geda_circle_finalize(GObject *object)
 {
-    BbGraphicCircle *circle = BB_GRAPHIC_CIRCLE(object);
+    BbGedaCircle *circle = BB_GEDA_CIRCLE(object);
 
     g_return_if_fail(circle != NULL);
 
@@ -464,7 +464,7 @@ bb_graphic_circle_finalize(GObject *object)
 
 
 static int
-bb_graphic_circle_get_angle_1(BbGraphicCircle *circle)
+bb_geda_circle_get_angle_1(BbGedaCircle *circle)
 {
     g_return_val_if_fail(circle != NULL, 0);
     g_return_val_if_fail(circle->fill_style != NULL, 0);
@@ -474,7 +474,7 @@ bb_graphic_circle_get_angle_1(BbGraphicCircle *circle)
 
 
 static int
-bb_graphic_circle_get_angle_2(BbGraphicCircle *circle)
+bb_geda_circle_get_angle_2(BbGedaCircle *circle)
 {
     g_return_val_if_fail(circle != NULL, 0);
     g_return_val_if_fail(circle->fill_style != NULL, 0);
@@ -484,7 +484,7 @@ bb_graphic_circle_get_angle_2(BbGraphicCircle *circle)
 
 
 static int
-bb_graphic_circle_get_cap_type(BbGraphicCircle *circle)
+bb_geda_circle_get_cap_type(BbGedaCircle *circle)
 {
     g_return_val_if_fail(circle != NULL, 0);
     g_return_val_if_fail(circle->line_style != NULL, 0);
@@ -494,7 +494,7 @@ bb_graphic_circle_get_cap_type(BbGraphicCircle *circle)
 
 
 int
-bb_graphic_circle_get_center_x(BbGraphicCircle *circle)
+bb_geda_circle_get_center_x(BbGedaCircle *circle)
 {
     g_return_val_if_fail(circle != NULL, 0);
 
@@ -503,7 +503,7 @@ bb_graphic_circle_get_center_x(BbGraphicCircle *circle)
 
 
 int
-bb_graphic_circle_get_center_y(BbGraphicCircle *circle)
+bb_geda_circle_get_center_y(BbGedaCircle *circle)
 {
     g_return_val_if_fail(circle != NULL, 0);
 
@@ -512,7 +512,7 @@ bb_graphic_circle_get_center_y(BbGraphicCircle *circle)
 
 
 static int
-bb_graphic_circle_get_dash_length(BbGraphicCircle *circle)
+bb_geda_circle_get_dash_length(BbGedaCircle *circle)
 {
     g_return_val_if_fail(circle != NULL, 0);
     g_return_val_if_fail(circle->line_style != NULL, 0);
@@ -522,7 +522,7 @@ bb_graphic_circle_get_dash_length(BbGraphicCircle *circle)
 
 
 static int
-bb_graphic_circle_get_dash_space(BbGraphicCircle *circle)
+bb_geda_circle_get_dash_space(BbGedaCircle *circle)
 {
     g_return_val_if_fail(circle != NULL, 0);
     g_return_val_if_fail(circle->line_style != NULL, 0);
@@ -532,7 +532,7 @@ bb_graphic_circle_get_dash_space(BbGraphicCircle *circle)
 
 
 static int
-bb_graphic_circle_get_dash_type(BbGraphicCircle *circle)
+bb_geda_circle_get_dash_type(BbGedaCircle *circle)
 {
     g_return_val_if_fail(circle != NULL, 0);
     g_return_val_if_fail(circle->line_style != NULL, 0);
@@ -542,7 +542,7 @@ bb_graphic_circle_get_dash_type(BbGraphicCircle *circle)
 
 
 static int
-bb_graphic_circle_get_fill_type(BbGraphicCircle *circle)
+bb_geda_circle_get_fill_type(BbGedaCircle *circle)
 {
     g_return_val_if_fail(circle != NULL, 0);
     g_return_val_if_fail(circle->fill_style != NULL, 0);
@@ -552,7 +552,7 @@ bb_graphic_circle_get_fill_type(BbGraphicCircle *circle)
 
 
 static int
-bb_graphic_circle_get_fill_width(BbGraphicCircle *circle)
+bb_geda_circle_get_fill_width(BbGedaCircle *circle)
 {
     g_return_val_if_fail(circle != NULL, 0);
     g_return_val_if_fail(circle->fill_style != NULL, 0);
@@ -562,7 +562,7 @@ bb_graphic_circle_get_fill_width(BbGraphicCircle *circle)
 
 
 static int
-bb_graphic_circle_get_item_color(BbGraphicCircle *circle)
+bb_geda_circle_get_item_color(BbGedaCircle *circle)
 {
     g_return_val_if_fail(circle != NULL, 0);
 
@@ -571,7 +571,7 @@ bb_graphic_circle_get_item_color(BbGraphicCircle *circle)
 
 
 static int
-bb_graphic_circle_get_line_width(BbGraphicCircle *circle)
+bb_geda_circle_get_line_width(BbGedaCircle *circle)
 {
     g_return_val_if_fail(circle != NULL, 0);
     g_return_val_if_fail(circle->line_style != NULL, 0);
@@ -581,7 +581,7 @@ bb_graphic_circle_get_line_width(BbGraphicCircle *circle)
 
 
 static int
-bb_graphic_circle_get_pitch_1(BbGraphicCircle *circle)
+bb_geda_circle_get_pitch_1(BbGedaCircle *circle)
 {
     g_return_val_if_fail(circle != NULL, 0);
     g_return_val_if_fail(circle->fill_style != NULL, 0);
@@ -591,7 +591,7 @@ bb_graphic_circle_get_pitch_1(BbGraphicCircle *circle)
 
 
 static int
-bb_graphic_circle_get_pitch_2(BbGraphicCircle *circle)
+bb_geda_circle_get_pitch_2(BbGedaCircle *circle)
 {
     g_return_val_if_fail(circle != NULL, 0);
     g_return_val_if_fail(circle->fill_style != NULL, 0);
@@ -601,68 +601,68 @@ bb_graphic_circle_get_pitch_2(BbGraphicCircle *circle)
 
 
 static void
-bb_graphic_circle_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec)
+bb_geda_circle_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec)
 {
     switch (property_id)
     {
         case PROP_ANGLE_1:
-            g_value_set_int(value, bb_graphic_circle_get_angle_1(BB_GRAPHIC_CIRCLE(object)));
+            g_value_set_int(value, bb_geda_circle_get_angle_1(BB_GEDA_CIRCLE(object)));
             break;
 
         case PROP_ANGLE_2:
-            g_value_set_int(value, bb_graphic_circle_get_angle_2(BB_GRAPHIC_CIRCLE(object)));
+            g_value_set_int(value, bb_geda_circle_get_angle_2(BB_GEDA_CIRCLE(object)));
             break;
 
         case PROP_CAP_TYPE:
-            g_value_set_int(value, bb_graphic_circle_get_cap_type(BB_GRAPHIC_CIRCLE(object)));
+            g_value_set_int(value, bb_geda_circle_get_cap_type(BB_GEDA_CIRCLE(object)));
             break;
 
         case PROP_CENTER_X:
-            g_value_set_int(value, bb_graphic_circle_get_center_x(BB_GRAPHIC_CIRCLE(object)));
+            g_value_set_int(value, bb_geda_circle_get_center_x(BB_GEDA_CIRCLE(object)));
             break;
 
         case PROP_CENTER_Y:
-            g_value_set_int(value, bb_graphic_circle_get_center_y(BB_GRAPHIC_CIRCLE(object)));
+            g_value_set_int(value, bb_geda_circle_get_center_y(BB_GEDA_CIRCLE(object)));
             break;
 
         case PROP_ITEM_COLOR:
-            g_value_set_int(value, bb_graphic_circle_get_item_color(BB_GRAPHIC_CIRCLE(object)));
+            g_value_set_int(value, bb_geda_circle_get_item_color(BB_GEDA_CIRCLE(object)));
             break;
 
         case PROP_DASH_LENGTH:
-            g_value_set_int(value, bb_graphic_circle_get_dash_length(BB_GRAPHIC_CIRCLE(object)));
+            g_value_set_int(value, bb_geda_circle_get_dash_length(BB_GEDA_CIRCLE(object)));
             break;
 
         case PROP_DASH_SPACE:
-            g_value_set_int(value, bb_graphic_circle_get_dash_space(BB_GRAPHIC_CIRCLE(object)));
+            g_value_set_int(value, bb_geda_circle_get_dash_space(BB_GEDA_CIRCLE(object)));
             break;
 
         case PROP_DASH_TYPE:
-            g_value_set_int(value, bb_graphic_circle_get_dash_type(BB_GRAPHIC_CIRCLE(object)));
+            g_value_set_int(value, bb_geda_circle_get_dash_type(BB_GEDA_CIRCLE(object)));
             break;
 
         case PROP_LINE_WIDTH:
-            g_value_set_int(value, bb_graphic_circle_get_line_width(BB_GRAPHIC_CIRCLE(object)));
+            g_value_set_int(value, bb_geda_circle_get_line_width(BB_GEDA_CIRCLE(object)));
             break;
 
         case PROP_PITCH_1:
-            g_value_set_int(value, bb_graphic_circle_get_pitch_1(BB_GRAPHIC_CIRCLE(object)));
+            g_value_set_int(value, bb_geda_circle_get_pitch_1(BB_GEDA_CIRCLE(object)));
             break;
 
         case PROP_PITCH_2:
-            g_value_set_int(value, bb_graphic_circle_get_pitch_2(BB_GRAPHIC_CIRCLE(object)));
+            g_value_set_int(value, bb_geda_circle_get_pitch_2(BB_GEDA_CIRCLE(object)));
             break;
 
         case PROP_RADIUS:
-            g_value_set_int(value, bb_graphic_circle_get_radius(BB_GRAPHIC_CIRCLE(object)));
+            g_value_set_int(value, bb_geda_circle_get_radius(BB_GEDA_CIRCLE(object)));
             break;
 
         case PROP_FILL_TYPE:
-            g_value_set_int(value, bb_graphic_circle_get_fill_type(BB_GRAPHIC_CIRCLE(object)));
+            g_value_set_int(value, bb_geda_circle_get_fill_type(BB_GEDA_CIRCLE(object)));
             break;
 
         case PROP_FILL_WIDTH:
-            g_value_set_int(value, bb_graphic_circle_get_fill_width(BB_GRAPHIC_CIRCLE(object)));
+            g_value_set_int(value, bb_geda_circle_get_fill_width(BB_GEDA_CIRCLE(object)));
             break;
 
         default:
@@ -672,7 +672,7 @@ bb_graphic_circle_get_property(GObject *object, guint property_id, GValue *value
 
 
 int
-bb_graphic_circle_get_radius(BbGraphicCircle *circle)
+bb_geda_circle_get_radius(BbGedaCircle *circle)
 {
     g_return_val_if_fail(circle != NULL, 0);
 
@@ -681,7 +681,7 @@ bb_graphic_circle_get_radius(BbGraphicCircle *circle)
 
 
 static void
-bb_graphic_circle_init(BbGraphicCircle *circle)
+bb_geda_circle_init(BbGedaCircle *circle)
 {
     g_return_if_fail(circle != NULL);
 
@@ -690,22 +690,22 @@ bb_graphic_circle_init(BbGraphicCircle *circle)
 }
 
 
-BbGraphicCircle*
-bb_graphic_circle_new()
+BbGedaCircle*
+bb_geda_circle_new()
 {
-    return g_object_new(BB_TYPE_GRAPHIC_CIRCLE, NULL);
+    return g_object_new(BB_TYPE_GEDA_CIRCLE, NULL);
 }
 
 
-BbGraphicCircle*
-bb_graphic_circle_new_with_params(BbParams *params, GError **error)
+BbGedaCircle*
+bb_geda_circle_new_with_params(BbParams *params, GError **error)
 {
     GError *local_error[N_PARAMETERS] = { NULL };
 
-    g_return_val_if_fail(bb_params_token_matches(params, BB_GRAPHIC_CIRCLE_TOKEN), NULL);
+    g_return_val_if_fail(bb_params_token_matches(params, BB_GEDA_CIRCLE_TOKEN), NULL);
 
-    BbGraphicCircle *circle = BB_GRAPHIC_CIRCLE(g_object_new(
-        BB_TYPE_GRAPHIC_CIRCLE,
+    BbGedaCircle *circle = BB_GEDA_CIRCLE(g_object_new(
+        BB_TYPE_GEDA_CIRCLE,
         "center-x", bb_params_get_int(params, PARAM_CENTER_X, &local_error[PARAM_CENTER_X]),
         "center-y", bb_params_get_int(params, PARAM_CENTER_Y, &local_error[PARAM_CENTER_Y]),
         "radius", bb_params_get_int(params, PARAM_RADIUS, &local_error[PARAM_RADIUS]),
@@ -748,9 +748,9 @@ bb_graphic_circle_new_with_params(BbParams *params, GError **error)
 
 
 static void
-bb_graphic_circle_render(BbSchematicItem *item, BbItemRenderer *renderer)
+bb_geda_circle_render(BbGedaItem *item, BbItemRenderer *renderer)
 {
-    BbGraphicCircle *circle = BB_GRAPHIC_CIRCLE(item);
+    BbGedaCircle *circle = BB_GEDA_CIRCLE(item);
 
     g_return_if_fail(circle != NULL);
 
@@ -770,7 +770,7 @@ bb_graphic_circle_render(BbSchematicItem *item, BbItemRenderer *renderer)
 
 
 static void
-bb_graphic_circle_set_cap_type(BbGraphicCircle *circle, int type)
+bb_geda_circle_set_cap_type(BbGedaCircle *circle, int type)
 {
     g_return_if_fail(circle != NULL);
     g_return_if_fail(circle->line_style != NULL);
@@ -789,7 +789,7 @@ bb_graphic_circle_set_cap_type(BbGraphicCircle *circle, int type)
 
 
 void
-bb_graphic_circle_set_angle_1(BbGraphicCircle *circle, int angle)
+bb_geda_circle_set_angle_1(BbGedaCircle *circle, int angle)
 {
     g_return_if_fail(circle != NULL);
     g_return_if_fail(circle->fill_style != NULL);
@@ -806,7 +806,7 @@ bb_graphic_circle_set_angle_1(BbGraphicCircle *circle, int angle)
 
 
 void
-bb_graphic_circle_set_angle_2(BbGraphicCircle *circle, int angle)
+bb_geda_circle_set_angle_2(BbGedaCircle *circle, int angle)
 {
     g_return_if_fail(circle != NULL);
     g_return_if_fail(circle->fill_style != NULL);
@@ -823,7 +823,7 @@ bb_graphic_circle_set_angle_2(BbGraphicCircle *circle, int angle)
 
 
 void
-bb_graphic_circle_set_center_x(BbGraphicCircle *circle, int x)
+bb_geda_circle_set_center_x(BbGedaCircle *circle, int x)
 {
     g_return_if_fail(circle != NULL);
 
@@ -841,7 +841,7 @@ bb_graphic_circle_set_center_x(BbGraphicCircle *circle, int x)
 
 
 void
-bb_graphic_circle_set_center_y(BbGraphicCircle *circle, int y)
+bb_geda_circle_set_center_y(BbGedaCircle *circle, int y)
 {
     g_return_if_fail(circle != NULL);
 
@@ -859,7 +859,7 @@ bb_graphic_circle_set_center_y(BbGraphicCircle *circle, int y)
 
 
 static void
-bb_graphic_circle_set_dash_length(BbGraphicCircle *circle, int length)
+bb_geda_circle_set_dash_length(BbGedaCircle *circle, int length)
 {
     g_return_if_fail(circle != NULL);
     g_return_if_fail(circle->line_style != NULL);
@@ -876,7 +876,7 @@ bb_graphic_circle_set_dash_length(BbGraphicCircle *circle, int length)
 
 
 static void
-bb_graphic_circle_set_dash_space(BbGraphicCircle *circle, int space)
+bb_geda_circle_set_dash_space(BbGedaCircle *circle, int space)
 {
     g_return_if_fail(circle != NULL);
     g_return_if_fail(circle->line_style != NULL);
@@ -893,7 +893,7 @@ bb_graphic_circle_set_dash_space(BbGraphicCircle *circle, int space)
 
 
 static void
-bb_graphic_circle_set_dash_type(BbGraphicCircle *circle, int type)
+bb_geda_circle_set_dash_type(BbGedaCircle *circle, int type)
 {
     g_return_if_fail(circle != NULL);
     g_return_if_fail(circle->line_style != NULL);
@@ -910,7 +910,7 @@ bb_graphic_circle_set_dash_type(BbGraphicCircle *circle, int type)
 
 
 void
-bb_graphic_circle_set_fill_type(BbGraphicCircle *circle, int type)
+bb_geda_circle_set_fill_type(BbGedaCircle *circle, int type)
 {
     g_return_if_fail(circle != NULL);
     g_return_if_fail(circle->fill_style != NULL);
@@ -927,7 +927,7 @@ bb_graphic_circle_set_fill_type(BbGraphicCircle *circle, int type)
 
 
 void
-bb_graphic_circle_set_fill_width(BbGraphicCircle *circle, int width)
+bb_geda_circle_set_fill_width(BbGedaCircle *circle, int width)
 {
     g_return_if_fail(circle != NULL);
     g_return_if_fail(circle->fill_style != NULL);
@@ -944,7 +944,7 @@ bb_graphic_circle_set_fill_width(BbGraphicCircle *circle, int width)
 
 
 static void
-bb_graphic_circle_set_item_color(BbGraphicCircle *circle, int color)
+bb_geda_circle_set_item_color(BbGedaCircle *circle, int color)
 {
     g_return_if_fail(circle != NULL);
 
@@ -960,7 +960,7 @@ bb_graphic_circle_set_item_color(BbGraphicCircle *circle, int color)
 
 
 static void
-bb_graphic_circle_set_line_width(BbGraphicCircle *circle, int width)
+bb_geda_circle_set_line_width(BbGedaCircle *circle, int width)
 {
     g_return_if_fail(circle != NULL);
     g_return_if_fail(circle->line_style != NULL);
@@ -979,7 +979,7 @@ bb_graphic_circle_set_line_width(BbGraphicCircle *circle, int width)
 
 
 void
-bb_graphic_circle_set_pitch_1(BbGraphicCircle *circle, int pitch)
+bb_geda_circle_set_pitch_1(BbGedaCircle *circle, int pitch)
 {
     g_return_if_fail(circle != NULL);
     g_return_if_fail(circle->fill_style != NULL);
@@ -996,7 +996,7 @@ bb_graphic_circle_set_pitch_1(BbGraphicCircle *circle, int pitch)
 
 
 void
-bb_graphic_circle_set_pitch_2(BbGraphicCircle *circle, int pitch)
+bb_geda_circle_set_pitch_2(BbGedaCircle *circle, int pitch)
 {
     g_return_if_fail(circle != NULL);
     g_return_if_fail(circle->fill_style != NULL);
@@ -1013,68 +1013,68 @@ bb_graphic_circle_set_pitch_2(BbGraphicCircle *circle, int pitch)
 
 
 static void
-bb_graphic_circle_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec)
+bb_geda_circle_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec)
 {
     switch (property_id)
     {
         case PROP_ANGLE_1:
-            bb_graphic_circle_set_angle_1(BB_GRAPHIC_CIRCLE(object), g_value_get_int(value));
+            bb_geda_circle_set_angle_1(BB_GEDA_CIRCLE(object), g_value_get_int(value));
             break;
 
         case PROP_ANGLE_2:
-            bb_graphic_circle_set_angle_2(BB_GRAPHIC_CIRCLE(object), g_value_get_int(value));
+            bb_geda_circle_set_angle_2(BB_GEDA_CIRCLE(object), g_value_get_int(value));
             break;
 
         case PROP_CAP_TYPE:
-            bb_graphic_circle_set_cap_type(BB_GRAPHIC_CIRCLE(object), g_value_get_int(value));
+            bb_geda_circle_set_cap_type(BB_GEDA_CIRCLE(object), g_value_get_int(value));
             break;
 
         case PROP_CENTER_X:
-            bb_graphic_circle_set_center_x(BB_GRAPHIC_CIRCLE(object), g_value_get_int(value));
+            bb_geda_circle_set_center_x(BB_GEDA_CIRCLE(object), g_value_get_int(value));
             break;
 
         case PROP_CENTER_Y:
-            bb_graphic_circle_set_center_y(BB_GRAPHIC_CIRCLE(object), g_value_get_int(value));
+            bb_geda_circle_set_center_y(BB_GEDA_CIRCLE(object), g_value_get_int(value));
             break;
 
         case PROP_ITEM_COLOR:
-            bb_graphic_circle_set_item_color(BB_GRAPHIC_CIRCLE(object), g_value_get_int(value));
+            bb_geda_circle_set_item_color(BB_GEDA_CIRCLE(object), g_value_get_int(value));
             break;
 
         case PROP_DASH_LENGTH:
-            bb_graphic_circle_set_dash_length(BB_GRAPHIC_CIRCLE(object), g_value_get_int(value));
+            bb_geda_circle_set_dash_length(BB_GEDA_CIRCLE(object), g_value_get_int(value));
             break;
 
         case PROP_DASH_SPACE:
-            bb_graphic_circle_set_dash_space(BB_GRAPHIC_CIRCLE(object), g_value_get_int(value));
+            bb_geda_circle_set_dash_space(BB_GEDA_CIRCLE(object), g_value_get_int(value));
             break;
 
         case PROP_DASH_TYPE:
-            bb_graphic_circle_set_dash_type(BB_GRAPHIC_CIRCLE(object), g_value_get_int(value));
+            bb_geda_circle_set_dash_type(BB_GEDA_CIRCLE(object), g_value_get_int(value));
             break;
 
         case PROP_FILL_TYPE:
-            bb_graphic_circle_set_fill_type(BB_GRAPHIC_CIRCLE(object), g_value_get_int(value));
+            bb_geda_circle_set_fill_type(BB_GEDA_CIRCLE(object), g_value_get_int(value));
             break;
 
         case PROP_FILL_WIDTH:
-            bb_graphic_circle_set_fill_width(BB_GRAPHIC_CIRCLE(object), g_value_get_int(value));
+            bb_geda_circle_set_fill_width(BB_GEDA_CIRCLE(object), g_value_get_int(value));
             break;
 
         case PROP_LINE_WIDTH:
-            bb_graphic_circle_set_line_width(BB_GRAPHIC_CIRCLE(object), g_value_get_int(value));
+            bb_geda_circle_set_line_width(BB_GEDA_CIRCLE(object), g_value_get_int(value));
             break;
 
         case PROP_PITCH_1:
-            bb_graphic_circle_set_pitch_1(BB_GRAPHIC_CIRCLE(object), g_value_get_int(value));
+            bb_geda_circle_set_pitch_1(BB_GEDA_CIRCLE(object), g_value_get_int(value));
             break;
 
         case PROP_PITCH_2:
-            bb_graphic_circle_set_pitch_2(BB_GRAPHIC_CIRCLE(object), g_value_get_int(value));
+            bb_geda_circle_set_pitch_2(BB_GEDA_CIRCLE(object), g_value_get_int(value));
             break;
 
         case PROP_RADIUS:
-            bb_graphic_circle_set_radius(BB_GRAPHIC_CIRCLE(object), g_value_get_int(value));
+            bb_geda_circle_set_radius(BB_GEDA_CIRCLE(object), g_value_get_int(value));
             break;
 
         default:
@@ -1084,7 +1084,7 @@ bb_graphic_circle_set_property(GObject *object, guint property_id, const GValue 
 
 
 void
-bb_graphic_circle_set_radius(BbGraphicCircle *circle, int radius)
+bb_geda_circle_set_radius(BbGedaCircle *circle, int radius)
 {
     g_return_if_fail(circle != NULL);
 
@@ -1102,9 +1102,9 @@ bb_graphic_circle_set_radius(BbGraphicCircle *circle, int radius)
 
 
 static void
-bb_graphic_circle_translate(BbSchematicItem *item, int dx, int dy)
+bb_geda_circle_translate(BbGedaItem *item, int dx, int dy)
 {
-    BbGraphicCircle *circle = BB_GRAPHIC_CIRCLE(item);
+    BbGedaCircle *circle = BB_GEDA_CIRCLE(item);
     g_return_if_fail(circle != NULL);
 
     bb_coord_translate(dx, dy, &circle->center_x, &circle->center_y, 1);
@@ -1115,9 +1115,9 @@ bb_graphic_circle_translate(BbSchematicItem *item, int dx, int dy)
 
 
 static gboolean
-bb_graphic_circle_write(BbSchematicItem *item, GOutputStream *stream, GCancellable *cancellable, GError **error)
+bb_geda_circle_write(BbGedaItem *item, GOutputStream *stream, GCancellable *cancellable, GError **error)
 {
-    BbGraphicCircle *circle = BB_GRAPHIC_CIRCLE(item);
+    BbGedaCircle *circle = BB_GEDA_CIRCLE(item);
     g_return_val_if_fail(circle != NULL, FALSE);
 
     GString *params = g_string_new(NULL);
@@ -1125,7 +1125,7 @@ bb_graphic_circle_write(BbSchematicItem *item, GOutputStream *stream, GCancellab
     g_string_printf(
         params,
         "%s %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d\n",
-        BB_GRAPHIC_CIRCLE_TOKEN,
+        BB_GEDA_CIRCLE_TOKEN,
         circle->center_x,
         circle->center_y,
         circle->radius,
@@ -1159,8 +1159,8 @@ bb_graphic_circle_write(BbSchematicItem *item, GOutputStream *stream, GCancellab
 
 
 static void
-bb_graphic_circle_write_async(
-    BbSchematicItem *item,
+bb_geda_circle_write_async(
+    BbGedaItem *item,
     GOutputStream *stream,
     int io_priority,
     GCancellable *cancellable,
@@ -1168,7 +1168,7 @@ bb_graphic_circle_write_async(
     gpointer callback_data
     )
 {
-    BbGraphicCircle *circle = BB_GRAPHIC_CIRCLE(item);
+    BbGedaCircle *circle = BB_GEDA_CIRCLE(item);
 
     bb_item_params_write_async(
         circle->params,
@@ -1182,8 +1182,8 @@ bb_graphic_circle_write_async(
 
 
 static gboolean
-bb_graphic_circle_write_finish(
-    BbSchematicItem *item,
+bb_geda_circle_write_finish(
+    BbGedaItem *item,
     GOutputStream *stream,
     GAsyncResult *result,
     GError **error

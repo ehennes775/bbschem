@@ -20,7 +20,7 @@
 #include "bbgedaitemfactory.h"
 
 
-BbSchematicItem*
+BbGedaItem*
 bb_geda_item_factory_create_missing(
     BbGedaItemFactory *factory,
     BbGedaVersion *version,
@@ -40,7 +40,7 @@ bb_geda_item_factory_create_async_missing(
     gpointer user_data
     );
 
-static BbSchematicItem*
+static BbGedaItem*
 bb_geda_item_factory_create_finish_default(
     BbGedaItemFactory *factory,
     GAsyncResult *result,
@@ -66,7 +66,7 @@ bb_geda_item_factory_default_init(BbGedaItemFactoryInterface *iface)
 }
 
 
-BbSchematicItem*
+BbGedaItem*
 bb_geda_item_factory_create(
     BbGedaItemFactory *factory,
     BbGedaVersion *version,
@@ -86,7 +86,7 @@ bb_geda_item_factory_create(
 }
 
 
-BbSchematicItem*
+BbGedaItem*
 bb_geda_item_factory_create_missing(
     BbGedaItemFactory *factory,
     BbGedaVersion *version,
@@ -136,7 +136,7 @@ bb_geda_item_factory_create_async_missing(
 }
 
 
-BbSchematicItem*
+BbGedaItem*
 bb_geda_item_factory_create_finish(
     BbGedaItemFactory *factory,
     GAsyncResult *result,
@@ -154,7 +154,7 @@ bb_geda_item_factory_create_finish(
 }
 
 
-static BbSchematicItem*
+static BbGedaItem*
 bb_geda_item_factory_create_finish_default(
     BbGedaItemFactory *factory,
     GAsyncResult *result,

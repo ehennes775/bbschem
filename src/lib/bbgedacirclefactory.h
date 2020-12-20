@@ -19,7 +19,7 @@
  */
 
 #include <gtk/gtk.h>
-#include "bbgraphiccircle.h"
+#include "bbgedacircle.h"
 #include "bbgedaitemfactory.h"
 #include "bbgedaversion.h"
 

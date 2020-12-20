@@ -22,7 +22,7 @@
 
 
 static void
-bb_tool_subject_add_item_missing(BbToolSubject *subject, BbSchematicItem *item);
+bb_tool_subject_add_item_missing(BbToolSubject *subject, BbGedaItem *item);
 
 static void
 bb_tool_subject_invalidate_all_missing(BbToolSubject *subject);
@@ -62,7 +62,7 @@ bb_tool_subject_default_init(BbToolSubjectInterface *iface)
 
 
 void
-bb_tool_subject_add_item(BbToolSubject *subject, BbSchematicItem *item)
+bb_tool_subject_add_item(BbToolSubject *subject, BbGedaItem *item)
 {
     g_return_if_fail(subject != NULL);
 
@@ -76,7 +76,7 @@ bb_tool_subject_add_item(BbToolSubject *subject, BbSchematicItem *item)
 
 
 static void
-bb_tool_subject_add_item_missing(BbToolSubject *subject, BbSchematicItem *item)
+bb_tool_subject_add_item_missing(BbToolSubject *subject, BbGedaItem *item)
 {
     g_error("bb_tool_subject_add_item_missing() not overridden");
 }

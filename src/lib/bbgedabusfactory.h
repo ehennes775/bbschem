@@ -19,7 +19,7 @@
  */
 
 #include <gtk/gtk.h>
-#include "bbelectricalbus.h"
+#include "bbgedabus.h"
 #include "bbgedaitemfactory.h"
 #include "bbgedaversion.h"
 

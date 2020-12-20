@@ -1,5 +1,5 @@
-#ifndef __BBAPPLYFUNC__
-#define __BBAPPLYFUNC__
+#ifndef __BBGEDABUS__
+#define __BBGEDABUS__
 /*
  * bbsch
  * Copyright (C) 2020 Edward C. Hennessy
@@ -19,26 +19,58 @@
  */
 
 #include <gtk/gtk.h>
+#include "bbparams.h"
 #include "bbgedaitem.h"
 
 
-/**
- * A function for applying changes to an item
- *
- * @param item A schematic item
- * @param user_data User data passed in from the caller
- */
-typedef void (*BbApplyFunc)(BbGedaItem *item, gpointer user_data);
+#define BB_GEDA_BUS_WIDTH (30)
 
 
-/**
- * Applies nothing
- *
- * @param item Unused
- * @param user_data Unused
- */
+#define BB_GEDA_BUS_TOKEN "U"
+
+
+#define BB_TYPE_GEDA_BUS bb_geda_bus_get_type()
+G_DECLARE_FINAL_TYPE(BbGedaBus, bb_geda_bus, BB, GEDA_BUS, BbGedaItem)
+
+
+int
+bb_geda_bus_get_x0(BbGedaBus *bus);
+
+
+int
+bb_geda_bus_get_x1(BbGedaBus *bus);
+
+
+int
+bb_geda_bus_get_y0(BbGedaBus *bus);
+
+
+int
+bb_geda_bus_get_y1(BbGedaBus *bus);
+
+
+BbGedaBus*
+bb_geda_bus_new();
+
+
+BbGedaBus*
+bb_geda_bus_new_with_params(BbParams *params, GError **error);
+
+
 void
-bb_apply_func_nothing(BbGedaItem *item, gpointer user_data);
+bb_geda_bus_set_x0(BbGedaBus *bus, int x);
+
+
+void
+bb_geda_bus_set_x1(BbGedaBus *bus, int x);
+
+
+void
+bb_geda_bus_set_y0(BbGedaBus *bus, int y);
+
+
+void
+bb_geda_bus_set_y1(BbGedaBus *bus, int y);
 
 
 #endif

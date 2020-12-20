@@ -28,7 +28,7 @@ struct _BbToolSubjectInterface
 {
     GTypeInterface g_iface;
 
-    void (*add_item)(BbToolSubject *subject, BbSchematicItem *item);
+    void (*add_item)(BbToolSubject *subject, BbGedaItem *item);
     void (*invalidate_all)(BbToolSubject *subject);
     void (*invalidate_rect_dev)(BbToolSubject *subject, double x0, double y0, double x1, double y1);
     void (*snap_coordinate)(BbToolSubject *subject, int x0, int y0, int *x1, int *y1);
@@ -39,7 +39,7 @@ struct _BbToolSubjectInterface
 
 
 void
-bb_tool_subject_add_item(BbToolSubject *subject, BbSchematicItem *item);
+bb_tool_subject_add_item(BbToolSubject *subject, BbGedaItem *item);
 
 
 void

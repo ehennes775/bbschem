@@ -65,7 +65,7 @@ bb_drawing_tool_default_init(BbDrawingToolInterface *iface)
         g_cclosure_marshal_VOID__OBJECT,
         G_TYPE_NONE,
         1,
-        BB_TYPE_SCHEMATIC_ITEM
+        BB_TYPE_GEDA_ITEM
         );
 }
 

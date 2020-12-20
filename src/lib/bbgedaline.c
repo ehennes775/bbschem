@@ -18,7 +18,7 @@
 
 #include <gtk/gtk.h>
 #include <bbextensions.h>
-#include "bbgraphicline.h"
+#include "bbgedaline.h"
 #include "bbcoord.h"
 #include "bbitemparams.h"
 #include "bbadjustablelinestyle.h"
@@ -75,9 +75,9 @@ enum
 };
 
 
-struct _BbGraphicLine
+struct _BbGedaLine
 {
-    BbSchematicItem parent;
+    BbGedaItem parent;
 
     BbItemParams *params;
 
@@ -91,77 +91,77 @@ struct _BbGraphicLine
 
 
 static void
-bb_graphical_line_adjustable_item_color_init(BbAdjustableLineStyleInterface *iface);
+bb_geda_line_adjustable_item_color_init(BbAdjustableLineStyleInterface *iface);
 
 static void
-bb_graphical_line_adjustable_line_style_init(BbAdjustableLineStyleInterface *iface);
+bb_geda_line_adjustable_line_style_init(BbAdjustableLineStyleInterface *iface);
 
 static BbBounds*
-bb_graphic_line_calculate_bounds(BbSchematicItem *item, BbBoundsCalculator *calculator);
+bb_geda_line_calculate_bounds(BbGedaItem *item, BbBoundsCalculator *calculator);
 
-static BbSchematicItem*
-bb_graphic_line_clone(BbSchematicItem *item);
-
-static void
-bb_graphic_line_dispose(GObject *object);
+static BbGedaItem*
+bb_geda_line_clone(BbGedaItem *item);
 
 static void
-bb_graphic_line_finalize(GObject *object);
+bb_geda_line_dispose(GObject *object);
+
+static void
+bb_geda_line_finalize(GObject *object);
 
 static int
-bb_graphic_line_get_cap_type(BbGraphicLine *line);
+bb_geda_line_get_cap_type(BbGedaLine *line);
 
 static int
-bb_graphic_line_get_dash_length(BbGraphicLine *line);
+bb_geda_line_get_dash_length(BbGedaLine *line);
 
 static int
-bb_graphic_line_get_dash_space(BbGraphicLine *line);
+bb_geda_line_get_dash_space(BbGedaLine *line);
 
 static int
-bb_graphic_line_get_dash_type(BbGraphicLine *line);
+bb_geda_line_get_dash_type(BbGedaLine *line);
 
 static int
-bb_graphic_line_get_item_color(BbGraphicLine *line);
+bb_geda_line_get_item_color(BbGedaLine *line);
 
 static int
-bb_graphic_line_get_line_width(BbGraphicLine *line);
+bb_geda_line_get_line_width(BbGedaLine *line);
 
 static void
-bb_graphic_line_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
+bb_geda_line_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
 
 static void
-bb_graphic_line_render(BbSchematicItem *item, BbItemRenderer *renderer);
+bb_geda_line_render(BbGedaItem *item, BbItemRenderer *renderer);
 
 static void
-bb_graphic_line_set_cap_type(BbGraphicLine *line, int type);
+bb_geda_line_set_cap_type(BbGedaLine *line, int type);
 
 static void
-bb_graphic_line_set_dash_length(BbGraphicLine *line, int length);
+bb_geda_line_set_dash_length(BbGedaLine *line, int length);
 
 static void
-bb_graphic_line_set_dash_space(BbGraphicLine *line, int space);
+bb_geda_line_set_dash_space(BbGedaLine *line, int space);
 
 static void
-bb_graphic_line_set_dash_type(BbGraphicLine *line, int type);
+bb_geda_line_set_dash_type(BbGedaLine *line, int type);
 
 static void
-bb_graphic_line_set_item_color(BbGraphicLine *line, int color);
+bb_geda_line_set_item_color(BbGedaLine *line, int color);
 
 static void
-bb_graphic_line_set_line_width(BbGraphicLine *line, int width);
+bb_geda_line_set_line_width(BbGedaLine *line, int width);
 
 static void
-bb_graphic_line_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
+bb_geda_line_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
 
 static void
-bb_graphic_line_translate(BbSchematicItem *item, int dx, int dy);
+bb_geda_line_translate(BbGedaItem *item, int dx, int dy);
 
 static gboolean
-bb_graphic_line_write(BbSchematicItem *item, GOutputStream *stream, GCancellable *cancellable, GError **error);
+bb_geda_line_write(BbGedaItem *item, GOutputStream *stream, GCancellable *cancellable, GError **error);
 
 static void
-bb_graphic_line_write_async(
-    BbSchematicItem *item,
+bb_geda_line_write_async(
+    BbGedaItem *item,
     GOutputStream *stream,
     int io_priority,
     GCancellable *cancellable,
@@ -170,8 +170,8 @@ bb_graphic_line_write_async(
     );
 
 static gboolean
-bb_graphic_line_write_finish(
-    BbSchematicItem *item,
+bb_geda_line_write_finish(
+    BbGedaItem *item,
     GOutputStream *stream,
     GAsyncResult *result,
     GError **error
@@ -182,32 +182,32 @@ static GParamSpec *properties[N_PROPERTIES];
 static guint signals[N_SIGNALS];
 
 G_DEFINE_TYPE_WITH_CODE(
-    BbGraphicLine,
-    bb_graphic_line,
-    BB_TYPE_SCHEMATIC_ITEM,
-    G_IMPLEMENT_INTERFACE(BB_TYPE_ADJUSTABLE_ITEM_COLOR, bb_graphical_line_adjustable_item_color_init)
-    G_IMPLEMENT_INTERFACE(BB_TYPE_ADJUSTABLE_LINE_STYLE, bb_graphical_line_adjustable_line_style_init)
+    BbGedaLine,
+    bb_geda_line,
+    BB_TYPE_GEDA_ITEM,
+    G_IMPLEMENT_INTERFACE(BB_TYPE_ADJUSTABLE_ITEM_COLOR, bb_geda_line_adjustable_item_color_init)
+    G_IMPLEMENT_INTERFACE(BB_TYPE_ADJUSTABLE_LINE_STYLE, bb_geda_line_adjustable_line_style_init)
     )
 
 
 static void
-bb_graphical_line_adjustable_item_color_init(BbAdjustableLineStyleInterface *iface)
+bb_geda_line_adjustable_item_color_init(BbAdjustableLineStyleInterface *iface)
 {
     g_return_if_fail(iface != NULL);
 }
 
 
 static void
-bb_graphical_line_adjustable_line_style_init(BbAdjustableLineStyleInterface *iface)
+bb_geda_line_adjustable_line_style_init(BbAdjustableLineStyleInterface *iface)
 {
     g_return_if_fail(iface != NULL);
 }
 
 
 static BbBounds*
-bb_graphic_line_calculate_bounds(BbSchematicItem *item, BbBoundsCalculator *calculator)
+bb_geda_line_calculate_bounds(BbGedaItem *item, BbBoundsCalculator *calculator)
 {
-    BbGraphicLine *line = BB_GRAPHIC_LINE(item);
+    BbGedaLine *line = BB_GEDA_LINE(item);
 
     g_return_val_if_fail(line != NULL, NULL);
 
@@ -223,20 +223,20 @@ bb_graphic_line_calculate_bounds(BbSchematicItem *item, BbBoundsCalculator *calc
 
 
 static void
-bb_graphic_line_class_init(BbGraphicLineClass *klasse)
+bb_geda_line_class_init(BbGedaLineClass *klasse)
 {
-    G_OBJECT_CLASS(klasse)->dispose = bb_graphic_line_dispose;
-    G_OBJECT_CLASS(klasse)->finalize = bb_graphic_line_finalize;
-    G_OBJECT_CLASS(klasse)->get_property = bb_graphic_line_get_property;
-    G_OBJECT_CLASS(klasse)->set_property = bb_graphic_line_set_property;
+    G_OBJECT_CLASS(klasse)->dispose = bb_geda_line_dispose;
+    G_OBJECT_CLASS(klasse)->finalize = bb_geda_line_finalize;
+    G_OBJECT_CLASS(klasse)->get_property = bb_geda_line_get_property;
+    G_OBJECT_CLASS(klasse)->set_property = bb_geda_line_set_property;
 
-    BB_SCHEMATIC_ITEM_CLASS(klasse)->calculate_bounds = bb_graphic_line_calculate_bounds;
-    BB_SCHEMATIC_ITEM_CLASS(klasse)->clone = bb_graphic_line_clone;
-    BB_SCHEMATIC_ITEM_CLASS(klasse)->render = bb_graphic_line_render;
-    BB_SCHEMATIC_ITEM_CLASS(klasse)->translate = bb_graphic_line_translate;
-    BB_SCHEMATIC_ITEM_CLASS(klasse)->write = bb_graphic_line_write;
-    BB_SCHEMATIC_ITEM_CLASS(klasse)->write_async = bb_graphic_line_write_async;
-    BB_SCHEMATIC_ITEM_CLASS(klasse)->write_finish = bb_graphic_line_write_finish;
+    BB_GEDA_ITEM_CLASS(klasse)->calculate_bounds = bb_geda_line_calculate_bounds;
+    BB_GEDA_ITEM_CLASS(klasse)->clone = bb_geda_line_clone;
+    BB_GEDA_ITEM_CLASS(klasse)->render = bb_geda_line_render;
+    BB_GEDA_ITEM_CLASS(klasse)->translate = bb_geda_line_translate;
+    BB_GEDA_ITEM_CLASS(klasse)->write = bb_geda_line_write;
+    BB_GEDA_ITEM_CLASS(klasse)->write_async = bb_geda_line_write_async;
+    BB_GEDA_ITEM_CLASS(klasse)->write_finish = bb_geda_line_write_finish;
 
     /* From AdjustableItemColor */
     properties[PROP_ITEM_COLOR] = bb_object_class_override_property(
@@ -332,29 +332,29 @@ bb_graphic_line_class_init(BbGraphicLineClass *klasse)
             )
         );
 
-    signals[SIG_INVALIDATE] = g_signal_lookup("invalidate-item", BB_TYPE_SCHEMATIC_ITEM);
+    signals[SIG_INVALIDATE] = g_signal_lookup("invalidate-item", BB_TYPE_GEDA_ITEM);
 }
 
 
-static BbSchematicItem*
-bb_graphic_line_clone(BbSchematicItem *item)
+static BbGedaItem*
+bb_geda_line_clone(BbGedaItem *item)
 {
-    return BB_SCHEMATIC_ITEM(g_object_new(
-        BB_TYPE_GRAPHIC_LINE,
-        "x0", bb_graphic_line_get_x0(BB_GRAPHIC_LINE(item)),
-        "x1", bb_graphic_line_get_x1(BB_GRAPHIC_LINE(item)),
-        "y0", bb_graphic_line_get_y0(BB_GRAPHIC_LINE(item)),
-        "y1", bb_graphic_line_get_y1(BB_GRAPHIC_LINE(item)),
+    return BB_GEDA_ITEM(g_object_new(
+        BB_TYPE_GEDA_LINE,
+        "x0", bb_geda_line_get_x0(BB_GEDA_LINE(item)),
+        "x1", bb_geda_line_get_x1(BB_GEDA_LINE(item)),
+        "y0", bb_geda_line_get_y0(BB_GEDA_LINE(item)),
+        "y1", bb_geda_line_get_y1(BB_GEDA_LINE(item)),
 
         /* From AdjustableItemColor */
-        "item-color", bb_graphic_line_get_item_color(BB_GRAPHIC_LINE(item)),
+        "item-color", bb_geda_line_get_item_color(BB_GEDA_LINE(item)),
 
         /* From AdjustableLineStyle */
-        "cap-type", bb_graphic_line_get_cap_type(BB_GRAPHIC_LINE(item)),
-        "dash-length", bb_graphic_line_get_dash_length(BB_GRAPHIC_LINE(item)),
-        "dash-space", bb_graphic_line_get_dash_space(BB_GRAPHIC_LINE(item)),
-        "dash-type", bb_graphic_line_get_dash_type(BB_GRAPHIC_LINE(item)),
-        "line-width", bb_graphic_line_get_line_width(BB_GRAPHIC_LINE(item)),
+        "cap-type", bb_geda_line_get_cap_type(BB_GEDA_LINE(item)),
+        "dash-length", bb_geda_line_get_dash_length(BB_GEDA_LINE(item)),
+        "dash-space", bb_geda_line_get_dash_space(BB_GEDA_LINE(item)),
+        "dash-type", bb_geda_line_get_dash_type(BB_GEDA_LINE(item)),
+        "line-width", bb_geda_line_get_line_width(BB_GEDA_LINE(item)),
 
         NULL
     ));
@@ -362,15 +362,15 @@ bb_graphic_line_clone(BbSchematicItem *item)
 
 
 static void
-bb_graphic_line_dispose(GObject *object)
+bb_geda_line_dispose(GObject *object)
 {
 }
 
 
 static void
-bb_graphic_line_finalize(GObject *object)
+bb_geda_line_finalize(GObject *object)
 {
-    BbGraphicLine *line = BB_GRAPHIC_LINE(object);
+    BbGedaLine *line = BB_GEDA_LINE(object);
 
     g_return_if_fail(line != NULL);
 
@@ -379,7 +379,7 @@ bb_graphic_line_finalize(GObject *object)
 
 
 static int
-bb_graphic_line_get_cap_type(BbGraphicLine *line)
+bb_geda_line_get_cap_type(BbGedaLine *line)
 {
     g_return_val_if_fail(line != NULL, 0);
     g_return_val_if_fail(line->line_style != NULL, 0);
@@ -389,7 +389,7 @@ bb_graphic_line_get_cap_type(BbGraphicLine *line)
 
 
 static int
-bb_graphic_line_get_dash_length(BbGraphicLine *line)
+bb_geda_line_get_dash_length(BbGedaLine *line)
 {
     g_return_val_if_fail(line != NULL, 0);
     g_return_val_if_fail(line->line_style != NULL, 0);
@@ -399,7 +399,7 @@ bb_graphic_line_get_dash_length(BbGraphicLine *line)
 
 
 static int
-bb_graphic_line_get_dash_space(BbGraphicLine *line)
+bb_geda_line_get_dash_space(BbGedaLine *line)
 {
     g_return_val_if_fail(line != NULL, 0);
     g_return_val_if_fail(line->line_style != NULL, 0);
@@ -409,7 +409,7 @@ bb_graphic_line_get_dash_space(BbGraphicLine *line)
 
 
 static int
-bb_graphic_line_get_dash_type(BbGraphicLine *line)
+bb_geda_line_get_dash_type(BbGedaLine *line)
 {
     g_return_val_if_fail(line != NULL, 0);
     g_return_val_if_fail(line->line_style != NULL, 0);
@@ -419,7 +419,7 @@ bb_graphic_line_get_dash_type(BbGraphicLine *line)
 
 
 static int
-bb_graphic_line_get_item_color(BbGraphicLine *line)
+bb_geda_line_get_item_color(BbGedaLine *line)
 {
     g_return_val_if_fail(line != NULL, 0);
 
@@ -428,7 +428,7 @@ bb_graphic_line_get_item_color(BbGraphicLine *line)
 
 
 static int
-bb_graphic_line_get_line_width(BbGraphicLine *line)
+bb_geda_line_get_line_width(BbGedaLine *line)
 {
     g_return_val_if_fail(line != NULL, 0);
     g_return_val_if_fail(line->line_style != NULL, 0);
@@ -438,48 +438,48 @@ bb_graphic_line_get_line_width(BbGraphicLine *line)
 
 
 static void
-bb_graphic_line_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec)
+bb_geda_line_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec)
 {
     switch (property_id)
     {
         case PROP_CAP_TYPE:
-            g_value_set_int(value, bb_graphic_line_get_cap_type(BB_GRAPHIC_LINE(object)));
+            g_value_set_int(value, bb_geda_line_get_cap_type(BB_GEDA_LINE(object)));
             break;
 
         case PROP_ITEM_COLOR:
-            g_value_set_int(value, bb_graphic_line_get_item_color(BB_GRAPHIC_LINE(object)));
+            g_value_set_int(value, bb_geda_line_get_item_color(BB_GEDA_LINE(object)));
             break;
 
         case PROP_DASH_LENGTH:
-            g_value_set_int(value, bb_graphic_line_get_dash_length(BB_GRAPHIC_LINE(object)));
+            g_value_set_int(value, bb_geda_line_get_dash_length(BB_GEDA_LINE(object)));
             break;
 
         case PROP_DASH_SPACE:
-            g_value_set_int(value, bb_graphic_line_get_dash_space(BB_GRAPHIC_LINE(object)));
+            g_value_set_int(value, bb_geda_line_get_dash_space(BB_GEDA_LINE(object)));
             break;
 
         case PROP_DASH_TYPE:
-            g_value_set_int(value, bb_graphic_line_get_dash_type(BB_GRAPHIC_LINE(object)));
+            g_value_set_int(value, bb_geda_line_get_dash_type(BB_GEDA_LINE(object)));
             break;
 
         case PROP_LINE_WIDTH:
-            g_value_set_int(value, bb_graphic_line_get_line_width(BB_GRAPHIC_LINE(object)));
+            g_value_set_int(value, bb_geda_line_get_line_width(BB_GEDA_LINE(object)));
             break;
 
         case PROP_X0:
-            g_value_set_int(value, bb_graphic_line_get_x0(BB_GRAPHIC_LINE(object)));
+            g_value_set_int(value, bb_geda_line_get_x0(BB_GEDA_LINE(object)));
             break;
 
         case PROP_X1:
-            g_value_set_int(value, bb_graphic_line_get_x1(BB_GRAPHIC_LINE(object)));
+            g_value_set_int(value, bb_geda_line_get_x1(BB_GEDA_LINE(object)));
             break;
 
         case PROP_Y0:
-            g_value_set_int(value, bb_graphic_line_get_y0(BB_GRAPHIC_LINE(object)));
+            g_value_set_int(value, bb_geda_line_get_y0(BB_GEDA_LINE(object)));
             break;
 
         case PROP_Y1:
-            g_value_set_int(value, bb_graphic_line_get_y1(BB_GRAPHIC_LINE(object)));
+            g_value_set_int(value, bb_geda_line_get_y1(BB_GEDA_LINE(object)));
             break;
 
         default:
@@ -489,7 +489,7 @@ bb_graphic_line_get_property(GObject *object, guint property_id, GValue *value, 
 
 
 int
-bb_graphic_line_get_x0(BbGraphicLine *line)
+bb_geda_line_get_x0(BbGedaLine *line)
 {
     g_return_val_if_fail(line != NULL, 0);
 
@@ -498,7 +498,7 @@ bb_graphic_line_get_x0(BbGraphicLine *line)
 
 
 int
-bb_graphic_line_get_x1(BbGraphicLine *line)
+bb_geda_line_get_x1(BbGedaLine *line)
 {
     g_return_val_if_fail(line != NULL, 0);
 
@@ -507,7 +507,7 @@ bb_graphic_line_get_x1(BbGraphicLine *line)
 
 
 int
-bb_graphic_line_get_y0(BbGraphicLine *line)
+bb_geda_line_get_y0(BbGedaLine *line)
 {
     g_return_val_if_fail(line != NULL, 0);
 
@@ -516,7 +516,7 @@ bb_graphic_line_get_y0(BbGraphicLine *line)
 
 
 int
-bb_graphic_line_get_y1(BbGraphicLine *line)
+bb_geda_line_get_y1(BbGedaLine *line)
 {
     g_return_val_if_fail(line != NULL, 0);
 
@@ -525,7 +525,7 @@ bb_graphic_line_get_y1(BbGraphicLine *line)
 
 
 static void
-bb_graphic_line_init(BbGraphicLine *line)
+bb_geda_line_init(BbGedaLine *line)
 {
     g_return_if_fail(line != NULL);
 
@@ -533,22 +533,22 @@ bb_graphic_line_init(BbGraphicLine *line)
 }
 
 
-BbGraphicLine*
-bb_graphic_line_new()
+BbGedaLine*
+bb_geda_line_new()
 {
-    return g_object_new(BB_TYPE_GRAPHIC_LINE, NULL);
+    return g_object_new(BB_TYPE_GEDA_LINE, NULL);
 }
 
 
-BbGraphicLine*
-bb_graphic_line_new_with_params(BbParams *params, GError **error)
+BbGedaLine*
+bb_geda_line_new_with_params(BbParams *params, GError **error)
 {
     GError *local_error[N_PARAMETERS] = { NULL };
 
-    g_return_val_if_fail(bb_params_token_matches(params, BB_GRAPHIC_LINE_TOKEN), NULL);
+    g_return_val_if_fail(bb_params_token_matches(params, BB_GEDA_LINE_TOKEN), NULL);
 
-    BbGraphicLine *line = BB_GRAPHIC_LINE(g_object_new(
-        BB_TYPE_GRAPHIC_LINE,
+    BbGedaLine *line = BB_GEDA_LINE(g_object_new(
+        BB_TYPE_GEDA_LINE,
         "x0", bb_params_get_int(params, PARAM_X0, &local_error[PARAM_X0]),
         "y0", bb_params_get_int(params, PARAM_Y0, &local_error[PARAM_Y0]),
         "x1", bb_params_get_int(params, PARAM_X1, &local_error[PARAM_X1]),
@@ -585,9 +585,9 @@ bb_graphic_line_new_with_params(BbParams *params, GError **error)
 
 
 static void
-bb_graphic_line_render(BbSchematicItem *item, BbItemRenderer *renderer)
+bb_geda_line_render(BbGedaItem *item, BbItemRenderer *renderer)
 {
-    BbGraphicLine *line = BB_GRAPHIC_LINE(item);
+    BbGedaLine *line = BB_GEDA_LINE(item);
 
     g_return_if_fail(line != NULL);
 
@@ -609,7 +609,7 @@ bb_graphic_line_render(BbSchematicItem *item, BbItemRenderer *renderer)
 
 
 static void
-bb_graphic_line_set_cap_type(BbGraphicLine *line, int type)
+bb_geda_line_set_cap_type(BbGedaLine *line, int type)
 {
     g_return_if_fail(line != NULL);
     g_return_if_fail(line->line_style != NULL);
@@ -628,7 +628,7 @@ bb_graphic_line_set_cap_type(BbGraphicLine *line, int type)
 
 
 static void
-bb_graphic_line_set_dash_length(BbGraphicLine *line, int length)
+bb_geda_line_set_dash_length(BbGedaLine *line, int length)
 {
     g_return_if_fail(line != NULL);
     g_return_if_fail(line->line_style != NULL);
@@ -645,7 +645,7 @@ bb_graphic_line_set_dash_length(BbGraphicLine *line, int length)
 
 
 static void
-bb_graphic_line_set_dash_space(BbGraphicLine *line, int space)
+bb_geda_line_set_dash_space(BbGedaLine *line, int space)
 {
     g_return_if_fail(line != NULL);
     g_return_if_fail(line->line_style != NULL);
@@ -662,7 +662,7 @@ bb_graphic_line_set_dash_space(BbGraphicLine *line, int space)
 
 
 static void
-bb_graphic_line_set_dash_type(BbGraphicLine *line, int type)
+bb_geda_line_set_dash_type(BbGedaLine *line, int type)
 {
     g_return_if_fail(line != NULL);
     g_return_if_fail(line->line_style != NULL);
@@ -679,7 +679,7 @@ bb_graphic_line_set_dash_type(BbGraphicLine *line, int type)
 
 
 static void
-bb_graphic_line_set_item_color(BbGraphicLine *line, int color)
+bb_geda_line_set_item_color(BbGedaLine *line, int color)
 {
     g_return_if_fail(line != NULL);
 
@@ -695,7 +695,7 @@ bb_graphic_line_set_item_color(BbGraphicLine *line, int color)
 
 
 static void
-bb_graphic_line_set_line_width(BbGraphicLine *line, int width)
+bb_geda_line_set_line_width(BbGedaLine *line, int width)
 {
     g_return_if_fail(line != NULL);
     g_return_if_fail(line->line_style != NULL);
@@ -714,48 +714,48 @@ bb_graphic_line_set_line_width(BbGraphicLine *line, int width)
 
 
 static void
-bb_graphic_line_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec)
+bb_geda_line_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec)
 {
     switch (property_id)
     {
         case PROP_CAP_TYPE:
-            bb_graphic_line_set_cap_type(BB_GRAPHIC_LINE(object), g_value_get_int(value));
+            bb_geda_line_set_cap_type(BB_GEDA_LINE(object), g_value_get_int(value));
             break;
 
         case PROP_ITEM_COLOR:
-            bb_graphic_line_set_item_color(BB_GRAPHIC_LINE(object), g_value_get_int(value));
+            bb_geda_line_set_item_color(BB_GEDA_LINE(object), g_value_get_int(value));
             break;
 
         case PROP_DASH_LENGTH:
-            bb_graphic_line_set_dash_length(BB_GRAPHIC_LINE(object), g_value_get_int(value));
+            bb_geda_line_set_dash_length(BB_GEDA_LINE(object), g_value_get_int(value));
             break;
 
         case PROP_DASH_SPACE:
-            bb_graphic_line_set_dash_space(BB_GRAPHIC_LINE(object), g_value_get_int(value));
+            bb_geda_line_set_dash_space(BB_GEDA_LINE(object), g_value_get_int(value));
             break;
 
         case PROP_DASH_TYPE:
-            bb_graphic_line_set_dash_type(BB_GRAPHIC_LINE(object), g_value_get_int(value));
+            bb_geda_line_set_dash_type(BB_GEDA_LINE(object), g_value_get_int(value));
             break;
 
         case PROP_LINE_WIDTH:
-            bb_graphic_line_set_line_width(BB_GRAPHIC_LINE(object), g_value_get_int(value));
+            bb_geda_line_set_line_width(BB_GEDA_LINE(object), g_value_get_int(value));
             break;
 
         case PROP_X0:
-            bb_graphic_line_set_x0(BB_GRAPHIC_LINE(object), g_value_get_int(value));
+            bb_geda_line_set_x0(BB_GEDA_LINE(object), g_value_get_int(value));
             break;
 
         case PROP_X1:
-            bb_graphic_line_set_x1(BB_GRAPHIC_LINE(object), g_value_get_int(value));
+            bb_geda_line_set_x1(BB_GEDA_LINE(object), g_value_get_int(value));
             break;
 
         case PROP_Y0:
-            bb_graphic_line_set_y0(BB_GRAPHIC_LINE(object), g_value_get_int(value));
+            bb_geda_line_set_y0(BB_GEDA_LINE(object), g_value_get_int(value));
             break;
 
         case PROP_Y1:
-            bb_graphic_line_set_y1(BB_GRAPHIC_LINE(object), g_value_get_int(value));
+            bb_geda_line_set_y1(BB_GEDA_LINE(object), g_value_get_int(value));
             break;
 
         default:
@@ -765,7 +765,7 @@ bb_graphic_line_set_property(GObject *object, guint property_id, const GValue *v
 
 
 void
-bb_graphic_line_set_x0(BbGraphicLine *line, int x)
+bb_geda_line_set_x0(BbGedaLine *line, int x)
 {
     g_return_if_fail(line != NULL);
 
@@ -783,7 +783,7 @@ bb_graphic_line_set_x0(BbGraphicLine *line, int x)
 
 
 void
-bb_graphic_line_set_x1(BbGraphicLine *line, int x)
+bb_geda_line_set_x1(BbGedaLine *line, int x)
 {
     g_return_if_fail(line != NULL);
 
@@ -801,7 +801,7 @@ bb_graphic_line_set_x1(BbGraphicLine *line, int x)
 
 
 void
-bb_graphic_line_set_y0(BbGraphicLine *line, int y)
+bb_geda_line_set_y0(BbGedaLine *line, int y)
 {
     g_return_if_fail(line != NULL);
 
@@ -819,7 +819,7 @@ bb_graphic_line_set_y0(BbGraphicLine *line, int y)
 
 
 void
-bb_graphic_line_set_y1(BbGraphicLine *line, int y)
+bb_geda_line_set_y1(BbGedaLine *line, int y)
 {
     g_return_if_fail(line != NULL);
 
@@ -837,9 +837,9 @@ bb_graphic_line_set_y1(BbGraphicLine *line, int y)
 
 
 static void
-bb_graphic_line_translate(BbSchematicItem *item, int dx, int dy)
+bb_geda_line_translate(BbGedaItem *item, int dx, int dy)
 {
-    BbGraphicLine *line = BB_GRAPHIC_LINE(item);
+    BbGedaLine *line = BB_GEDA_LINE(item);
     g_return_if_fail(line != NULL);
 
     bb_coord_translate(dx, dy, line->x, line->y, 2);
@@ -852,9 +852,9 @@ bb_graphic_line_translate(BbSchematicItem *item, int dx, int dy)
 
 
 static gboolean
-bb_graphic_line_write(BbSchematicItem *item, GOutputStream *stream, GCancellable *cancellable, GError **error)
+bb_geda_line_write(BbGedaItem *item, GOutputStream *stream, GCancellable *cancellable, GError **error)
 {
-    BbGraphicLine *line = BB_GRAPHIC_LINE(item);
+    BbGedaLine *line = BB_GEDA_LINE(item);
     g_return_val_if_fail(line != NULL, FALSE);
 
     GString *params = g_string_new(NULL);
@@ -862,7 +862,7 @@ bb_graphic_line_write(BbSchematicItem *item, GOutputStream *stream, GCancellable
     g_string_printf(
         params,
         "%s %d %d %d %d %d %d %d %d %d %d\n",
-        BB_GRAPHIC_LINE_TOKEN,
+        BB_GEDA_LINE_TOKEN,
         line->x[0],
         line->y[0],
         line->x[1],
@@ -891,8 +891,8 @@ bb_graphic_line_write(BbSchematicItem *item, GOutputStream *stream, GCancellable
 
 
 static void
-bb_graphic_line_write_async(
-    BbSchematicItem *item,
+bb_geda_line_write_async(
+    BbGedaItem *item,
     GOutputStream *stream,
     int io_priority,
     GCancellable *cancellable,
@@ -900,7 +900,7 @@ bb_graphic_line_write_async(
     gpointer callback_data
     )
 {
-    BbGraphicLine *line = BB_GRAPHIC_LINE(item);
+    BbGedaLine *line = BB_GEDA_LINE(item);
 
     bb_item_params_write_async(
         line->params,
@@ -914,8 +914,8 @@ bb_graphic_line_write_async(
 
 
 static gboolean
-bb_graphic_line_write_finish(
-    BbSchematicItem *item,
+bb_geda_line_write_finish(
+    BbGedaItem *item,
     GOutputStream *stream,
     GAsyncResult *result,
     GError **error

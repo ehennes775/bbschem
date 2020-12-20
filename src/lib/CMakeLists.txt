@@ -25,12 +25,12 @@ add_library(bblib
         bbcoord.h
         bbdashtype.c
         bbdashtype.h
-        bbelectricalbus.c
-        bbelectricalbus.h
-        bbelectricalnet.c
-        bbelectricalnet.h
-        bbelectricalpin.c
-        bbelectricalpin.h
+        bbgedabus.c
+        bbgedabus.h
+        bbgedanet.c
+        bbgedanet.h
+        bbgedapin.c
+        bbgedapin.h
         bberror.c
         bberror.h
         bbfillstyle.c
@@ -57,16 +57,16 @@ add_library(bblib
         bbgedapinfactory.h
         bbgedaversion.c
         bbgedaversion.h
-        bbgraphicarc.c
-        bbgraphicarc.h
-        bbgraphicbox.c
-        bbgraphicbox.h
-        bbgraphiccircle.c
-        bbgraphiccircle.h
-        bbgraphicline.c
-        bbgraphicline.h
-        bbgraphicpath.c
-        bbgraphicpath.h
+        bbgedaarc.c
+        bbgedaarc.h
+        bbgedabox.c
+        bbgedabox.h
+        bbgedacircle.c
+        bbgedacircle.h
+        bbgedaline.c
+        bbgedaline.h
+        bbgedapath.c
+        bbgedapath.h
         bbhashtable.c
         bbhashtable.h
         bbitemparams.c
@@ -88,14 +88,14 @@ add_library(bblib
         bbrelativemoveto.h
         bbschematic.c
         bbschematic.h
-        bbschematicitem.c
-        bbschematicitem.h
+        bbgedaitem.c
+        bbgedaitem.h
         bbsweep.c
         bbsweep.h
-        bbuniversalblock.c
-        bbuniversalblock.h
-        bbuniversaltext.c
-        bbuniversaltext.h
+        bbgedablock.c
+        bbgedablock.h
+        bbgedatext.c
+        bbgedatext.h
         bbvaluecount.c
         bbvaluecount.h
         bblibrary.h

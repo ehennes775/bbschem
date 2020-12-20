@@ -21,10 +21,10 @@
 #include "bbgedafactory.h"
 #include "bbgedaitemfactory.h"
 #include "bbgedalinefactory.h"
-#include "bbgraphicarc.h"
+#include "bbgedaarc.h"
 #include "bbgedaarcfactory.h"
-#include "bbgraphicbox.h"
-#include "bbgraphiccircle.h"
+#include "bbgedabox.h"
+#include "bbgedacircle.h"
 #include "bbgedacirclefactory.h"
 #include "bbgedaboxfactory.h"
 #include "bbgedabusfactory.h"
@@ -107,7 +107,7 @@ bb_geda_factory_class_init(BbGedaFactoryClass *klasse)
 }
 
 
-BbSchematicItem*
+BbGedaItem*
 bb_geda_factory_create(
     BbGedaItemFactory *factory,
     BbGedaVersion *version,
@@ -119,7 +119,7 @@ bb_geda_factory_create(
     BbGedaFactory *geda_factory = BB_GEDA_FACTORY(factory);
     g_return_val_if_fail(geda_factory != NULL, NULL);
 
-    BbSchematicItem *item = NULL;
+    BbGedaItem *item = NULL;
     GError *local_error = NULL;
 
     BbGedaItemFactory *specific_factory = g_hash_table_lookup(
@@ -217,7 +217,7 @@ bb_geda_factory_create_ready(BbGedaFactory *factory, GAsyncResult *result, GTask
 {
     GError *local_error = NULL;
 
-    BbSchematicItem *item = bb_geda_item_factory_create_finish(
+    BbGedaItem *item = bb_geda_item_factory_create_finish(
         BB_GEDA_ITEM_FACTORY(factory),
         result,
         &local_error
@@ -298,43 +298,43 @@ bb_geda_factory_init(BbGedaFactory *factory)
 
     bb_geda_factory_add_factory(
         factory,
-        BB_GRAPHIC_ARC_TOKEN,
+        BB_GEDA_ARC_TOKEN,
         bb_geda_arc_factory_new()
         );
 
     bb_geda_factory_add_factory(
         factory,
-        BB_GRAPHIC_BOX_TOKEN,
+        BB_GEDA_BOX_TOKEN,
         bb_geda_box_factory_new()
         );
 
     bb_geda_factory_add_factory(
         factory,
-        BB_GRAPHIC_CIRCLE_TOKEN,
+        BB_GEDA_CIRCLE_TOKEN,
         bb_geda_circle_factory_new()
         );
 
     bb_geda_factory_add_factory(
         factory,
-        BB_GRAPHIC_LINE_TOKEN,
+        BB_GEDA_LINE_TOKEN,
         bb_geda_line_factory_new()
         );
 
     bb_geda_factory_add_factory(
         factory,
-        BB_ELECTRICAL_BUS_TOKEN,
+        BB_GEDA_BUS_TOKEN,
         bb_geda_bus_factory_new()
         );
 
     bb_geda_factory_add_factory(
         factory,
-        BB_ELECTRICAL_NET_TOKEN,
+        BB_GEDA_NET_TOKEN,
         bb_geda_net_factory_new()
         );
 
     bb_geda_factory_add_factory(
         factory,
-        BB_ELECTRICAL_PIN_TOKEN,
+        BB_GEDA_PIN_TOKEN,
         bb_geda_pin_factory_new()
         );
 }

@@ -52,37 +52,37 @@ static void
 bb_fill_style_editor_apply_angle_1(BbInt32ComboBox *combo, BbFillStyleEditor *editor);
 
 static void
-bb_fill_style_editor_apply_angle_1_lambda(BbSchematicItem *item, gpointer user_data);
+bb_fill_style_editor_apply_angle_1_lambda(BbGedaItem *item, gpointer user_data);
 
 static void
 bb_fill_style_editor_apply_angle_2(BbInt32ComboBox *combo, BbFillStyleEditor *editor);
 
 static void
-bb_fill_style_editor_apply_angle_2_lambda(BbSchematicItem *item, gpointer user_data);
+bb_fill_style_editor_apply_angle_2_lambda(BbGedaItem *item, gpointer user_data);
 
 static void
 bb_fill_style_editor_apply_fill_type(BbPropertyComboBox *combo, BbFillStyleEditor *editor);
 
 static void
-bb_fill_style_editor_apply_fill_type_lambda(BbSchematicItem *item, gpointer user_data);
+bb_fill_style_editor_apply_fill_type_lambda(BbGedaItem *item, gpointer user_data);
 
 static void
 bb_fill_style_editor_apply_fill_width(BbInt32ComboBox *combo, BbFillStyleEditor *editor);
 
 static void
-bb_fill_style_editor_apply_fill_width_lambda(BbSchematicItem *item, gpointer user_data);
+bb_fill_style_editor_apply_fill_width_lambda(BbGedaItem *item, gpointer user_data);
 
 static void
 bb_fill_style_editor_apply_pitch_1(BbInt32ComboBox *combo, BbFillStyleEditor *editor);
 
 static void
-bb_fill_style_editor_apply_pitch_1_lambda(BbSchematicItem *item, gpointer user_data);
+bb_fill_style_editor_apply_pitch_1_lambda(BbGedaItem *item, gpointer user_data);
 
 static void
 bb_fill_style_editor_apply_pitch_2(BbInt32ComboBox *combo, BbFillStyleEditor *editor);
 
 static void
-bb_fill_style_editor_apply_pitch_2_lambda(BbSchematicItem *item, gpointer user_data);
+bb_fill_style_editor_apply_pitch_2_lambda(BbGedaItem *item, gpointer user_data);
 
 static void
 bb_fill_style_editor_get_property(GObject *object, guint param_id, GValue* value, GParamSpec* pspec);
@@ -131,7 +131,7 @@ bb_fill_style_editor_apply_angle_1(BbInt32ComboBox *combo, BbFillStyleEditor *ed
  * @param user_data The angle
  */
 static void
-bb_fill_style_editor_apply_angle_1_lambda(BbSchematicItem *item, gpointer user_data)
+bb_fill_style_editor_apply_angle_1_lambda(BbGedaItem *item, gpointer user_data)
 {
     if (BB_IS_ADJUSTABLE_FILL_STYLE(item))
     {
@@ -177,7 +177,7 @@ bb_fill_style_editor_apply_angle_2(BbInt32ComboBox *combo, BbFillStyleEditor *ed
  * @param user_data The angle
  */
 static void
-bb_fill_style_editor_apply_angle_2_lambda(BbSchematicItem *item, gpointer user_data)
+bb_fill_style_editor_apply_angle_2_lambda(BbGedaItem *item, gpointer user_data)
 {
     if (BB_IS_ADJUSTABLE_FILL_STYLE(item))
     {
@@ -223,7 +223,7 @@ bb_fill_style_editor_apply_fill_type(BbPropertyComboBox *combo, BbFillStyleEdito
  * @param user_data The pitch
  */
 static void
-bb_fill_style_editor_apply_fill_type_lambda(BbSchematicItem *item, gpointer user_data)
+bb_fill_style_editor_apply_fill_type_lambda(BbGedaItem *item, gpointer user_data)
 {
     if (BB_IS_ADJUSTABLE_FILL_STYLE(item))
     {
@@ -269,7 +269,7 @@ bb_fill_style_editor_apply_fill_width(BbInt32ComboBox *combo, BbFillStyleEditor 
  * @param user_data The pitch
  */
 static void
-bb_fill_style_editor_apply_fill_width_lambda(BbSchematicItem *item, gpointer user_data)
+bb_fill_style_editor_apply_fill_width_lambda(BbGedaItem *item, gpointer user_data)
 {
     if (BB_IS_ADJUSTABLE_FILL_STYLE(item))
     {
@@ -314,7 +314,7 @@ bb_fill_style_editor_apply_pitch_1(BbInt32ComboBox *combo, BbFillStyleEditor *ed
  * @param user_data The pitch
  */
 static void
-bb_fill_style_editor_apply_pitch_1_lambda(BbSchematicItem *item, gpointer user_data)
+bb_fill_style_editor_apply_pitch_1_lambda(BbGedaItem *item, gpointer user_data)
 {
     if (BB_IS_ADJUSTABLE_FILL_STYLE(item))
     {
@@ -360,7 +360,7 @@ bb_fill_style_editor_apply_pitch_2(BbInt32ComboBox *combo, BbFillStyleEditor *ed
  * @param user_data The pitch
  */
 static void
-bb_fill_style_editor_apply_pitch_2_lambda(BbSchematicItem *item, gpointer user_data)
+bb_fill_style_editor_apply_pitch_2_lambda(BbGedaItem *item, gpointer user_data)
 {
     if (BB_IS_ADJUSTABLE_FILL_STYLE(item))
     {

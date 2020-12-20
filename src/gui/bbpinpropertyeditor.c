@@ -55,7 +55,7 @@ static void
 bb_pin_property_editor_update(BbMainWindow *main_window, BbPinPropertyEditor *editor);
 
 static gboolean
-bb_pin_property_editor_update_lambda(BbSchematicItem *item, gpointer user_data);
+bb_pin_property_editor_update_lambda(BbGedaItem *item, gpointer user_data);
 
 static void
 bb_pin_property_editor_apply(BbPropertyComboBox *combo, BbPinPropertyEditor *editor)
@@ -243,7 +243,7 @@ bb_pin_property_editor_update(BbMainWindow *main_window, BbPinPropertyEditor *ed
 
 
 static gboolean
-bb_pin_property_editor_update_lambda(BbSchematicItem *item, gpointer user_data)
+bb_pin_property_editor_update_lambda(BbGedaItem *item, gpointer user_data)
 {
     GHashTable *table = (GHashTable*) user_data;
 

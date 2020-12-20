@@ -1,5 +1,5 @@
-#ifndef __BBELECTRICALPIN__
-#define __BBELECTRICALPIN__
+#ifndef __BBGEDALINE__
+#define __BBGEDALINE__
 /*
  * bbsch
  * Copyright (C) 2020 Edward C. Hennessy
@@ -20,54 +20,54 @@
 
 #include <gtk/gtk.h>
 #include "bbparams.h"
-#include "bbschematicitem.h"
+#include "bbgedaitem.h"
 
 
-#define BB_ELECTRICAL_PIN_TOKEN "P"
+#define BB_GEDA_LINE_TOKEN "L"
 
 
-#define BB_TYPE_ELECTRICAL_PIN bb_electrical_pin_get_type()
-G_DECLARE_FINAL_TYPE(BbElectricalPin, bb_electrical_pin, BB, ELECTRICAL_PIN, BbSchematicItem)
-
-
-int
-bb_electrical_pin_get_x0(BbElectricalPin *pin);
+#define BB_TYPE_GEDA_LINE bb_geda_line_get_type()
+G_DECLARE_FINAL_TYPE(BbGedaLine, bb_geda_line, BB, GEDA_LINE, BbGedaItem)
 
 
 int
-bb_electrical_pin_get_x1(BbElectricalPin *pin);
+bb_geda_line_get_x0(BbGedaLine *line);
 
 
 int
-bb_electrical_pin_get_y0(BbElectricalPin *pin);
+bb_geda_line_get_x1(BbGedaLine *line);
 
 
 int
-bb_electrical_pin_get_y1(BbElectricalPin *pin);
+bb_geda_line_get_y0(BbGedaLine *line);
 
 
-BbElectricalPin*
-bb_electrical_pin_new();
+int
+bb_geda_line_get_y1(BbGedaLine *line);
 
 
-BbElectricalPin*
-bb_electrical_pin_new_with_params(BbParams *params, GError **error);
+BbGedaLine*
+bb_geda_line_new();
 
 
-void
-bb_electrical_pin_set_x0(BbElectricalPin *pin, int x);
-
-
-void
-bb_electrical_pin_set_x1(BbElectricalPin *pin, int x);
+BbGedaLine*
+bb_geda_line_new_with_params(BbParams *params, GError **error);
 
 
 void
-bb_electrical_pin_set_y0(BbElectricalPin *pin, int y);
+bb_geda_line_set_x0(BbGedaLine *line, int x);
 
 
 void
-bb_electrical_pin_set_y1(BbElectricalPin *pin, int y);
+bb_geda_line_set_x1(BbGedaLine *line, int x);
+
+
+void
+bb_geda_line_set_y0(BbGedaLine *line, int y);
+
+
+void
+bb_geda_line_set_y1(BbGedaLine *line, int y);
 
 
 #endif

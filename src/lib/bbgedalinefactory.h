@@ -19,7 +19,7 @@
  */
 
 #include <gtk/gtk.h>
-#include "bbgraphicline.h"
+#include "bbgedaline.h"
 #include "bbgedaversion.h"
 #include "bbgedaitemfactory.h"
 

@@ -50,7 +50,7 @@ struct _BbBoxTool
 {
     GObject parent;
 
-    BbGraphicBox *item;
+    BbGedaBox *item;
 
     int state;
 
@@ -79,7 +79,7 @@ bb_box_tool_finalize(GObject *object);
 static void
 bb_box_tool_finish(BbBoxTool *box_tool);
 
-static BbGraphicBox*
+static BbGedaBox*
 bb_box_tool_get_item(BbBoxTool *tool);
 
 static void
@@ -89,7 +89,7 @@ static BbToolSubject*
 bb_box_tool_get_subject(BbBoxTool *tool);
 
 static void
-bb_box_tool_invalidate_item_cb(BbSchematicItem *item, BbBoxTool *box_tool);
+bb_box_tool_invalidate_item_cb(BbGedaItem *item, BbBoxTool *box_tool);
 
 static void
 bb_box_tool_key_pressed(BbDrawingTool *tool);
@@ -107,7 +107,7 @@ static void
 bb_box_tool_reset_with_point(BbBoxTool *tool, double x, double y);
 
 static void
-bb_box_tool_set_item(BbBoxTool *tool, BbGraphicBox *item);
+bb_box_tool_set_item(BbBoxTool *tool, BbGedaBox *item);
 
 static void
 bb_box_tool_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
@@ -180,7 +180,7 @@ bb_box_tool_class_init(BbBoxToolClass *klasse)
             "item",
             "",
             "",
-            BB_TYPE_GRAPHIC_BOX,
+            BB_TYPE_GEDA_BOX,
             G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS
             )
         );
@@ -223,10 +223,10 @@ bb_box_tool_draw(BbDrawingTool *tool, BbGraphics *graphics)
 
     if (box_tool->state != STATE_S0)
     {
-        bb_schematic_item_render(
-            BB_SCHEMATIC_ITEM(box_tool->item),
+        bb_geda_item_render(
+            BB_GEDA_ITEM(box_tool->item),
             BB_ITEM_RENDERER(graphics)
-            );
+        );
     }
 }
 
@@ -256,7 +256,7 @@ bb_box_tool_finish(BbBoxTool *box_tool)
 {
     g_return_if_fail(box_tool != NULL);
 
-    BbSchematicItem *item = bb_schematic_item_clone(BB_SCHEMATIC_ITEM(box_tool->item));
+    BbGedaItem *item = bb_geda_item_clone(BB_GEDA_ITEM(box_tool->item));
 
     bb_tool_subject_add_item(box_tool->subject, item);
 
@@ -266,7 +266,7 @@ bb_box_tool_finish(BbBoxTool *box_tool)
 }
 
 
-static BbGraphicBox*
+static BbGedaBox*
 bb_box_tool_get_item(BbBoxTool *tool)
 {
     g_return_val_if_fail(tool != NULL, NULL);
@@ -311,11 +311,11 @@ bb_box_tool_init(BbBoxTool *box_tool)
 
 
 static void
-bb_box_tool_invalidate_item_cb(BbSchematicItem *item, BbBoxTool *box_tool)
+bb_box_tool_invalidate_item_cb(BbGedaItem *item, BbBoxTool *box_tool)
 {
     g_return_if_fail(box_tool != NULL);
     g_return_if_fail(box_tool->item != NULL);
-    g_return_if_fail(box_tool->item == BB_GRAPHIC_BOX(item));
+    g_return_if_fail(box_tool->item == BB_GEDA_BOX(item));
 
     g_signal_emit(box_tool, signals[SIG_INVALIDATE_ITEM], 0, item);
 }
@@ -340,7 +340,7 @@ bb_box_tool_new(BbToolSubject *subject)
 {
     return BB_BOX_TOOL(g_object_new(
         BB_TYPE_BOX_TOOL,
-        "item", g_object_new(BB_TYPE_GRAPHIC_BOX, NULL),
+        "item", g_object_new(BB_TYPE_GEDA_BOX, NULL),
         "subject", subject,
         NULL
         ));
@@ -372,11 +372,11 @@ bb_box_tool_reset_with_point(BbBoxTool *box_tool, gdouble x, gdouble y)
 
     bb_tool_subject_snap_coordinate(box_tool->subject, bb_coord_round(ux), bb_coord_round(uy), &sx, &sy);
 
-    bb_graphic_box_set_x0(box_tool->item, sx);
-    bb_graphic_box_set_y0(box_tool->item, sy);
+    bb_geda_box_set_x0(box_tool->item, sx);
+    bb_geda_box_set_y0(box_tool->item, sy);
 
-    bb_graphic_box_set_x1(box_tool->item, sx);
-    bb_graphic_box_set_y1(box_tool->item, sy);
+    bb_geda_box_set_x1(box_tool->item, sx);
+    bb_geda_box_set_y1(box_tool->item, sy);
 
     box_tool->state = STATE_S1;
 }
@@ -395,7 +395,7 @@ bb_box_tool_motion_notify(BbDrawingTool *tool, gdouble x, gdouble y)
 
 
 static void
-bb_box_tool_set_item(BbBoxTool *tool, BbGraphicBox *item)
+bb_box_tool_set_item(BbBoxTool *tool, BbGedaBox *item)
 {
     g_return_if_fail(tool != NULL);
 
@@ -434,7 +434,7 @@ bb_box_tool_set_property(GObject *object, guint property_id, const GValue *value
     switch (property_id)
     {
         case PROP_ITEM:
-            bb_box_tool_set_item(BB_BOX_TOOL(object), BB_GRAPHIC_BOX(g_value_get_object(value)));
+            bb_box_tool_set_item(BB_BOX_TOOL(object), BB_GEDA_BOX(g_value_get_object(value)));
             break;
 
         case PROP_SUBJECT:
@@ -490,7 +490,7 @@ bb_box_tool_update_with_point(BbBoxTool *box_tool, gdouble x, gdouble y)
 
         bb_tool_subject_snap_coordinate(box_tool->subject, bb_coord_round(ux), bb_coord_round(uy), &sx, &sy);
 
-        bb_graphic_box_set_x1(box_tool->item, sx);
-        bb_graphic_box_set_y1(box_tool->item, sy);
+        bb_geda_box_set_x1(box_tool->item, sx);
+        bb_geda_box_set_y1(box_tool->item, sy);
     }
 }

@@ -19,7 +19,7 @@
  */
 
 #include <gtk/gtk.h>
-#include "bbschematicitem.h"
+#include "bbgedaitem.h"
 #include "bbgedaversion.h"
 
 #define BB_TYPE_GEDA_ITEM_FACTORY bb_geda_item_factory_get_type()
@@ -29,7 +29,7 @@ struct _BbGedaItemFactoryInterface
 {
     GTypeInterface g_iface;
 
-    BbSchematicItem* (*create)(
+    BbGedaItem* (*create)(
         BbGedaItemFactory *factory,
         BbGedaVersion *version,
         BbParams *params,
@@ -47,7 +47,7 @@ struct _BbGedaItemFactoryInterface
         gpointer user_data
         );
 
-    BbSchematicItem* (*create_finish)(
+    BbGedaItem* (*create_finish)(
         BbGedaItemFactory *factory,
         GAsyncResult *result,
         GError **error
@@ -63,9 +63,9 @@ struct _BbGedaItemFactoryInterface
  * @param params The first line of the item from the input stream converted to BbParams
  * @param stream The input stream containing the rest of the item, if needed
  * @param error An optional location to store any error encountered
- * @return The BbSchematicItem created from the operation, or NULL if encountering an error
+ * @return The BbGedaItem created from the operation, or NULL if encountering an error
  */
-BbSchematicItem*
+BbGedaItem*
 bb_geda_item_factory_create(
     BbGedaItemFactory *factory,
     BbGedaVersion *version,
@@ -103,9 +103,9 @@ bb_geda_item_factory_create_async(
  * @param factory The BbGedaItemFactory that initiated the asynchronous operation
  * @param result The result passed to the GAsyncReadyCallback
  * @param error An optional location to store any error encountered
- * @return The BbSchematicItem created from the operation, or NULL if encountering an error
+ * @return The BbGedaItem created from the operation, or NULL if encountering an error
  */
-BbSchematicItem*
+BbGedaItem*
 bb_geda_item_factory_create_finish(
     BbGedaItemFactory *factory,
     GAsyncResult *result,

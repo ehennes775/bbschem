@@ -19,7 +19,7 @@
  */
 
 #include <gtk/gtk.h>
-#include "bbgraphicarc.h"
+#include "bbgedaarc.h"
 #include "bbgedaversion.h"
 #include "bbgedaitemfactory.h"
 

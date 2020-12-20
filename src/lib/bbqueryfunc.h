@@ -19,7 +19,7 @@
  */
 
 #include <gtk/gtk.h>
-#include "bbschematicitem.h"
+#include "bbgedaitem.h"
 
 /**
  * A function for querying items
@@ -27,7 +27,7 @@
  * @param item A schematic item
  * @param user_data User data passed in from the caller
  */
-typedef gboolean (*BbQueryFunc)(BbSchematicItem *item, gpointer user_data);
+typedef gboolean (*BbQueryFunc)(BbGedaItem *item, gpointer user_data);
 
 
 /**
@@ -37,7 +37,7 @@ typedef gboolean (*BbQueryFunc)(BbSchematicItem *item, gpointer user_data);
  * @param user_data Unused
  */
 gboolean
-bb_query_func_always(BbSchematicItem *item, gpointer user_data);
+bb_query_func_always(BbGedaItem *item, gpointer user_data);
 
 
 /**
@@ -47,7 +47,7 @@ bb_query_func_always(BbSchematicItem *item, gpointer user_data);
  * @param user_data Unused
  */
 gboolean
-bb_query_func_never(BbSchematicItem *item, gpointer user_data);
+bb_query_func_never(BbGedaItem *item, gpointer user_data);
 
 
 #endif

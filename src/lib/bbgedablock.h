@@ -1,5 +1,5 @@
-#ifndef __BBGRAPHICPATH__
-#define __BBGRAPHICPATH__
+#ifndef __BBGEDABLOCK__
+#define __BBGEDABLOCK__
 /*
  * bbsch
  * Copyright (C) 2020 Edward C. Hennessy
@@ -19,9 +19,30 @@
  */
 
 #include <gtk/gtk.h>
-#include "bbschematicitem.h"
+#include "bbgedaitem.h"
 
-#define BB_TYPE_GRAPHIC_PATH bb_graphic_path_get_type()
-G_DECLARE_FINAL_TYPE(BbGraphicPath, bb_graphic_path, BB, GRAPHIC_PATH, BbSchematicItem)
+#define BB_TYPE_GEDA_BLOCK bb_geda_block_get_type()
+G_DECLARE_FINAL_TYPE(BbGedaBlock, bb_geda_block, BB, GEDA_BLOCK, BbGedaItem)
+
+
+int
+bb_geda_block_get_insert_x(BbGedaBlock *block);
+
+
+int
+bb_geda_block_get_insert_y(BbGedaBlock *block);
+
+
+BbGedaBlock*
+bb_geda_block_new();
+
+
+void
+bb_geda_block_set_insert_x(BbGedaBlock *block, int x);
+
+
+void
+bb_geda_block_set_insert_y(BbGedaBlock *block, int y);
+
 
 #endif

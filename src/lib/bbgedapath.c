@@ -18,7 +18,7 @@
 
 #include <gtk/gtk.h>
 #include <bbextensions.h>
-#include "bbgraphicpath.h"
+#include "bbgedapath.h"
 #include "bbitemparams.h"
 #include "bbpathcommand.h"
 
@@ -48,7 +48,7 @@ enum
 
 struct _BbGraphicPath
 {
-    BbSchematicItem parent;
+    BbGedaItem parent;
 
     BbItemParams *params;
 
@@ -61,7 +61,7 @@ struct _BbGraphicPath
 };
 
 
-G_DEFINE_TYPE(BbGraphicPath, bb_graphic_path, BB_TYPE_SCHEMATIC_ITEM)
+G_DEFINE_TYPE(BbGraphicPath, bb_geda_path, BB_TYPE_GEDA_ITEM)
 
 
 typedef struct _MirrorXCapture MirrorXCapture;
@@ -100,89 +100,89 @@ struct _TranslateCapture
 
 
 static BbBounds*
-bb_graphic_path_calculate_bounds(BbSchematicItem *item, BbBoundsCalculator *calculator);
+bb_geda_path_calculate_bounds(BbGedaItem *item, BbBoundsCalculator *calculator);
 
 static void
-bb_graphic_path_dispose(GObject *object);
+bb_geda_path_dispose(GObject *object);
 
 static void
-bb_graphic_path_finalize(GObject *object);
+bb_geda_path_finalize(GObject *object);
 
 static int
-bb_graphic_path_get_cap_type(BbGraphicPath *path);
+bb_geda_path_get_cap_type(BbGraphicPath *path);
 
 static int
-bb_graphic_path_get_dash_length(BbGraphicPath *path);
+bb_geda_path_get_dash_length(BbGraphicPath *path);
 
 static int
-bb_graphic_path_get_dash_space(BbGraphicPath *path);
+bb_geda_path_get_dash_space(BbGraphicPath *path);
 
 static int
-bb_graphic_path_get_dash_type(BbGraphicPath *path);
+bb_geda_path_get_dash_type(BbGraphicPath *path);
 
 static int
-bb_graphic_path_get_item_color(BbGraphicPath *path);
+bb_geda_path_get_item_color(BbGraphicPath *path);
 
 static int
-bb_graphic_path_get_line_width(BbGraphicPath *path);
+bb_geda_path_get_line_width(BbGraphicPath *path);
 
 static void
-bb_graphic_path_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
+bb_geda_path_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
 
 static void
-bb_graphic_path_mirror_x(BbSchematicItem *item, int cx);
+bb_geda_path_mirror_x(BbGedaItem *item, int cx);
 
 static void
-bb_graphic_path_mirror_x_lambda(BbPathCommand *command, MirrorXCapture *capture);
+bb_geda_path_mirror_x_lambda(BbPathCommand *command, MirrorXCapture *capture);
 
 static void
-bb_graphic_path_mirror_y(BbSchematicItem *item, int cy);
+bb_geda_path_mirror_y(BbGedaItem *item, int cy);
 
 static void
-bb_graphic_path_mirror_y_lambda(BbPathCommand *command, MirrorYCapture *capture);
+bb_geda_path_mirror_y_lambda(BbPathCommand *command, MirrorYCapture *capture);
 
 static void
-bb_graphic_path_render(BbSchematicItem *item, BbItemRenderer *renderer);
+bb_geda_path_render(BbGedaItem *item, BbItemRenderer *renderer);
 
 static void
-bb_graphic_path_render_lambda(gpointer command, gpointer renderer);
+bb_geda_path_render_lambda(gpointer command, gpointer renderer);
 
 static void
-bb_graphic_path_rotate(BbSchematicItem *item, int cx, int cy, int angle);
+bb_geda_path_rotate(BbGedaItem *item, int cx, int cy, int angle);
 
 static void
-bb_graphic_path_rotate_lambda(BbPathCommand *command, RotateCapture *capture);
+bb_geda_path_rotate_lambda(BbPathCommand *command, RotateCapture *capture);
 
 static void
-bb_graphic_path_set_cap_type(BbGraphicPath *path, int type);
+bb_geda_path_set_cap_type(BbGraphicPath *path, int type);
 
 static void
-bb_graphic_path_set_dash_length(BbGraphicPath *path, int length);
+bb_geda_path_set_dash_length(BbGraphicPath *path, int length);
 
 static void
-bb_graphic_path_set_dash_space(BbGraphicPath *path, int space);
+bb_geda_path_set_dash_space(BbGraphicPath *path, int space);
 
 static void
-bb_graphic_path_set_dash_type(BbGraphicPath *path, int type);
+bb_geda_path_set_dash_type(BbGraphicPath *path, int type);
 
 static void
-bb_graphic_path_set_item_color(BbGraphicPath *path, int color);
+bb_geda_path_set_item_color(BbGraphicPath *path, int color);
 
 static void
-bb_graphic_path_set_line_width(BbGraphicPath *path, int width);
+bb_geda_path_set_line_width(BbGraphicPath *path, int width);
 
 static void
-bb_graphic_path_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
+bb_geda_path_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
 
 static void
-bb_graphic_path_translate(BbSchematicItem *item, int dx, int dy);
+bb_geda_path_translate(BbGedaItem *item, int dx, int dy);
 
 static void
-bb_graphic_path_translate_lambda(BbPathCommand *command, TranslateCapture *capture);
+bb_geda_path_translate_lambda(BbPathCommand *command, TranslateCapture *capture);
 
 static void
-bb_graphic_path_write_async(
-    BbSchematicItem *item,
+bb_geda_path_write_async(
+    BbGedaItem *item,
     GOutputStream *stream,
     int io_priority,
     GCancellable *cancellable,
@@ -191,8 +191,8 @@ bb_graphic_path_write_async(
     );
 
 static gboolean
-bb_graphic_path_write_finish(
-    BbSchematicItem *item,
+bb_geda_path_write_finish(
+    BbGedaItem *item,
     GOutputStream *stream,
     GAsyncResult *result,
     GError **error
@@ -203,9 +203,9 @@ static GParamSpec *properties[N_PROPERTIES];
 
 
 static BbBounds*
-bb_graphic_path_calculate_bounds(BbSchematicItem *item, BbBoundsCalculator *calculator)
+bb_geda_path_calculate_bounds(BbGedaItem *item, BbBoundsCalculator *calculator)
 {
-    BbGraphicPath *path = BB_GRAPHIC_PATH(item);
+    BbGraphicPath *path = BB_GEDA_PATH(item);
 
     g_return_val_if_fail(path != NULL, NULL);
 
@@ -214,21 +214,21 @@ bb_graphic_path_calculate_bounds(BbSchematicItem *item, BbBoundsCalculator *calc
 
 
 static void
-bb_graphic_path_class_init(BbGraphicPathClass *klasse)
+bb_geda_path_class_init(BbGraphicPathClass *klasse)
 {
-    G_OBJECT_CLASS(klasse)->dispose = bb_graphic_path_dispose;
-    G_OBJECT_CLASS(klasse)->finalize = bb_graphic_path_finalize;
-    G_OBJECT_CLASS(klasse)->get_property = bb_graphic_path_get_property;
-    G_OBJECT_CLASS(klasse)->set_property = bb_graphic_path_set_property;
+    G_OBJECT_CLASS(klasse)->dispose = bb_geda_path_dispose;
+    G_OBJECT_CLASS(klasse)->finalize = bb_geda_path_finalize;
+    G_OBJECT_CLASS(klasse)->get_property = bb_geda_path_get_property;
+    G_OBJECT_CLASS(klasse)->set_property = bb_geda_path_set_property;
 
-    BB_SCHEMATIC_ITEM_CLASS(klasse)->calculate_bounds = bb_graphic_path_calculate_bounds;
-    BB_SCHEMATIC_ITEM_CLASS(klasse)->mirror_x = bb_graphic_path_mirror_x;
-    BB_SCHEMATIC_ITEM_CLASS(klasse)->mirror_y = bb_graphic_path_mirror_y;
-    BB_SCHEMATIC_ITEM_CLASS(klasse)->render = bb_graphic_path_render;
-    BB_SCHEMATIC_ITEM_CLASS(klasse)->rotate = bb_graphic_path_rotate;
-    BB_SCHEMATIC_ITEM_CLASS(klasse)->translate = bb_graphic_path_translate;
-    BB_SCHEMATIC_ITEM_CLASS(klasse)->write_async = bb_graphic_path_write_async;
-    BB_SCHEMATIC_ITEM_CLASS(klasse)->write_finish = bb_graphic_path_write_finish;
+    BB_GEDA_ITEM_CLASS(klasse)->calculate_bounds = bb_geda_path_calculate_bounds;
+    BB_GEDA_ITEM_CLASS(klasse)->mirror_x = bb_geda_path_mirror_x;
+    BB_GEDA_ITEM_CLASS(klasse)->mirror_y = bb_geda_path_mirror_y;
+    BB_GEDA_ITEM_CLASS(klasse)->render = bb_geda_path_render;
+    BB_GEDA_ITEM_CLASS(klasse)->rotate = bb_geda_path_rotate;
+    BB_GEDA_ITEM_CLASS(klasse)->translate = bb_geda_path_translate;
+    BB_GEDA_ITEM_CLASS(klasse)->write_async = bb_geda_path_write_async;
+    BB_GEDA_ITEM_CLASS(klasse)->write_finish = bb_geda_path_write_finish;
 
     properties[PROP_CAP_TYPE] = bb_object_class_override_property(
         G_OBJECT_CLASS(klasse),
@@ -269,9 +269,9 @@ bb_graphic_path_class_init(BbGraphicPathClass *klasse)
 
 
 static void
-bb_graphic_path_dispose(GObject *object)
+bb_geda_path_dispose(GObject *object)
 {
-    BbGraphicPath *path = BB_GRAPHIC_PATH(object);
+    BbGraphicPath *path = BB_GEDA_PATH(object);
 
     g_return_if_fail(path != NULL);
 
@@ -283,9 +283,9 @@ bb_graphic_path_dispose(GObject *object)
 
 
 static void
-bb_graphic_path_finalize(GObject *object)
+bb_geda_path_finalize(GObject *object)
 {
-    BbGraphicPath *path = BB_GRAPHIC_PATH(object);
+    BbGraphicPath *path = BB_GEDA_PATH(object);
 
     g_return_if_fail(path != NULL);
 
@@ -295,7 +295,7 @@ bb_graphic_path_finalize(GObject *object)
 
 
 static int
-bb_graphic_path_get_cap_type(BbGraphicPath *path)
+bb_geda_path_get_cap_type(BbGraphicPath *path)
 {
     g_return_val_if_fail(path != NULL, 0);
     g_return_val_if_fail(path->line_style != NULL, 0);
@@ -305,7 +305,7 @@ bb_graphic_path_get_cap_type(BbGraphicPath *path)
 
 
 static int
-bb_graphic_path_get_dash_length(BbGraphicPath *path)
+bb_geda_path_get_dash_length(BbGraphicPath *path)
 {
     g_return_val_if_fail(path != NULL, 0);
     g_return_val_if_fail(path->line_style != NULL, 0);
@@ -315,7 +315,7 @@ bb_graphic_path_get_dash_length(BbGraphicPath *path)
 
 
 static int
-bb_graphic_path_get_dash_space(BbGraphicPath *path)
+bb_geda_path_get_dash_space(BbGraphicPath *path)
 {
     g_return_val_if_fail(path != NULL, 0);
     g_return_val_if_fail(path->line_style != NULL, 0);
@@ -325,7 +325,7 @@ bb_graphic_path_get_dash_space(BbGraphicPath *path)
 
 
 static int
-bb_graphic_path_get_dash_type(BbGraphicPath *path)
+bb_geda_path_get_dash_type(BbGraphicPath *path)
 {
     g_return_val_if_fail(path != NULL, 0);
     g_return_val_if_fail(path->line_style != NULL, 0);
@@ -335,7 +335,7 @@ bb_graphic_path_get_dash_type(BbGraphicPath *path)
 
 
 static int
-bb_graphic_path_get_item_color(BbGraphicPath *path)
+bb_geda_path_get_item_color(BbGraphicPath *path)
 {
     g_return_val_if_fail(path != NULL, 0);
 
@@ -344,7 +344,7 @@ bb_graphic_path_get_item_color(BbGraphicPath *path)
 
 
 static int
-bb_graphic_path_get_line_width(BbGraphicPath *path)
+bb_geda_path_get_line_width(BbGraphicPath *path)
 {
     g_return_val_if_fail(path != NULL, 0);
     g_return_val_if_fail(path->line_style != NULL, 0);
@@ -354,32 +354,32 @@ bb_graphic_path_get_line_width(BbGraphicPath *path)
 
 
 static void
-bb_graphic_path_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec)
+bb_geda_path_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec)
 {
     switch (property_id)
     {
         case PROP_CAP_TYPE:
-            g_value_set_int(value, bb_graphic_path_get_cap_type(BB_GRAPHIC_PATH(object)));
+            g_value_set_int(value, bb_geda_path_get_cap_type(BB_GEDA_PATH(object)));
             break;
 
         case PROP_ITEM_COLOR:
-            g_value_set_int(value, bb_graphic_path_get_item_color(BB_GRAPHIC_PATH(object)));
+            g_value_set_int(value, bb_geda_path_get_item_color(BB_GEDA_PATH(object)));
             break;
 
         case PROP_DASH_LENGTH:
-            g_value_set_int(value, bb_graphic_path_get_dash_length(BB_GRAPHIC_PATH(object)));
+            g_value_set_int(value, bb_geda_path_get_dash_length(BB_GEDA_PATH(object)));
             break;
 
         case PROP_DASH_SPACE:
-            g_value_set_int(value, bb_graphic_path_get_dash_space(BB_GRAPHIC_PATH(object)));
+            g_value_set_int(value, bb_geda_path_get_dash_space(BB_GEDA_PATH(object)));
             break;
 
         case PROP_DASH_TYPE:
-            g_value_set_int(value, bb_graphic_path_get_dash_type(BB_GRAPHIC_PATH(object)));
+            g_value_set_int(value, bb_geda_path_get_dash_type(BB_GEDA_PATH(object)));
             break;
 
         case PROP_LINE_WIDTH:
-            g_value_set_int(value, bb_graphic_path_get_line_width(BB_GRAPHIC_PATH(object)));
+            g_value_set_int(value, bb_geda_path_get_line_width(BB_GEDA_PATH(object)));
             break;
 
         default:
@@ -389,7 +389,7 @@ bb_graphic_path_get_property(GObject *object, guint property_id, GValue *value, 
 
 
 static void
-bb_graphic_path_init(BbGraphicPath *path)
+bb_geda_path_init(BbGraphicPath *path)
 {
     g_return_if_fail(path != NULL);
 
@@ -399,9 +399,9 @@ bb_graphic_path_init(BbGraphicPath *path)
 
 
 static void
-bb_graphic_path_mirror_x(BbSchematicItem *item, int cx)
+bb_geda_path_mirror_x(BbGedaItem *item, int cx)
 {
-    BbGraphicPath *path = BB_GRAPHIC_PATH(item);
+    BbGraphicPath *path = BB_GEDA_PATH(item);
     g_return_if_fail(path != NULL);
 
     MirrorXCapture capture;
@@ -410,14 +410,14 @@ bb_graphic_path_mirror_x(BbSchematicItem *item, int cx)
 
     g_slist_foreach(
         path->commands,
-        bb_graphic_path_mirror_x_lambda,
+        bb_geda_path_mirror_x_lambda,
         &capture
         );
 }
 
 
 static void
-bb_graphic_path_mirror_x_lambda(BbPathCommand *command, MirrorXCapture *capture)
+bb_geda_path_mirror_x_lambda(BbPathCommand *command, MirrorXCapture *capture)
 {
     g_return_if_fail(capture != NULL);
 
@@ -426,9 +426,9 @@ bb_graphic_path_mirror_x_lambda(BbPathCommand *command, MirrorXCapture *capture)
 
 
 static void
-bb_graphic_path_mirror_y(BbSchematicItem *item, int cy)
+bb_geda_path_mirror_y(BbGedaItem *item, int cy)
 {
-    BbGraphicPath *path = BB_GRAPHIC_PATH(item);
+    BbGraphicPath *path = BB_GEDA_PATH(item);
     g_return_if_fail(path != NULL);
 
     MirrorYCapture capture;
@@ -437,14 +437,14 @@ bb_graphic_path_mirror_y(BbSchematicItem *item, int cy)
 
     g_slist_foreach(
         path->commands,
-        bb_graphic_path_mirror_y_lambda,
+        bb_geda_path_mirror_y_lambda,
         &capture
         );
 }
 
 
 static void
-bb_graphic_path_mirror_y_lambda(BbPathCommand *command, MirrorYCapture *capture)
+bb_geda_path_mirror_y_lambda(BbPathCommand *command, MirrorYCapture *capture)
 {
     g_return_if_fail(capture != NULL);
 
@@ -453,9 +453,9 @@ bb_graphic_path_mirror_y_lambda(BbPathCommand *command, MirrorYCapture *capture)
 
 
 static void
-bb_graphic_path_rotate(BbSchematicItem *item, int cx, int cy, int angle)
+bb_geda_path_rotate(BbGedaItem *item, int cx, int cy, int angle)
 {
-    BbGraphicPath *path = BB_GRAPHIC_PATH(item);
+    BbGraphicPath *path = BB_GEDA_PATH(item);
     g_return_if_fail(path != NULL);
 
     RotateCapture capture;
@@ -466,14 +466,14 @@ bb_graphic_path_rotate(BbSchematicItem *item, int cx, int cy, int angle)
 
     g_slist_foreach(
         path->commands,
-        bb_graphic_path_rotate_lambda,
+        bb_geda_path_rotate_lambda,
         &capture
         );
 }
 
 
 static void
-bb_graphic_path_rotate_lambda(BbPathCommand *command, RotateCapture *capture)
+bb_geda_path_rotate_lambda(BbPathCommand *command, RotateCapture *capture)
 {
     g_return_if_fail(capture != NULL);
 
@@ -482,16 +482,16 @@ bb_graphic_path_rotate_lambda(BbPathCommand *command, RotateCapture *capture)
 
 
 __attribute__((constructor)) void
-bb_graphic_path_register()
+bb_geda_path_register()
 {
-    bb_graphic_path_get_type();
+    bb_geda_path_get_type();
 }
 
 
 static void
-bb_graphic_path_render(BbSchematicItem *item, BbItemRenderer *renderer)
+bb_geda_path_render(BbGedaItem *item, BbItemRenderer *renderer)
 {
-    BbGraphicPath *path = BB_GRAPHIC_PATH(item);
+    BbGraphicPath *path = BB_GEDA_PATH(item);
 
     g_return_if_fail(path != NULL);
 
@@ -501,16 +501,16 @@ bb_graphic_path_render(BbSchematicItem *item, BbItemRenderer *renderer)
 
     g_slist_foreach(
         path->commands,
-        bb_graphic_path_render_lambda,
+        bb_geda_path_render_lambda,
         renderer
         );
 }
 
 
 static void
-bb_graphic_path_render_lambda(gpointer command, gpointer renderer)
+bb_geda_path_render_lambda(gpointer command, gpointer renderer)
 {
-    bb_graphic_path_render(
+    bb_geda_path_render(
         BB_PATH_COMMAND(command),
         BB_ITEM_RENDERER(renderer)
         );
@@ -518,7 +518,7 @@ bb_graphic_path_render_lambda(gpointer command, gpointer renderer)
 
 
 static void
-bb_graphic_path_set_cap_type(BbGraphicPath *path, int type)
+bb_geda_path_set_cap_type(BbGraphicPath *path, int type)
 {
     g_return_if_fail(path != NULL);
     g_return_if_fail(path->line_style != NULL);
@@ -533,7 +533,7 @@ bb_graphic_path_set_cap_type(BbGraphicPath *path, int type)
 
 
 static void
-bb_graphic_path_set_dash_length(BbGraphicPath *path, int length)
+bb_geda_path_set_dash_length(BbGraphicPath *path, int length)
 {
     g_return_if_fail(path != NULL);
     g_return_if_fail(path->line_style != NULL);
@@ -548,7 +548,7 @@ bb_graphic_path_set_dash_length(BbGraphicPath *path, int length)
 
 
 static void
-bb_graphic_path_set_dash_space(BbGraphicPath *path, int space)
+bb_geda_path_set_dash_space(BbGraphicPath *path, int space)
 {
     g_return_if_fail(path != NULL);
     g_return_if_fail(path->line_style != NULL);
@@ -563,7 +563,7 @@ bb_graphic_path_set_dash_space(BbGraphicPath *path, int space)
 
 
 static void
-bb_graphic_path_set_dash_type(BbGraphicPath *path, int type)
+bb_geda_path_set_dash_type(BbGraphicPath *path, int type)
 {
     g_return_if_fail(path != NULL);
     g_return_if_fail(path->line_style != NULL);
@@ -578,7 +578,7 @@ bb_graphic_path_set_dash_type(BbGraphicPath *path, int type)
 
 
 static void
-bb_graphic_path_set_item_color(BbGraphicPath *path, int color)
+bb_geda_path_set_item_color(BbGraphicPath *path, int color)
 {
     g_return_if_fail(path != NULL);
 
@@ -592,7 +592,7 @@ bb_graphic_path_set_item_color(BbGraphicPath *path, int color)
 
 
 static void
-bb_graphic_path_set_line_width(BbGraphicPath *path, int width)
+bb_geda_path_set_line_width(BbGraphicPath *path, int width)
 {
     g_return_if_fail(path != NULL);
     g_return_if_fail(path->line_style != NULL);
@@ -607,32 +607,32 @@ bb_graphic_path_set_line_width(BbGraphicPath *path, int width)
 
 
 static void
-bb_graphic_path_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec)
+bb_geda_path_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec)
 {
     switch (property_id)
     {
         case PROP_CAP_TYPE:
-            bb_graphic_path_set_cap_type(BB_GRAPHIC_PATH(object), g_value_get_int(value));
+            bb_geda_path_set_cap_type(BB_GEDA_PATH(object), g_value_get_int(value));
             break;
 
         case PROP_ITEM_COLOR:
-            bb_graphic_path_set_item_color(BB_GRAPHIC_PATH(object), g_value_get_int(value));
+            bb_geda_path_set_item_color(BB_GEDA_PATH(object), g_value_get_int(value));
             break;
 
         case PROP_DASH_LENGTH:
-            bb_graphic_path_set_dash_length(BB_GRAPHIC_PATH(object), g_value_get_int(value));
+            bb_geda_path_set_dash_length(BB_GEDA_PATH(object), g_value_get_int(value));
             break;
 
         case PROP_DASH_SPACE:
-            bb_graphic_path_set_dash_space(BB_GRAPHIC_PATH(object), g_value_get_int(value));
+            bb_geda_path_set_dash_space(BB_GEDA_PATH(object), g_value_get_int(value));
             break;
 
         case PROP_DASH_TYPE:
-            bb_graphic_path_set_dash_type(BB_GRAPHIC_PATH(object), g_value_get_int(value));
+            bb_geda_path_set_dash_type(BB_GEDA_PATH(object), g_value_get_int(value));
             break;
 
         case PROP_LINE_WIDTH:
-            bb_graphic_path_set_line_width(BB_GRAPHIC_PATH(object), g_value_get_int(value));
+            bb_geda_path_set_line_width(BB_GEDA_PATH(object), g_value_get_int(value));
             break;
 
         default:
@@ -642,9 +642,9 @@ bb_graphic_path_set_property(GObject *object, guint property_id, const GValue *v
 
 
 static void
-bb_graphic_path_translate(BbSchematicItem *item, int dx, int dy)
+bb_geda_path_translate(BbGedaItem *item, int dx, int dy)
 {
-    BbGraphicPath *path = BB_GRAPHIC_PATH(item);
+    BbGraphicPath *path = BB_GEDA_PATH(item);
     g_return_if_fail(path != NULL);
 
     TranslateCapture capture;
@@ -654,14 +654,14 @@ bb_graphic_path_translate(BbSchematicItem *item, int dx, int dy)
 
     g_slist_foreach(
         path->commands,
-        bb_graphic_path_translate_lambda,
+        bb_geda_path_translate_lambda,
         &capture
         );
 }
 
 
 static void
-bb_graphic_path_translate_lambda(BbPathCommand *command, TranslateCapture *capture)
+bb_geda_path_translate_lambda(BbPathCommand *command, TranslateCapture *capture)
 {
     g_return_if_fail(capture != NULL);
 
@@ -670,8 +670,8 @@ bb_graphic_path_translate_lambda(BbPathCommand *command, TranslateCapture *captu
 
 
 static void
-bb_graphic_path_write_async(
-    BbSchematicItem *item,
+bb_geda_path_write_async(
+    BbGedaItem *item,
     GOutputStream *stream,
     int io_priority,
     GCancellable *cancellable,
@@ -679,7 +679,7 @@ bb_graphic_path_write_async(
     gpointer callback_data
     )
 {
-    BbGraphicPath *path = BB_GRAPHIC_PATH(item);
+    BbGraphicPath *path = BB_GEDA_PATH(item);
 
     bb_item_params_write_async(
         path->params,
@@ -693,8 +693,8 @@ bb_graphic_path_write_async(
 
 
 static gboolean
-bb_graphic_path_write_finish(
-    BbSchematicItem *item,
+bb_geda_path_write_finish(
+    BbGedaItem *item,
     GOutputStream *stream,
     GAsyncResult *result,
     GError **error

@@ -20,7 +20,7 @@
 #include <bbextensions.h>
 #include "bbcoord.h"
 #include "bbitemparams.h"
-#include "bbuniversalblock.h"
+#include "bbgedablock.h"
 #include "bbadjustableitemcolor.h"
 
 
@@ -42,9 +42,9 @@ enum
 };
 
 
-struct _BbUniversalBlock
+struct _BbGedaBlock
 {
-    BbSchematicItem parent;
+    BbGedaItem parent;
 
     BbItemParams *params;
 
@@ -54,38 +54,38 @@ struct _BbUniversalBlock
 
 
 static void
-bb_universal_block_adjustable_item_color_init(BbAdjustableItemColorInterface *iface);
+bb_geda_block_adjustable_item_color_init(BbAdjustableItemColorInterface *iface);
 
 static BbBounds*
-bb_universal_block_calculate_bounds(BbSchematicItem *item, BbBoundsCalculator *calculator);
+bb_geda_block_calculate_bounds(BbGedaItem *item, BbBoundsCalculator *calculator);
 
-static BbSchematicItem*
-bb_universal_block_clone(BbSchematicItem *item);
-
-static void
-bb_universal_block_dispose(GObject *object);
+static BbGedaItem*
+bb_geda_block_clone(BbGedaItem *item);
 
 static void
-bb_universal_block_finalize(GObject *object);
+bb_geda_block_dispose(GObject *object);
 
 static void
-bb_universal_block_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
+bb_geda_block_finalize(GObject *object);
 
 static void
-bb_universal_block_render(BbSchematicItem *item, BbItemRenderer *renderer);
+bb_geda_block_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
 
 static void
-bb_universal_block_set_item_color(BbUniversalBlock *block, int color);
+bb_geda_block_render(BbGedaItem *item, BbItemRenderer *renderer);
 
 static void
-bb_universal_block_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
+bb_geda_block_set_item_color(BbGedaBlock *block, int color);
 
 static void
-bb_universal_block_translate(BbSchematicItem *item, int dx, int dy);
+bb_geda_block_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
 
 static void
-bb_universal_block_write_async(
-    BbSchematicItem *item,
+bb_geda_block_translate(BbGedaItem *item, int dx, int dy);
+
+static void
+bb_geda_block_write_async(
+    BbGedaItem *item,
     GOutputStream *stream,
     int io_priority,
     GCancellable *cancellable,
@@ -94,8 +94,8 @@ bb_universal_block_write_async(
     );
 
 static gboolean
-bb_universal_block_write_finish(
-    BbSchematicItem *item,
+bb_geda_block_write_finish(
+    BbGedaItem *item,
     GOutputStream *stream,
     GAsyncResult *result,
     GError **error
@@ -107,24 +107,24 @@ static guint signals[N_SIGNALS];
 
 
 G_DEFINE_TYPE_WITH_CODE(
-    BbUniversalBlock,
-    bb_universal_block,
-    BB_TYPE_SCHEMATIC_ITEM,
-    G_IMPLEMENT_INTERFACE(BB_TYPE_ADJUSTABLE_ITEM_COLOR, bb_universal_block_adjustable_item_color_init)
+    BbGedaBlock,
+    bb_geda_block,
+    BB_TYPE_GEDA_ITEM,
+    G_IMPLEMENT_INTERFACE(BB_TYPE_ADJUSTABLE_ITEM_COLOR, bb_geda_block_adjustable_item_color_init)
     )
 
 
 static void
-bb_universal_block_adjustable_item_color_init(BbAdjustableItemColorInterface *iface)
+bb_geda_block_adjustable_item_color_init(BbAdjustableItemColorInterface *iface)
 {
     g_return_if_fail(iface != NULL);
 }
 
 
 static BbBounds*
-bb_universal_block_calculate_bounds(BbSchematicItem *item, BbBoundsCalculator *calculator)
+bb_geda_block_calculate_bounds(BbGedaItem *item, BbBoundsCalculator *calculator)
 {
-    BbUniversalBlock *block = BB_UNIVERSAL_BLOCK(item);
+    BbGedaBlock *block = BB_GEDA_BLOCK(item);
 
     g_return_val_if_fail(block != NULL, NULL);
 
@@ -140,22 +140,22 @@ bb_universal_block_calculate_bounds(BbSchematicItem *item, BbBoundsCalculator *c
 
 
 static void
-bb_universal_block_class_init(BbUniversalBlockClass *klasse)
+bb_geda_block_class_init(BbGedaBlockClass *klasse)
 {
     GObjectClass *object_class = G_OBJECT_CLASS(klasse);
     g_return_if_fail(object_class != NULL);
 
-    object_class->dispose = bb_universal_block_dispose;
-    object_class->finalize = bb_universal_block_finalize;
-    object_class->get_property = bb_universal_block_get_property;
-    object_class->set_property = bb_universal_block_set_property;
+    object_class->dispose = bb_geda_block_dispose;
+    object_class->finalize = bb_geda_block_finalize;
+    object_class->get_property = bb_geda_block_get_property;
+    object_class->set_property = bb_geda_block_set_property;
 
-    BB_SCHEMATIC_ITEM_CLASS(klasse)->calculate_bounds = bb_universal_block_calculate_bounds;
-    BB_SCHEMATIC_ITEM_CLASS(klasse)->clone = bb_universal_block_clone;
-    BB_SCHEMATIC_ITEM_CLASS(klasse)->render = bb_universal_block_render;
-    BB_SCHEMATIC_ITEM_CLASS(klasse)->translate = bb_universal_block_translate;
-    BB_SCHEMATIC_ITEM_CLASS(klasse)->write_async = bb_universal_block_write_async;
-    BB_SCHEMATIC_ITEM_CLASS(klasse)->write_finish = bb_universal_block_write_finish;
+    BB_GEDA_ITEM_CLASS(klasse)->calculate_bounds = bb_geda_block_calculate_bounds;
+    BB_GEDA_ITEM_CLASS(klasse)->clone = bb_geda_block_clone;
+    BB_GEDA_ITEM_CLASS(klasse)->render = bb_geda_block_render;
+    BB_GEDA_ITEM_CLASS(klasse)->translate = bb_geda_block_translate;
+    BB_GEDA_ITEM_CLASS(klasse)->write_async = bb_geda_block_write_async;
+    BB_GEDA_ITEM_CLASS(klasse)->write_finish = bb_geda_block_write_finish;
 
     bb_object_class_install_property(
         object_class,
@@ -185,17 +185,17 @@ bb_universal_block_class_init(BbUniversalBlockClass *klasse)
             )
         );
 
-    signals[SIG_INVALIDATE] = g_signal_lookup("invalidate-item", BB_TYPE_SCHEMATIC_ITEM);
+    signals[SIG_INVALIDATE] = g_signal_lookup("invalidate-item", BB_TYPE_GEDA_ITEM);
 }
 
 
-static BbSchematicItem*
-bb_universal_block_clone(BbSchematicItem *item)
+static BbGedaItem*
+bb_geda_block_clone(BbGedaItem *item)
 {
-    return BB_SCHEMATIC_ITEM(g_object_new(
-        BB_TYPE_UNIVERSAL_BLOCK,
-        "insert-x", bb_universal_block_get_insert_x(BB_UNIVERSAL_BLOCK(item)),
-        "insert-y", bb_universal_block_get_insert_y(BB_UNIVERSAL_BLOCK(item)),
+    return BB_GEDA_ITEM(g_object_new(
+        BB_TYPE_GEDA_BLOCK,
+        "insert-x", bb_geda_block_get_insert_x(BB_GEDA_BLOCK(item)),
+        "insert-y", bb_geda_block_get_insert_y(BB_GEDA_BLOCK(item)),
 
         NULL
         ));
@@ -203,19 +203,19 @@ bb_universal_block_clone(BbSchematicItem *item)
 
 
 static void
-bb_universal_block_dispose(GObject *object)
+bb_geda_block_dispose(GObject *object)
 {
 }
 
 
 static void
-bb_universal_block_finalize(GObject *object)
+bb_geda_block_finalize(GObject *object)
 {
 }
 
 
 int
-bb_universal_block_get_insert_x(BbUniversalBlock *block)
+bb_geda_block_get_insert_x(BbGedaBlock *block)
 {
     g_return_val_if_fail(block != NULL, 0);
 
@@ -224,7 +224,7 @@ bb_universal_block_get_insert_x(BbUniversalBlock *block)
 
 
 int
-bb_universal_block_get_insert_y(BbUniversalBlock *block)
+bb_geda_block_get_insert_y(BbGedaBlock *block)
 {
     g_return_val_if_fail(block != NULL, 0);
 
@@ -233,16 +233,16 @@ bb_universal_block_get_insert_y(BbUniversalBlock *block)
 
 
 static void
-bb_universal_block_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec)
+bb_geda_block_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec)
 {
     switch (property_id)
     {
         case PROP_INSERT_X:
-            g_value_set_int(value, bb_universal_block_get_insert_x(BB_UNIVERSAL_BLOCK(object)));
+            g_value_set_int(value, bb_geda_block_get_insert_x(BB_GEDA_BLOCK(object)));
             break;
 
         case PROP_INSERT_Y:
-            g_value_set_int(value, bb_universal_block_get_insert_y(BB_UNIVERSAL_BLOCK(object)));
+            g_value_set_int(value, bb_geda_block_get_insert_y(BB_GEDA_BLOCK(object)));
             break;
 
         default:
@@ -252,29 +252,29 @@ bb_universal_block_get_property(GObject *object, guint property_id, GValue *valu
 
 
 static void
-bb_universal_block_init(BbUniversalBlock *block)
+bb_geda_block_init(BbGedaBlock *block)
 {
     g_return_if_fail(block != NULL);
 }
 
 
-BbUniversalBlock*
-bb_universal_block_new()
+BbGedaBlock*
+bb_geda_block_new()
 {
-    return g_object_new(BB_TYPE_UNIVERSAL_BLOCK, NULL);
+    return g_object_new(BB_TYPE_GEDA_BLOCK, NULL);
 }
 
 
 static void
-bb_universal_block_render(BbSchematicItem *item, BbItemRenderer *renderer)
+bb_geda_block_render(BbGedaItem *item, BbItemRenderer *renderer)
 {
-    BbUniversalBlock *block = BB_UNIVERSAL_BLOCK(item);
+    BbGedaBlock *block = BB_GEDA_BLOCK(item);
     g_return_if_fail(block != NULL);
 }
 
 
 void
-bb_universal_block_set_insert_x(BbUniversalBlock *block, int x)
+bb_geda_block_set_insert_x(BbGedaBlock *block, int x)
 {
     g_return_if_fail(block != NULL);
 
@@ -292,7 +292,7 @@ bb_universal_block_set_insert_x(BbUniversalBlock *block, int x)
 
 
 void
-bb_universal_block_set_insert_y(BbUniversalBlock *block, int y)
+bb_geda_block_set_insert_y(BbGedaBlock *block, int y)
 {
     g_return_if_fail(block != NULL);
 
@@ -310,16 +310,16 @@ bb_universal_block_set_insert_y(BbUniversalBlock *block, int y)
 
 
 static void
-bb_universal_block_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec)
+bb_geda_block_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec)
 {
     switch (property_id)
     {
         case PROP_INSERT_X:
-            bb_universal_block_set_insert_x(BB_UNIVERSAL_BLOCK(object), g_value_get_int(value));
+            bb_geda_block_set_insert_x(BB_GEDA_BLOCK(object), g_value_get_int(value));
             break;
 
         case PROP_INSERT_Y:
-            bb_universal_block_set_insert_y(BB_UNIVERSAL_BLOCK(object), g_value_get_int(value));
+            bb_geda_block_set_insert_y(BB_GEDA_BLOCK(object), g_value_get_int(value));
             break;
 
         default:
@@ -329,9 +329,9 @@ bb_universal_block_set_property(GObject *object, guint property_id, const GValue
 
 
 static void
-bb_universal_block_translate(BbSchematicItem *item, int dx, int dy)
+bb_geda_block_translate(BbGedaItem *item, int dx, int dy)
 {
-    BbUniversalBlock *block = BB_UNIVERSAL_BLOCK(item);
+    BbGedaBlock *block = BB_GEDA_BLOCK(item);
     g_return_if_fail(block != NULL);
 
     bb_coord_translate(dx, dy, &block->insert_x, &block->insert_y, 1);
@@ -342,8 +342,8 @@ bb_universal_block_translate(BbSchematicItem *item, int dx, int dy)
 
 
 static void
-bb_universal_block_write_async(
-    BbSchematicItem *item,
+bb_geda_block_write_async(
+    BbGedaItem *item,
     GOutputStream *stream,
     int io_priority,
     GCancellable *cancellable,
@@ -351,7 +351,7 @@ bb_universal_block_write_async(
     gpointer callback_data
     )
 {
-    BbUniversalBlock *block = BB_UNIVERSAL_BLOCK(item);
+    BbGedaBlock *block = BB_GEDA_BLOCK(item);
 
     bb_item_params_write_async(
         block->params,
@@ -365,8 +365,8 @@ bb_universal_block_write_async(
 
 
 static gboolean
-bb_universal_block_write_finish(
-    BbSchematicItem *item,
+bb_geda_block_write_finish(
+    BbGedaItem *item,
     GOutputStream *stream,
     GAsyncResult *result,
     GError **error

@@ -19,7 +19,7 @@
 #include <gtk/gtk.h>
 #include <bbextensions.h>
 #include <bblibrary.h>
-#include <bbelectricalpin.h>
+#include <bbgedapin.h>
 #include "bbpintool.h"
 #include "bbdrawingtool.h"
 
@@ -51,7 +51,7 @@ struct _BbPinTool
 {
     GObject parent;
 
-    BbElectricalPin *item;
+    BbGedaPin *item;
 
     int state;
 
@@ -80,7 +80,7 @@ bb_pin_tool_finalize(GObject *object);
 static void
 bb_pin_tool_finish(BbPinTool *pin_tool);
 
-static BbElectricalPin*
+static BbGedaPin*
 bb_pin_tool_get_item(BbPinTool *tool);
 
 static void
@@ -90,7 +90,7 @@ static BbToolSubject*
 bb_pin_tool_get_subject(BbPinTool *tool);
 
 static void
-bb_pin_tool_invalidate_item_cb(BbSchematicItem *item, BbPinTool *pin_tool);
+bb_pin_tool_invalidate_item_cb(BbGedaItem *item, BbPinTool *pin_tool);
 
 static void
 bb_pin_tool_key_pressed(BbDrawingTool *tool);
@@ -108,7 +108,7 @@ static void
 bb_pin_tool_reset_with_point(BbPinTool *tool, double x, double y);
 
 static void
-bb_pin_tool_set_item(BbPinTool *tool, BbElectricalPin *item);
+bb_pin_tool_set_item(BbPinTool *tool, BbGedaPin *item);
 
 static void
 bb_pin_tool_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
@@ -181,7 +181,7 @@ bb_pin_tool_class_init(BbPinToolClass *klasse)
             "item",
             "",
             "",
-            BB_TYPE_ELECTRICAL_PIN,
+            BB_TYPE_GEDA_PIN,
             G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS
             )
         );
@@ -224,10 +224,10 @@ bb_pin_tool_draw(BbDrawingTool *tool, BbGraphics *graphics)
 
     if (pin_tool->state != STATE_S0)
     {
-        bb_schematic_item_render(
-            BB_SCHEMATIC_ITEM(pin_tool->item),
+        bb_geda_item_render(
+            BB_GEDA_ITEM(pin_tool->item),
             BB_ITEM_RENDERER(graphics)
-            );
+        );
     }
 }
 
@@ -257,7 +257,7 @@ bb_pin_tool_finish(BbPinTool *pin_tool)
 {
     g_return_if_fail(pin_tool != NULL);
 
-    BbSchematicItem *item = bb_schematic_item_clone(BB_SCHEMATIC_ITEM(pin_tool->item));
+    BbGedaItem *item = bb_geda_item_clone(BB_GEDA_ITEM(pin_tool->item));
 
     bb_tool_subject_add_item(pin_tool->subject, item);
 
@@ -267,7 +267,7 @@ bb_pin_tool_finish(BbPinTool *pin_tool)
 }
 
 
-static BbElectricalPin*
+static BbGedaPin*
 bb_pin_tool_get_item(BbPinTool *tool)
 {
     g_return_val_if_fail(tool != NULL, NULL);
@@ -312,11 +312,11 @@ bb_pin_tool_init(BbPinTool *pin_tool)
 
 
 static void
-bb_pin_tool_invalidate_item_cb(BbSchematicItem *item, BbPinTool *pin_tool)
+bb_pin_tool_invalidate_item_cb(BbGedaItem *item, BbPinTool *pin_tool)
 {
     g_return_if_fail(pin_tool != NULL);
     g_return_if_fail(pin_tool->item != NULL);
-    g_return_if_fail(pin_tool->item == BB_ELECTRICAL_PIN(item));
+    g_return_if_fail(pin_tool->item == BB_GEDA_PIN(item));
 
     g_signal_emit(pin_tool, signals[SIG_INVALIDATE_ITEM], 0, item);
 }
@@ -341,7 +341,7 @@ bb_pin_tool_new(BbToolSubject *subject)
 {
     return BB_PIN_TOOL(g_object_new(
         BB_TYPE_PIN_TOOL,
-        "item", g_object_new(BB_TYPE_ELECTRICAL_PIN, NULL),
+        "item", g_object_new(BB_TYPE_GEDA_PIN, NULL),
         "subject", subject,
         NULL
         ));
@@ -373,11 +373,11 @@ bb_pin_tool_reset_with_point(BbPinTool *pin_tool, gdouble x, gdouble y)
 
     bb_tool_subject_snap_coordinate(pin_tool->subject, bb_coord_round(ux), bb_coord_round(uy), &sx, &sy);
 
-    bb_electrical_pin_set_x0(pin_tool->item, sx);
-    bb_electrical_pin_set_y0(pin_tool->item, sy);
+    bb_geda_pin_set_x0(pin_tool->item, sx);
+    bb_geda_pin_set_y0(pin_tool->item, sy);
 
-    bb_electrical_pin_set_x1(pin_tool->item, sx);
-    bb_electrical_pin_set_y1(pin_tool->item, sy);
+    bb_geda_pin_set_x1(pin_tool->item, sx);
+    bb_geda_pin_set_y1(pin_tool->item, sy);
 
     pin_tool->state = STATE_S1;
 }
@@ -396,7 +396,7 @@ bb_pin_tool_motion_notify(BbDrawingTool *tool, gdouble x, gdouble y)
 
 
 static void
-bb_pin_tool_set_item(BbPinTool *tool, BbElectricalPin *item)
+bb_pin_tool_set_item(BbPinTool *tool, BbGedaPin *item)
 {
     g_return_if_fail(tool != NULL);
 
@@ -435,7 +435,7 @@ bb_pin_tool_set_property(GObject *object, guint property_id, const GValue *value
     switch (property_id)
     {
         case PROP_ITEM:
-            bb_pin_tool_set_item(BB_PIN_TOOL(object), BB_ELECTRICAL_PIN(g_value_get_object(value)));
+            bb_pin_tool_set_item(BB_PIN_TOOL(object), BB_GEDA_PIN(g_value_get_object(value)));
             break;
 
         case PROP_SUBJECT:
@@ -491,7 +491,7 @@ bb_pin_tool_update_with_point(BbPinTool *pin_tool, gdouble x, gdouble y)
 
         bb_tool_subject_snap_coordinate(pin_tool->subject, bb_coord_round(ux), bb_coord_round(uy), &sx, &sy);
 
-        bb_electrical_pin_set_x1(pin_tool->item, sx);
-        bb_electrical_pin_set_y1(pin_tool->item, sy);
+        bb_geda_pin_set_x1(pin_tool->item, sx);
+        bb_geda_pin_set_y1(pin_tool->item, sy);
     }
 }

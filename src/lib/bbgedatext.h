@@ -1,3 +1,5 @@
+#ifndef __BBGEDATEXT__
+#define __BBGEDATEXT__
 /*
  * bbsch
  * Copyright (C) 2020 Edward C. Hennessy
@@ -17,10 +19,30 @@
  */
 
 #include <gtk/gtk.h>
-#include "bbapplyfunc.h"
+#include "bbgedaitem.h"
+
+#define BB_TYPE_GEDA_TEXT bb_geda_text_get_type()
+G_DECLARE_FINAL_TYPE(BbGedaText, bb_geda_text, BB, GEDA_TEXT, BbGedaItem)
+
+
+int
+bb_geda_text_get_insert_x(BbGedaText *text);
+
+
+int
+bb_geda_text_get_insert_y(BbGedaText *text);
+
+
+BbGedaText*
+bb_geda_text_new();
 
 
 void
-bb_apply_func_nothing(BbGedaItem *item, gpointer user_data)
-{
-}
+bb_geda_text_set_insert_x(BbGedaText *text, int x);
+
+
+void
+bb_geda_text_set_insert_y(BbGedaText *text, int y);
+
+
+#endif

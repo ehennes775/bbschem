@@ -1,5 +1,5 @@
-#ifndef __BBGRAPHICCIRCLE__
-#define __BBGRAPHICCIRCLE__
+#ifndef __BBGEDAPIN__
+#define __BBGEDAPIN__
 /*
  * bbsch
  * Copyright (C) 2020 Edward C. Hennessy
@@ -20,46 +20,54 @@
 
 #include <gtk/gtk.h>
 #include "bbparams.h"
-#include "bbschematicitem.h"
+#include "bbgedaitem.h"
 
 
-#define BB_GRAPHIC_CIRCLE_TOKEN "V"
+#define BB_GEDA_PIN_TOKEN "P"
 
 
-#define BB_TYPE_GRAPHIC_CIRCLE bb_graphic_circle_get_type()
-G_DECLARE_FINAL_TYPE(BbGraphicCircle, bb_graphic_circle, BB, GRAPHIC_CIRCLE, BbSchematicItem)
-
-
-int
-bb_graphic_circle_get_center_x(BbGraphicCircle *circle);
+#define BB_TYPE_GEDA_PIN bb_geda_pin_get_type()
+G_DECLARE_FINAL_TYPE(BbGedaPin, bb_geda_pin, BB, GEDA_PIN, BbGedaItem)
 
 
 int
-bb_graphic_circle_get_center_y(BbGraphicCircle *circle);
+bb_geda_pin_get_x0(BbGedaPin *pin);
 
 
 int
-bb_graphic_circle_get_radius(BbGraphicCircle *circle);
+bb_geda_pin_get_x1(BbGedaPin *pin);
 
 
-BbGraphicCircle*
-bb_graphic_circle_new();
+int
+bb_geda_pin_get_y0(BbGedaPin *pin);
 
 
-BbGraphicCircle*
-bb_graphic_circle_new_with_params(BbParams *params, GError **error);
+int
+bb_geda_pin_get_y1(BbGedaPin *pin);
+
+
+BbGedaPin*
+bb_geda_pin_new();
+
+
+BbGedaPin*
+bb_geda_pin_new_with_params(BbParams *params, GError **error);
 
 
 void
-bb_graphic_circle_set_center_x(BbGraphicCircle *circle, int x);
+bb_geda_pin_set_x0(BbGedaPin *pin, int x);
 
 
 void
-bb_graphic_circle_set_center_y(BbGraphicCircle *circle, int y);
+bb_geda_pin_set_x1(BbGedaPin *pin, int x);
 
 
 void
-bb_graphic_circle_set_radius(BbGraphicCircle *circle, int radius);
+bb_geda_pin_set_y0(BbGedaPin *pin, int y);
+
+
+void
+bb_geda_pin_set_y1(BbGedaPin *pin, int y);
 
 
 #endif

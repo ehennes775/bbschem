@@ -39,7 +39,7 @@
 
 #include "bbhashtable.h"
 
-#include "bbschematicitem.h"
+#include "bbgedaitem.h"
 #include "bbschematic.h"
 
 #include "bbadjustablefillstyle.h"
@@ -53,13 +53,13 @@
 #include "bbrelativelineto.h"
 #include "bbrelativemoveto.h"
 
-#include "bbgraphicarc.h"
-#include "bbgraphicbox.h"
-#include "bbgraphiccircle.h"
-#include "bbgraphicline.h"
-#include "bbgraphicpath.h"
-#include "bbuniversalblock.h"
-#include "bbuniversaltext.h"
+#include "bbgedaarc.h"
+#include "bbgedabox.h"
+#include "bbgedacircle.h"
+#include "bbgedaline.h"
+#include "bbgedapath.h"
+#include "bbgedablock.h"
+#include "bbgedatext.h"
 
 #include "bbgedaitemfactory.h"
 #include "bbgedafactory.h"

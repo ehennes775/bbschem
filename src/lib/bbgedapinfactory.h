@@ -19,7 +19,7 @@
  */
 
 #include <gtk/gtk.h>
-#include "bbelectricalpin.h"
+#include "bbgedapin.h"
 #include "bbgedaitemfactory.h"
 #include "bbgedaversion.h"
 

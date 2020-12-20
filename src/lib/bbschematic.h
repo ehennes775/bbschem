@@ -28,7 +28,7 @@
 G_DECLARE_FINAL_TYPE(BbSchematic, bb_schematic, BB, SCHEMATIC, GObject)
 
 void
-bb_schematic_add_item(BbSchematic *schematic, BbSchematicItem *item);
+bb_schematic_add_item(BbSchematic *schematic, BbGedaItem *item);
 
 
 void

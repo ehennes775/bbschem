@@ -1,5 +1,5 @@
-#ifndef __BBUNIVERSALBLOCK__
-#define __BBUNIVERSALBLOCK__
+#ifndef __BbGedaBox__
+#define __BbGedaBox__
 /*
  * bbsch
  * Copyright (C) 2020 Edward C. Hennessy
@@ -19,30 +19,55 @@
  */
 
 #include <gtk/gtk.h>
-#include "bbschematicitem.h"
+#include "bbparams.h"
+#include "bbgedaitem.h"
 
-#define BB_TYPE_UNIVERSAL_BLOCK bb_universal_block_get_type()
-G_DECLARE_FINAL_TYPE(BbUniversalBlock, bb_universal_block, BB, UNIVERSAL_BLOCK, BbSchematicItem)
+
+#define BB_GEDA_BOX_TOKEN "B"
+
+
+#define BB_TYPE_GEDA_BOX bb_geda_box_get_type()
+G_DECLARE_FINAL_TYPE(BbGedaBox, bb_geda_box, BB, GEDA_BOX, BbGedaItem)
 
 
 int
-bb_universal_block_get_insert_x(BbUniversalBlock *block);
+bb_geda_box_get_x0(BbGedaBox *box);
 
 
 int
-bb_universal_block_get_insert_y(BbUniversalBlock *block);
+bb_geda_box_get_x1(BbGedaBox *box);
 
 
-BbUniversalBlock*
-bb_universal_block_new();
+int
+bb_geda_box_get_y0(BbGedaBox *box);
+
+
+int
+bb_geda_box_get_y1(BbGedaBox *box);
+
+
+BbGedaBox*
+bb_geda_box_new();
+
+
+BbGedaBox*
+bb_geda_box_new_with_params(BbParams *params, GError **error);
 
 
 void
-bb_universal_block_set_insert_x(BbUniversalBlock *block, int x);
+bb_geda_box_set_x0(BbGedaBox *box, int x);
 
 
 void
-bb_universal_block_set_insert_y(BbUniversalBlock *block, int y);
+bb_geda_box_set_x1(BbGedaBox *box, int x);
+
+
+void
+bb_geda_box_set_y0(BbGedaBox *box, int y);
+
+
+void
+bb_geda_box_set_y1(BbGedaBox *box, int y);
 
 
 #endif

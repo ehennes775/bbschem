@@ -18,7 +18,7 @@
 
 #include <gtk/gtk.h>
 #include <bbextensions.h>
-#include "bbgraphicbox.h"
+#include "bbgedabox.h"
 #include "bbcoord.h"
 #include "bbitemparams.h"
 #include "bbadjustablefillstyle.h"
@@ -91,9 +91,9 @@ enum
 };
 
 
-struct _BbGraphicBox
+struct _BbGedaBox
 {
-    BbSchematicItem parent;
+    BbGedaItem parent;
 
     BbItemParams *params;
 
@@ -108,80 +108,80 @@ struct _BbGraphicBox
 
 
 static void
-bb_graphic_box_adjustable_fill_style_init(BbAdjustableFillStyleInterface *iface);
+bb_geda_box_adjustable_fill_style_init(BbAdjustableFillStyleInterface *iface);
 
 static void
-bb_graphic_box_adjustable_item_color_init(BbAdjustableItemColorInterface *iface);
+bb_geda_box_adjustable_item_color_init(BbAdjustableItemColorInterface *iface);
 
 static void
-bb_graphic_box_adjustable_line_style_init(BbAdjustableLineStyleInterface *iface);
+bb_geda_box_adjustable_line_style_init(BbAdjustableLineStyleInterface *iface);
 
 static BbBounds*
-bb_graphic_box_calculate_bounds(BbSchematicItem *item, BbBoundsCalculator *calculator);
+bb_geda_box_calculate_bounds(BbGedaItem *item, BbBoundsCalculator *calculator);
 
-static BbSchematicItem*
-bb_graphic_box_clone(BbSchematicItem *item);
-
-static void
-bb_graphic_box_dispose(GObject *object);
+static BbGedaItem*
+bb_geda_box_clone(BbGedaItem *item);
 
 static void
-bb_graphic_box_finalize(GObject *object);
-
-static int
-bb_graphic_box_get_angle_1(BbGraphicBox *box);
-
-static int
-bb_graphic_box_get_angle_2(BbGraphicBox *box);
-
-static int
-bb_graphic_box_get_cap_type(BbGraphicBox *box);
-
-static int
-bb_graphic_box_get_dash_space(BbGraphicBox *box);
-
-static int
-bb_graphic_box_get_dash_length(BbGraphicBox *box);
-
-static int
-bb_graphic_box_get_dash_type(BbGraphicBox *box);
-
-static int
-bb_graphic_box_get_fill_type(BbGraphicBox *box);
-
-static int
-bb_graphic_box_get_fill_width(BbGraphicBox *box);
-
-static int
-bb_graphic_box_get_item_color(BbGraphicBox *box);
-
-static int
-bb_graphic_box_get_line_width(BbGraphicBox *box);
-
-static int
-bb_graphic_box_get_pitch_1(BbGraphicBox *box);
-
-static int
-bb_graphic_box_get_pitch_2(BbGraphicBox *box);
+bb_geda_box_dispose(GObject *object);
 
 static void
-bb_graphic_box_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
+bb_geda_box_finalize(GObject *object);
+
+static int
+bb_geda_box_get_angle_1(BbGedaBox *box);
+
+static int
+bb_geda_box_get_angle_2(BbGedaBox *box);
+
+static int
+bb_geda_box_get_cap_type(BbGedaBox *box);
+
+static int
+bb_geda_box_get_dash_space(BbGedaBox *box);
+
+static int
+bb_geda_box_get_dash_length(BbGedaBox *box);
+
+static int
+bb_geda_box_get_dash_type(BbGedaBox *box);
+
+static int
+bb_geda_box_get_fill_type(BbGedaBox *box);
+
+static int
+bb_geda_box_get_fill_width(BbGedaBox *box);
+
+static int
+bb_geda_box_get_item_color(BbGedaBox *box);
+
+static int
+bb_geda_box_get_line_width(BbGedaBox *box);
+
+static int
+bb_geda_box_get_pitch_1(BbGedaBox *box);
+
+static int
+bb_geda_box_get_pitch_2(BbGedaBox *box);
 
 static void
-bb_graphic_box_render(BbSchematicItem *item, BbItemRenderer *renderer);
+bb_geda_box_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
 
 static void
-bb_graphic_box_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
+bb_geda_box_render(BbGedaItem *item, BbItemRenderer *renderer);
 
 static void
-bb_graphic_box_translate(BbSchematicItem *item, int dx, int dy);
+bb_geda_box_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
+
+static void
+bb_geda_box_translate(BbGedaItem *item, int dx, int dy);
 
 static gboolean
-bb_graphic_box_write(BbSchematicItem *item, GOutputStream *stream, GCancellable *cancellable, GError **error);
+bb_geda_box_write(BbGedaItem *item, GOutputStream *stream, GCancellable *cancellable, GError **error);
 
 static void
-bb_graphic_box_write_async(
-    BbSchematicItem *item,
+bb_geda_box_write_async(
+    BbGedaItem *item,
     GOutputStream *stream,
     int io_priority,
     GCancellable *cancellable,
@@ -190,8 +190,8 @@ bb_graphic_box_write_async(
     );
 
 static gboolean
-bb_graphic_box_write_finish(
-    BbSchematicItem *item,
+bb_geda_box_write_finish(
+    BbGedaItem *item,
     GOutputStream *stream,
     GAsyncResult *result,
     GError **error
@@ -203,37 +203,37 @@ static guint signals[N_SIGNALS];
 
 
 G_DEFINE_TYPE_WITH_CODE(
-    BbGraphicBox,
-    bb_graphic_box,
-    BB_TYPE_SCHEMATIC_ITEM,
-    G_IMPLEMENT_INTERFACE(BB_TYPE_ADJUSTABLE_FILL_STYLE, bb_graphic_box_adjustable_fill_style_init)
-    G_IMPLEMENT_INTERFACE(BB_TYPE_ADJUSTABLE_ITEM_COLOR, bb_graphic_box_adjustable_item_color_init)
-    G_IMPLEMENT_INTERFACE(BB_TYPE_ADJUSTABLE_LINE_STYLE, bb_graphic_box_adjustable_line_style_init)
+    BbGedaBox,
+    bb_geda_box,
+    BB_TYPE_GEDA_ITEM,
+    G_IMPLEMENT_INTERFACE(BB_TYPE_ADJUSTABLE_FILL_STYLE, bb_geda_box_adjustable_fill_style_init)
+    G_IMPLEMENT_INTERFACE(BB_TYPE_ADJUSTABLE_ITEM_COLOR, bb_geda_box_adjustable_item_color_init)
+    G_IMPLEMENT_INTERFACE(BB_TYPE_ADJUSTABLE_LINE_STYLE, bb_geda_box_adjustable_line_style_init)
     )
 
 
 static void
-bb_graphic_box_adjustable_fill_style_init(BbAdjustableFillStyleInterface *iface)
+bb_geda_box_adjustable_fill_style_init(BbAdjustableFillStyleInterface *iface)
 {
 }
 
 
 static void
-bb_graphic_box_adjustable_item_color_init(BbAdjustableItemColorInterface *iface)
+bb_geda_box_adjustable_item_color_init(BbAdjustableItemColorInterface *iface)
 {
 }
 
 
 static void
-bb_graphic_box_adjustable_line_style_init(BbAdjustableLineStyleInterface *iface)
+bb_geda_box_adjustable_line_style_init(BbAdjustableLineStyleInterface *iface)
 {
 }
 
 
 static BbBounds*
-bb_graphic_box_calculate_bounds(BbSchematicItem *item, BbBoundsCalculator *calculator)
+bb_geda_box_calculate_bounds(BbGedaItem *item, BbBoundsCalculator *calculator)
 {
-    BbGraphicBox *box = BB_GRAPHIC_BOX(item);
+    BbGedaBox *box = BB_GEDA_BOX(item);
 
     g_return_val_if_fail(box != NULL, NULL);
     g_return_val_if_fail(box->line_style != NULL, NULL);
@@ -250,22 +250,22 @@ bb_graphic_box_calculate_bounds(BbSchematicItem *item, BbBoundsCalculator *calcu
 
 
 static void
-bb_graphic_box_class_init(BbGraphicBoxClass *klasse)
+bb_geda_box_class_init(BbGedaBoxClass *klasse)
 {
     GObjectClass *object_class = G_OBJECT_CLASS(klasse);
 
-    object_class->dispose = bb_graphic_box_dispose;
-    object_class->finalize = bb_graphic_box_finalize;
-    object_class->get_property = bb_graphic_box_get_property;
-    object_class->set_property = bb_graphic_box_set_property;
+    object_class->dispose = bb_geda_box_dispose;
+    object_class->finalize = bb_geda_box_finalize;
+    object_class->get_property = bb_geda_box_get_property;
+    object_class->set_property = bb_geda_box_set_property;
 
-    BB_SCHEMATIC_ITEM_CLASS(klasse)->calculate_bounds = bb_graphic_box_calculate_bounds;
-    BB_SCHEMATIC_ITEM_CLASS(klasse)->clone = bb_graphic_box_clone;
-    BB_SCHEMATIC_ITEM_CLASS(klasse)->render = bb_graphic_box_render;
-    BB_SCHEMATIC_ITEM_CLASS(klasse)->translate = bb_graphic_box_translate;
-    BB_SCHEMATIC_ITEM_CLASS(klasse)->write = bb_graphic_box_write;
-    BB_SCHEMATIC_ITEM_CLASS(klasse)->write_async = bb_graphic_box_write_async;
-    BB_SCHEMATIC_ITEM_CLASS(klasse)->write_finish = bb_graphic_box_write_finish;
+    BB_GEDA_ITEM_CLASS(klasse)->calculate_bounds = bb_geda_box_calculate_bounds;
+    BB_GEDA_ITEM_CLASS(klasse)->clone = bb_geda_box_clone;
+    BB_GEDA_ITEM_CLASS(klasse)->render = bb_geda_box_render;
+    BB_GEDA_ITEM_CLASS(klasse)->translate = bb_geda_box_translate;
+    BB_GEDA_ITEM_CLASS(klasse)->write = bb_geda_box_write;
+    BB_GEDA_ITEM_CLASS(klasse)->write_async = bb_geda_box_write_async;
+    BB_GEDA_ITEM_CLASS(klasse)->write_finish = bb_geda_box_write_finish;
 
     /* Properties from BbAdjustableFillStyle */
 
@@ -401,37 +401,37 @@ bb_graphic_box_class_init(BbGraphicBoxClass *klasse)
             )
         );
 
-    signals[SIG_INVALIDATE] = g_signal_lookup("invalidate-item", BB_TYPE_SCHEMATIC_ITEM);
+    signals[SIG_INVALIDATE] = g_signal_lookup("invalidate-item", BB_TYPE_GEDA_ITEM);
 }
 
 
-static BbSchematicItem*
-bb_graphic_box_clone(BbSchematicItem *item)
+static BbGedaItem*
+bb_geda_box_clone(BbGedaItem *item)
 {
-    return BB_SCHEMATIC_ITEM(g_object_new(
-        BB_TYPE_GRAPHIC_BOX,
-        "x0", bb_graphic_box_get_x0(BB_GRAPHIC_BOX(item)),
-        "x1", bb_graphic_box_get_x1(BB_GRAPHIC_BOX(item)),
-        "y0", bb_graphic_box_get_y0(BB_GRAPHIC_BOX(item)),
-        "y1", bb_graphic_box_get_y1(BB_GRAPHIC_BOX(item)),
+    return BB_GEDA_ITEM(g_object_new(
+        BB_TYPE_GEDA_BOX,
+        "x0", bb_geda_box_get_x0(BB_GEDA_BOX(item)),
+        "x1", bb_geda_box_get_x1(BB_GEDA_BOX(item)),
+        "y0", bb_geda_box_get_y0(BB_GEDA_BOX(item)),
+        "y1", bb_geda_box_get_y1(BB_GEDA_BOX(item)),
 
         /* From AdjustableFillStyle */
-        "angle-1", bb_graphic_box_get_angle_1(BB_GRAPHIC_BOX(item)),
-        "angle-2", bb_graphic_box_get_angle_2(BB_GRAPHIC_BOX(item)),
-        "fill-type", bb_graphic_box_get_fill_type(BB_GRAPHIC_BOX(item)),
-        "fill-width", bb_graphic_box_get_fill_width(BB_GRAPHIC_BOX(item)),
-        "pitch-1", bb_graphic_box_get_pitch_1(BB_GRAPHIC_BOX(item)),
-        "pitch-2", bb_graphic_box_get_pitch_2(BB_GRAPHIC_BOX(item)),
+        "angle-1", bb_geda_box_get_angle_1(BB_GEDA_BOX(item)),
+        "angle-2", bb_geda_box_get_angle_2(BB_GEDA_BOX(item)),
+        "fill-type", bb_geda_box_get_fill_type(BB_GEDA_BOX(item)),
+        "fill-width", bb_geda_box_get_fill_width(BB_GEDA_BOX(item)),
+        "pitch-1", bb_geda_box_get_pitch_1(BB_GEDA_BOX(item)),
+        "pitch-2", bb_geda_box_get_pitch_2(BB_GEDA_BOX(item)),
 
         /* From AdjustableItemColor */
-        "item-color", bb_graphic_box_get_item_color(BB_GRAPHIC_BOX(item)),
+        "item-color", bb_geda_box_get_item_color(BB_GEDA_BOX(item)),
 
         /* From AdjustableLineStyle */
-        "cap-type", bb_graphic_box_get_cap_type(BB_GRAPHIC_BOX(item)),
-        "dash-length", bb_graphic_box_get_dash_length(BB_GRAPHIC_BOX(item)),
-        "dash-space", bb_graphic_box_get_dash_space(BB_GRAPHIC_BOX(item)),
-        "dash-type", bb_graphic_box_get_dash_type(BB_GRAPHIC_BOX(item)),
-        "line-width", bb_graphic_box_get_line_width(BB_GRAPHIC_BOX(item)),
+        "cap-type", bb_geda_box_get_cap_type(BB_GEDA_BOX(item)),
+        "dash-length", bb_geda_box_get_dash_length(BB_GEDA_BOX(item)),
+        "dash-space", bb_geda_box_get_dash_space(BB_GEDA_BOX(item)),
+        "dash-type", bb_geda_box_get_dash_type(BB_GEDA_BOX(item)),
+        "line-width", bb_geda_box_get_line_width(BB_GEDA_BOX(item)),
 
         NULL
     ));
@@ -439,15 +439,15 @@ bb_graphic_box_clone(BbSchematicItem *item)
 
 
 static void
-bb_graphic_box_dispose(GObject *object)
+bb_geda_box_dispose(GObject *object)
 {
 }
 
 
 static void
-bb_graphic_box_finalize(GObject *object)
+bb_geda_box_finalize(GObject *object)
 {
-    BbGraphicBox *box = BB_GRAPHIC_BOX(object);
+    BbGedaBox *box = BB_GEDA_BOX(object);
 
     g_return_if_fail(box != NULL);
 
@@ -456,7 +456,7 @@ bb_graphic_box_finalize(GObject *object)
 }
 
 static int
-bb_graphic_box_get_angle_1(BbGraphicBox *box)
+bb_geda_box_get_angle_1(BbGedaBox *box)
 {
     g_return_val_if_fail(box != NULL, 0);
     g_return_val_if_fail(box->fill_style != NULL, 0);
@@ -466,7 +466,7 @@ bb_graphic_box_get_angle_1(BbGraphicBox *box)
 
 
 static int
-bb_graphic_box_get_angle_2(BbGraphicBox *box)
+bb_geda_box_get_angle_2(BbGedaBox *box)
 {
     g_return_val_if_fail(box != NULL, 0);
     g_return_val_if_fail(box->fill_style != NULL, 0);
@@ -476,7 +476,7 @@ bb_graphic_box_get_angle_2(BbGraphicBox *box)
 
 
 static int
-bb_graphic_box_get_cap_type(BbGraphicBox *box)
+bb_geda_box_get_cap_type(BbGedaBox *box)
 {
     g_return_val_if_fail(box != NULL, 0);
     g_return_val_if_fail(box->line_style != NULL, 0);
@@ -486,7 +486,7 @@ bb_graphic_box_get_cap_type(BbGraphicBox *box)
 
 
 static int
-bb_graphic_box_get_dash_length(BbGraphicBox *box)
+bb_geda_box_get_dash_length(BbGedaBox *box)
 {
     g_return_val_if_fail(box != NULL, 0);
     g_return_val_if_fail(box->line_style != NULL, 0);
@@ -496,7 +496,7 @@ bb_graphic_box_get_dash_length(BbGraphicBox *box)
 
 
 static int
-bb_graphic_box_get_dash_space(BbGraphicBox *box)
+bb_geda_box_get_dash_space(BbGedaBox *box)
 {
     g_return_val_if_fail(box != NULL, 0);
     g_return_val_if_fail(box->line_style != NULL, 0);
@@ -506,7 +506,7 @@ bb_graphic_box_get_dash_space(BbGraphicBox *box)
 
 
 static int
-bb_graphic_box_get_dash_type(BbGraphicBox *box)
+bb_geda_box_get_dash_type(BbGedaBox *box)
 {
     g_return_val_if_fail(box != NULL, 0);
     g_return_val_if_fail(box->line_style != NULL, 0);
@@ -516,7 +516,7 @@ bb_graphic_box_get_dash_type(BbGraphicBox *box)
 
 
 static int
-bb_graphic_box_get_fill_type(BbGraphicBox *box)
+bb_geda_box_get_fill_type(BbGedaBox *box)
 {
     g_return_val_if_fail(box != NULL, 0);
     g_return_val_if_fail(box->fill_style != NULL, 0);
@@ -526,7 +526,7 @@ bb_graphic_box_get_fill_type(BbGraphicBox *box)
 
 
 static int
-bb_graphic_box_get_fill_width(BbGraphicBox *box)
+bb_geda_box_get_fill_width(BbGedaBox *box)
 {
     g_return_val_if_fail(box != NULL, 0);
     g_return_val_if_fail(box->fill_style != NULL, 0);
@@ -536,7 +536,7 @@ bb_graphic_box_get_fill_width(BbGraphicBox *box)
 
 
 static int
-bb_graphic_box_get_item_color(BbGraphicBox *box)
+bb_geda_box_get_item_color(BbGedaBox *box)
 {
     g_return_val_if_fail(box != NULL, 0);
 
@@ -545,7 +545,7 @@ bb_graphic_box_get_item_color(BbGraphicBox *box)
 
 
 static int
-bb_graphic_box_get_line_width(BbGraphicBox *box)
+bb_geda_box_get_line_width(BbGedaBox *box)
 {
     g_return_val_if_fail(box != NULL, 0);
     g_return_val_if_fail(box->line_style != NULL, 0);
@@ -555,7 +555,7 @@ bb_graphic_box_get_line_width(BbGraphicBox *box)
 
 
 static int
-bb_graphic_box_get_pitch_1(BbGraphicBox *box)
+bb_geda_box_get_pitch_1(BbGedaBox *box)
 {
     g_return_val_if_fail(box != NULL, 0);
     g_return_val_if_fail(box->fill_style != NULL, 0);
@@ -565,7 +565,7 @@ bb_graphic_box_get_pitch_1(BbGraphicBox *box)
 
 
 static int
-bb_graphic_box_get_pitch_2(BbGraphicBox *box)
+bb_geda_box_get_pitch_2(BbGedaBox *box)
 {
     g_return_val_if_fail(box != NULL, 0);
     g_return_val_if_fail(box->fill_style != NULL, 0);
@@ -575,72 +575,72 @@ bb_graphic_box_get_pitch_2(BbGraphicBox *box)
 
 
 static void
-bb_graphic_box_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec)
+bb_geda_box_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec)
 {
     switch (property_id)
     {
         case PROP_ANGLE_1:
-            g_value_set_int(value, bb_graphic_box_get_angle_1(BB_GRAPHIC_BOX(object)));
+            g_value_set_int(value, bb_geda_box_get_angle_1(BB_GEDA_BOX(object)));
             break;
 
         case PROP_ANGLE_2:
-            g_value_set_int(value, bb_graphic_box_get_angle_2(BB_GRAPHIC_BOX(object)));
+            g_value_set_int(value, bb_geda_box_get_angle_2(BB_GEDA_BOX(object)));
             break;
 
         case PROP_CAP_TYPE:
-            g_value_set_int(value, bb_graphic_box_get_cap_type(BB_GRAPHIC_BOX(object)));
+            g_value_set_int(value, bb_geda_box_get_cap_type(BB_GEDA_BOX(object)));
             break;
 
         case PROP_ITEM_COLOR:
-            g_value_set_int(value, bb_graphic_box_get_item_color(BB_GRAPHIC_BOX(object)));
+            g_value_set_int(value, bb_geda_box_get_item_color(BB_GEDA_BOX(object)));
             break;
 
         case PROP_DASH_LENGTH:
-            g_value_set_int(value, bb_graphic_box_get_dash_length(BB_GRAPHIC_BOX(object)));
+            g_value_set_int(value, bb_geda_box_get_dash_length(BB_GEDA_BOX(object)));
             break;
 
         case PROP_DASH_SPACE:
-            g_value_set_int(value, bb_graphic_box_get_dash_space(BB_GRAPHIC_BOX(object)));
+            g_value_set_int(value, bb_geda_box_get_dash_space(BB_GEDA_BOX(object)));
             break;
 
         case PROP_DASH_TYPE:
-            g_value_set_int(value, bb_graphic_box_get_dash_type(BB_GRAPHIC_BOX(object)));
+            g_value_set_int(value, bb_geda_box_get_dash_type(BB_GEDA_BOX(object)));
             break;
 
         case PROP_FILL_TYPE:
-            g_value_set_int(value, bb_graphic_box_get_fill_type(BB_GRAPHIC_BOX(object)));
+            g_value_set_int(value, bb_geda_box_get_fill_type(BB_GEDA_BOX(object)));
             break;
 
         case PROP_FILL_WIDTH:
-            g_value_set_int(value, bb_graphic_box_get_fill_width(BB_GRAPHIC_BOX(object)));
+            g_value_set_int(value, bb_geda_box_get_fill_width(BB_GEDA_BOX(object)));
             break;
 
         case PROP_LINE_WIDTH:
-            g_value_set_int(value, bb_graphic_box_get_line_width(BB_GRAPHIC_BOX(object)));
+            g_value_set_int(value, bb_geda_box_get_line_width(BB_GEDA_BOX(object)));
             break;
 
         case PROP_PITCH_1:
-            g_value_set_int(value, bb_graphic_box_get_pitch_1(BB_GRAPHIC_BOX(object)));
+            g_value_set_int(value, bb_geda_box_get_pitch_1(BB_GEDA_BOX(object)));
             break;
 
         case PROP_PITCH_2:
-            g_value_set_int(value, bb_graphic_box_get_pitch_2(BB_GRAPHIC_BOX(object)));
+            g_value_set_int(value, bb_geda_box_get_pitch_2(BB_GEDA_BOX(object)));
             break;
 
         case PROP_X0:
-            g_value_set_int(value, bb_graphic_box_get_x0(BB_GRAPHIC_BOX(object)));
+            g_value_set_int(value, bb_geda_box_get_x0(BB_GEDA_BOX(object)));
             break;
 
         case PROP_X1:
-            g_value_set_int(value, bb_graphic_box_get_x1(BB_GRAPHIC_BOX(object)));
+            g_value_set_int(value, bb_geda_box_get_x1(BB_GEDA_BOX(object)));
             break;
 
         case PROP_Y0:
-            g_value_set_int(value, bb_graphic_box_get_y0(BB_GRAPHIC_BOX(object)));
+            g_value_set_int(value, bb_geda_box_get_y0(BB_GEDA_BOX(object)));
             break;
 
         case PROP_Y1:
-            g_value_set_int(value, bb_graphic_box_get_y1(BB_GRAPHIC_BOX(object)));
+            g_value_set_int(value, bb_geda_box_get_y1(BB_GEDA_BOX(object)));
             break;
 
         default:
@@ -650,7 +650,7 @@ bb_graphic_box_get_property(GObject *object, guint property_id, GValue *value, G
 
 
 int
-bb_graphic_box_get_x0(BbGraphicBox *box)
+bb_geda_box_get_x0(BbGedaBox *box)
 {
     g_return_val_if_fail(box != NULL, 0);
 
@@ -659,7 +659,7 @@ bb_graphic_box_get_x0(BbGraphicBox *box)
 
 
 int
-bb_graphic_box_get_x1(BbGraphicBox *box)
+bb_geda_box_get_x1(BbGedaBox *box)
 {
     g_return_val_if_fail(box != NULL, 0);
 
@@ -668,7 +668,7 @@ bb_graphic_box_get_x1(BbGraphicBox *box)
 
 
 int
-bb_graphic_box_get_y0(BbGraphicBox *box)
+bb_geda_box_get_y0(BbGedaBox *box)
 {
     g_return_val_if_fail(box != NULL, 0);
 
@@ -677,7 +677,7 @@ bb_graphic_box_get_y0(BbGraphicBox *box)
 
 
 int
-bb_graphic_box_get_y1(BbGraphicBox *box)
+bb_geda_box_get_y1(BbGedaBox *box)
 {
     g_return_val_if_fail(box != NULL, 0);
 
@@ -686,7 +686,7 @@ bb_graphic_box_get_y1(BbGraphicBox *box)
 
 
 static void
-bb_graphic_box_init(BbGraphicBox *box)
+bb_geda_box_init(BbGedaBox *box)
 {
     g_return_if_fail(box != NULL);
 
@@ -695,27 +695,27 @@ bb_graphic_box_init(BbGraphicBox *box)
 }
 
 
-BbGraphicBox*
-bb_graphic_box_new()
+BbGedaBox*
+bb_geda_box_new()
 {
-    return g_object_new(BB_TYPE_GRAPHIC_BOX, NULL);
+    return g_object_new(BB_TYPE_GEDA_BOX, NULL);
 }
 
 
-BbGraphicBox*
-bb_graphic_box_new_with_params(BbParams *params, GError **error)
+BbGedaBox*
+bb_geda_box_new_with_params(BbParams *params, GError **error)
 {
     GError *local_error[N_PARAMETERS] = { NULL };
 
-    g_return_val_if_fail(bb_params_token_matches(params, BB_GRAPHIC_BOX_TOKEN), NULL);
+    g_return_val_if_fail(bb_params_token_matches(params, BB_GEDA_BOX_TOKEN), NULL);
 
     int x0 = bb_params_get_int(params, PARAM_CORNER_X, &local_error[PARAM_CORNER_X]);
     int y0 = bb_params_get_int(params, PARAM_CORNER_Y, &local_error[PARAM_CORNER_Y]);
     int x1 = x0 + bb_params_get_int(params, PARAM_WIDTH, &local_error[PARAM_WIDTH]);
     int y1 = y0 + bb_params_get_int(params, PARAM_HEIGHT, &local_error[PARAM_HEIGHT]);
 
-    BbGraphicBox *box = BB_GRAPHIC_BOX(g_object_new(
-        BB_TYPE_GRAPHIC_BOX,
+    BbGedaBox *box = BB_GEDA_BOX(g_object_new(
+        BB_TYPE_GEDA_BOX,
         "x0", x0,
         "y0", y0,
         "x1", x1,
@@ -723,9 +723,9 @@ bb_graphic_box_new_with_params(BbParams *params, GError **error)
 
         "item-color", bb_params_get_int(params, PARAM_COLOR, &local_error[PARAM_COLOR]),
 
-        "line-width",  bb_params_get_int(params, PARAM_LINE_WIDTH, &local_error[PARAM_LINE_WIDTH]),
-        "cap-type",  bb_params_get_int(params, PARAM_CAP_TYPE, &local_error[PARAM_CAP_TYPE]),
-        "dash_type",  bb_params_get_int(params, PARAM_DASH_TYPE, &local_error[PARAM_DASH_TYPE]),
+        "line-width", bb_params_get_int(params, PARAM_LINE_WIDTH, &local_error[PARAM_LINE_WIDTH]),
+        "cap-type", bb_params_get_int(params, PARAM_CAP_TYPE, &local_error[PARAM_CAP_TYPE]),
+        "dash_type", bb_params_get_int(params, PARAM_DASH_TYPE, &local_error[PARAM_DASH_TYPE]),
         "dash-length", bb_params_get_int(params, PARAM_DASH_LENGTH, &local_error[PARAM_DASH_LENGTH]),
         "dash-space", bb_params_get_int(params, PARAM_DASH_SPACE, &local_error[PARAM_DASH_SPACE]),
 
@@ -759,9 +759,9 @@ bb_graphic_box_new_with_params(BbParams *params, GError **error)
 
 
 static void
-bb_graphic_box_render(BbSchematicItem *item, BbItemRenderer *renderer)
+bb_geda_box_render(BbGedaItem *item, BbItemRenderer *renderer)
 {
-    BbGraphicBox *box = BB_GRAPHIC_BOX(item);
+    BbGedaBox *box = BB_GEDA_BOX(item);
 
     g_return_if_fail(box != NULL);
 
@@ -778,7 +778,7 @@ bb_graphic_box_render(BbSchematicItem *item, BbItemRenderer *renderer)
 
 
 void
-bb_graphic_box_set_angle_1(BbGraphicBox *box, int angle)
+bb_geda_box_set_angle_1(BbGedaBox *box, int angle)
 {
     g_return_if_fail(box != NULL);
     g_return_if_fail(box->fill_style != NULL);
@@ -795,7 +795,7 @@ bb_graphic_box_set_angle_1(BbGraphicBox *box, int angle)
 
 
 void
-bb_graphic_box_set_angle_2(BbGraphicBox *box, int angle)
+bb_geda_box_set_angle_2(BbGedaBox *box, int angle)
 {
     g_return_if_fail(box != NULL);
     g_return_if_fail(box->fill_style != NULL);
@@ -812,7 +812,7 @@ bb_graphic_box_set_angle_2(BbGraphicBox *box, int angle)
 
 
 static void
-bb_graphic_box_set_cap_type(BbGraphicBox *box, int type)
+bb_geda_box_set_cap_type(BbGedaBox *box, int type)
 {
     g_return_if_fail(box != NULL);
     g_return_if_fail(box->line_style != NULL);
@@ -831,7 +831,7 @@ bb_graphic_box_set_cap_type(BbGraphicBox *box, int type)
 
 
 static void
-bb_graphic_box_set_dash_length(BbGraphicBox *box, int length)
+bb_geda_box_set_dash_length(BbGedaBox *box, int length)
 {
     g_return_if_fail(box != NULL);
     g_return_if_fail(box->line_style != NULL);
@@ -848,7 +848,7 @@ bb_graphic_box_set_dash_length(BbGraphicBox *box, int length)
 
 
 static void
-bb_graphic_box_set_dash_space(BbGraphicBox *box, int space)
+bb_geda_box_set_dash_space(BbGedaBox *box, int space)
 {
     g_return_if_fail(box != NULL);
     g_return_if_fail(box->line_style != NULL);
@@ -865,7 +865,7 @@ bb_graphic_box_set_dash_space(BbGraphicBox *box, int space)
 
 
 static void
-bb_graphic_box_set_dash_type(BbGraphicBox *box, int type)
+bb_geda_box_set_dash_type(BbGedaBox *box, int type)
 {
     g_return_if_fail(box != NULL);
     g_return_if_fail(box->line_style != NULL);
@@ -882,7 +882,7 @@ bb_graphic_box_set_dash_type(BbGraphicBox *box, int type)
 
 
 static void
-bb_graphic_box_set_item_color(BbGraphicBox *box, int color)
+bb_geda_box_set_item_color(BbGedaBox *box, int color)
 {
     g_return_if_fail(box != NULL);
 
@@ -898,7 +898,7 @@ bb_graphic_box_set_item_color(BbGraphicBox *box, int color)
 
 
 void
-bb_graphic_box_set_fill_type(BbGraphicBox *box, int type)
+bb_geda_box_set_fill_type(BbGedaBox *box, int type)
 {
     g_return_if_fail(box != NULL);
     g_return_if_fail(box->fill_style != NULL);
@@ -915,7 +915,7 @@ bb_graphic_box_set_fill_type(BbGraphicBox *box, int type)
 
 
 void
-bb_graphic_box_set_fill_width(BbGraphicBox *box, int width)
+bb_geda_box_set_fill_width(BbGedaBox *box, int width)
 {
     g_return_if_fail(box != NULL);
     g_return_if_fail(box->fill_style != NULL);
@@ -932,7 +932,7 @@ bb_graphic_box_set_fill_width(BbGraphicBox *box, int width)
 
 
 static void
-bb_graphic_box_set_line_width(BbGraphicBox *box, int width)
+bb_geda_box_set_line_width(BbGedaBox *box, int width)
 {
     g_return_if_fail(box != NULL);
     g_return_if_fail(box->line_style != NULL);
@@ -947,7 +947,7 @@ bb_graphic_box_set_line_width(BbGraphicBox *box, int width)
 
 
 void
-bb_graphic_box_set_pitch_1(BbGraphicBox *box, int pitch)
+bb_geda_box_set_pitch_1(BbGedaBox *box, int pitch)
 {
     g_return_if_fail(box != NULL);
     g_return_if_fail(box->fill_style != NULL);
@@ -964,7 +964,7 @@ bb_graphic_box_set_pitch_1(BbGraphicBox *box, int pitch)
 
 
 void
-bb_graphic_box_set_pitch_2(BbGraphicBox *box, int pitch)
+bb_geda_box_set_pitch_2(BbGedaBox *box, int pitch)
 {
     g_return_if_fail(box != NULL);
     g_return_if_fail(box->fill_style != NULL);
@@ -981,72 +981,72 @@ bb_graphic_box_set_pitch_2(BbGraphicBox *box, int pitch)
 
 
 static void
-bb_graphic_box_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec)
+bb_geda_box_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec)
 {
     switch (property_id)
     {
         case PROP_ANGLE_1:
-            bb_graphic_box_set_angle_1(BB_GRAPHIC_BOX(object), g_value_get_int(value));
+            bb_geda_box_set_angle_1(BB_GEDA_BOX(object), g_value_get_int(value));
             break;
 
         case PROP_ANGLE_2:
-            bb_graphic_box_set_angle_2(BB_GRAPHIC_BOX(object), g_value_get_int(value));
+            bb_geda_box_set_angle_2(BB_GEDA_BOX(object), g_value_get_int(value));
             break;
 
         case PROP_CAP_TYPE:
-            bb_graphic_box_set_cap_type(BB_GRAPHIC_BOX(object), g_value_get_int(value));
+            bb_geda_box_set_cap_type(BB_GEDA_BOX(object), g_value_get_int(value));
             break;
 
         case PROP_ITEM_COLOR:
-            bb_graphic_box_set_item_color(BB_GRAPHIC_BOX(object), g_value_get_int(value));
+            bb_geda_box_set_item_color(BB_GEDA_BOX(object), g_value_get_int(value));
             break;
 
         case PROP_DASH_LENGTH:
-            bb_graphic_box_set_dash_length(BB_GRAPHIC_BOX(object), g_value_get_int(value));
+            bb_geda_box_set_dash_length(BB_GEDA_BOX(object), g_value_get_int(value));
             break;
 
         case PROP_DASH_SPACE:
-            bb_graphic_box_set_dash_space(BB_GRAPHIC_BOX(object), g_value_get_int(value));
+            bb_geda_box_set_dash_space(BB_GEDA_BOX(object), g_value_get_int(value));
             break;
 
         case PROP_DASH_TYPE:
-            bb_graphic_box_set_dash_type(BB_GRAPHIC_BOX(object), g_value_get_int(value));
+            bb_geda_box_set_dash_type(BB_GEDA_BOX(object), g_value_get_int(value));
             break;
 
         case PROP_FILL_TYPE:
-            bb_graphic_box_set_fill_type(BB_GRAPHIC_BOX(object), g_value_get_int(value));
+            bb_geda_box_set_fill_type(BB_GEDA_BOX(object), g_value_get_int(value));
             break;
 
         case PROP_FILL_WIDTH:
-            bb_graphic_box_set_fill_width(BB_GRAPHIC_BOX(object), g_value_get_int(value));
+            bb_geda_box_set_fill_width(BB_GEDA_BOX(object), g_value_get_int(value));
             break;
 
         case PROP_LINE_WIDTH:
-            bb_graphic_box_set_line_width(BB_GRAPHIC_BOX(object), g_value_get_int(value));
+            bb_geda_box_set_line_width(BB_GEDA_BOX(object), g_value_get_int(value));
             break;
 
         case PROP_PITCH_1:
-            bb_graphic_box_set_pitch_1(BB_GRAPHIC_BOX(object), g_value_get_int(value));
+            bb_geda_box_set_pitch_1(BB_GEDA_BOX(object), g_value_get_int(value));
             break;
 
         case PROP_PITCH_2:
-            bb_graphic_box_set_pitch_2(BB_GRAPHIC_BOX(object), g_value_get_int(value));
+            bb_geda_box_set_pitch_2(BB_GEDA_BOX(object), g_value_get_int(value));
             break;
 
         case PROP_X0:
-            bb_graphic_box_set_x0(BB_GRAPHIC_BOX(object), g_value_get_int(value));
+            bb_geda_box_set_x0(BB_GEDA_BOX(object), g_value_get_int(value));
             break;
 
         case PROP_X1:
-            bb_graphic_box_set_x1(BB_GRAPHIC_BOX(object), g_value_get_int(value));
+            bb_geda_box_set_x1(BB_GEDA_BOX(object), g_value_get_int(value));
             break;
 
         case PROP_Y0:
-            bb_graphic_box_set_y0(BB_GRAPHIC_BOX(object), g_value_get_int(value));
+            bb_geda_box_set_y0(BB_GEDA_BOX(object), g_value_get_int(value));
             break;
 
         case PROP_Y1:
-            bb_graphic_box_set_y1(BB_GRAPHIC_BOX(object), g_value_get_int(value));
+            bb_geda_box_set_y1(BB_GEDA_BOX(object), g_value_get_int(value));
             break;
 
         default:
@@ -1056,7 +1056,7 @@ bb_graphic_box_set_property(GObject *object, guint property_id, const GValue *va
 
 
 void
-bb_graphic_box_set_x0(BbGraphicBox *box, int x)
+bb_geda_box_set_x0(BbGedaBox *box, int x)
 {
     g_return_if_fail(box != NULL);
 
@@ -1074,7 +1074,7 @@ bb_graphic_box_set_x0(BbGraphicBox *box, int x)
 
 
 void
-bb_graphic_box_set_x1(BbGraphicBox *box, int x)
+bb_geda_box_set_x1(BbGedaBox *box, int x)
 {
     g_return_if_fail(box != NULL);
 
@@ -1092,7 +1092,7 @@ bb_graphic_box_set_x1(BbGraphicBox *box, int x)
 
 
 void
-bb_graphic_box_set_y0(BbGraphicBox *box, int y)
+bb_geda_box_set_y0(BbGedaBox *box, int y)
 {
     g_return_if_fail(box != NULL);
 
@@ -1110,7 +1110,7 @@ bb_graphic_box_set_y0(BbGraphicBox *box, int y)
 
 
 void
-bb_graphic_box_set_y1(BbGraphicBox *box, int y)
+bb_geda_box_set_y1(BbGedaBox *box, int y)
 {
     g_return_if_fail(box != NULL);
 
@@ -1128,9 +1128,9 @@ bb_graphic_box_set_y1(BbGraphicBox *box, int y)
 
 
 static void
-bb_graphic_box_translate(BbSchematicItem *item, int dx, int dy)
+bb_geda_box_translate(BbGedaItem *item, int dx, int dy)
 {
-    BbGraphicBox *box = BB_GRAPHIC_BOX(item);
+    BbGedaBox *box = BB_GEDA_BOX(item);
     g_return_if_fail(box != NULL);
 
     bb_coord_translate(dx, dy, box->x, box->y, 2);
@@ -1143,9 +1143,9 @@ bb_graphic_box_translate(BbSchematicItem *item, int dx, int dy)
 
 
 static gboolean
-bb_graphic_box_write(BbSchematicItem *item, GOutputStream *stream, GCancellable *cancellable, GError **error)
+bb_geda_box_write(BbGedaItem *item, GOutputStream *stream, GCancellable *cancellable, GError **error)
 {
-    BbGraphicBox *box = BB_GRAPHIC_BOX(item);
+    BbGedaBox *box = BB_GEDA_BOX(item);
     g_return_val_if_fail(box != NULL, FALSE);
 
     GString *params = g_string_new(NULL);
@@ -1153,7 +1153,7 @@ bb_graphic_box_write(BbSchematicItem *item, GOutputStream *stream, GCancellable 
     g_string_printf(
         params,
         "%s %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d\n",
-        BB_GRAPHIC_BOX_TOKEN,
+        BB_GEDA_BOX_TOKEN,
         MIN(box->x[0], box->x[1]),
         MIN(box->y[0], box->y[1]),
         ABS(box->x[0] - box->x[1]),
@@ -1188,8 +1188,8 @@ bb_graphic_box_write(BbSchematicItem *item, GOutputStream *stream, GCancellable 
 
 
 static void
-bb_graphic_box_write_async(
-    BbSchematicItem *item,
+bb_geda_box_write_async(
+    BbGedaItem *item,
     GOutputStream *stream,
     int io_priority,
     GCancellable *cancellable,
@@ -1197,7 +1197,7 @@ bb_graphic_box_write_async(
     gpointer callback_data
     )
 {
-    BbGraphicBox *box = BB_GRAPHIC_BOX(item);
+    BbGedaBox *box = BB_GEDA_BOX(item);
 
     bb_item_params_write_async(
         box->params,
@@ -1211,8 +1211,8 @@ bb_graphic_box_write_async(
 
 
 static gboolean
-bb_graphic_box_write_finish(
-    BbSchematicItem *item,
+bb_geda_box_write_finish(
+    BbGedaItem *item,
     GOutputStream *stream,
     GAsyncResult *result,
     GError **error

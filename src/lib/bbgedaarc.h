@@ -1,5 +1,5 @@
-#ifndef __BBGRAPHICBOX__
-#define __BBGRAPHICBOX__
+#ifndef __BBGEDAARC__
+#define __BBGEDAARC__
 /*
  * bbsch
  * Copyright (C) 2020 Edward C. Hennessy
@@ -20,54 +20,58 @@
 
 #include <gtk/gtk.h>
 #include "bbparams.h"
-#include "bbschematicitem.h"
+#include "bbgedaitem.h"
 
 
-#define BB_GRAPHIC_BOX_TOKEN "B"
+#define BB_GEDA_ARC_TOKEN "A"
 
 
-#define BB_TYPE_GRAPHIC_BOX bb_graphic_box_get_type()
-G_DECLARE_FINAL_TYPE(BbGraphicBox, bb_graphic_box, BB, GRAPHIC_BOX, BbSchematicItem)
-
-
-int
-bb_graphic_box_get_x0(BbGraphicBox *box);
+#define BB_TYPE_GEDA_ARC bb_geda_arc_get_type()
+G_DECLARE_FINAL_TYPE(BbGedaArc, bb_geda_arc, BB, GEDA_ARC, BbGedaItem)
 
 
 int
-bb_graphic_box_get_x1(BbGraphicBox *box);
+bb_geda_arc_get_center_x(BbGedaArc *arc);
 
 
 int
-bb_graphic_box_get_y0(BbGraphicBox *box);
+bb_geda_arc_get_center_y(BbGedaArc *arc);
 
 
 int
-bb_graphic_box_get_y1(BbGraphicBox *box);
+bb_geda_arc_get_radius(BbGedaArc *arc);
 
 
-BbGraphicBox*
-bb_graphic_box_new();
+int
+bb_geda_arc_get_start_angle(BbGedaArc *arc);
 
 
-BbGraphicBox*
-bb_graphic_box_new_with_params(BbParams *params, GError **error);
+int
+bb_geda_arc_get_sweep_angle(BbGedaArc *arc);
 
 
-void
-bb_graphic_box_set_x0(BbGraphicBox *box, int x);
-
-
-void
-bb_graphic_box_set_x1(BbGraphicBox *box, int x);
+BbGedaArc*
+bb_geda_arc_new_with_params(BbParams *params, GError **error);
 
 
 void
-bb_graphic_box_set_y0(BbGraphicBox *box, int y);
+bb_geda_arc_set_center_x(BbGedaArc *arc, int x);
 
 
 void
-bb_graphic_box_set_y1(BbGraphicBox *box, int y);
+bb_geda_arc_set_center_y(BbGedaArc *arc, int y);
+
+
+void
+bb_geda_arc_set_radius(BbGedaArc *arc, int radius);
+
+
+void
+bb_geda_arc_set_start_angle(BbGedaArc *arc, int angle);
+
+
+void
+bb_geda_arc_set_sweep_angle(BbGedaArc *arc, int angle);
 
 
 #endif

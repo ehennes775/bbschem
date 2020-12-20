@@ -19,7 +19,7 @@
  */
 
 #include <gtk/gtk.h>
-#include "bbelectricalnet.h"
+#include "bbgedanet.h"
 #include "bbgedaitemfactory.h"
 #include "bbgedaversion.h"
 

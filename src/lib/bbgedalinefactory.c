@@ -38,7 +38,7 @@ struct _BbGedaLineFactory
 };
 
 
-BbSchematicItem*
+BbGedaItem*
 bb_geda_line_factory_create(
     BbGedaItemFactory *factory,
     BbGedaVersion *version,
@@ -85,7 +85,7 @@ G_DEFINE_TYPE_WITH_CODE(
     );
 
 
-BbSchematicItem*
+BbGedaItem*
 bb_geda_line_factory_create(
     BbGedaItemFactory *factory,
     BbGedaVersion *version,
@@ -94,7 +94,7 @@ bb_geda_line_factory_create(
     GError **error
     )
 {
-    return BB_SCHEMATIC_ITEM(bb_graphic_line_new_with_params(params, error));
+    return BB_GEDA_ITEM(bb_geda_line_new_with_params(params, error));
 }
 
 
@@ -113,7 +113,7 @@ bb_geda_line_factory_create_async(
 
     GError *local_error = NULL;
 
-    BbGraphicLine *line = bb_graphic_line_new_with_params(params, &local_error);
+    BbGedaLine *line = bb_geda_line_new_with_params(params, &local_error);
 
     if (!g_task_return_error_if_cancelled(task))
     {

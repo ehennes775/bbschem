@@ -21,8 +21,8 @@
 #include "bbadjustableitemcolor.h"
 #include "bbadjustablelinestyle.h"
 #include "bbschematic.h"
-#include "bbschematicitem.h"
-#include "bbgraphicline.h"
+#include "bbgedaitem.h"
+#include "bbgedaline.h"
 #include "bbapplyfunc.h"
 #include "bblibrary.h"
 
@@ -83,10 +83,10 @@ struct _WriteCapture
 };
 
 static void
-bb_schematic_add_items_lambda(BbSchematicItem *item, BbSchematic *schematic);
+bb_schematic_add_items_lambda(BbGedaItem *item, BbSchematic *schematic);
 
 static void
-bb_schematic_apply_item_property_lambda(BbSchematicItem *item, ApplyItemPropertyCapture *capture);
+bb_schematic_apply_item_property_lambda(BbGedaItem *item, ApplyItemPropertyCapture *capture);
 
 static void
 bb_schematic_dispose(GObject *object);
@@ -98,7 +98,7 @@ static void
 bb_schematic_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
 
 static void
-bb_schematic_render_lambda(BbSchematicItem *item, RenderCapture *capture);
+bb_schematic_render_lambda(BbGedaItem *item, RenderCapture *capture);
 
 static void
 bb_schematic_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
@@ -107,7 +107,7 @@ static void
 bb_schematic_write_callback(GObject *source, GAsyncResult *result, gpointer callback_data);
 
 static void
-bb_schematic_write_lambda(BbSchematicItem *item, WriteCapture *capture);
+bb_schematic_write_lambda(BbGedaItem *item, WriteCapture *capture);
 
 static AsyncWriteData*
 bb_schematic_async_write_data_new();
@@ -169,10 +169,10 @@ static GParamSpec *properties[N_PROPERTIES];
 
 
 void
-bb_schematic_add_item(BbSchematic *schematic, BbSchematicItem *item)
+bb_schematic_add_item(BbSchematic *schematic, BbGedaItem *item)
 {
     g_return_if_fail(BB_IS_SCHEMATIC(schematic));
-    g_return_if_fail(BB_IS_SCHEMATIC_ITEM(item));
+    g_return_if_fail(BB_IS_GEDA_ITEM(item));
 
     GSList *items = g_slist_append(NULL, item);
 
@@ -192,10 +192,10 @@ bb_schematic_add_items(BbSchematic *schematic, GSList *items)
 
 
 static void
-bb_schematic_add_items_lambda(BbSchematicItem *item, BbSchematic *schematic)
+bb_schematic_add_items_lambda(BbGedaItem *item, BbSchematic *schematic)
 {
     g_return_if_fail(BB_IS_SCHEMATIC(schematic));
-    g_return_if_fail(BB_IS_SCHEMATIC_ITEM(item));
+    g_return_if_fail(BB_IS_GEDA_ITEM(item));
 
     g_object_ref(item);
 
@@ -218,9 +218,9 @@ bb_schematic_apply_item_property(BbSchematic *schematic, const char *name, const
 
 
 static void
-bb_schematic_apply_item_property_lambda(BbSchematicItem *item, ApplyItemPropertyCapture *capture)
+bb_schematic_apply_item_property_lambda(BbGedaItem *item, ApplyItemPropertyCapture *capture)
 {
-    BbSchematicItemClass *class = BB_SCHEMATIC_ITEM_GET_CLASS(item);
+    BbGedaItemClass *class = BB_GEDA_ITEM_GET_CLASS(item);
     g_return_if_fail(class != NULL);
 
     GParamSpec *param = g_object_class_find_property(G_OBJECT_CLASS(class), capture->name);
@@ -247,7 +247,7 @@ bb_schematic_calculate_bounds(
     {
         if (where_pred(iter->data , where_user_data))
         {
-            BbBounds *temp = bb_schematic_item_calculate_bounds(iter->data, calculator);
+            BbBounds *temp = bb_geda_item_calculate_bounds(iter->data, calculator);
 
             bounds->min_x = MIN(bounds->min_x, temp->min_x);
             bounds->min_y = MIN(bounds->min_y, temp->min_y);
@@ -387,8 +387,8 @@ bb_schematic_get_property(GObject *object, guint property_id, GValue *value, GPa
 static void
 bb_schematic_init(BbSchematic *schematic)
 {
-    BbGraphicBox *box = g_object_new(
-        BB_TYPE_GRAPHIC_BOX,
+    BbGedaBox *box = g_object_new(
+        BB_TYPE_GEDA_BOX,
         "x0", 0,
         "y0", 0,
         "x1", 100,
@@ -433,12 +433,12 @@ bb_schematic_render(
 
 
 static void
-bb_schematic_render_lambda(BbSchematicItem *item, RenderCapture *capture)
+bb_schematic_render_lambda(BbGedaItem *item, RenderCapture *capture)
 {
-    g_return_if_fail(BB_IS_SCHEMATIC_ITEM(item));
+    g_return_if_fail(BB_IS_GEDA_ITEM(item));
     g_return_if_fail(capture != NULL);
 
-    bb_schematic_item_render(item, BB_ITEM_RENDERER(capture->renderer));
+    bb_geda_item_render(item, BB_ITEM_RENDERER(capture->renderer));
 }
 
 
@@ -485,9 +485,9 @@ bb_schematic_write(
 
 
 static void
-bb_schematic_write_lambda(BbSchematicItem *item, WriteCapture *capture)
+bb_schematic_write_lambda(BbGedaItem *item, WriteCapture *capture)
 {
-    bb_schematic_item_write(
+    bb_geda_item_write(
         item,
         capture->stream,
         capture->cancellable,
@@ -517,14 +517,14 @@ bb_schematic_write_async(
         data->io_priority = io_priority;
         data->item = schematic->items;
 
-        bb_schematic_item_write_async(
-            BB_SCHEMATIC_ITEM(data->item->data),
+        bb_geda_item_write_async(
+            BB_GEDA_ITEM(data->item->data),
             stream,
             io_priority,
             g_task_get_cancellable(task),
             bb_schematic_write_callback,
             task
-            );
+        );
     }
     else
     {
@@ -553,12 +553,12 @@ bb_schematic_write_callback(GObject *source, GAsyncResult *result, gpointer call
     GTask *task = G_TASK(callback_data);
     AsyncWriteData *data = g_task_get_task_data(task);
 
-    bb_schematic_item_write_finish(
-        BB_SCHEMATIC_ITEM(data->item->data),
+    bb_geda_item_write_finish(
+        BB_GEDA_ITEM(data->item->data),
         data->stream,
         result,
         &error
-        );
+    );
 
     if (error != NULL)
     {
@@ -566,14 +566,14 @@ bb_schematic_write_callback(GObject *source, GAsyncResult *result, gpointer call
 
         if (data->item != NULL)
         {
-            bb_schematic_item_write_async(
-                BB_SCHEMATIC_ITEM(data->item->data),
+            bb_geda_item_write_async(
+                BB_GEDA_ITEM(data->item->data),
                 data->stream,
                 data->io_priority,
                 g_task_get_cancellable(G_TASK(result)),
                 bb_schematic_write_callback,
                 task
-                );
+            );
         }
         else
         {

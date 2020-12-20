@@ -1,5 +1,5 @@
-#ifndef __BBUNIVERSALTEXT__
-#define __BBUNIVERSALTEXT__
+#ifndef __BBGEDACIRCLE__
+#define __BBGEDACIRCLE__
 /*
  * bbsch
  * Copyright (C) 2020 Edward C. Hennessy
@@ -19,30 +19,47 @@
  */
 
 #include <gtk/gtk.h>
-#include "bbschematicitem.h"
+#include "bbparams.h"
+#include "bbgedaitem.h"
 
-#define BB_TYPE_UNIVERSAL_TEXT bb_universal_text_get_type()
-G_DECLARE_FINAL_TYPE(BbUniversalText, bb_universal_text, BB, UNIVERSAL_TEXT, BbSchematicItem)
+
+#define BB_GEDA_CIRCLE_TOKEN "V"
+
+
+#define BB_TYPE_GEDA_CIRCLE bb_geda_circle_get_type()
+G_DECLARE_FINAL_TYPE(BbGedaCircle, bb_geda_circle, BB, GEDA_CIRCLE, BbGedaItem)
 
 
 int
-bb_universal_text_get_insert_x(BbUniversalText *text);
+bb_geda_circle_get_center_x(BbGedaCircle *circle);
 
 
 int
-bb_universal_text_get_insert_y(BbUniversalText *text);
+bb_geda_circle_get_center_y(BbGedaCircle *circle);
 
 
-BbUniversalText*
-bb_universal_text_new();
+int
+bb_geda_circle_get_radius(BbGedaCircle *circle);
+
+
+BbGedaCircle*
+bb_geda_circle_new();
+
+
+BbGedaCircle*
+bb_geda_circle_new_with_params(BbParams *params, GError **error);
 
 
 void
-bb_universal_text_set_insert_x(BbUniversalText *text, int x);
+bb_geda_circle_set_center_x(BbGedaCircle *circle, int x);
 
 
 void
-bb_universal_text_set_insert_y(BbUniversalText *text, int y);
+bb_geda_circle_set_center_y(BbGedaCircle *circle, int y);
+
+
+void
+bb_geda_circle_set_radius(BbGedaCircle *circle, int radius);
 
 
 #endif
