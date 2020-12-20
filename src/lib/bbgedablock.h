@@ -20,6 +20,11 @@
 
 #include <gtk/gtk.h>
 #include "bbgedaitem.h"
+#include "bbparams.h"
+
+
+#define BB_GEDA_BLOCK_TOKEN "C"
+
 
 #define BB_TYPE_GEDA_BLOCK bb_geda_block_get_type()
 G_DECLARE_FINAL_TYPE(BbGedaBlock, bb_geda_block, BB, GEDA_BLOCK, BbGedaItem)
@@ -37,6 +42,10 @@ BbGedaBlock*
 bb_geda_block_new();
 
 
+BbGedaBlock*
+bb_geda_block_new_with_params(BbParams *params, GError **error);
+
+
 void
 bb_geda_block_set_insert_x(BbGedaBlock *block, int x);
 
@@ -44,5 +53,16 @@ bb_geda_block_set_insert_x(BbGedaBlock *block, int x);
 void
 bb_geda_block_set_insert_y(BbGedaBlock *block, int y);
 
+
+void
+bb_geda_block_set_selectable(BbGedaBlock *block, gboolean selectable);
+
+
+void
+bb_geda_block_set_rotation(BbGedaBlock *block, int angle);
+
+
+void
+bb_geda_block_set_mirror(BbGedaBlock *block, gboolean mirror);
 
 #endif

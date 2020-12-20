@@ -46,6 +46,10 @@ bb_params_get_int(BbParams *params, int index, GError **error);
 
 
 const gchar*
+bb_params_get_string(BbParams *params, int index, GError **error);
+
+
+const gchar*
 bb_params_get_token(BbParams *params);
 
 

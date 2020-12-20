@@ -95,6 +95,40 @@ bb_params_get_int(BbParams *params, int index, GError **error)
 
 
 const gchar*
+bb_params_get_string(BbParams *params, int index, GError **error)
+{
+    g_return_val_if_fail(params != NULL, 0);
+    g_return_val_if_fail(params->params != NULL, 0);
+    g_return_val_if_fail(index >= 0, 0);
+
+    GError *local_error = NULL;
+    const gchar *value = NULL;
+
+    if (index >= g_strv_length(params->params))
+    {
+        local_error = g_error_new(
+            BB_ERROR_DOMAIN,
+            ERROR_TOO_FEW_PARAMETERS,
+            "Too few parameters"
+            );
+    }
+    else
+    {
+        value = *(params->params + index);
+    }
+
+    if (local_error != NULL)
+    {
+        g_propagate_error(error, local_error);
+
+        value = NULL;
+    }
+
+    return value;
+}
+
+
+const gchar*
 bb_params_get_token(BbParams *params)
 {
     g_return_val_if_fail(params != NULL, NULL);

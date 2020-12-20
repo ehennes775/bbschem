@@ -21,64 +21,75 @@ add_library(bblib
         bbcaptype.h
         bbclosepath.c
         bbclosepath.h
+        bbcolors.h
         bbcoord.c
         bbcoord.h
         bbdashtype.c
         bbdashtype.h
-        bbgedabus.c
-        bbgedabus.h
-        bbgedanet.c
-        bbgedanet.h
-        bbgedapin.c
-        bbgedapin.h
         bberror.c
         bberror.h
         bbfillstyle.c
         bbfillstyle.h
         bbfilltype.c
         bbfilltype.h
+        bbgedaarc.c
+        bbgedaarc.h
         bbgedaarcfactory.c
         bbgedaarcfactory.h
+        bbgedablock.c
+        bbgedablock.h
+        bbgedablockfactory.c
+        bbgedablockfactory.h
+        bbgedabox.c
+        bbgedabox.h
         bbgedaboxfactory.c
         bbgedaboxfactory.h
+        bbgedabus.c
+        bbgedabus.h
         bbgedabusfactory.c
         bbgedabusfactory.h
+        bbgedacircle.c
+        bbgedacircle.h
         bbgedacirclefactory.c
         bbgedacirclefactory.h
         bbgedafactory.c
         bbgedafactory.h
+        bbgedaitem.c
+        bbgedaitem.h
         bbgedaitemfactory.c
         bbgedaitemfactory.h
-        bbgedalinefactory.c
-        bbgedalinefactory.h
-        bbgedanetfactory.c
-        bbgedanetfactory.h
-        bbgedapinfactory.c
-        bbgedapinfactory.h
-        bbgedaversion.c
-        bbgedaversion.h
-        bbgedaarc.c
-        bbgedaarc.h
-        bbgedabox.c
-        bbgedabox.h
-        bbgedacircle.c
-        bbgedacircle.h
         bbgedaline.c
         bbgedaline.h
+        bbgedalinefactory.c
+        bbgedalinefactory.h
+        bbgedanet.c
+        bbgedanet.h
+        bbgedanetfactory.c
+        bbgedanetfactory.h
         bbgedapath.c
         bbgedapath.h
+        bbgedapin.c
+        bbgedapin.h
+        bbgedapinfactory.c
+        bbgedapinfactory.h
+        bbgedatext.c
+        bbgedatext.h
+        bbgedaversion.c
+        bbgedaversion.h
         bbhashtable.c
         bbhashtable.h
         bbitemparams.c
         bbitemparams.h
         bbitemrenderer.c
         bbitemrenderer.h
+        bblibrary.h
         bblinestyle.c
         bblinestyle.h
         bbparams.c
         bbparams.h
         bbpathcommand.c
         bbpathcommand.h
+        bbpintype.h
         bbpred.c
         bbpred.h
         bbqueryfunc.h
@@ -88,17 +99,8 @@ add_library(bblib
         bbrelativemoveto.h
         bbschematic.c
         bbschematic.h
-        bbgedaitem.c
-        bbgedaitem.h
         bbsweep.c
         bbsweep.h
-        bbgedablock.c
-        bbgedablock.h
-        bbgedatext.c
-        bbgedatext.h
         bbvaluecount.c
         bbvaluecount.h
-        bblibrary.h
-        bbpintype.h
-        bbcolors.h
         )
