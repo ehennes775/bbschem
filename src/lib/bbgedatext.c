@@ -313,7 +313,7 @@ bb_geda_text_class_init(BbGedaTextClass *klasse)
             "",
             0,
             N_TEXT_ALIGNMENT - 1,
-            BB_TEXT_ALIGNMENT_LOWER_LEFT,
+            BB_TEXT_ALIGNMENT_DEFAULT,
             G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS
             )
         );
@@ -355,7 +355,7 @@ bb_geda_text_class_init(BbGedaTextClass *klasse)
             "",
             0,
             N_TEXT_PRESENTATION - 1,
-            BB_TEXT_PRESENTATION_BOTH,
+            BB_TEXT_PRESENTATION_DEFAULT,
             G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS
             )
         );
@@ -410,7 +410,7 @@ bb_geda_text_class_init(BbGedaTextClass *klasse)
             "",
             0,
             N_TEXT_VISIBILITY - 1,
-            BB_TEXT_VISIBILITY_VISIBLE,
+            BB_TEXT_VISIBILITY_DEFAULT,
             G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS
             )
         );
@@ -491,7 +491,7 @@ bb_geda_text_finalize(GObject *object)
 BbTextAlignment
 bb_geda_text_get_alignment(BbGedaText *text)
 {
-    g_return_val_if_fail(BB_IS_GEDA_TEXT(text), BB_TEXT_ALIGNMENT_LOWER_LEFT);
+    g_return_val_if_fail(BB_IS_GEDA_TEXT(text), BB_TEXT_ALIGNMENT_DEFAULT);
 
     return text->alignment;
 }
@@ -655,7 +655,7 @@ bb_geda_text_get_property(GObject *object, guint property_id, GValue *value, GPa
 BbTextPresentation
 bb_geda_text_get_presentation(BbGedaText *text)
 {
-    g_return_val_if_fail(BB_IS_GEDA_TEXT(text), BB_TEXT_PRESENTATION_BOTH);
+    g_return_val_if_fail(BB_IS_GEDA_TEXT(text), BB_TEXT_PRESENTATION_DEFAULT);
 
     return text->presentation;
 }
@@ -673,7 +673,7 @@ bb_geda_text_get_rotation(BbGedaText *text)
 int
 bb_geda_text_get_size(BbGedaText *text)
 {
-    g_return_val_if_fail(BB_IS_GEDA_TEXT(text), 10);
+    g_return_val_if_fail(BB_IS_GEDA_TEXT(text), BB_TEXT_SIZE_DEFAULT);
 
     return text->size;
 }
@@ -691,7 +691,7 @@ bb_geda_text_get_text(BbGedaText *text_item)
 BbTextVisibility
 bb_geda_text_get_visibility(BbGedaText *text)
 {
-    g_return_val_if_fail(BB_IS_GEDA_TEXT(text), BB_TEXT_VISIBILITY_VISIBLE);
+    g_return_val_if_fail(BB_IS_GEDA_TEXT(text), BB_TEXT_VISIBILITY_DEFAULT);
 
     return text->visibility;
 }
