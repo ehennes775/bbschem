@@ -74,6 +74,8 @@ add_library(bblib
         bbgedapinfactory.h
         bbgedatext.c
         bbgedatext.h
+        bbgedatextfactory.c
+        bbgedatextfactory.h
         bbgedaversion.c
         bbgedaversion.h
         bbhashtable.c
@@ -103,4 +105,12 @@ add_library(bblib
         bbsweep.h
         bbvaluecount.c
         bbvaluecount.h
+        bbtextalignment.h
+        bbtextpresentation.h
+        bbtextvisibility.h
+        bbtextalignment.c
+        bbtextvisibility.c
+        bbtextpresentation.c
+        bbtextsize.h
+        bbtextsize.c
         )

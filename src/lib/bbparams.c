@@ -27,6 +27,17 @@ struct _BbParams
 };
 
 
+BbParams*
+bb_params_copy(BbParams *params)
+{
+    BbParams *copy = g_new0(BbParams, 1);
+
+    copy->params = g_strdupv(params->params);
+
+    return copy;
+}
+
+
 void
 bb_params_free(BbParams *params)
 {

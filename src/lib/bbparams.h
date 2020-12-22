@@ -24,6 +24,9 @@
 typedef struct _BbParams BbParams;
 
 
+BbParams*
+bb_params_copy(BbParams *params);
+
 /**
  * Free resources associated with BbParams
  *
