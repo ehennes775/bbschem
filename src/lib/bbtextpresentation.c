@@ -43,7 +43,7 @@ bb_text_presentation_from_params(BbParams *params, int index, GError **error)
         }
     }
 
-    if (error != NULL)
+    if (local_error != NULL)
     {
         g_propagate_error(error, local_error);
 

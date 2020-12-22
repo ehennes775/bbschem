@@ -115,4 +115,7 @@ add_library(bblib
         bbtextsize.c
         bbcolor.c
         bbcolor.h
+        bbpintype.c
+        bbpinend.c
+        bbpinend.h
         )

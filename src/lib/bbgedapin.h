@@ -21,6 +21,8 @@
 #include <gtk/gtk.h>
 #include "bbparams.h"
 #include "bbgedaitem.h"
+#include "bbpinend.h"
+#include "bbpintype.h"
 
 
 #define BB_GEDA_PIN_TOKEN "P"
@@ -28,6 +30,14 @@
 
 #define BB_TYPE_GEDA_PIN bb_geda_pin_get_type()
 G_DECLARE_FINAL_TYPE(BbGedaPin, bb_geda_pin, BB, GEDA_PIN, BbGedaItem)
+
+
+BbPinEnd
+bb_geda_pin_get_pin_end(BbGedaPin *pin);
+
+
+BbPinType
+bb_geda_pin_get_pin_type(BbGedaPin *pin);
 
 
 int
@@ -52,6 +62,14 @@ bb_geda_pin_new();
 
 BbGedaPin*
 bb_geda_pin_new_with_params(BbParams *params, GError **error);
+
+
+void
+bb_geda_pin_set_pin_end(BbGedaPin *pin, BbPinEnd pin_end);
+
+
+void
+bb_geda_pin_set_pin_type(BbGedaPin *pin, BbPinType pin_type);
 
 
 void

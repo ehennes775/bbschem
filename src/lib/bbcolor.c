@@ -43,7 +43,7 @@ bb_text_color_from_params(BbParams *params, int index, int default_value, GError
         }
     }
 
-    if (error != NULL)
+    if (local_error != NULL)
     {
         g_propagate_error(error, local_error);
 

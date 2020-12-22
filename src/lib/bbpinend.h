@@ -1,5 +1,5 @@
-#ifndef __BBPINTYPE__
-#define __BBPINTYPE__
+#ifndef __BBPINEND__
+#define __BBPINEND__
 /*
  * bbschem
  * Copyright (C) 2020 Edward C. Hennessy
@@ -22,42 +22,38 @@
 #include "bbparams.h"
 
 
-#define BB_PIN_TYPE_DEFAULT (BB_PIN_TYPE_NET)
+#define BB_PIN_END_DEFAULT (0)
 
+#define BB_PIN_END_MAX (1)
+
+#define BB_PIN_END_MIN (0)
 
 /**
- * These items must match the gEDA file format numerically.
+ *
  */
-typedef enum _BbPinType BbPinType;
-
-enum _BbPinType
-{
-    BB_PIN_TYPE_NET,
-    BB_PIN_TYPE_BUS,
-    N_PIN_TYPES
-};
+typedef int BbPinEnd;
 
 
 /**
- * Convert the pin type from parameters
+ * Convert the pin end from parameters
  *
  * @param params A BbParams
  * @param index The index of the parameter
  * @param error Any error encountered converting the parameter
- * @return The pin type, or BB_PIN_TYPE_DEFAULT on an error
+ * @return The pin end, or BB_PIN_END_DEFAULT on an error
  */
-BbPinType
-bb_pin_type_from_params(BbParams *params, int index, GError **error);
+BbPinEnd
+bb_pin_end_from_params(BbParams *params, int index, GError **error);
 
 
 /**
- * @brief Checks the pin type for validity
+ * @brief Checks the pin end for validity
  *
- * @param type A BbPinType
- * @return TRUE if the pin type represents a valid value
+ * @param pin_end A BbPinEnd
+ * @return TRUE if the pin end represents a valid value
  */
 gboolean
-bb_pin_type_is_valid(BbPinType type);
+bb_pin_end_is_valid(BbPinEnd pin_end);
 
 
 #endif

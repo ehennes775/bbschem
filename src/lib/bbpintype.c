@@ -17,29 +17,29 @@
  */
 
 #include <gtk/gtk.h>
-#include "bbtextvisibility.h"
 #include "bberror.h"
+#include "bbpintype.h"
 
 
-BbTextVisibility
-bb_text_visibility_from_params(BbParams *params, int index, GError **error)
+BbPinType
+bb_pin_type_from_params(BbParams *params, int index, GError **error)
 {
     GError *local_error = NULL;
 
-    int visibility = bb_params_get_int(params, index, &local_error);
+    int type = bb_params_get_int(params, index, &local_error);
 
     if (local_error == NULL)
     {
-        if (!bb_text_visibility_is_valid(visibility))
+        if (!bb_pin_type_is_valid(type))
         {
             local_error = g_error_new(
                 BB_ERROR_DOMAIN,
                 ERROR_VALUE_OUT_OF_RANGE,
-                "Text visibility of %d out of range [%d,%d)",
-                visibility,
+                "Pin type of %d out of range [%d,%d)",
+                type,
                 0,
-                N_TEXT_VISIBILITY
-                );
+                N_PIN_TYPES
+            );
         }
     }
 
@@ -47,15 +47,16 @@ bb_text_visibility_from_params(BbParams *params, int index, GError **error)
     {
         g_propagate_error(error, local_error);
 
-        visibility = BB_TEXT_VISIBILITY_DEFAULT;
+        type = BB_PIN_TYPE_DEFAULT;
     }
 
-    return visibility;
+    return type;
 }
 
 
 gboolean
-bb_text_visibility_is_valid(BbTextVisibility visibility)
+bb_pin_type_is_valid(BbPinType type)
 {
-    return (visibility >= 0) && (visibility < N_TEXT_VISIBILITY);
+    return (type >= 0) && (type < N_PIN_TYPES);
 }
+

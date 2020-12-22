@@ -20,7 +20,6 @@
 #include <bbextensions.h>
 #include "bbgedapin.h"
 #include "bbcoord.h"
-#include "bbitemparams.h"
 #include "bbadjustableitemcolor.h"
 #include "bbgedanet.h"
 #include "bbgedabus.h"
@@ -63,7 +62,8 @@ enum
     PROP_ITEM_COLOR,
 
     PROP_PIN_END,
-
+    PROP_PIN_TYPE,
+    
     N_PROPERTIES
 };
 
@@ -79,16 +79,13 @@ struct _BbGedaPin
 {
     BbGedaItem parent;
 
-    BbItemParams *params;
-
     int x[2];
     int y[2];
 
     int color;
 
-    BbPinType type;
-
-    int end;
+    BbPinEnd pin_end;
+    BbPinType pin_type;
 };
 
 
@@ -219,7 +216,7 @@ bb_geda_pin_class_init(BbGedaPinClass *klasse)
             INT_MIN,
             INT_MAX,
             0,
-            G_PARAM_READWRITE
+            G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS
             )
         );
 
@@ -233,7 +230,7 @@ bb_geda_pin_class_init(BbGedaPinClass *klasse)
             INT_MIN,
             INT_MAX,
             0,
-            G_PARAM_READWRITE
+            G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS
             )
         );
 
@@ -247,7 +244,7 @@ bb_geda_pin_class_init(BbGedaPinClass *klasse)
             INT_MIN,
             INT_MAX,
             0,
-            G_PARAM_READWRITE
+            G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS
             )
         );
 
@@ -261,7 +258,7 @@ bb_geda_pin_class_init(BbGedaPinClass *klasse)
             INT_MIN,
             INT_MAX,
             0,
-            G_PARAM_READWRITE
+            G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS
             )
         );
 
@@ -272,10 +269,24 @@ bb_geda_pin_class_init(BbGedaPinClass *klasse)
             "pin-end",
             "",
             "",
-            INT_MIN,
-            INT_MAX,
+            BB_PIN_END_MIN,
+            BB_PIN_END_MAX,
+            BB_PIN_END_DEFAULT,
+            G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS
+            )
+        );
+
+    properties[PROP_PIN_TYPE] = bb_object_class_install_property(
+        G_OBJECT_CLASS(klasse),
+        PROP_PIN_TYPE,
+        g_param_spec_int(
+            "pin-type",
+            "",
+            "",
             0,
-            G_PARAM_READWRITE
+            N_PIN_TYPES - 1,
+            BB_PIN_TYPE_DEFAULT,
+            G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS
             )
         );
 
@@ -288,13 +299,17 @@ bb_geda_pin_clone(BbGedaItem *item)
 {
     return BB_GEDA_ITEM(g_object_new(
         BB_TYPE_GEDA_PIN,
+
+        /* From AdjustableItemColor */
+        "item-color", bb_geda_pin_get_item_color(BB_GEDA_PIN(item)),
+
+        /* From GedaPin */
         "x0", bb_geda_pin_get_x0(BB_GEDA_PIN(item)),
         "x1", bb_geda_pin_get_x1(BB_GEDA_PIN(item)),
         "y0", bb_geda_pin_get_y0(BB_GEDA_PIN(item)),
         "y1", bb_geda_pin_get_y1(BB_GEDA_PIN(item)),
-
-        /* From AdjustableItemColor */
-        "item-color", bb_geda_pin_get_item_color(BB_GEDA_PIN(item)),
+        "pin-end", bb_geda_pin_get_pin_end(BB_GEDA_PIN(item)),
+        "pin-type", bb_geda_pin_get_pin_type(BB_GEDA_PIN(item)),
 
         NULL
     ));
@@ -325,10 +340,28 @@ bb_geda_pin_get_item_color(BbGedaPin *pin)
 }
 
 
+BbPinEnd
+bb_geda_pin_get_pin_end(BbGedaPin *pin)
+{
+    g_return_val_if_fail(BB_IS_GEDA_PIN(pin), BB_PIN_END_DEFAULT);
+
+    return pin->pin_end;
+}
+
+
+BbPinType
+bb_geda_pin_get_pin_type(BbGedaPin *pin)
+{
+    g_return_val_if_fail(BB_IS_GEDA_PIN(pin), BB_PIN_TYPE_DEFAULT);
+
+    return pin->pin_type;
+}
+
+
 static int
 bb_geda_pin_get_pin_width(BbGedaPin *pin)
 {
-    switch (pin->type)
+    switch (pin->pin_type)
     {
         case BB_PIN_TYPE_NET:
             return BB_GEDA_NET_WIDTH;
@@ -349,6 +382,14 @@ bb_geda_pin_get_property(GObject *object, guint property_id, GValue *value, GPar
     {
         case PROP_ITEM_COLOR:
             g_value_set_int(value, bb_geda_pin_get_item_color(BB_GEDA_PIN(object)));
+            break;
+
+        case PROP_PIN_END:
+            g_value_set_int(value, bb_geda_pin_get_pin_end(BB_GEDA_PIN(object)));
+            break;
+
+        case PROP_PIN_TYPE:
+            g_value_set_int(value, bb_geda_pin_get_pin_type(BB_GEDA_PIN(object)));
             break;
 
         case PROP_X0:
@@ -428,39 +469,68 @@ bb_geda_pin_new()
 BbGedaPin*
 bb_geda_pin_new_with_params(BbParams *params, GError **error)
 {
-    GError *local_error[N_PARAMETERS] = { NULL };
+    GError *local_error = NULL;
 
     g_return_val_if_fail(bb_params_token_matches(params, BB_GEDA_PIN_TOKEN), NULL);
 
-    BbGedaPin *pin = BB_GEDA_PIN(g_object_new(
-        BB_TYPE_GEDA_PIN,
-        "x0", bb_params_get_int(params, PARAM_X0, &local_error[PARAM_X0]),
-        "y0", bb_params_get_int(params, PARAM_Y0, &local_error[PARAM_Y0]),
-        "x1", bb_params_get_int(params, PARAM_X1, &local_error[PARAM_X1]),
-        "y1", bb_params_get_int(params, PARAM_Y1, &local_error[PARAM_Y1]),
+    int color;
+    BbGedaPin *pin = NULL;
+    int pin_end;
+    BbPinType pin_type;
+    int x[2];
+    int y[2];
 
-        "item-color", bb_params_get_int(params, PARAM_COLOR, &local_error[PARAM_COLOR]),
+    x[0] = bb_params_get_int(params, PARAM_X0, &local_error);
 
-        "pin-type", bb_params_get_int(params, PARAM_PIN_TYPE, &local_error[PARAM_PIN_TYPE]),
-        "pin-end", bb_params_get_int(params, PARAM_PIN_END, &local_error[PARAM_PIN_END]),
-
-        NULL
-        ));
-
-    for (int index=0; index < N_PARAMETERS; index++)
+    if (local_error == NULL)
     {
-        if (local_error[index] != NULL)
-        {
-            g_propagate_error(error, local_error[index]);
-            local_error[index] = NULL;
-            g_clear_object(&pin);
-            break;
-        }
+        y[0] = bb_params_get_int(params, PARAM_Y0, &local_error);
     }
 
-    for (int index=0; index < N_PARAMETERS; index++)
+    if (local_error == NULL)
     {
-        g_clear_error(&local_error[index]);
+        x[1] = bb_params_get_int(params, PARAM_X1, &local_error);
+    }
+
+    if (local_error == NULL)
+    {
+        y[1] = bb_params_get_int(params, PARAM_Y1, &local_error);
+    }
+
+    if (local_error == NULL)
+    {
+        color = bb_text_color_from_params(params, PARAM_COLOR, BB_COLOR_PIN, &local_error);
+    }
+
+    if (local_error == NULL)
+    {
+        pin_end = bb_pin_end_from_params(params, PARAM_PIN_END, &local_error);
+    }
+
+    if (local_error == NULL)
+    {
+        pin_type = bb_pin_type_from_params(params, PARAM_PIN_TYPE, &local_error);
+    }
+
+    if (local_error == NULL)
+    {
+        pin = BB_GEDA_PIN(g_object_new(
+            BB_TYPE_GEDA_PIN,
+            "x0", x[0],
+            "y0", y[0],
+            "x1", x[1],
+            "y1", y[1],
+            "item-color", color,
+            "pin-type", pin_type,
+            "pin-end", pin_end,
+            NULL
+            ));
+    }
+
+    if (local_error != NULL)
+    {
+        g_propagate_error(error, local_error);
+        g_clear_object(&pin);
     }
 
     return pin;
@@ -507,6 +577,42 @@ bb_geda_pin_set_item_color(BbGedaPin *pin, int color)
 }
 
 
+void
+bb_geda_pin_set_pin_end(BbGedaPin *pin, BbPinEnd pin_end)
+{
+    g_return_if_fail(BB_IS_GEDA_PIN(pin));
+    g_return_if_fail(bb_pin_end_is_valid(pin_end));
+
+    if (pin->pin_end != pin_end)
+    {
+        pin->pin_end = pin_end;
+
+        g_signal_emit(pin, signals[SIG_INVALIDATE], 0);
+
+        g_object_notify_by_pspec(G_OBJECT(pin), properties[PROP_PIN_END]);
+    }
+}
+
+
+void
+bb_geda_pin_set_pin_type(BbGedaPin *pin, BbPinType pin_type)
+{
+    g_return_if_fail(BB_IS_GEDA_PIN(pin));
+    g_return_if_fail(bb_pin_type_is_valid(pin_type));
+
+    if (pin->pin_type != pin_type)
+    {
+        g_signal_emit(pin, signals[SIG_INVALIDATE], 0);
+
+        pin->pin_type = pin_type;
+
+        g_signal_emit(pin, signals[SIG_INVALIDATE], 0);
+
+        g_object_notify_by_pspec(G_OBJECT(pin), properties[PROP_PIN_TYPE]);
+    }
+}
+
+
 static void
 bb_geda_pin_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec)
 {
@@ -514,6 +620,14 @@ bb_geda_pin_set_property(GObject *object, guint property_id, const GValue *value
     {
         case PROP_ITEM_COLOR:
             bb_geda_pin_set_item_color(BB_GEDA_PIN(object), g_value_get_int(value));
+            break;
+
+        case PROP_PIN_END:
+            bb_geda_pin_set_pin_end(BB_GEDA_PIN(object), g_value_get_int(value));
+            break;
+
+        case PROP_PIN_TYPE:
+            bb_geda_pin_set_pin_type(BB_GEDA_PIN(object), g_value_get_int(value));
             break;
 
         case PROP_X0:
@@ -616,7 +730,11 @@ bb_geda_pin_translate(BbGedaItem *item, int dx, int dy)
     BbGedaPin *pin = BB_GEDA_PIN(item);
     g_return_if_fail(pin != NULL);
 
+    g_signal_emit(pin, signals[SIG_INVALIDATE], 0);
+
     bb_coord_translate(dx, dy, pin->x, pin->y, 2);
+
+    g_signal_emit(pin, signals[SIG_INVALIDATE], 0);
 
     g_object_notify_by_pspec(G_OBJECT(pin), properties[PROP_X0]);
     g_object_notify_by_pspec(G_OBJECT(pin), properties[PROP_Y0]);
@@ -628,22 +746,19 @@ bb_geda_pin_translate(BbGedaItem *item, int dx, int dy)
 static gboolean
 bb_geda_pin_write(BbGedaItem *item, GOutputStream *stream, GCancellable *cancellable, GError **error)
 {
-    BbGedaPin *pin = BB_GEDA_PIN(item);
-    g_return_val_if_fail(pin != NULL, FALSE);
-
     GString *params = g_string_new(NULL);
 
     g_string_printf(
         params,
         "%s %d %d %d %d %d %d %d\n",
         BB_GEDA_PIN_TOKEN,
-        pin->x[0],
-        pin->y[0],
-        pin->x[1],
-        pin->y[1],
-        pin->color,
-        pin->type,
-        pin->end
+        bb_geda_pin_get_x0(BB_GEDA_PIN(item)),
+        bb_geda_pin_get_y0(BB_GEDA_PIN(item)),
+        bb_geda_pin_get_x1(BB_GEDA_PIN(item)),
+        bb_geda_pin_get_y1(BB_GEDA_PIN(item)),
+        bb_geda_pin_get_item_color(BB_GEDA_PIN(item)),
+        bb_geda_pin_get_pin_type(BB_GEDA_PIN(item)),
+        bb_geda_pin_get_pin_end(BB_GEDA_PIN(item))
         );
 
     gboolean result = g_output_stream_write_all(
@@ -653,7 +768,7 @@ bb_geda_pin_write(BbGedaItem *item, GOutputStream *stream, GCancellable *cancell
         NULL,
         cancellable,
         error
-    );
+        );
 
     g_string_free(params, TRUE);
 
@@ -673,14 +788,14 @@ bb_geda_pin_write_async(
 {
     BbGedaPin *pin = BB_GEDA_PIN(item);
 
-    bb_item_params_write_async(
-        pin->params,
-        stream,
-        io_priority,
-        cancellable,
-        callback,
-        callback_data
-        );
+//    bb_item_params_write_async(
+//        pin->params,
+//        stream,
+//        io_priority,
+//        cancellable,
+//        callback,
+//        callback_data
+//        );
 }
 
 
