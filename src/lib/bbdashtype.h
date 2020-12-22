@@ -1,7 +1,7 @@
 #ifndef __BBDASHTYPE__
 #define __BBDASHTYPE__
 /*
- * bbsch
+ * bbschem
  * Copyright (C) 2020 Edward C. Hennessy
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,8 +19,18 @@
  */
 
 #include <gtk/gtk.h>
+#include "bbparams.h"
 
 
+/**
+ * @brief A default value when uninitialized or logic errors occur
+ */
+#define BB_DASH_TYPE_DEFAULT (BB_DASH_TYPE_SOLID)
+
+
+/**
+ * These items must match the gEDA file format numerically.
+ */
 typedef enum _BbDashType BbDashType;
 
 enum _BbDashType
@@ -29,15 +39,38 @@ enum _BbDashType
     BB_DASH_TYPE_DOTTED,
     BB_DASH_TYPE_DASHED,
     BB_DASH_TYPE_CENTER,
-    BB_DASH_TYPE_PHANTOM
+    BB_DASH_TYPE_PHANTOM,
+    N_DASH_TYPES
 };
 
 
-int
+/**
+ * Convert the dash type from parameters
+ *
+ * @param params A BbParams
+ * @param index The index of the parameter
+ * @param error Any error encountered converting the parameter
+ * @return The dash type, or BB_DASH_TYPE_DEFAULT on an error
+ */
+BbDashType
+bb_dash_type_from_params(BbParams *params, int index, GError **error);
+
+
+/**
+ * @brief Checks the dash type for validity
+ *
+ * @param type A BbDashType
+ * @return TRUE if the type represents a valid value
+ */
+gboolean
+bb_dash_type_is_valid(BbDashType type);
+
+
+gboolean
 bb_dash_type_uses_dash_length(BbDashType dash_type);
 
 
-int
+gboolean
 bb_dash_type_uses_dash_space(BbDashType dash_type);
 
 

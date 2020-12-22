@@ -24,6 +24,7 @@
 #include "bbadjustablelinestyle.h"
 #include "bblibrary.h"
 #include "bbcolor.h"
+#include "bbcolors.h"
 
 
 /**
@@ -414,8 +415,8 @@ bb_geda_arc_finalize(GObject *object)
 static int
 bb_geda_arc_get_cap_type(BbGedaArc *arc)
 {
-    g_return_val_if_fail(arc != NULL, 0);
-    g_return_val_if_fail(arc->line_style != NULL, 0);
+    g_return_val_if_fail(arc != NULL, BB_CAP_TYPE_DEFAULT);
+    g_return_val_if_fail(arc->line_style != NULL, BB_CAP_TYPE_DEFAULT);
 
     return arc->line_style->cap_type;
 }
@@ -462,8 +463,8 @@ bb_geda_arc_get_dash_space(BbGedaArc *arc)
 static int
 bb_geda_arc_get_dash_type(BbGedaArc *arc)
 {
-    g_return_val_if_fail(arc != NULL, 0);
-    g_return_val_if_fail(arc->line_style != NULL, 0);
+    g_return_val_if_fail(arc != NULL, BB_DASH_TYPE_DEFAULT);
+    g_return_val_if_fail(arc->line_style != NULL, BB_DASH_TYPE_DEFAULT);
 
     return arc->line_style->dash_type;
 }
@@ -582,42 +583,80 @@ bb_geda_arc_init(BbGedaArc *arc)
 BbGedaArc*
 bb_geda_arc_new_with_params(BbParams *params, GError **error)
 {
-    GError *local_error[N_PARAMETERS] = { NULL };
+    GError *local_error = NULL;
 
     g_return_val_if_fail(bb_params_token_matches(params, BB_GEDA_ARC_TOKEN), NULL);
 
-    BbGedaArc *arc = BB_GEDA_ARC(g_object_new(
-        BB_TYPE_GEDA_ARC,
-        "center-x", bb_params_get_int(params, PARAM_CENTER_X, &local_error[PARAM_CENTER_X]),
-        "center-y", bb_params_get_int(params, PARAM_CENTER_Y, &local_error[PARAM_CENTER_Y]),
-        "radius", bb_params_get_int(params, PARAM_RADIUS, &local_error[PARAM_RADIUS]),
-        "start-angle", bb_params_get_int(params, PARAM_START_ANGLE, &local_error[PARAM_START_ANGLE]),
-        "sweep-angle", bb_params_get_int(params, PARAM_SWEEP_ANGLE, &local_error[PARAM_SWEEP_ANGLE]),
+    BbGedaArc *arc = NULL;
+    int center_x;
+    int center_y;
+    int color;
+    BbLineStyle line_style;
+    int radius;
+    int start_angle;
+    int sweep_angle;
 
-        "item-color", bb_params_get_int(params, PARAM_COLOR, &local_error[PARAM_COLOR]),
+    center_x = bb_params_get_int(params, PARAM_CENTER_X, &local_error);
 
-        "line-width", bb_params_get_int(params, PARAM_LINE_WIDTH, &local_error[PARAM_LINE_WIDTH]),
-        "cap-type", bb_params_get_int(params, PARAM_CAP_TYPE, &local_error[PARAM_CAP_TYPE]),
-        "dash_type", bb_params_get_int(params, PARAM_DASH_TYPE, &local_error[PARAM_DASH_TYPE]),
-        "dash-length", bb_params_get_int(params, PARAM_DASH_LENGTH, &local_error[PARAM_DASH_LENGTH]),
-        "dash-space", bb_params_get_int(params, PARAM_DASH_SPACE, &local_error[PARAM_DASH_SPACE]),
-        NULL
-    ));
-
-    for (int index=0; index < N_PARAMETERS; index++)
+    if (local_error == NULL)
     {
-        if (local_error[index] != NULL)
-        {
-            g_propagate_error(error, local_error[index]);
-            local_error[index] = NULL;
-            g_clear_object(&arc);
-            break;
-        }
+        center_y = bb_params_get_int(params, PARAM_CENTER_Y, &local_error);
     }
 
-    for (int index=0; index < N_PARAMETERS; index++)
+    if (local_error == NULL)
     {
-        g_clear_error(&local_error[index]);
+        radius = bb_params_get_int(params, PARAM_RADIUS, &local_error);
+    }
+
+    if (local_error == NULL)
+    {
+        start_angle = bb_params_get_int(params, PARAM_START_ANGLE, &local_error);
+    }
+
+    if (local_error == NULL)
+    {
+        sweep_angle = bb_params_get_int(params, PARAM_SWEEP_ANGLE, &local_error);
+    }
+
+    if (local_error == NULL)
+    {
+        color = bb_text_color_from_params(params, PARAM_COLOR, BB_COLOR_GRAPHIC, &local_error);
+    }
+
+    if (local_error == NULL)
+    {
+        bb_line_style_from_params(params, PARAM_LINE_WIDTH, &line_style, &local_error);
+    }
+
+    if (local_error == NULL)
+    {
+        arc = BB_GEDA_ARC(g_object_new(
+            BB_TYPE_GEDA_ARC,
+            /* From AdjustableColor */
+            "item-color", color,
+
+            /* From AdjustableLineStyle */
+            "line-width", line_style.line_width,
+            "cap-type", line_style.cap_type,
+            "dash_type", line_style.dash_type,
+            "dash-length", line_style.dash_length,
+            "dash-space", line_style.dash_space,
+
+            /* From GedaCircle */
+            "center-x", center_x,
+            "center-y", center_y,
+            "radius", radius,
+            "start-angle", start_angle,
+            "sweep-angle", sweep_angle,
+
+            NULL
+            ));
+    }
+
+    if (local_error != NULL)
+    {
+        g_propagate_error(error, local_error);
+        g_clear_object(&arc);
     }
 
     return arc;
@@ -655,6 +694,7 @@ bb_geda_arc_set_cap_type(BbGedaArc *arc, int cap_type)
 {
     g_return_if_fail(arc != NULL);
     g_return_if_fail(arc->line_style != NULL);
+    g_return_if_fail(bb_cap_type_is_valid(cap_type));
 
     if (arc->line_style->cap_type != cap_type)
     {
@@ -742,6 +782,7 @@ bb_geda_arc_set_dash_type(BbGedaArc *arc, int dash_type)
 {
     g_return_if_fail(arc != NULL);
     g_return_if_fail(arc->line_style != NULL);
+    g_return_if_fail(bb_dash_type_is_valid(dash_type));
 
     if (arc->line_style->dash_type != dash_type)
     {

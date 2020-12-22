@@ -38,6 +38,50 @@ bb_line_style_free(BbLineStyle* style)
 }
 
 
+void
+bb_line_style_from_params(BbParams *params, int index, BbLineStyle *line_style, GError **error)
+{
+    GError *local_error = NULL;
+
+    line_style->line_width = bb_params_get_int(params, index++, &local_error);
+
+    if (local_error == NULL)
+    {
+        line_style->cap_type = bb_cap_type_from_params(params, index++, &local_error);
+    }
+
+    if (local_error == NULL)
+    {
+        line_style->dash_type = bb_dash_type_from_params(params, index++, &local_error);
+    }
+
+    if (local_error == NULL)
+    {
+        line_style->dash_length = bb_params_get_int(params, index++, &local_error);
+
+        if (!bb_dash_type_uses_dash_length(line_style->dash_type))
+        {
+            line_style->dash_length = 100;
+        }
+    }
+
+    if (local_error == NULL)
+    {
+        line_style->dash_space = bb_params_get_int(params, index++, &local_error);
+
+        if (!bb_dash_type_uses_dash_space(line_style->dash_type))
+        {
+            line_style->dash_space = 100;
+        }
+    }
+
+    if (local_error != NULL)
+    {
+        g_propagate_error(error, local_error);
+    }
+}
+
+
 int
 bb_line_style_get_dash_length_for_file(BbLineStyle *line_style)
 {

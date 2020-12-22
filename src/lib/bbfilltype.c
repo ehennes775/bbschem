@@ -18,6 +18,46 @@
 
 #include <gtk/gtk.h>
 #include "bbfilltype.h"
+#include "bberror.h"
+
+BbFillType
+bb_fill_type_from_params(BbParams *params, int index, GError **error)
+{
+    GError *local_error = NULL;
+
+    int fill_type = bb_params_get_int(params, index, &local_error);
+
+    if (local_error == NULL)
+    {
+        if (!bb_fill_type_is_valid(fill_type))
+        {
+            local_error = g_error_new(
+                BB_ERROR_DOMAIN,
+                ERROR_VALUE_OUT_OF_RANGE,
+                "Fill type of %d out of range [%d,%d)",
+                fill_type,
+                0,
+                N_FILL_TYPES
+            );
+        }
+    }
+
+    if (local_error != NULL)
+    {
+        g_propagate_error(error, local_error);
+
+        fill_type = BB_FILL_TYPE_DEFAULT;
+    }
+
+    return fill_type;
+}
+
+
+gboolean
+bb_fill_type_is_valid(BbFillType fill_type)
+{
+    return (fill_type >= 0) && (fill_type < N_FILL_TYPES);
+}
 
 
 gboolean

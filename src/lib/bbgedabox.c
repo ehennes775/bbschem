@@ -26,6 +26,7 @@
 #include "bbadjustablelinestyle.h"
 #include "bbparams.h"
 #include "bbcolor.h"
+#include "bbcolors.h"
 
 
 /**
@@ -479,8 +480,8 @@ bb_geda_box_get_angle_2(BbGedaBox *box)
 static int
 bb_geda_box_get_cap_type(BbGedaBox *box)
 {
-    g_return_val_if_fail(box != NULL, 0);
-    g_return_val_if_fail(box->line_style != NULL, 0);
+    g_return_val_if_fail(box != NULL, BB_CAP_TYPE_DEFAULT);
+    g_return_val_if_fail(box->line_style != NULL, BB_CAP_TYPE_DEFAULT);
 
     return box->line_style->cap_type;
 }
@@ -509,8 +510,8 @@ bb_geda_box_get_dash_space(BbGedaBox *box)
 static int
 bb_geda_box_get_dash_type(BbGedaBox *box)
 {
-    g_return_val_if_fail(box != NULL, 0);
-    g_return_val_if_fail(box->line_style != NULL, 0);
+    g_return_val_if_fail(box != NULL, BB_DASH_TYPE_DEFAULT);
+    g_return_val_if_fail(box->line_style != NULL, BB_DASH_TYPE_DEFAULT);
 
     return box->line_style->dash_type;
 }
@@ -519,8 +520,8 @@ bb_geda_box_get_dash_type(BbGedaBox *box)
 static int
 bb_geda_box_get_fill_type(BbGedaBox *box)
 {
-    g_return_val_if_fail(box != NULL, 0);
-    g_return_val_if_fail(box->fill_style != NULL, 0);
+    g_return_val_if_fail(box != NULL, BB_FILL_TYPE_DEFAULT);
+    g_return_val_if_fail(box->fill_style != NULL, BB_FILL_TYPE_DEFAULT);
 
     return box->fill_style->type;
 }
@@ -706,53 +707,87 @@ bb_geda_box_new()
 BbGedaBox*
 bb_geda_box_new_with_params(BbParams *params, GError **error)
 {
-    GError *local_error[N_PARAMETERS] = { NULL };
+    GError *local_error = NULL;
 
     g_return_val_if_fail(bb_params_token_matches(params, BB_GEDA_BOX_TOKEN), NULL);
 
-    int x0 = bb_params_get_int(params, PARAM_CORNER_X, &local_error[PARAM_CORNER_X]);
-    int y0 = bb_params_get_int(params, PARAM_CORNER_Y, &local_error[PARAM_CORNER_Y]);
-    int x1 = x0 + bb_params_get_int(params, PARAM_WIDTH, &local_error[PARAM_WIDTH]);
-    int y1 = y0 + bb_params_get_int(params, PARAM_HEIGHT, &local_error[PARAM_HEIGHT]);
+    BbGedaBox *box = NULL;
+    int color;
+    int corner_x;
+    int corner_y;
+    BbFillStyle fill_style;
+    int height;
+    BbLineStyle line_style;
+    int width;
 
-    BbGedaBox *box = BB_GEDA_BOX(g_object_new(
-        BB_TYPE_GEDA_BOX,
-        "x0", x0,
-        "y0", y0,
-        "x1", x1,
-        "y1", y1,
+    corner_x = bb_params_get_int(params, PARAM_CORNER_X, &local_error);
 
-        "item-color", bb_params_get_int(params, PARAM_COLOR, &local_error[PARAM_COLOR]),
-
-        "line-width", bb_params_get_int(params, PARAM_LINE_WIDTH, &local_error[PARAM_LINE_WIDTH]),
-        "cap-type", bb_params_get_int(params, PARAM_CAP_TYPE, &local_error[PARAM_CAP_TYPE]),
-        "dash_type", bb_params_get_int(params, PARAM_DASH_TYPE, &local_error[PARAM_DASH_TYPE]),
-        "dash-length", bb_params_get_int(params, PARAM_DASH_LENGTH, &local_error[PARAM_DASH_LENGTH]),
-        "dash-space", bb_params_get_int(params, PARAM_DASH_SPACE, &local_error[PARAM_DASH_SPACE]),
-
-        "fill-type", bb_params_get_int(params, PARAM_FILL_TYPE, &local_error[PARAM_FILL_TYPE]),
-        "fill-width", bb_params_get_int(params, PARAM_FILL_WIDTH, &local_error[PARAM_FILL_WIDTH]),
-        "angle-1", bb_params_get_int(params, PARAM_FILL_ANGLE_1, &local_error[PARAM_FILL_ANGLE_1]),
-        "pitch-1", bb_params_get_int(params, PARAM_FILL_PITCH_1, &local_error[PARAM_FILL_PITCH_1]),
-        "angle-2", bb_params_get_int(params, PARAM_FILL_ANGLE_2, &local_error[PARAM_FILL_ANGLE_2]),
-        "pitch-2", bb_params_get_int(params, PARAM_FILL_PITCH_2, &local_error[PARAM_FILL_PITCH_2]),
-        NULL
-    ));
-
-    for (int index=0; index < N_PARAMETERS; index++)
+    if (local_error == NULL)
     {
-        if (local_error[index] != NULL)
-        {
-            g_propagate_error(error, local_error[index]);
-            local_error[index] = NULL;
-            g_clear_object(&box);
-            break;
-        }
+        corner_y = bb_params_get_int(params, PARAM_CORNER_Y, &local_error);
     }
 
-    for (int index=0; index < N_PARAMETERS; index++)
+    if (local_error == NULL)
     {
-        g_clear_error(&local_error[index]);
+        width = bb_params_get_int(params, PARAM_WIDTH, &local_error);
+    }
+
+    if (local_error == NULL)
+    {
+        height = bb_params_get_int(params, PARAM_HEIGHT, &local_error);
+    }
+
+    if (local_error == NULL)
+    {
+        color = bb_text_color_from_params(params, PARAM_COLOR, BB_COLOR_GRAPHIC, &local_error);
+    }
+
+    if (local_error == NULL)
+    {
+        bb_fill_style_from_params(params, PARAM_FILL_TYPE, &fill_style, &local_error);
+    }
+
+    if (local_error == NULL)
+    {
+        bb_line_style_from_params(params, PARAM_LINE_WIDTH, &line_style, &local_error);
+    }
+
+    if (local_error == NULL)
+    {
+        box = BB_GEDA_BOX(g_object_new(
+            BB_TYPE_GEDA_BOX,
+
+            /* From AdjustableColor */
+            "item-color", color,
+
+            /* From AdjustableFillStyle */
+            "fill-type", fill_style.type,
+            "fill-width", fill_style.width,
+            "angle-1", fill_style.angle[0],
+            "pitch-1", fill_style.pitch[0],
+            "angle-2", fill_style.angle[1],
+            "pitch-2", fill_style.pitch[1],
+
+            /* From AdjustableLineStyle */
+            "line-width", line_style.line_width,
+            "cap-type", line_style.cap_type,
+            "dash_type", line_style.dash_type,
+            "dash-length", line_style.dash_length,
+            "dash-space", line_style.dash_space,
+
+            "x0", corner_x,
+            "y0", corner_y,
+            "x1", corner_x + width,
+            "y1", corner_y + height,
+
+            NULL
+            ));
+    }
+
+    if (local_error != NULL)
+    {
+        g_propagate_error(error, local_error);
+        g_clear_object(&box);
     }
 
     return box;
@@ -813,16 +848,17 @@ bb_geda_box_set_angle_2(BbGedaBox *box, int angle)
 
 
 static void
-bb_geda_box_set_cap_type(BbGedaBox *box, int type)
+bb_geda_box_set_cap_type(BbGedaBox *box, int cap_type)
 {
     g_return_if_fail(box != NULL);
     g_return_if_fail(box->line_style != NULL);
+    g_return_if_fail(bb_cap_type_is_valid(cap_type));
 
-    if (box->line_style->cap_type != type)
+    if (box->line_style->cap_type != cap_type)
     {
         g_signal_emit(box, signals[SIG_INVALIDATE], 0);
 
-        box->line_style->cap_type = type;
+        box->line_style->cap_type = cap_type;
 
         g_signal_emit(box, signals[SIG_INVALIDATE], 0);
 
@@ -866,14 +902,15 @@ bb_geda_box_set_dash_space(BbGedaBox *box, int space)
 
 
 static void
-bb_geda_box_set_dash_type(BbGedaBox *box, int type)
+bb_geda_box_set_dash_type(BbGedaBox *box, int dash_type)
 {
     g_return_if_fail(box != NULL);
     g_return_if_fail(box->line_style != NULL);
+    g_return_if_fail(bb_dash_type_is_valid(dash_type));
 
-    if (box->line_style->dash_type != type)
+    if (box->line_style->dash_type != dash_type)
     {
-        box->line_style->dash_type = type;
+        box->line_style->dash_type = dash_type;
 
         g_signal_emit(box, signals[SIG_INVALIDATE], 0);
 
@@ -900,14 +937,15 @@ bb_geda_box_set_item_color(BbGedaBox *box, int color)
 
 
 void
-bb_geda_box_set_fill_type(BbGedaBox *box, int type)
+bb_geda_box_set_fill_type(BbGedaBox *box, int fill_type)
 {
     g_return_if_fail(box != NULL);
     g_return_if_fail(box->fill_style != NULL);
+    g_return_if_fail(bb_fill_type_is_valid(fill_type));
 
-    if (box->fill_style->type != type)
+    if (box->fill_style->type != fill_type)
     {
-        box->fill_style->type = type;
+        box->fill_style->type = fill_type;
 
         g_signal_emit(box, signals[SIG_INVALIDATE], 0);
 

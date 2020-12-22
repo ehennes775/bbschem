@@ -35,9 +35,9 @@ bb_adjustable_fill_style_default_init(BbAdjustableFillStyleInterface *class)
             "Fill Type",
             "Fill Type",
             0,
-            G_MAXINT,
-            0,
-            G_PARAM_READWRITE
+            N_FILL_TYPES - 1,
+            BB_FILL_TYPE_DEFAULT,
+            G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS
             )
         );
 
@@ -50,7 +50,7 @@ bb_adjustable_fill_style_default_init(BbAdjustableFillStyleInterface *class)
             10,
             G_MAXINT,
             10,
-            G_PARAM_READWRITE
+            G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS
             )
         );
 
@@ -63,7 +63,7 @@ bb_adjustable_fill_style_default_init(BbAdjustableFillStyleInterface *class)
             G_MININT,
             G_MAXINT,
             45,
-            G_PARAM_READWRITE
+            G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS
             )
         );
 
@@ -76,7 +76,7 @@ bb_adjustable_fill_style_default_init(BbAdjustableFillStyleInterface *class)
             10,
             G_MAXINT,
             100,
-            G_PARAM_READWRITE
+            G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS
             )
         );
 
@@ -89,7 +89,7 @@ bb_adjustable_fill_style_default_init(BbAdjustableFillStyleInterface *class)
             G_MININT,
             G_MAXINT,
             135,
-            G_PARAM_READWRITE
+            G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS
             )
         );
 
@@ -102,7 +102,7 @@ bb_adjustable_fill_style_default_init(BbAdjustableFillStyleInterface *class)
             10,
             G_MAXINT,
             100,
-            G_PARAM_READWRITE
+            G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS
             )
         );
 }

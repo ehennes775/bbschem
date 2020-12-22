@@ -24,6 +24,7 @@
 #include "bbadjustablelinestyle.h"
 #include "bbadjustableitemcolor.h"
 #include "bbcolor.h"
+#include "bbcolors.h"
 
 
 /**
@@ -382,8 +383,8 @@ bb_geda_line_finalize(GObject *object)
 static int
 bb_geda_line_get_cap_type(BbGedaLine *line)
 {
-    g_return_val_if_fail(line != NULL, 0);
-    g_return_val_if_fail(line->line_style != NULL, 0);
+    g_return_val_if_fail(line != NULL, BB_CAP_TYPE_DEFAULT);
+    g_return_val_if_fail(line->line_style != NULL, BB_CAP_TYPE_DEFAULT);
 
     return line->line_style->cap_type;
 }
@@ -412,8 +413,8 @@ bb_geda_line_get_dash_space(BbGedaLine *line)
 static int
 bb_geda_line_get_dash_type(BbGedaLine *line)
 {
-    g_return_val_if_fail(line != NULL, 0);
-    g_return_val_if_fail(line->line_style != NULL, 0);
+    g_return_val_if_fail(line != NULL, BB_DASH_TYPE_DEFAULT);
+    g_return_val_if_fail(line->line_style != NULL, BB_DASH_TYPE_DEFAULT);
 
     return line->line_style->dash_type;
 }
@@ -544,41 +545,70 @@ bb_geda_line_new()
 BbGedaLine*
 bb_geda_line_new_with_params(BbParams *params, GError **error)
 {
-    GError *local_error[N_PARAMETERS] = { NULL };
+    GError *local_error = NULL;
 
     g_return_val_if_fail(bb_params_token_matches(params, BB_GEDA_LINE_TOKEN), NULL);
 
-    BbGedaLine *line = BB_GEDA_LINE(g_object_new(
-        BB_TYPE_GEDA_LINE,
-        "x0", bb_params_get_int(params, PARAM_X0, &local_error[PARAM_X0]),
-        "y0", bb_params_get_int(params, PARAM_Y0, &local_error[PARAM_Y0]),
-        "x1", bb_params_get_int(params, PARAM_X1, &local_error[PARAM_X1]),
-        "y1", bb_params_get_int(params, PARAM_Y1, &local_error[PARAM_Y1]),
+    int color;
+    BbGedaLine *line = NULL;
+    BbLineStyle line_style;
+    int x[2];
+    int y[2];
 
-        "item-color", bb_params_get_int(params, PARAM_COLOR, &local_error[PARAM_COLOR]),
+    x[0] = bb_params_get_int(params, PARAM_X0, &local_error);
 
-        "line-width",  bb_params_get_int(params, PARAM_LINE_WIDTH, &local_error[PARAM_LINE_WIDTH]),
-        "cap-type",  bb_params_get_int(params, PARAM_CAP_TYPE, &local_error[PARAM_CAP_TYPE]),
-        "dash_type",  bb_params_get_int(params, PARAM_DASH_TYPE, &local_error[PARAM_DASH_TYPE]),
-        "dash-length", bb_params_get_int(params, PARAM_DASH_LENGTH, &local_error[PARAM_DASH_LENGTH]),
-        "dash-space", bb_params_get_int(params, PARAM_DASH_SPACE, &local_error[PARAM_DASH_SPACE]),
-        NULL
-        ));
-
-    for (int index=0; index < N_PARAMETERS; index++)
+    if (local_error == NULL)
     {
-        if (local_error[index] != NULL)
-        {
-            g_propagate_error(error, local_error[index]);
-            local_error[index] = NULL;
-            g_clear_object(&line);
-            break;
-        }
+        y[0] = bb_params_get_int(params, PARAM_Y0, &local_error);
     }
 
-    for (int index=0; index < N_PARAMETERS; index++)
+    if (local_error == NULL)
     {
-        g_clear_error(&local_error[index]);
+        x[1] = bb_params_get_int(params, PARAM_X1, &local_error);
+    }
+
+    if (local_error == NULL)
+    {
+        y[1] = bb_params_get_int(params, PARAM_Y1, &local_error);
+    }
+
+    if (local_error == NULL)
+    {
+        color = bb_text_color_from_params(params, PARAM_COLOR, BB_COLOR_GRAPHIC, &local_error);
+    }
+
+    if (local_error == NULL)
+    {
+        bb_line_style_from_params(params, PARAM_LINE_WIDTH, &line_style, &local_error);
+    }
+
+    if (local_error == NULL)
+    {
+        line = BB_GEDA_LINE(g_object_new(
+            BB_TYPE_GEDA_LINE,
+
+            /* From AdjustableColor */
+            "item-color", color,
+
+            /* From AdjustableLineStyle */
+            "line-width", line_style.line_width,
+            "cap-type", line_style.cap_type,
+            "dash_type", line_style.dash_type,
+            "dash-length", line_style.dash_length,
+            "dash-space", line_style.dash_space,
+
+            "x0", x[0],
+            "y0", y[0],
+            "x1", x[1],
+            "y1", y[1],
+            NULL
+            ));
+    }
+
+    if (local_error != NULL)
+    {
+        g_propagate_error(error, local_error);
+        g_clear_object(&line);
     }
 
     return line;
@@ -610,16 +640,17 @@ bb_geda_line_render(BbGedaItem *item, BbItemRenderer *renderer)
 
 
 static void
-bb_geda_line_set_cap_type(BbGedaLine *line, int type)
+bb_geda_line_set_cap_type(BbGedaLine *line, int cap_type)
 {
     g_return_if_fail(line != NULL);
     g_return_if_fail(line->line_style != NULL);
+    g_return_if_fail(bb_cap_type_is_valid(cap_type));
 
-    if (line->line_style->cap_type != type)
+    if (line->line_style->cap_type != cap_type)
     {
         g_signal_emit(line, signals[SIG_INVALIDATE], 0);
 
-        line->line_style->cap_type = type;
+        line->line_style->cap_type = cap_type;
 
         g_signal_emit(line, signals[SIG_INVALIDATE], 0);
 
@@ -663,14 +694,15 @@ bb_geda_line_set_dash_space(BbGedaLine *line, int space)
 
 
 static void
-bb_geda_line_set_dash_type(BbGedaLine *line, int type)
+bb_geda_line_set_dash_type(BbGedaLine *line, int dash_type)
 {
     g_return_if_fail(line != NULL);
     g_return_if_fail(line->line_style != NULL);
+    g_return_if_fail(bb_dash_type_is_valid(dash_type));
 
-    if (line->line_style->dash_type != type)
+    if (line->line_style->dash_type != dash_type)
     {
-        line->line_style->dash_type = type;
+        line->line_style->dash_type = dash_type;
 
         g_signal_emit(line, signals[SIG_INVALIDATE], 0);
 

@@ -18,6 +18,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <gtk/gtk.h>
+#include "bbparams.h"
+
+
+#define BB_FILL_TYPE_DEFAULT (BB_FILL_TYPE_HOLLOW)
+
+
 typedef enum _BbFillType BbFillType;
 
 enum _BbFillType
@@ -25,8 +32,31 @@ enum _BbFillType
     BB_FILL_TYPE_HOLLOW,
     BB_FILL_TYPE_SOLID,
     BB_FILL_TYPE_MESH,
-    BB_FILL_TYPE_HATCH
+    BB_FILL_TYPE_HATCH,
+    N_FILL_TYPES
 };
+
+
+/**
+ * Convert the fill type from parameters
+ *
+ * @param params A BbParams
+ * @param index The index of the parameter
+ * @param error Any error encountered converting the parameter
+ * @return The fill type, or BB_FILL_TYPE_DEFAULT on an error
+ */
+BbFillType
+bb_fill_type_from_params(BbParams *params, int index, GError **error);
+
+
+/**
+ * @brief Checks the fill type for validity
+ *
+ * @param type A BbFillType
+ * @return TRUE if the type represents a valid value
+ */
+gboolean
+bb_fill_type_is_valid(BbFillType type);
 
 
 gboolean

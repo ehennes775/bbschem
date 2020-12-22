@@ -21,6 +21,7 @@
 #include <gtk/gtk.h>
 #include "bbcaptype.h"
 #include "bbdashtype.h"
+#include "bbparams.h"
 
 
 typedef struct _BbLineStyle BbLineStyle;
@@ -41,6 +42,10 @@ bb_line_style_copy(BbLineStyle* style);
 
 void
 bb_line_style_free(BbLineStyle* style);
+
+void
+bb_line_style_from_params(BbParams *params, int index, BbLineStyle *line_style, GError **error);
+
 
 int
 bb_line_style_get_dash_length_for_file(BbLineStyle *line_style);

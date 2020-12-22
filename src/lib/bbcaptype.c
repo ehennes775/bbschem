@@ -18,3 +18,44 @@
 
 #include <gtk/gtk.h>
 #include "bbcaptype.h"
+#include "bberror.h"
+
+
+BbCapType
+bb_cap_type_from_params(BbParams *params, int index, GError **error)
+{
+    GError *local_error = NULL;
+
+    int cap_type = bb_params_get_int(params, index, &local_error);
+
+    if (local_error == NULL)
+    {
+        if (!bb_cap_type_is_valid(cap_type))
+        {
+            local_error = g_error_new(
+                BB_ERROR_DOMAIN,
+                ERROR_VALUE_OUT_OF_RANGE,
+                "Cap type of %d out of range [%d,%d)",
+                cap_type,
+                0,
+                N_CAP_TYPES
+            );
+        }
+    }
+
+    if (local_error != NULL)
+    {
+        g_propagate_error(error, local_error);
+
+        cap_type = BB_CAP_TYPE_DEFAULT;
+    }
+
+    return cap_type;
+}
+
+
+gboolean
+bb_cap_type_is_valid(BbCapType cap_type)
+{
+    return (cap_type >= 0) && (cap_type < N_CAP_TYPES);
+}

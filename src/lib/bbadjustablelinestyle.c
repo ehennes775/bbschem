@@ -18,6 +18,8 @@
 
 #include <gtk/gtk.h>
 #include "bbadjustablelinestyle.h"
+#include "bbcaptype.h"
+#include "bbdashtype.h"
 
 
 G_DEFINE_INTERFACE(BbAdjustableLineStyle, bb_adjustable_line_style, G_TYPE_OBJECT)
@@ -35,9 +37,9 @@ bb_adjustable_line_style_default_init(BbAdjustableLineStyleInterface *class)
             "Cap Type",
             "Cap Type",
             0,
-            G_MAXINT,
-            0,
-            G_PARAM_READWRITE
+            N_CAP_TYPES - 1,
+            BB_CAP_TYPE_DEFAULT,
+            G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS
             )
         );
 
@@ -50,7 +52,7 @@ bb_adjustable_line_style_default_init(BbAdjustableLineStyleInterface *class)
             0,
             G_MAXINT,
             0,
-            G_PARAM_READWRITE
+            G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS
             )
         );
 
@@ -63,7 +65,7 @@ bb_adjustable_line_style_default_init(BbAdjustableLineStyleInterface *class)
             0,
             G_MAXINT,
             0,
-            G_PARAM_READWRITE
+            G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS
             )
         );
 
@@ -74,9 +76,9 @@ bb_adjustable_line_style_default_init(BbAdjustableLineStyleInterface *class)
             "Dash Type",
             "Dash Type",
             0,
-            G_MAXINT,
-            0,
-            G_PARAM_READWRITE
+            N_DASH_TYPES - 1,
+            BB_DASH_TYPE_DEFAULT,
+            G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS
             )
         );
 
@@ -89,7 +91,7 @@ bb_adjustable_line_style_default_init(BbAdjustableLineStyleInterface *class)
             0,
             G_MAXINT,
             0,
-            G_PARAM_READWRITE
+            G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS
             )
         );
 }
@@ -181,13 +183,13 @@ bb_adjustable_line_style_get_line_width(BbAdjustableLineStyle *item)
 
 
 void
-bb_adjustable_line_style_set_cap_type(BbAdjustableLineStyle *item, int type)
+bb_adjustable_line_style_set_cap_type(BbAdjustableLineStyle *item, int cap_type)
 {
     g_return_if_fail(item != NULL);
 
     g_object_set(
         G_OBJECT(item),
-        "cap-type", type,
+        "cap-type", cap_type,
         NULL
         );
 }

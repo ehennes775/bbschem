@@ -20,6 +20,7 @@
 #include <gtk/gtk.h>
 #include <bblibrary.h>
 #include <bbextensions.h>
+#include <bbcolors.h>
 #include "bbgraphics.h"
 
 
@@ -624,7 +625,20 @@ bb_graphics_set_color(BbItemRenderer *renderer, int color)
     g_return_if_fail(graphics != NULL);
     g_return_if_fail(graphics->cairo != NULL);
 
-    cairo_set_source_rgb(graphics->cairo, 0.0, 1.0, 0.0);  // TODO
+    switch (color)
+    {
+        case BB_COLOR_NET:
+            cairo_set_source_rgb(graphics->cairo, 0.0, 0.0, 1.0);
+            break;
+
+        case BB_COLOR_PIN:
+            cairo_set_source_rgb(graphics->cairo, 1.0, 1.0, 1.0);
+            break;
+
+        default:
+            cairo_set_source_rgb(graphics->cairo, 0.0, 1.0, 0.0);
+            break;
+    }
 }
 
 
