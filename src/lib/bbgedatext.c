@@ -731,22 +731,22 @@ bb_geda_text_new_with_params(BbParams *params, gchar **lines, GError **error)
 
     if (local_error == NULL)
     {
-        color = bb_params_get_int(params, PARAM_COLOR, &local_error);
+        color = bb_text_color_from_params(params, PARAM_COLOR, BB_COLOR_GRAPHIC, &local_error);
     }
 
     if (local_error == NULL)
     {
-        size = bb_params_get_int(params, PARAM_SIZE, &local_error);
+        size = bb_text_size_from_params(params, PARAM_SIZE, &local_error);
     }
 
     if (local_error == NULL)
     {
-        visibility = bb_params_get_int(params, PARAM_VISIBILITY, &local_error);
+        visibility = bb_text_visibility_from_params(params, PARAM_VISIBILITY, &local_error);
     }
 
     if (local_error == NULL)
     {
-        presentation = bb_params_get_int(params, PARAM_PRESENTATION, &local_error);
+        presentation = bb_text_presentation_from_params(params, PARAM_PRESENTATION, &local_error);
     }
 
     if (local_error == NULL)
@@ -756,7 +756,7 @@ bb_geda_text_new_with_params(BbParams *params, gchar **lines, GError **error)
 
     if (local_error == NULL)
     {
-        alignment = bb_params_get_int(params, PARAM_ALIGNMENT, &local_error);
+        alignment = bb_text_alignment_from_params(params, PARAM_ALIGNMENT, &local_error);
     }
 
     if (local_error == NULL)

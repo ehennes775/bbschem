@@ -18,6 +18,41 @@
 
 #include <gtk/gtk.h>
 #include "bbcolor.h"
+#include "bberror.h"
+#include "bbcolors.h"
+
+
+int
+bb_text_color_from_params(BbParams *params, int index, int default_value, GError **error)
+{
+    GError *local_error = NULL;
+
+    int color = bb_params_get_int(params, index, &local_error);
+
+    if (local_error == NULL)
+    {
+        if (!bb_color_is_valid(color))
+        {
+            local_error = g_error_new(
+                BB_ERROR_DOMAIN,
+                ERROR_VALUE_OUT_OF_RANGE,
+                "Color of %d out of range (color >= %d)",
+                color,
+                0
+                );
+        }
+    }
+
+    if (error != NULL)
+    {
+        g_propagate_error(error, local_error);
+
+        color = bb_color_is_valid(default_value) ? default_value : BB_COLOR_GRAPHIC;
+    }
+
+    return color;
+}
+
 
 
 gboolean

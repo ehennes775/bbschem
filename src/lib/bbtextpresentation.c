@@ -17,7 +17,41 @@
  */
 
 #include <gtk/gtk.h>
+#include "bberror.h"
 #include "bbtextpresentation.h"
+
+
+BbTextPresentation
+bb_text_presentation_from_params(BbParams *params, int index, GError **error)
+{
+    GError *local_error = NULL;
+
+    int presentation = bb_params_get_int(params, index, &local_error);
+
+    if (local_error == NULL)
+    {
+        if (!bb_text_presentation_is_valid(presentation))
+        {
+            local_error = g_error_new(
+                BB_ERROR_DOMAIN,
+                ERROR_VALUE_OUT_OF_RANGE,
+                "Text presentation of %d out of range [%d,%d)",
+                presentation,
+                0,
+                N_TEXT_PRESENTATION
+                );
+        }
+    }
+
+    if (error != NULL)
+    {
+        g_propagate_error(error, local_error);
+
+        presentation = BB_TEXT_PRESENTATION_DEFAULT;
+    }
+
+    return presentation;
+}
 
 
 gboolean

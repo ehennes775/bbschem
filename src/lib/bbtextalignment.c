@@ -18,6 +18,40 @@
 
 #include <gtk/gtk.h>
 #include "bbtextalignment.h"
+#include "bberror.h"
+
+
+BbTextAlignment
+bb_text_alignment_from_params(BbParams *params, int index, GError **error)
+{
+    GError *local_error = NULL;
+
+    int alignment = bb_params_get_int(params, index, &local_error);
+
+    if (local_error == NULL)
+    {
+        if (!bb_text_alignment_is_valid(alignment))
+        {
+            local_error = g_error_new(
+                BB_ERROR_DOMAIN,
+                ERROR_VALUE_OUT_OF_RANGE,
+                "Text alignment of %d out of range [%d,%d)",
+                alignment,
+                0,
+                N_TEXT_ALIGNMENT
+                );
+        }
+    }
+
+    if (error != NULL)
+    {
+        g_propagate_error(error, local_error);
+
+        alignment = BB_TEXT_ALIGNMENT_DEFAULT;
+    }
+
+    return alignment;
+}
 
 
 double

@@ -19,6 +19,20 @@
  */
 
 #include <gtk/gtk.h>
+#include "bbparams.h"
+
+
+/**
+ * Convert the color from parameters
+ *
+ * @param params A BbParams
+ * @param index The index of the parameter
+ * @param error Any error encountered converting the parameter
+ * @param default_value The value to return in case of an error
+ * @return The text color, or BB_TEXT_COLOR_DEFAULT on an error
+ */
+int
+bb_text_color_from_params(BbParams *params, int index, int default_value, GError **error);
 
 
 gboolean

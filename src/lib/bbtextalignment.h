@@ -19,6 +19,11 @@
  */
 
 #include <gtk/gtk.h>
+#include <bbparams.h>
+
+
+#define BB_TEXT_ALIGNMENT_DEFAULT (BB_TEXT_ALIGNMENT_LOWER_LEFT)
+
 
 /**
  * These items must match the gEDA file format numerically.
@@ -38,6 +43,18 @@ enum _BbTextAlignment
     BB_TEXT_ALIGNMENT_UPPER_RIGHT,
     N_TEXT_ALIGNMENT
 };
+
+
+/**
+ * Convert the text alignment from parameters
+ *
+ * @param params A BbParams
+ * @param index The index of the parameter
+ * @param error Any error encountered converting the parameter
+ * @return The text alignment, or BB_TEXT_ALIGNMENT_DEFAULT on an error
+ */
+BbTextAlignment
+bb_text_alignment_from_params(BbParams *params, int index, GError **error);
 
 
 /**

@@ -19,6 +19,11 @@
  */
 
 #include <gtk/gtk.h>
+#include "bbparams.h"
+
+
+#define BB_TEXT_PRESENTATION_DEFAULT (BB_TEXT_PRESENTATION_BOTH)
+
 
 /**
  * These items must match the gEDA file format numerically. Also, the value is used as an array index requiring
@@ -36,7 +41,19 @@ enum _BbTextPresentation
 
 
 /**
- * @brief Checks the text alignment for validity
+ * Convert the text presentation from parameters
+ *
+ * @param params A BbParams
+ * @param index The index of the parameter
+ * @param error Any error encountered converting the parameter
+ * @return The text presentation, or BB_TEXT_PRESENTATION_DEFAULT on an error
+ */
+BbTextPresentation
+bb_text_presentation_from_params(BbParams *params, int index, GError **error);
+
+
+/**
+ * @brief Checks the text presentation for validity
  *
  * @param presentation A BbTextPresentation
  * @return TRUE if the presentation represents a valid value

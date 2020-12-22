@@ -18,6 +18,40 @@
 
 #include <gtk/gtk.h>
 #include "bbtextsize.h"
+#include "bberror.h"
+
+
+int
+bb_text_size_from_params(BbParams *params, int index, GError **error)
+{
+    GError *local_error = NULL;
+
+    int size = bb_params_get_int(params, index, &local_error);
+
+    if (local_error == NULL)
+    {
+        if (!bb_text_size_is_valid(size))
+        {
+            local_error = g_error_new(
+                BB_ERROR_DOMAIN,
+                ERROR_VALUE_OUT_OF_RANGE,
+                "Text size of %d out of range [%d,%d]",
+                size,
+                BB_TEXT_SIZE_MIN,
+                BB_TEXT_SIZE_MAX
+                );
+        }
+    }
+
+    if (error != NULL)
+    {
+        g_propagate_error(error, local_error);
+
+        size = BB_TEXT_SIZE_DEFAULT;
+    }
+
+    return size;
+}
 
 
 /**

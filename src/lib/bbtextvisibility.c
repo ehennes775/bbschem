@@ -18,6 +18,40 @@
 
 #include <gtk/gtk.h>
 #include "bbtextvisibility.h"
+#include "bberror.h"
+
+
+BbTextVisibility
+bb_text_visibility_from_params(BbParams *params, int index, GError **error)
+{
+    GError *local_error = NULL;
+
+    int visibility = bb_params_get_int(params, index, &local_error);
+
+    if (local_error == NULL)
+    {
+        if (!bb_text_visibility_is_valid(visibility))
+        {
+            local_error = g_error_new(
+                BB_ERROR_DOMAIN,
+                ERROR_VALUE_OUT_OF_RANGE,
+                "Text visibility of %d out of range [%d,%d)",
+                visibility,
+                0,
+                N_TEXT_VISIBILITY
+                );
+        }
+    }
+
+    if (error != NULL)
+    {
+        g_propagate_error(error, local_error);
+
+        visibility = BB_TEXT_VISIBILITY_DEFAULT;
+    }
+
+    return visibility;
+}
 
 
 gboolean

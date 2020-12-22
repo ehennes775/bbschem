@@ -19,6 +19,7 @@
  */
 
 #include <gtk/gtk.h>
+#include "bbparams.h"
 
 
 #define BB_TEXT_SIZE_DEFAULT (10)
@@ -34,6 +35,18 @@
  * @brief Maximum text size, inclusive, defined by the file format
  */
 #define BB_TEXT_SIZE_MAX (G_MAXINT)
+
+
+/**
+ * Convert the text size from parameters
+ *
+ * @param params A BbParams
+ * @param index The index of the parameter
+ * @param error Any error encountered converting the parameter
+ * @return The text size, or BB_TEXT_SIZE_DEFAULT on an error
+ */
+int
+bb_text_size_from_params(BbParams *params, int index, GError **error);
 
 
 /**

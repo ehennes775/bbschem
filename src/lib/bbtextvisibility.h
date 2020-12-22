@@ -19,6 +19,11 @@
  */
 
 #include <gtk/gtk.h>
+#include "bbparams.h"
+
+
+#define BB_TEXT_VISIBILITY_DEFAULT (BB_TEXT_VISIBILITY_VISIBLE)
+
 
 /**
  * These items must match the gEDA file format numerically.
@@ -31,6 +36,18 @@ enum _BbTextVisibility
     BB_TEXT_VISIBILITY_VISIBLE,
     N_TEXT_VISIBILITY
 };
+
+
+/**
+ * Convert the text visibility from parameters
+ *
+ * @param params A BbParams
+ * @param index The index of the parameter
+ * @param error Any error encountered converting the parameter
+ * @return The text visibility, or BB_TEXT_VISIBILITY_DEFAULT on an error
+ */
+BbTextVisibility
+bb_text_visibility_from_params(BbParams *params, int index, GError **error);
 
 
 /**
