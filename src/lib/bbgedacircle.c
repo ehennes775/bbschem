@@ -25,6 +25,7 @@
 #include "bbadjustablefillstyle.h"
 #include "bbadjustableitemcolor.h"
 #include "bbparams.h"
+#include "bbcolor.h"
 
 
 /**
@@ -946,7 +947,8 @@ bb_geda_circle_set_fill_width(BbGedaCircle *circle, int width)
 static void
 bb_geda_circle_set_item_color(BbGedaCircle *circle, int color)
 {
-    g_return_if_fail(circle != NULL);
+    g_return_if_fail(BB_IS_GEDA_CIRCLE(circle));
+    g_return_if_fail(bb_color_is_valid(color));
 
     if (circle->color != color)
     {

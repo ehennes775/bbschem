@@ -113,4 +113,6 @@ add_library(bblib
         bbtextpresentation.c
         bbtextsize.h
         bbtextsize.c
+        bbcolor.c
+        bbcolor.h
         )

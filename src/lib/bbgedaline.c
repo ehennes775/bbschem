@@ -23,6 +23,7 @@
 #include "bbitemparams.h"
 #include "bbadjustablelinestyle.h"
 #include "bbadjustableitemcolor.h"
+#include "bbcolor.h"
 
 
 /**
@@ -681,7 +682,8 @@ bb_geda_line_set_dash_type(BbGedaLine *line, int type)
 static void
 bb_geda_line_set_item_color(BbGedaLine *line, int color)
 {
-    g_return_if_fail(line != NULL);
+    g_return_if_fail(BB_IS_GEDA_LINE(line));
+    g_return_if_fail(bb_color_is_valid(color));
 
     if (line->color != color)
     {
@@ -697,7 +699,7 @@ bb_geda_line_set_item_color(BbGedaLine *line, int color)
 static void
 bb_geda_line_set_line_width(BbGedaLine *line, int width)
 {
-    g_return_if_fail(line != NULL);
+    g_return_if_fail(BB_IS_GEDA_LINE(line));
     g_return_if_fail(line->line_style != NULL);
 
     if (line->line_style->line_width != width)
@@ -767,7 +769,7 @@ bb_geda_line_set_property(GObject *object, guint property_id, const GValue *valu
 void
 bb_geda_line_set_x0(BbGedaLine *line, int x)
 {
-    g_return_if_fail(line != NULL);
+    g_return_if_fail(BB_IS_GEDA_LINE(line));
 
     if (line->x[0] != x)
     {
@@ -785,7 +787,7 @@ bb_geda_line_set_x0(BbGedaLine *line, int x)
 void
 bb_geda_line_set_x1(BbGedaLine *line, int x)
 {
-    g_return_if_fail(line != NULL);
+    g_return_if_fail(BB_IS_GEDA_LINE(line));
 
     if (line->x[1] != x)
     {
@@ -803,7 +805,7 @@ bb_geda_line_set_x1(BbGedaLine *line, int x)
 void
 bb_geda_line_set_y0(BbGedaLine *line, int y)
 {
-    g_return_if_fail(line != NULL);
+    g_return_if_fail(BB_IS_GEDA_LINE(line));
 
     if (line->y[0] != y)
     {
@@ -821,7 +823,7 @@ bb_geda_line_set_y0(BbGedaLine *line, int y)
 void
 bb_geda_line_set_y1(BbGedaLine *line, int y)
 {
-    g_return_if_fail(line != NULL);
+    g_return_if_fail(BB_IS_GEDA_LINE(line));
 
     if (line->y[1] != y)
     {

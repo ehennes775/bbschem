@@ -25,6 +25,7 @@
 #include "bbadjustableitemcolor.h"
 #include "bbadjustablelinestyle.h"
 #include "bbparams.h"
+#include "bbcolor.h"
 
 
 /**
@@ -884,7 +885,8 @@ bb_geda_box_set_dash_type(BbGedaBox *box, int type)
 static void
 bb_geda_box_set_item_color(BbGedaBox *box, int color)
 {
-    g_return_if_fail(box != NULL);
+    g_return_if_fail(BB_IS_GEDA_BOX(box));
+    g_return_if_fail(bb_color_is_valid(color));
 
     if (box->color != color)
     {

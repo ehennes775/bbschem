@@ -40,6 +40,68 @@ enum _BbTextAlignment
 };
 
 
+/**
+ * @brief Convert to a floating point representation of the horizontal alignment
+ *
+ * @param alignment A BbTextAlignment
+ * @return Floating point representation of the horizontal alignment
+ * <table>
+ * <tr>
+ * <th>Alignment</th>
+ * <th>Value</th>
+ * </tr>
+ * <tr>
+ * <td>left</td>
+ * <td>0.0</td>
+ * </tr>
+ * <tr>
+ * <td>middle</td>
+ * <td>0.5</td>
+ * </tr>
+ * <tr>
+ * <td>right</td>
+ * <td>1.0</td>
+ * </tr>
+ * </table>
+ */
+double
+bb_text_alignment_get_alignment_x(BbTextAlignment alignment);
+
+
+/**
+ * @brief Convert to a floating point representation of the vertical alignment
+ *
+ * @param alignment A BbTextAlignment
+ * @return Floating point representation of the vertical alignment
+ * <table>
+ * <tr>
+ * <th>Alignment</th>
+ * <th>Value</th>
+ * </tr>
+ * <tr>
+ * <td>upper</td>
+ * <td>0.0</td>
+ * </tr>
+ * <tr>
+ * <td>middle</td>
+ * <td>0.5</td>
+ * </tr>
+ * <tr>
+ * <td>lower</td>
+ * <td>1.0</td>
+ * </tr>
+ * </table>
+ */
+double
+bb_text_alignment_get_alignment_y(BbTextAlignment alignment);
+
+
+/**
+ * @brief Checks the text alignment for validity
+ *
+ * @param alignment A BbTextAlignment
+ * @return TRUE if the alignment represents a valid value
+ */
 gboolean
 bb_text_alignment_is_valid(BbTextAlignment alignment);
 

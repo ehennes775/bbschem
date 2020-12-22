@@ -1,5 +1,5 @@
-#ifndef __BBTEXTVISIBILITY__
-#define __BBTEXTVISIBILITY__
+#ifndef __BBCOLOR__
+#define __BBCOLOR__
 /*
  * bbschem
  * Copyright (C) 2020 Edward C. Hennessy
@@ -20,26 +20,9 @@
 
 #include <gtk/gtk.h>
 
-/**
- * These items must match the gEDA file format numerically.
- */
-typedef enum _BbTextVisibility BbTextVisibility;
 
-enum _BbTextVisibility
-{
-    BB_TEXT_VISIBILITY_INVISIBLE,
-    BB_TEXT_VISIBILITY_VISIBLE,
-    N_TEXT_VISIBILITY
-};
-
-
-/**
- * @brief Checks the text visibility for validity
- *
- * @param visibility A BbTextVisibility
- * @return TRUE if the text visibility represents a valid value
- */
 gboolean
-bb_text_visibility_is_valid(BbTextVisibility visibility);
+bb_color_is_valid(int color);
+
 
 #endif

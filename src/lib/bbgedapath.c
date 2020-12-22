@@ -21,6 +21,7 @@
 #include "bbgedapath.h"
 #include "bbitemparams.h"
 #include "bbpathcommand.h"
+#include "bbcolor.h"
 
 
 enum
@@ -580,7 +581,8 @@ bb_geda_path_set_dash_type(BbGraphicPath *path, int type)
 static void
 bb_geda_path_set_item_color(BbGraphicPath *path, int color)
 {
-    g_return_if_fail(path != NULL);
+    g_return_if_fail(BB_IS_GEDA_PATH(path));
+    g_return_if_fail(bb_color_is_valid(color));
 
     if (path->color != color)
     {

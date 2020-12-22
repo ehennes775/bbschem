@@ -19,6 +19,12 @@
 #include <gtk/gtk.h>
 #include "bbtextsize.h"
 
+
+/**
+ *
+ * @param size
+ * @return
+ */
 gboolean
 bb_text_size_is_valid(int size)
 {

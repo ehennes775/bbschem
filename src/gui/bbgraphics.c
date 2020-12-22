@@ -65,6 +65,9 @@ struct _GridGeometry
 
 
 static void
+calculate_text_adjustment(PangoLayout *layout, BbTextAlignment alignment, int *dx, int *dy);
+
+static void
 bb_graphics_dispose(GObject *object);
 
 static void
@@ -105,6 +108,14 @@ bb_graphics_render_relative_line_to(BbItemRenderer *renderer, int dx, int dy);
 
 static void
 bb_graphics_render_relative_move_to(BbItemRenderer *renderer, int dx, int dy);
+
+static void
+bb_graphics_render_text(
+    BbItemRenderer *renderer,
+    int insert_x,
+    int insert_y,
+    char *text
+    );
 
 static void
 bb_graphics_set_cairo(BbGraphics *graphics, cairo_t* cairo);
@@ -436,6 +447,7 @@ bb_graphics_item_renderer_init(BbItemRendererInterface *iface)
     iface->render_arc = bb_graphics_render_arc;
     iface->render_relative_line_to = bb_graphics_render_relative_line_to;
     iface->render_relative_move_to = bb_graphics_render_relative_move_to;
+    iface->render_text = bb_graphics_render_text;
     iface->set_color = bb_graphics_set_color;
     iface->set_fill_style = bb_graphics_set_fill_style;
     iface->set_line_style = bb_graphics_set_line_style;
@@ -508,6 +520,89 @@ bb_graphics_render_relative_line_to(BbItemRenderer *renderer, int dx, int dy)
     g_return_if_fail(graphics->cairo != NULL);
 
     cairo_rel_line_to(graphics->cairo, dx, dy);
+}
+
+
+static void
+bb_graphics_render_text(
+    BbItemRenderer *renderer,
+    int insert_x,
+    int insert_y,
+    char *text
+    )
+{
+    BbGraphics *graphics = BB_GRAPHICS(renderer);
+    g_return_if_fail(graphics != NULL);
+
+    cairo_save(graphics->cairo);
+
+    PangoFontDescription *font_description = pango_font_description_from_string("Sans");
+
+    PangoLayout *layout = pango_cairo_create_layout(graphics->cairo);
+
+    pango_font_description_set_size(font_description, 100 * PANGO_SCALE);
+    pango_layout_set_font_description(layout, font_description);
+    pango_layout_set_spacing(layout, 40000);
+    pango_layout_set_markup(layout, text, -1);
+
+    cairo_move_to(graphics->cairo, insert_x, insert_y);
+    cairo_scale(graphics->cairo, 1.0, -1.0);
+
+    double rotation = bb_angle_to_radians(0);
+    cairo_rotate(graphics->cairo, -rotation);
+
+    int dx = 0;
+    int dy = 0;
+
+    calculate_text_adjustment(layout, BB_TEXT_ALIGNMENT_LOWER_LEFT, &dx, &dy);
+
+    cairo_rel_move_to(
+        graphics->cairo,
+        (double) dx / (double) PANGO_SCALE,
+        (double) dy / (double) PANGO_SCALE
+        );
+
+    pango_cairo_show_layout(graphics->cairo, layout);
+
+    pango_font_description_free(font_description);
+    g_clear_object(&layout);
+
+    cairo_restore(graphics->cairo);
+}
+
+
+static void
+calculate_text_adjustment(PangoLayout *layout, BbTextAlignment alignment, int *dx, int *dy)
+{
+    *dx = 0;
+
+    double alignment_x = bb_text_alignment_get_alignment_x(alignment);
+
+    if (alignment_x > 0.0)
+    {
+        int height;
+        int width;
+
+        pango_layout_get_size(layout, &width, &height);
+
+        *dx = - (int) round(alignment_x * width);
+    }
+
+    *dy = 0;
+
+    double alignment_y = bb_text_alignment_get_alignment_y(alignment);
+
+    if (alignment_y > 0.0)
+    {
+        PangoLayoutIter *iter = pango_layout_get_iter(layout);
+
+        while (!pango_layout_iter_at_last_line(iter))
+        {
+            pango_layout_iter_next_line(iter);
+        }
+
+        *dy = - (int) round(alignment_y * pango_layout_iter_get_baseline(iter));
+    }
 }
 
 

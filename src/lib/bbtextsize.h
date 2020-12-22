@@ -21,11 +21,27 @@
 #include <gtk/gtk.h>
 
 
+#define BB_TEXT_SIZE_DEFAULT (10)
+
+
+/**
+ * @brief Minimum text size, inclusive, defined by the file format
+ */
 #define BB_TEXT_SIZE_MIN (2)
 
+
+/**
+ * @brief Maximum text size, inclusive, defined by the file format
+ */
 #define BB_TEXT_SIZE_MAX (G_MAXINT)
 
 
+/**
+ * @brief Checks the text size for validity
+ *
+ * @param size A text size in points
+ * @return TRUE if the text size represents a valid value
+ */
 gboolean
 bb_text_size_is_valid(int size);
 

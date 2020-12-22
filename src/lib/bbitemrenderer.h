@@ -37,6 +37,14 @@ struct _BbItemRendererInterface
     void (*render_arc)(BbItemRenderer *renderer, int x, int y, int radius, int start, int sweep);
     void (*render_relative_line_to)(BbItemRenderer *renderer, int dx, int dy);
     void (*render_relative_move_to)(BbItemRenderer *renderer, int dx, int dy);
+
+    void (*render_text)(
+        BbItemRenderer *renderer,
+        int insert_x,
+        int insert_y,
+        char *text
+        );
+
     void (*set_color)(BbItemRenderer *renderer, int color);
     void (*set_fill_style)(BbItemRenderer *renderer, BbFillStyle *style);
     void (*set_line_style)(BbItemRenderer *renderer, BbLineStyle *style);
@@ -66,6 +74,14 @@ bb_item_renderer_render_relative_line_to(BbItemRenderer *renderer, int dx, int d
 void
 bb_item_renderer_render_relative_move_to(BbItemRenderer *renderer, int dx, int dy);
 
+
+void
+bb_item_renderer_render_text(
+    BbItemRenderer *renderer,
+    int insert_x,
+    int insert_y,
+    char *text
+    );
 
 void
 bb_item_renderer_set_color(BbItemRenderer *renderer, int color);

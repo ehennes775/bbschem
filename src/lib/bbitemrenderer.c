@@ -183,6 +183,35 @@ bb_item_renderer_render_relative_move_to_missing(BbItemRenderer *renderer, int d
 
 
 void
+bb_item_renderer_render_text(
+    BbItemRenderer *renderer,
+    int insert_x,
+    int insert_y,
+    char *text
+    )
+{
+    BbItemRendererInterface *iface = BB_ITEM_RENDERER_GET_IFACE(renderer);
+
+    g_return_if_fail(iface != NULL);
+    g_return_if_fail(iface->render_text != NULL);
+
+    return iface->render_text(renderer, insert_x, insert_y, text);
+}
+
+
+static void
+bb_item_renderer_render_text_missing(
+    BbItemRenderer *renderer,
+    int insert_x,
+    int insert_y,
+    char *text
+    )
+{
+    g_error("bb_item_renderer_render_text() not overridden");
+}
+
+
+void
 bb_item_renderer_set_color(BbItemRenderer *renderer, int color)
 {
     BbItemRendererInterface *iface = BB_ITEM_RENDERER_GET_IFACE(renderer);

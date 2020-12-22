@@ -27,6 +27,7 @@
 #include "bbpintype.h"
 #include "bbcolors.h"
 #include "bbparams.h"
+#include "bbcolor.h"
 
 
 /**
@@ -492,7 +493,8 @@ bb_geda_pin_render(BbGedaItem *item, BbItemRenderer *renderer)
 static void
 bb_geda_pin_set_item_color(BbGedaPin *pin, int color)
 {
-    g_return_if_fail(pin != NULL);
+    g_return_if_fail(BB_IS_GEDA_PIN(pin));
+    g_return_if_fail(bb_color_is_valid(color));
 
     if (pin->color != color)
     {
@@ -539,7 +541,7 @@ bb_geda_pin_set_property(GObject *object, guint property_id, const GValue *value
 void
 bb_geda_pin_set_x0(BbGedaPin *pin, int x)
 {
-    g_return_if_fail(pin != NULL);
+    g_return_if_fail(BB_IS_GEDA_PIN(pin));
 
     if (pin->x[0] != x)
     {
@@ -557,7 +559,7 @@ bb_geda_pin_set_x0(BbGedaPin *pin, int x)
 void
 bb_geda_pin_set_x1(BbGedaPin *pin, int x)
 {
-    g_return_if_fail(pin != NULL);
+    g_return_if_fail(BB_IS_GEDA_PIN(pin));
 
     if (pin->x[1] != x)
     {
@@ -575,7 +577,7 @@ bb_geda_pin_set_x1(BbGedaPin *pin, int x)
 void
 bb_geda_pin_set_y0(BbGedaPin *pin, int y)
 {
-    g_return_if_fail(pin != NULL);
+    g_return_if_fail(BB_IS_GEDA_PIN(pin));
 
     if (pin->y[0] != y)
     {
@@ -593,7 +595,7 @@ bb_geda_pin_set_y0(BbGedaPin *pin, int y)
 void
 bb_geda_pin_set_y1(BbGedaPin *pin, int y)
 {
-    g_return_if_fail(pin != NULL);
+    g_return_if_fail(BB_IS_GEDA_PIN(pin));
 
     if (pin->y[1] != y)
     {

@@ -24,6 +24,7 @@
 #include "bbadjustableitemcolor.h"
 #include "bbcolors.h"
 #include "bbparams.h"
+#include "bbcolor.h"
 
 
 /**
@@ -443,7 +444,8 @@ bb_geda_net_render(BbGedaItem *item, BbItemRenderer *renderer)
 static void
 bb_geda_net_set_item_color(BbGedaNet *net, int color)
 {
-    g_return_if_fail(net != NULL);
+    g_return_if_fail(BB_IS_GEDA_NET(net));
+    g_return_if_fail(bb_color_is_valid(color));
 
     if (net->color != color)
     {

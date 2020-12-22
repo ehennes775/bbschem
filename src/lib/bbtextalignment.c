@@ -20,6 +20,49 @@
 #include "bbtextalignment.h"
 
 
+double
+bb_text_alignment_get_alignment_x(BbTextAlignment alignment)
+{
+    switch (alignment)
+    {
+        case BB_TEXT_ALIGNMENT_LOWER_RIGHT:
+        case BB_TEXT_ALIGNMENT_CENTER_RIGHT:
+        case BB_TEXT_ALIGNMENT_UPPER_RIGHT:
+            return 1.0;
+
+        case BB_TEXT_ALIGNMENT_LOWER_CENTER:
+        case BB_TEXT_ALIGNMENT_CENTER_CENTER:
+        case BB_TEXT_ALIGNMENT_UPPER_CENTER:
+            return 0.5;
+            break;
+
+        default:
+            return 0.0;
+    }
+}
+
+
+double
+bb_text_alignment_get_alignment_y(BbTextAlignment alignment)
+{
+    switch (alignment)
+    {
+        case BB_TEXT_ALIGNMENT_LOWER_LEFT:
+        case BB_TEXT_ALIGNMENT_LOWER_CENTER:
+        case BB_TEXT_ALIGNMENT_LOWER_RIGHT:
+            return 1.0;
+
+        case BB_TEXT_ALIGNMENT_CENTER_LEFT:
+        case BB_TEXT_ALIGNMENT_CENTER_CENTER:
+        case BB_TEXT_ALIGNMENT_CENTER_RIGHT:
+            return 0.5;
+
+        default:
+            return 0.0;
+    }
+}
+
+
 gboolean
 bb_text_alignment_is_valid(BbTextAlignment alignment)
 {

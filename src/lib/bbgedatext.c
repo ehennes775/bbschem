@@ -26,6 +26,8 @@
 #include "bbtextpresentation.h"
 #include "bbtextvisibility.h"
 #include "bbtextsize.h"
+#include "bbcolors.h"
+#include "bbcolor.h"
 
 
 /**
@@ -101,6 +103,7 @@ struct _BbGedaText
     int color;
 
     int insert_x;
+
     int insert_y;
 
     /**
@@ -138,43 +141,86 @@ struct _BbGedaText
 
 
 static void
-bb_geda_text_adjustable_item_color_init(BbAdjustableItemColorInterface *iface);
+bb_geda_text_adjustable_item_color_init(
+    BbAdjustableItemColorInterface *iface
+    );
 
 static BbBounds*
-bb_geda_text_calculate_bounds(BbGedaItem *item, BbBoundsCalculator *calculator);
+bb_geda_text_calculate_bounds(
+    BbGedaItem *item,
+    BbBoundsCalculator *calculator
+    );
 
 static BbGedaItem*
-bb_geda_text_clone(BbGedaItem *item);
+bb_geda_text_clone(
+    BbGedaItem *item
+    );
+
+static int
+bb_geda_text_count_lines(
+    BbGedaText *text_item
+    );
 
 static void
-bb_geda_text_dispose(GObject *object);
+bb_geda_text_dispose(
+    GObject *object
+    );
 
 static void
-bb_geda_text_finalize(GObject *object);
+bb_geda_text_finalize(
+    GObject *object
+    );
 
 static GRegex*
 bb_geda_text_get_attribute_regex();
 
 static int
-bb_geda_text_get_item_color(BbGedaText *text);
+bb_geda_text_get_item_color(
+    BbGedaText *text
+    );
 
 static void
-bb_geda_text_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
+bb_geda_text_get_property(
+    GObject *object,
+    guint property_id,
+    GValue *value,
+    GParamSpec *pspec
+    );
 
 static void
-bb_geda_text_render(BbGedaItem *item, BbItemRenderer *renderer);
+bb_geda_text_render(
+    BbGedaItem *item,
+    BbItemRenderer *renderer
+    );
 
 static void
-bb_geda_text_set_item_color(BbGedaText *text, int color);
+bb_geda_text_set_item_color(
+    BbGedaText *text,
+    int color
+    );
 
 static void
-bb_geda_text_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
+bb_geda_text_set_property(
+    GObject *object,
+    guint property_id,
+    const GValue *value,
+    GParamSpec *pspec
+    );
 
 static void
-bb_geda_text_translate(BbGedaItem *item, int dx, int dy);
+bb_geda_text_translate(
+    BbGedaItem *item,
+    int dx,
+    int dy
+    );
 
 static gboolean
-bb_geda_text_write(BbGedaItem *item, GOutputStream *stream, GCancellable *cancellable, GError **error);
+bb_geda_text_write(
+    BbGedaItem *item,
+    GOutputStream *stream,
+    GCancellable *cancellable,
+    GError **error
+    );
 
 static void
 bb_geda_text_write_async(
@@ -335,9 +381,9 @@ bb_geda_text_class_init(BbGedaTextClass *klasse)
             "size",
             "",
             "",
-            2,
-            G_MAXINT,
-            10,
+            BB_TEXT_SIZE_MIN,
+            BB_TEXT_SIZE_MAX,
+            BB_TEXT_SIZE_DEFAULT,
             G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS
             )
         );
@@ -404,11 +450,14 @@ bb_geda_text_count_lines(BbGedaText *text_item)
     g_return_val_if_fail(text_item->text != NULL, 1);
 
     int count = 1;
+    int length = strlen(LINE_BREAK);
 
     char *iter = strstr(LINE_BREAK, text_item->text);
 
     while (iter != NULL)
     {
+        iter += length;
+
         count++;
 
         iter = strstr(LINE_BREAK, iter);
@@ -500,7 +549,7 @@ bb_geda_text_get_attribute_regex()
 int
 bb_geda_text_get_insert_x(BbGedaText *text)
 {
-    g_return_val_if_fail(text != NULL, 0);
+    g_return_val_if_fail(BB_IS_GEDA_TEXT(text), 0);
 
     return text->insert_x;
 }
@@ -509,7 +558,7 @@ bb_geda_text_get_insert_x(BbGedaText *text)
 int
 bb_geda_text_get_insert_y(BbGedaText *text)
 {
-    g_return_val_if_fail(text != NULL, 0);
+    g_return_val_if_fail(BB_IS_GEDA_TEXT(text), 0);
 
     return text->insert_y;
 }
@@ -518,7 +567,7 @@ bb_geda_text_get_insert_y(BbGedaText *text)
 static int
 bb_geda_text_get_item_color(BbGedaText *text)
 {
-    g_return_val_if_fail(text != NULL, 0);
+    g_return_val_if_fail(BB_IS_GEDA_TEXT(text), BB_COLOR_GRAPHIC);
 
     return text->color;
 }
@@ -651,14 +700,7 @@ bb_geda_text_get_visibility(BbGedaText *text)
 static void
 bb_geda_text_init(BbGedaText *text)
 {
-    g_return_if_fail(text != NULL);
-}
-
-
-BbGedaText*
-bb_geda_text_new()
-{
-    return g_object_new(BB_TYPE_GEDA_TEXT, NULL);
+    g_return_if_fail(BB_IS_GEDA_TEXT(text));
 }
 
 
@@ -753,6 +795,13 @@ bb_geda_text_render(BbGedaItem *item, BbItemRenderer *renderer)
 {
     BbGedaText *text = BB_GEDA_TEXT(item);
     g_return_if_fail(text != NULL);
+
+    bb_item_renderer_render_text(
+        renderer,
+        bb_geda_text_get_insert_x(text),
+        bb_geda_text_get_insert_y(text),
+        bb_geda_text_get_text(text)
+        );
 }
 
 
@@ -776,53 +825,54 @@ bb_geda_text_set_alignment(BbGedaText *text_item, BbTextAlignment alignment)
 
 
 void
-bb_geda_text_set_insert_x(BbGedaText *text, int x)
+bb_geda_text_set_insert_x(BbGedaText *text_item, int x)
 {
-    g_return_if_fail(text != NULL);
+    g_return_if_fail(BB_IS_GEDA_TEXT(text_item));
 
-    if (text->insert_x != x)
+    if (text_item->insert_x != x)
     {
-        g_signal_emit(text, signals[SIG_INVALIDATE], 0);
+        g_signal_emit(text_item, signals[SIG_INVALIDATE], 0);
 
-        text->insert_x = x;
+        text_item->insert_x = x;
 
-        g_signal_emit(text, signals[SIG_INVALIDATE], 0);
+        g_signal_emit(text_item, signals[SIG_INVALIDATE], 0);
 
-        g_object_notify_by_pspec(G_OBJECT(text), properties[PROP_INSERT_X]);
+        g_object_notify_by_pspec(G_OBJECT(text_item), properties[PROP_INSERT_X]);
     }
 }
 
 
 void
-bb_geda_text_set_insert_y(BbGedaText *text, int y)
+bb_geda_text_set_insert_y(BbGedaText *text_item, int y)
 {
-    g_return_if_fail(text != NULL);
+    g_return_if_fail(BB_IS_GEDA_TEXT(text_item));
 
-    if (text->insert_y != y)
+    if (text_item->insert_y != y)
     {
-        g_signal_emit(text, signals[SIG_INVALIDATE], 0);
+        g_signal_emit(text_item, signals[SIG_INVALIDATE], 0);
 
-        text->insert_y = y;
+        text_item->insert_y = y;
 
-        g_signal_emit(text, signals[SIG_INVALIDATE], 0);
+        g_signal_emit(text_item, signals[SIG_INVALIDATE], 0);
 
-        g_object_notify_by_pspec(G_OBJECT(text), properties[PROP_INSERT_Y]);
+        g_object_notify_by_pspec(G_OBJECT(text_item), properties[PROP_INSERT_Y]);
     }
 }
 
 
 static void
-bb_geda_text_set_item_color(BbGedaText *text, int color)
+bb_geda_text_set_item_color(BbGedaText *text_item, int color)
 {
-    g_return_if_fail(text != NULL);
+    g_return_if_fail(BB_IS_GEDA_TEXT(text_item));
+    g_return_if_fail(bb_color_is_valid(color));
 
-    if (text->color != color)
+    if (text_item->color != color)
     {
-        text->color = color;
+        text_item->color = color;
 
-        g_signal_emit(text, signals[SIG_INVALIDATE], 0);
+        g_signal_emit(text_item, signals[SIG_INVALIDATE], 0);
 
-        g_object_notify_by_pspec(G_OBJECT(text), properties[PROP_ITEM_COLOR]);
+        g_object_notify_by_pspec(G_OBJECT(text_item), properties[PROP_ITEM_COLOR]);
     }
 }
 
@@ -992,25 +1042,28 @@ bb_geda_text_set_visibility(BbGedaText *text_item, BbTextVisibility visibility)
 static void
 bb_geda_text_translate(BbGedaItem *item, int dx, int dy)
 {
-    BbGedaText *text = BB_GEDA_TEXT(item);
-    g_return_if_fail(text != NULL);
+    BbGedaText *text_item = BB_GEDA_TEXT(item);
+    g_return_if_fail(text_item != NULL);
 
-    bb_coord_translate(dx, dy, &text->insert_x, &text->insert_y, 1);
+    g_signal_emit(text_item, signals[SIG_INVALIDATE], 0);
 
-    g_object_notify_by_pspec(G_OBJECT(text), properties[PROP_INSERT_X]);
-    g_object_notify_by_pspec(G_OBJECT(text), properties[PROP_INSERT_Y]);
+    bb_coord_translate(dx, dy, &text_item->insert_x, &text_item->insert_y, 1);
+
+    g_signal_emit(text_item, signals[SIG_INVALIDATE], 0);
+
+    g_object_notify_by_pspec(G_OBJECT(text_item), properties[PROP_INSERT_X]);
+    g_object_notify_by_pspec(G_OBJECT(text_item), properties[PROP_INSERT_Y]);
 }
 
 
 static gboolean
 bb_geda_text_write(BbGedaItem *item, GOutputStream *stream, GCancellable *cancellable, GError **error)
 {
-    GError *local_error = NULL;
     GString *params = g_string_new(NULL);
 
     g_string_printf(
         params,
-        "%s %d %d %d %d %d %d %d %d %d\n",
+        "%s %d %d %d %d %d %d %d %d %d\n%s\n",
         BB_GEDA_TEXT_TOKEN,
         bb_geda_text_get_insert_x(BB_GEDA_TEXT(item)),
         bb_geda_text_get_insert_y(BB_GEDA_TEXT(item)),
@@ -1020,7 +1073,8 @@ bb_geda_text_write(BbGedaItem *item, GOutputStream *stream, GCancellable *cancel
         bb_geda_text_get_presentation(BB_GEDA_TEXT(item)),
         bb_geda_text_get_rotation(BB_GEDA_TEXT(item)),
         bb_geda_text_get_alignment(BB_GEDA_TEXT(item)),
-        bb_geda_text_count_lines(BB_GEDA_TEXT(item))
+        bb_geda_text_count_lines(BB_GEDA_TEXT(item)),
+        bb_geda_text_get_text(BB_GEDA_TEXT(item))
         );
 
     gboolean result = g_output_stream_write_all(
@@ -1029,44 +1083,10 @@ bb_geda_text_write(BbGedaItem *item, GOutputStream *stream, GCancellable *cancel
         params->len,
         NULL,
         cancellable,
-        &local_error
+        error
         );
 
     g_string_free(params, TRUE);
-
-    if (local_error == NULL && !result)
-    {
-        local_error = g_error_new(BB_ERROR_DOMAIN, 0, "Internal Error");
-    }
-
-    if (local_error == NULL)
-    {
-        GString *lines = g_string_new(bb_geda_text_get_text(BB_GEDA_TEXT(item)));
-
-        g_string_append(lines, LINE_BREAK);
-
-        result = g_output_stream_write_all(
-            stream,
-            lines->str,
-            lines->len,
-            NULL,
-            cancellable,
-            &local_error
-            );
-
-        g_free(lines);
-
-        if (local_error == NULL && !result)
-        {
-            local_error = g_error_new(BB_ERROR_DOMAIN, 0, "Internal Error");
-        }
-    }
-
-    if (local_error != NULL)
-    {
-        g_propagate_error(error, local_error);
-        result = FALSE;
-    }
 
     return result;
 }
@@ -1082,7 +1102,33 @@ bb_geda_text_write_async(
     gpointer callback_data
     )
 {
-    BbGedaText *text = BB_GEDA_TEXT(item);
+    GString *params = g_string_new(NULL);
+
+    g_string_printf(
+        params,
+        "%s %d %d %d %d %d %d %d %d %d\n%s\n",
+        BB_GEDA_TEXT_TOKEN,
+        bb_geda_text_get_insert_x(BB_GEDA_TEXT(item)),
+        bb_geda_text_get_insert_y(BB_GEDA_TEXT(item)),
+        bb_adjustable_item_color_get_color(BB_ADJUSTABLE_ITEM_COLOR(item)),
+        bb_geda_text_get_size(BB_GEDA_TEXT(item)),
+        bb_geda_text_get_visibility(BB_GEDA_TEXT(item)),
+        bb_geda_text_get_presentation(BB_GEDA_TEXT(item)),
+        bb_geda_text_get_rotation(BB_GEDA_TEXT(item)),
+        bb_geda_text_get_alignment(BB_GEDA_TEXT(item)),
+        bb_geda_text_count_lines(BB_GEDA_TEXT(item)),
+        bb_geda_text_get_text(BB_GEDA_TEXT(item))
+        );
+
+    g_output_stream_write_all_async(
+        stream,
+        params->str,
+        params->len,
+        io_priority,
+        cancellable,
+        callback,
+        callback_data
+        );
 }
 
 

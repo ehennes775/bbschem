@@ -21,7 +21,8 @@
 #include <gtk/gtk.h>
 
 /**
- * These items must match the gEDA file format numerically.
+ * These items must match the gEDA file format numerically. Also, the value is used as an array index requiring
+ * contiguous values starting at index 0.
  */
 typedef enum _BbTextPresentation BbTextPresentation;
 
@@ -34,6 +35,12 @@ enum _BbTextPresentation
 };
 
 
+/**
+ * @brief Checks the text alignment for validity
+ *
+ * @param presentation A BbTextPresentation
+ * @return TRUE if the presentation represents a valid value
+ */
 gboolean
 bb_text_presentation_is_valid(BbTextPresentation presentation);
 

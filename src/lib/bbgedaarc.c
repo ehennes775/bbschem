@@ -23,6 +23,7 @@
 #include "bbitemparams.h"
 #include "bbadjustablelinestyle.h"
 #include "bblibrary.h"
+#include "bbcolor.h"
 
 
 /**
@@ -756,7 +757,8 @@ bb_geda_arc_set_dash_type(BbGedaArc *arc, int dash_type)
 static void
 bb_geda_arc_set_item_color(BbGedaArc *arc, int color)
 {
-    g_return_if_fail(arc != NULL);
+    g_return_if_fail(BB_IS_GEDA_ARC(arc));
+    g_return_if_fail(bb_color_is_valid(color));
 
     if (arc->color != color)
     {
