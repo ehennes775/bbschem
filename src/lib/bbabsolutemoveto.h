@@ -1,7 +1,7 @@
 #ifndef __BBABSOLUTEMOVETO__
 #define __BBABSOLUTEMOVETO__
 /*
- * bbsch
+ * bbschem
  * Copyright (C) 2020 Edward C. Hennessy
  *
  * This program is free software: you can redistribute it and/or modify

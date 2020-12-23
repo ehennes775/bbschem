@@ -118,4 +118,6 @@ add_library(bblib
         bbpintype.c
         bbpinend.c
         bbpinend.h
+        bbqueryfunc.c
+        bbapplyfunc.c
         )

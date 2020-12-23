@@ -1,5 +1,5 @@
 /*
- * bbsch
+ * bbschem
  * Copyright (C) 2020 Edward C. Hennessy
  *
  * This program is free software: you can redistribute it and/or modify
@@ -98,73 +98,138 @@ struct _BbGedaArc
 
 
 static void
-bb_geda_arc_adjustable_item_color_init(BbAdjustableLineStyleInterface *iface);
+bb_geda_arc_adjustable_item_color_init(
+    BbAdjustableLineStyleInterface *iface
+    );
 
 static void
-bb_geda_arc_adjustable_line_style_init(BbAdjustableLineStyleInterface *iface);
+bb_geda_arc_adjustable_line_style_init(
+    BbAdjustableLineStyleInterface *iface
+    );
 
 static BbBounds*
-bb_geda_arc_calculate_bounds(BbGedaItem *item, BbBoundsCalculator *calculator);
+bb_geda_arc_calculate_bounds(
+    BbGedaItem *item,
+    BbBoundsCalculator *calculator
+    );
 
 static BbGedaItem*
-bb_geda_arc_clone(BbGedaItem *item);
+bb_geda_arc_clone(
+    BbGedaItem *item
+    );
 
 static void
-bb_geda_arc_dispose(GObject *object);
+bb_geda_arc_dispose(
+    GObject *object
+    );
 
 static void
-bb_geda_arc_finalize(GObject *object);
+bb_geda_arc_finalize(
+    GObject *object
+    );
 
 static int
-bb_geda_arc_get_cap_type(BbGedaArc *arc);
+bb_geda_arc_get_cap_type(
+    BbGedaArc *arc
+    );
 
 static int
-bb_geda_arc_get_dash_space(BbGedaArc *arc);
+bb_geda_arc_get_dash_space(
+    BbGedaArc *arc
+    );
 
 static int
-bb_geda_arc_get_dash_length(BbGedaArc *arc);
+bb_geda_arc_get_dash_length(
+    BbGedaArc *arc
+    );
 
 static int
-bb_geda_arc_get_dash_type(BbGedaArc *arc);
+bb_geda_arc_get_dash_type(
+    BbGedaArc *arc
+    );
 
 static int
-bb_geda_arc_get_item_color(BbGedaArc *arc);
+bb_geda_arc_get_item_color(
+    BbGedaArc *arc
+    );
 
 static void
-bb_geda_arc_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
+bb_geda_arc_get_property(
+    GObject *object,
+    guint property_id,
+    GValue *value,
+    GParamSpec *pspec
+    );
 
 static int
-bb_geda_arc_get_line_width(BbGedaArc *arc);
+bb_geda_arc_get_line_width(
+    BbGedaArc *arc
+    );
 
 static void
-bb_geda_arc_render(BbGedaItem *item, BbItemRenderer *renderer);
+bb_geda_arc_render(
+    BbGedaItem *item,
+    BbItemRenderer *renderer
+    );
 
 static void
-bb_geda_arc_set_cap_type(BbGedaArc *arc, int cap_type);
+bb_geda_arc_set_cap_type(
+    BbGedaArc *arc,
+    int cap_type
+    );
 
 static void
-bb_geda_arc_set_dash_length(BbGedaArc *arc, int dash_length);
+bb_geda_arc_set_dash_length(
+    BbGedaArc *arc,
+    int dash_length
+    );
 
 static void
-bb_geda_arc_set_dash_space(BbGedaArc *arc, int dash_space);
+bb_geda_arc_set_dash_space(
+    BbGedaArc *arc,
+    int dash_space
+    );
 
 static void
-bb_geda_arc_set_dash_type(BbGedaArc *arc, int dash_type);
+bb_geda_arc_set_dash_type(
+    BbGedaArc *arc,
+    int dash_type
+    );
 
 static void
-bb_geda_arc_set_item_color(BbGedaArc *arc, int item_color);
+bb_geda_arc_set_item_color(
+    BbGedaArc *arc,
+    int item_color
+    );
 
 static void
-bb_geda_arc_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
+bb_geda_arc_set_property(
+    GObject *object,
+    guint property_id,
+    const GValue *value,
+    GParamSpec *pspec
+    );
 
 static void
-bb_geda_arc_set_width(BbGedaArc *arc, int width);
+bb_geda_arc_set_width(
+    BbGedaArc *arc,
+    int width
+    );
 
 static void
-bb_geda_arc_translate(BbGedaItem *item, int dx, int dy);
+bb_geda_arc_translate(
+    BbGedaItem *item,
+    int dx,
+    int dy
+    );
 
 static gboolean
-bb_geda_arc_write(BbGedaItem *item, GOutputStream *stream, GCancellable *cancellable, GError **error);
+bb_geda_arc_write(
+    BbGedaItem *item,
+    GOutputStream *stream,
+    GCancellable *cancellable,
+    GError **error
+    );
 
 static void
 bb_geda_arc_write_async(
@@ -425,7 +490,7 @@ bb_geda_arc_get_cap_type(BbGedaArc *arc)
 int
 bb_geda_arc_get_center_x(BbGedaArc *arc)
 {
-    g_return_val_if_fail(arc != NULL, 0);
+    g_return_val_if_fail(BB_IS_GEDA_ARC(arc), 0);
 
     return arc->center_x;
 }
@@ -434,7 +499,7 @@ bb_geda_arc_get_center_x(BbGedaArc *arc)
 int
 bb_geda_arc_get_center_y(BbGedaArc *arc)
 {
-    g_return_val_if_fail(arc != NULL, 0);
+    g_return_val_if_fail(BB_IS_GEDA_ARC(arc), 0);
 
     return arc->center_y;
 }
@@ -443,7 +508,7 @@ bb_geda_arc_get_center_y(BbGedaArc *arc)
 static int
 bb_geda_arc_get_dash_length(BbGedaArc *arc)
 {
-    g_return_val_if_fail(arc != NULL, 0);
+    g_return_val_if_fail(BB_IS_GEDA_ARC(arc), 0);
     g_return_val_if_fail(arc->line_style != NULL, 0);
 
     return arc->line_style->dash_length;
@@ -453,7 +518,7 @@ bb_geda_arc_get_dash_length(BbGedaArc *arc)
 static int
 bb_geda_arc_get_dash_space(BbGedaArc *arc)
 {
-    g_return_val_if_fail(arc != NULL, 0);
+    g_return_val_if_fail(BB_IS_GEDA_ARC(arc), 0);
     g_return_val_if_fail(arc->line_style != NULL, 0);
 
     return arc->line_style->dash_space;
@@ -463,7 +528,7 @@ bb_geda_arc_get_dash_space(BbGedaArc *arc)
 static int
 bb_geda_arc_get_dash_type(BbGedaArc *arc)
 {
-    g_return_val_if_fail(arc != NULL, BB_DASH_TYPE_DEFAULT);
+    g_return_val_if_fail(BB_IS_GEDA_ARC(arc), BB_DASH_TYPE_DEFAULT);
     g_return_val_if_fail(arc->line_style != NULL, BB_DASH_TYPE_DEFAULT);
 
     return arc->line_style->dash_type;
@@ -473,7 +538,7 @@ bb_geda_arc_get_dash_type(BbGedaArc *arc)
 static int
 bb_geda_arc_get_item_color(BbGedaArc *arc)
 {
-    g_return_val_if_fail(arc != NULL, 0);
+    g_return_val_if_fail(BB_IS_GEDA_ARC(arc), BB_COLOR_GRAPHIC);
 
     return arc->color;
 }
@@ -537,7 +602,7 @@ bb_geda_arc_get_property(GObject *object, guint property_id, GValue *value, GPar
 static int
 bb_geda_arc_get_line_width(BbGedaArc *arc)
 {
-    g_return_val_if_fail(arc != NULL, 0);
+    g_return_val_if_fail(BB_IS_GEDA_ARC(arc), 0);
     g_return_val_if_fail(arc->line_style != NULL, 0);
 
     return arc->line_style->line_width;
@@ -547,7 +612,7 @@ bb_geda_arc_get_line_width(BbGedaArc *arc)
 int
 bb_geda_arc_get_radius(BbGedaArc *arc)
 {
-    g_return_val_if_fail(arc != NULL, 0);
+    g_return_val_if_fail(BB_IS_GEDA_ARC(arc), 0);
 
     return arc->radius;
 }
@@ -556,7 +621,7 @@ bb_geda_arc_get_radius(BbGedaArc *arc)
 int
 bb_geda_arc_get_start_angle(BbGedaArc *arc)
 {
-    g_return_val_if_fail(arc != NULL, 0);
+    g_return_val_if_fail(BB_IS_GEDA_ARC(arc), 0);
 
     return arc->start_angle;
 }
@@ -565,7 +630,7 @@ bb_geda_arc_get_start_angle(BbGedaArc *arc)
 int
 bb_geda_arc_get_sweep_angle(BbGedaArc *arc)
 {
-    g_return_val_if_fail(arc != NULL, 0);
+    g_return_val_if_fail(BB_IS_GEDA_ARC(arc), 0);
 
     return arc->sweep_angle;
 }
@@ -574,7 +639,7 @@ bb_geda_arc_get_sweep_angle(BbGedaArc *arc)
 static void
 bb_geda_arc_init(BbGedaArc *arc)
 {
-    g_return_if_fail(arc != NULL);
+    g_return_if_fail(BB_IS_GEDA_ARC(arc));
 
     arc->line_style = bb_line_style_new();
 }
@@ -663,13 +728,6 @@ bb_geda_arc_new_with_params(BbParams *params, GError **error)
 }
 
 
-__attribute__((constructor)) void
-bb_geda_arc_register()
-{
-    bb_geda_arc_get_type();
-}
-
-
 static void
 bb_geda_arc_render(BbGedaItem *item, BbItemRenderer *renderer)
 {
@@ -692,7 +750,7 @@ bb_geda_arc_render(BbGedaItem *item, BbItemRenderer *renderer)
 static void
 bb_geda_arc_set_cap_type(BbGedaArc *arc, int cap_type)
 {
-    g_return_if_fail(arc != NULL);
+    g_return_if_fail(BB_IS_GEDA_ARC(arc));
     g_return_if_fail(arc->line_style != NULL);
     g_return_if_fail(bb_cap_type_is_valid(cap_type));
 
@@ -710,7 +768,7 @@ bb_geda_arc_set_cap_type(BbGedaArc *arc, int cap_type)
 void
 bb_geda_arc_set_center_x(BbGedaArc *arc, int x)
 {
-    g_return_if_fail(arc != NULL);
+    g_return_if_fail(BB_IS_GEDA_ARC(arc));
 
     if (arc->center_x != x)
     {
@@ -728,7 +786,7 @@ bb_geda_arc_set_center_x(BbGedaArc *arc, int x)
 void
 bb_geda_arc_set_center_y(BbGedaArc *arc, int y)
 {
-    g_return_if_fail(arc != NULL);
+    g_return_if_fail(BB_IS_GEDA_ARC(arc));
 
     if (arc->center_y != y)
     {
@@ -746,7 +804,7 @@ bb_geda_arc_set_center_y(BbGedaArc *arc, int y)
 static void
 bb_geda_arc_set_dash_length(BbGedaArc *arc, int dash_length)
 {
-    g_return_if_fail(arc != NULL);
+    g_return_if_fail(BB_IS_GEDA_ARC(arc));
     g_return_if_fail(arc->line_style != NULL);
 
     if (arc->line_style->dash_length != dash_length)
@@ -763,7 +821,7 @@ bb_geda_arc_set_dash_length(BbGedaArc *arc, int dash_length)
 static void
 bb_geda_arc_set_dash_space(BbGedaArc *arc, int dash_space)
 {
-    g_return_if_fail(arc != NULL);
+    g_return_if_fail(BB_IS_GEDA_ARC(arc));
     g_return_if_fail(arc->line_style != NULL);
 
     if (arc->line_style->dash_space != dash_space)
@@ -780,7 +838,7 @@ bb_geda_arc_set_dash_space(BbGedaArc *arc, int dash_space)
 static void
 bb_geda_arc_set_dash_type(BbGedaArc *arc, int dash_type)
 {
-    g_return_if_fail(arc != NULL);
+    g_return_if_fail(BB_IS_GEDA_ARC(arc));
     g_return_if_fail(arc->line_style != NULL);
     g_return_if_fail(bb_dash_type_is_valid(dash_type));
 
@@ -870,7 +928,7 @@ bb_geda_arc_set_property(GObject *object, guint property_id, const GValue *value
 void
 bb_geda_arc_set_radius(BbGedaArc *arc, int radius)
 {
-    g_return_if_fail(arc != NULL);
+    g_return_if_fail(BB_IS_GEDA_ARC(arc));
 
     if (arc->radius != radius)
     {
@@ -888,7 +946,7 @@ bb_geda_arc_set_radius(BbGedaArc *arc, int radius)
 void
 bb_geda_arc_set_start_angle(BbGedaArc *arc, int angle)
 {
-    g_return_if_fail(arc != NULL);
+    g_return_if_fail(BB_IS_GEDA_ARC(arc));
 
     if (arc->start_angle != angle)
     {
@@ -906,7 +964,7 @@ bb_geda_arc_set_start_angle(BbGedaArc *arc, int angle)
 void
 bb_geda_arc_set_sweep_angle(BbGedaArc *arc, int angle)
 {
-    g_return_if_fail(arc != NULL);
+    g_return_if_fail(BB_IS_GEDA_ARC(arc));
 
     if (arc->sweep_angle != angle)
     {
@@ -924,7 +982,7 @@ bb_geda_arc_set_sweep_angle(BbGedaArc *arc, int angle)
 static void
 bb_geda_arc_set_width(BbGedaArc *arc, int width)
 {
-    g_return_if_fail(arc != NULL);
+    g_return_if_fail(BB_IS_GEDA_ARC(arc));
     g_return_if_fail(arc->line_style != NULL);
 
     if (arc->line_style->line_width != width)

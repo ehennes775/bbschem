@@ -1,5 +1,5 @@
 /*
- * bbsch
+ * bbschem
  * Copyright (C) 2020 Edward C. Hennessy
  *
  * This program is free software: you can redistribute it and/or modify
@@ -110,94 +110,173 @@ struct _BbGedaCircle
 
 
 static void
-bb_geda_circle_adjustable_fill_style_init(BbAdjustableFillStyleInterface *iface);
+bb_geda_circle_adjustable_fill_style_init(
+    BbAdjustableFillStyleInterface *iface
+    );
 
 static void
-bb_geda_circle_adjustable_item_color_init(BbAdjustableItemColorInterface *iface);
+bb_geda_circle_adjustable_item_color_init(
+    BbAdjustableItemColorInterface *iface
+    );
 
 static void
-bb_geda_circle_adjustable_line_style_init(BbAdjustableLineStyleInterface *iface);
+bb_geda_circle_adjustable_line_style_init(
+    BbAdjustableLineStyleInterface *iface
+    );
 
 static BbBounds*
-bb_geda_circle_calculate_bounds(BbGedaItem *item, BbBoundsCalculator *calculator);
+bb_geda_circle_calculate_bounds(
+    BbGedaItem *item,
+    BbBoundsCalculator *calculator
+    );
 
 static BbGedaItem*
-bb_geda_circle_clone(BbGedaItem *item);
+bb_geda_circle_clone(
+    BbGedaItem *item
+    );
 
 static void
-bb_geda_circle_dispose(GObject *object);
+bb_geda_circle_dispose(
+    GObject *object
+    );
 
 static void
-bb_geda_circle_finalize(GObject *object);
+bb_geda_circle_finalize(
+    GObject *object
+    );
 
 static int
-bb_geda_circle_get_angle_1(BbGedaCircle *circle);
+bb_geda_circle_get_angle_1(
+    BbGedaCircle *circle
+    );
 
 static int
-bb_geda_circle_get_angle_2(BbGedaCircle *circle);
+bb_geda_circle_get_angle_2(
+    BbGedaCircle *circle
+    );
 
 static int
-bb_geda_circle_get_cap_type(BbGedaCircle *circle);
+bb_geda_circle_get_cap_type(
+    BbGedaCircle *circle
+    );
 
 static int
-bb_geda_circle_get_dash_length(BbGedaCircle *circle);
+bb_geda_circle_get_dash_length(
+    BbGedaCircle *circle
+    );
 
 static int
-bb_geda_circle_get_dash_space(BbGedaCircle *circle);
+bb_geda_circle_get_dash_space(
+    BbGedaCircle *circle
+    );
 
 static int
-bb_geda_circle_get_dash_type(BbGedaCircle *circle);
+bb_geda_circle_get_dash_type(
+    BbGedaCircle *circle
+    );
 
 static int
-bb_geda_circle_get_fill_type(BbGedaCircle *circle);
+bb_geda_circle_get_fill_type(
+    BbGedaCircle *circle
+    );
 
 static int
-bb_geda_circle_get_fill_width(BbGedaCircle *circle);
+bb_geda_circle_get_fill_width(
+    BbGedaCircle *circle
+    );
 
 static int
-bb_geda_circle_get_item_color(BbGedaCircle *circle);
+bb_geda_circle_get_item_color(
+    BbGedaCircle *circle
+    );
 
 static int
-bb_geda_circle_get_line_width(BbGedaCircle *circle);
+bb_geda_circle_get_line_width(
+    BbGedaCircle *circle
+    );
 
 static int
-bb_geda_circle_get_pitch_1(BbGedaCircle *circle);
+bb_geda_circle_get_pitch_1(
+    BbGedaCircle *circle
+    );
 
 static int
-bb_geda_circle_get_pitch_2(BbGedaCircle *circle);
+bb_geda_circle_get_pitch_2(
+    BbGedaCircle *circle
+    );
 
 static void
-bb_geda_circle_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
+bb_geda_circle_get_property(
+    GObject *object,
+    guint property_id,
+    GValue *value,
+    GParamSpec *pspec
+    );
 
 static void
-bb_geda_circle_render(BbGedaItem *item, BbItemRenderer *renderer);
+bb_geda_circle_render(
+    BbGedaItem *item,
+    BbItemRenderer *renderer
+    );
 
 static void
-bb_geda_circle_set_cap_type(BbGedaCircle *circle, int type);
+bb_geda_circle_set_cap_type(
+    BbGedaCircle *circle,
+    int type
+    );
 
 static void
-bb_geda_circle_set_dash_length(BbGedaCircle *circle, int length);
+bb_geda_circle_set_dash_length(
+    BbGedaCircle *circle,
+    int length
+    );
 
 static void
-bb_geda_circle_set_dash_space(BbGedaCircle *circle, int space);
+bb_geda_circle_set_dash_space(
+    BbGedaCircle *circle,
+    int space
+    );
 
 static void
-bb_geda_circle_set_dash_type(BbGedaCircle *circle, int type);
+bb_geda_circle_set_dash_type(
+    BbGedaCircle *circle,
+    int type
+    );
 
 static void
-bb_geda_circle_set_item_color(BbGedaCircle *circle, int color);
+bb_geda_circle_set_item_color(
+    BbGedaCircle *circle,
+    int color
+    );
 
 static void
-bb_geda_circle_set_line_width(BbGedaCircle *line, int width);
+bb_geda_circle_set_line_width(
+    BbGedaCircle *line,
+    int width
+    );
 
 static void
-bb_geda_circle_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
+bb_geda_circle_set_property(
+    GObject *object,
+    guint property_id,
+    const GValue *value,
+    GParamSpec *pspec
+    );
 
 static void
-bb_geda_circle_translate(BbGedaItem *item, int dx, int dy);
+bb_geda_circle_translate(
+    BbGedaItem *item,
+    int dx,
+    int dy
+    );
 
 static gboolean
-bb_geda_circle_write(BbGedaItem *item, GOutputStream *stream, GCancellable *cancellable, GError **error);
+bb_geda_circle_write(
+    BbGedaItem *item,
+    GOutputStream *stream,
+    GCancellable *cancellable,
+    GError **error
+    );
 
 static void
 bb_geda_circle_write_async(
