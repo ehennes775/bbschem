@@ -120,4 +120,10 @@ add_library(bblib
         bbpinend.h
         bbqueryfunc.c
         bbapplyfunc.c
+        bbpathscanner.c
+        bbpathscanner.h
+        bbpathparser.c
+        bbpathparser.h
+        bbgedapathfactory.h
+        bbgedapathfactory.c
         )

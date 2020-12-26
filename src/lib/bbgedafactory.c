@@ -32,6 +32,7 @@
 #include "bbgedapinfactory.h"
 #include "bbgedablockfactory.h"
 #include "bbgedatextfactory.h"
+#include "bbgedapathfactory.h"
 
 
 enum
@@ -350,6 +351,12 @@ bb_geda_factory_init(BbGedaFactory *factory)
         factory,
         BB_GEDA_TEXT_TOKEN,
         bb_geda_text_factory_new()
+        );
+
+    bb_geda_factory_add_factory(
+        factory,
+        BB_GEDA_PATH_TOKEN,
+        bb_geda_path_factory_new()
         );
 }
 

@@ -1,5 +1,5 @@
-#ifndef __BBGRAPHICPATH__
-#define __BBGRAPHICPATH__
+#ifndef __BBGEDAPATHFACTORY__
+#define __BBGEDAPATHFACTORY__
 /*
  * bbschem
  * Copyright (C) 2020 Edward C. Hennessy
@@ -19,30 +19,14 @@
  */
 
 #include <gtk/gtk.h>
-#include "bbgedaitem.h"
+#include "bbgedapath.h"
+#include "bbgedaversion.h"
+#include "bbgedaitemfactory.h"
 
+#define BB_TYPE_GEDA_PATH_FACTORY bb_geda_path_factory_get_type()
+G_DECLARE_FINAL_TYPE(BbGedaPathFactory, bb_geda_path_factory, BB, GEDA_PATH_FACTORY, GObject)
 
-#define BB_GEDA_PATH_TOKEN "H"
-
-
-#define BB_TYPE_GEDA_PATH bb_geda_path_get_type()
-G_DECLARE_FINAL_TYPE(BbGedaPath, bb_geda_path, BB, GEDA_PATH, BbGedaItem)
-
-
-/**
- * @brief Get the line count from the parameters
- *
- * Returns the number of lines of text following the parameter line inside a gEDA file.
- *
- * @param params The parameters to extract the line count from
- * @param error Any errors encountered
- * @return A valid line count (result &gt; 0) or an error (result &lt;= 0)
- */
-int
-bb_geda_path_get_line_count(BbParams *params, GError **error);
-
-
-BbGedaPath*
-bb_geda_path_new_with_params(BbParams *params, GSList *commands, GError **error);
+BbGedaItemFactory*
+bb_geda_path_factory_new();
 
 #endif

@@ -1,5 +1,5 @@
-#ifndef __BBGRAPHICPATH__
-#define __BBGRAPHICPATH__
+#ifndef __BBPATHPARSER__
+#define __BBPATHPARSER__
 /*
  * bbschem
  * Copyright (C) 2020 Edward C. Hennessy
@@ -19,30 +19,17 @@
  */
 
 #include <gtk/gtk.h>
-#include "bbgedaitem.h"
-
-
-#define BB_GEDA_PATH_TOKEN "H"
-
-
-#define BB_TYPE_GEDA_PATH bb_geda_path_get_type()
-G_DECLARE_FINAL_TYPE(BbGedaPath, bb_geda_path, BB, GEDA_PATH, BbGedaItem)
 
 
 /**
- * @brief Get the line count from the parameters
+ * @brief Parse the path string into a list of BbPathCommand items
  *
- * Returns the number of lines of text following the parameter line inside a gEDA file.
- *
- * @param params The parameters to extract the line count from
- * @param error Any errors encountered
- * @return A valid line count (result &gt; 0) or an error (result &lt;= 0)
+ * @param input The input path string
+ * @param error An errors encountered
+ * @return A list of path commands, or NULL on error.
  */
-int
-bb_geda_path_get_line_count(BbParams *params, GError **error);
+GSList*
+bb_path_parser_parse(const char *input, GError **error);
 
-
-BbGedaPath*
-bb_geda_path_new_with_params(BbParams *params, GSList *commands, GError **error);
 
 #endif
