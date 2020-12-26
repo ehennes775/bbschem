@@ -1,4 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
+
+enable_testing()
+
 project(bbschem C)
 
 set(CMAKE_C_STANDARD 11)
@@ -27,6 +30,7 @@ include_directories(src)
 
 add_subdirectory(src/ext)
 add_subdirectory(src/lib)
+add_subdirectory(src/libtest)
 add_subdirectory(src/gui)
 
 find_program(GLIB_COMPILE_RESOURCES NAMES glib-compile-resources REQUIRED)
