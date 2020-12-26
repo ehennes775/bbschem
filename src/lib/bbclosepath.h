@@ -26,7 +26,7 @@ G_DECLARE_FINAL_TYPE(BbClosePath, bb_close_path, BB, CLOSE_PATH, BbPathCommand)
 
 struct _BbClosePathClass
 {
-    BbPathCommandClass parent_class;
+    BbPathCommandClass parent;
 };
 
 

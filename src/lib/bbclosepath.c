@@ -17,10 +17,7 @@
  */
 
 #include <gtk/gtk.h>
-#include <bbextensions.h>
-#include "bbpathcommand.h"
 #include "bbclosepath.h"
-#include "bbcoord.h"
 
 
 enum
@@ -32,7 +29,7 @@ enum
 
 struct _BbClosePath
 {
-    BbPathCommand parent_instance;
+    BbPathCommand parent;
 };
 
 
@@ -76,23 +73,31 @@ G_DEFINE_TYPE(BbClosePath, bb_close_path, BB_TYPE_PATH_COMMAND)
 static void
 bb_close_path_class_init(BbClosePathClass *klasse)
 {
-    G_OBJECT_CLASS(klasse)->dispose = bb_close_path_dispose;
-    G_OBJECT_CLASS(klasse)->finalize = bb_close_path_finalize;
-    G_OBJECT_CLASS(klasse)->get_property = bb_close_path_get_property;
-    G_OBJECT_CLASS(klasse)->set_property = bb_close_path_set_property;
+    GObjectClass *object_class = G_OBJECT_CLASS(klasse);
+    g_return_if_fail(G_IS_OBJECT_CLASS(object_class));
 
-    BB_PATH_COMMAND_CLASS(klasse)->clone = bb_close_path_clone;
-    BB_PATH_COMMAND_CLASS(klasse)->mirror_x = bb_close_path_mirror_x;
-    BB_PATH_COMMAND_CLASS(klasse)->mirror_y = bb_close_path_mirror_y;
-    BB_PATH_COMMAND_CLASS(klasse)->render = bb_close_path_render;
-    BB_PATH_COMMAND_CLASS(klasse)->rotate = bb_close_path_rotate;
-    BB_PATH_COMMAND_CLASS(klasse)->translate = bb_close_path_translate;
+    object_class->dispose = bb_close_path_dispose;
+    object_class->finalize = bb_close_path_finalize;
+    object_class->get_property = bb_close_path_get_property;
+    object_class->set_property = bb_close_path_set_property;
+
+    BbPathCommandClass *command_class = BB_PATH_COMMAND_CLASS(klasse);
+    g_return_if_fail(BB_IS_PATH_COMMAND_CLASS(command_class));
+
+    command_class->clone = bb_close_path_clone;
+    command_class->mirror_x = bb_close_path_mirror_x;
+    command_class->mirror_y = bb_close_path_mirror_y;
+    command_class->render = bb_close_path_render;
+    command_class->rotate = bb_close_path_rotate;
+    command_class->translate = bb_close_path_translate;
 }
 
 
 static BbPathCommand*
 bb_close_path_clone(BbPathCommand *command)
 {
+    g_warn_if_fail(BB_IS_CLOSE_PATH(command));
+
     return BB_PATH_COMMAND(bb_close_path_new());
 }
 
@@ -121,21 +126,23 @@ bb_close_path_get_property(GObject *object, guint property_id, GValue *value, GP
 
 
 static void
-bb_close_path_init(BbClosePath *window)
+bb_close_path_init(BbClosePath *command)
 {
-    gtk_widget_init_template(GTK_WIDGET(window));
+    g_return_if_fail(BB_IS_CLOSE_PATH(command));
 }
 
 
 static void
 bb_close_path_mirror_x(BbPathCommand *command, int cx)
 {
+    g_return_if_fail(BB_IS_CLOSE_PATH(command));
 }
 
 
 static void
 bb_close_path_mirror_y(BbPathCommand *command, int cy)
 {
+    g_return_if_fail(BB_IS_CLOSE_PATH(command));
 }
 
 
@@ -152,13 +159,16 @@ bb_close_path_new()
 static void
 bb_close_path_render(BbPathCommand *command, BbItemRenderer *renderer)
 {
-    // TODO
+    g_return_if_fail(BB_IS_CLOSE_PATH(command));
+
+    bb_item_renderer_close_path(renderer);
 }
 
 
 static void
 bb_close_path_rotate(BbPathCommand *command, int cx, int cy, int angle)
 {
+    g_return_if_fail(BB_IS_CLOSE_PATH(command));
 }
 
 
@@ -176,4 +186,5 @@ bb_close_path_set_property(GObject *object, guint property_id, const GValue *val
 static void
 bb_close_path_translate(BbPathCommand *command, int dx, int dy)
 {
+    g_return_if_fail(BB_IS_CLOSE_PATH(command));
 }
