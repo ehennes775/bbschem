@@ -9,6 +9,7 @@
       <template name="GObject Header File Derivable.h" reformat="false" live-template-enabled="true" />
       <template name="GObject Header File Final.h" reformat="false" live-template-enabled="true" />
       <template name="GObject Source File Final.c" reformat="false" live-template-enabled="true" />
+      <template name="Test Source File.c" reformat="false" live-template-enabled="true" />
     </default_templates>
   </component>
 </project>
