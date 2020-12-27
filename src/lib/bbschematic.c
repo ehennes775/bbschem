@@ -37,6 +37,13 @@ enum
 };
 
 
+enum
+{
+    SIG_INVALIDATE_ITEM,
+    N_SIGNALS
+};
+
+
 struct _BbSchematic
 {
     GObject parent;
@@ -96,6 +103,9 @@ bb_schematic_finalize(GObject *object);
 
 static void
 bb_schematic_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
+
+static void
+bb_schematic_invalidate_item_cb(BbGedaItem *item, BbSchematic *schematic);
 
 static void
 bb_schematic_render_lambda(BbGedaItem *item, RenderCapture *capture);
@@ -166,6 +176,7 @@ bb_schematic_modify_item_color_lambda(
 
 
 static GParamSpec *properties[N_PROPERTIES];
+static guint signals[N_SIGNALS];
 
 
 void
@@ -199,7 +210,12 @@ bb_schematic_add_items_lambda(BbGedaItem *item, BbSchematic *schematic)
 
     g_object_ref(item);
 
-    /* attach signal handlers */
+    g_signal_connect(
+        item,
+        "invalidate-item",
+        G_CALLBACK(bb_schematic_invalidate_item_cb),
+        schematic
+        );
 }
 
 
@@ -264,10 +280,26 @@ bb_schematic_calculate_bounds(
 static void
 bb_schematic_class_init(BbSchematicClass *klasse)
 {
-    G_OBJECT_CLASS(klasse)->dispose = bb_schematic_dispose;
-    G_OBJECT_CLASS(klasse)->finalize = bb_schematic_finalize;
-    G_OBJECT_CLASS(klasse)->get_property = bb_schematic_get_property;
-    G_OBJECT_CLASS(klasse)->set_property = bb_schematic_set_property;
+    GObjectClass *object_class = G_OBJECT_CLASS(klasse);
+    g_return_if_fail(G_IS_OBJECT_CLASS(object_class));
+
+    object_class->dispose = bb_schematic_dispose;
+    object_class->finalize = bb_schematic_finalize;
+    object_class->get_property = bb_schematic_get_property;
+    object_class->set_property = bb_schematic_set_property;
+
+    signals[SIG_INVALIDATE_ITEM] = g_signal_new(
+        "invalidate-item",
+        BB_TYPE_SCHEMATIC,
+        0,
+        0,
+        NULL,
+        NULL,
+        g_cclosure_marshal_VOID__OBJECT,
+        G_TYPE_NONE,
+        1,
+        BB_TYPE_GEDA_ITEM
+        );
 }
 
 
@@ -400,17 +432,21 @@ bb_schematic_init(BbSchematic *schematic)
 }
 
 
+static void
+bb_schematic_invalidate_item_cb(BbGedaItem *item, BbSchematic *schematic)
+{
+    g_return_if_fail(BB_IS_SCHEMATIC(schematic));
+
+    g_message("invalidate-item");
+
+    g_signal_emit(schematic, signals[SIG_INVALIDATE_ITEM], 0, item);
+}
+
+
 BbSchematic*
 bb_schematic_new()
 {
     return g_object_new(BB_TYPE_SCHEMATIC, NULL);
-}
-
-
-__attribute__((constructor)) void
-bb_schematic_register()
-{
-    bb_schematic_get_type();
 }
 
 

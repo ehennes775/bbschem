@@ -128,4 +128,6 @@ add_library(bblib
         bbgedapathfactory.c
         bbattribute.c
         bbattribute.h
+        bbelectrical.c
+        bbelectrical.h
         )

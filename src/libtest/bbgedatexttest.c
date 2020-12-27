@@ -230,7 +230,8 @@ main(int argc, char *argv[])
     g_test_init(&argc, &argv, NULL);
 
     BbGedaText *text_item = g_object_ref(BB_GEDA_TEXT(g_object_new(
-        BB_TYPE_GEDA_TEXT, NULL
+        BB_TYPE_GEDA_TEXT,
+        NULL
         )));
 
     g_test_add_data_func(

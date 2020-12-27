@@ -27,6 +27,7 @@
 #include "bbcolors.h"
 #include "bbparams.h"
 #include "bbcolor.h"
+#include "bbelectrical.h"
 
 
 /**
@@ -86,47 +87,107 @@ struct _BbGedaPin
 
     BbPinEnd pin_end;
     BbPinType pin_type;
+
+    GSList *attributes;
 };
 
 
 static void
-bb_geda_pin_adjustable_item_color_init(BbAdjustableItemColorInterface *iface);
+bb_geda_pin_add_attribute(
+    BbElectrical *electrical,
+    BbAttribute *attribute
+    );
+
+static void
+bb_geda_pin_adjustable_item_color_init(
+    BbAdjustableItemColorInterface *iface
+    );
 
 static BbBounds*
-bb_geda_pin_calculate_bounds(BbGedaItem *item, BbBoundsCalculator *calculator);
+bb_geda_pin_calculate_bounds(
+    BbGedaItem *item,
+    BbBoundsCalculator *calculator
+    );
 
 static BbGedaItem*
-bb_geda_pin_clone(BbGedaItem *item);
+bb_geda_pin_clone(
+    BbGedaItem *item
+    );
 
 static void
-bb_geda_pin_dispose(GObject *object);
+bb_geda_pin_dispose(
+    GObject *object
+    );
 
 static void
-bb_geda_pin_finalize(GObject *object);
+bb_geda_pin_electrical_init(
+    BbElectricalInterface *iface
+    );
+
+static void
+bb_geda_pin_finalize(
+    GObject *object
+    );
+
+static void
+bb_geda_pin_foreach(
+    BbElectrical *electrical,
+    GFunc func,
+    gpointer user_data
+    );
 
 static int
-bb_geda_pin_get_item_color(BbGedaPin *pin);
+bb_geda_pin_get_item_color(
+    BbGedaPin *pin
+    );
 
 static int
-bb_geda_pin_get_pin_width(BbGedaPin *pin);
+bb_geda_pin_get_pin_width(
+    BbGedaPin *pin
+    );
 
 static void
-bb_geda_pin_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
+bb_geda_pin_get_property(
+    GObject *object,
+    guint property_id,
+    GValue *value,
+    GParamSpec *pspec
+    );
 
 static void
-bb_geda_pin_render(BbGedaItem *item, BbItemRenderer *renderer);
+bb_geda_pin_render(
+    BbGedaItem *item,
+    BbItemRenderer *renderer
+    );
 
 static void
-bb_geda_pin_set_item_color(BbGedaPin *pin, int color);
+bb_geda_pin_set_item_color(
+    BbGedaPin *pin,
+    int color
+    );
 
 static void
-bb_geda_pin_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
+bb_geda_pin_set_property(
+    GObject *object,
+    guint property_id,
+    const GValue *value,
+    GParamSpec *pspec
+    );
 
 static void
-bb_geda_pin_translate(BbGedaItem *item, int dx, int dy);
+bb_geda_pin_translate(
+    BbGedaItem *item,
+    int dx,
+    int dy
+    );
 
 static gboolean
-bb_geda_pin_write(BbGedaItem *item, GOutputStream *stream, GCancellable *cancellable, GError **error);
+bb_geda_pin_write(
+    BbGedaItem *item,
+    GOutputStream *stream,
+    GCancellable *cancellable,
+    GError **error
+    );
 
 static void
 bb_geda_pin_write_async(
@@ -155,7 +216,22 @@ G_DEFINE_TYPE_WITH_CODE(
     bb_geda_pin,
     BB_TYPE_GEDA_ITEM,
     G_IMPLEMENT_INTERFACE(BB_TYPE_ADJUSTABLE_ITEM_COLOR, bb_geda_pin_adjustable_item_color_init)
+    G_IMPLEMENT_INTERFACE(BB_TYPE_ELECTRICAL, bb_geda_pin_electrical_init)
     )
+
+
+static void
+bb_geda_pin_add_attribute(BbElectrical *electrical, BbAttribute *attribute)
+{
+    BbGedaPin *pin_item = BB_GEDA_PIN(electrical);
+
+    g_return_if_fail(BB_IS_GEDA_PIN(pin_item));
+    g_return_if_fail(BB_IS_ATTRIBUTE(attribute));
+
+    g_object_ref(attribute);
+
+    pin_item->attributes = g_slist_append(pin_item->attributes, attribute);
+}
 
 
 static void
@@ -186,28 +262,34 @@ bb_geda_pin_calculate_bounds(BbGedaItem *item, BbBoundsCalculator *calculator)
 static void
 bb_geda_pin_class_init(BbGedaPinClass *klasse)
 {
-    G_OBJECT_CLASS(klasse)->dispose = bb_geda_pin_dispose;
-    G_OBJECT_CLASS(klasse)->finalize = bb_geda_pin_finalize;
-    G_OBJECT_CLASS(klasse)->get_property = bb_geda_pin_get_property;
-    G_OBJECT_CLASS(klasse)->set_property = bb_geda_pin_set_property;
+    GObjectClass *object_class = G_OBJECT_CLASS(klasse);
+    g_return_if_fail(G_IS_OBJECT_CLASS(object_class));
 
-    BB_GEDA_ITEM_CLASS(klasse)->calculate_bounds = bb_geda_pin_calculate_bounds;
-    BB_GEDA_ITEM_CLASS(klasse)->clone = bb_geda_pin_clone;
-    BB_GEDA_ITEM_CLASS(klasse)->render = bb_geda_pin_render;
-    BB_GEDA_ITEM_CLASS(klasse)->translate = bb_geda_pin_translate;
-    BB_GEDA_ITEM_CLASS(klasse)->write = bb_geda_pin_write;
-    BB_GEDA_ITEM_CLASS(klasse)->write_async = bb_geda_pin_write_async;
-    BB_GEDA_ITEM_CLASS(klasse)->write_finish = bb_geda_pin_write_finish;
+    object_class->dispose = bb_geda_pin_dispose;
+    object_class->finalize = bb_geda_pin_finalize;
+    object_class->get_property = bb_geda_pin_get_property;
+    object_class->set_property = bb_geda_pin_set_property;
+
+    BbGedaItemClass *item_class = BB_GEDA_ITEM_CLASS(klasse);
+    g_return_if_fail(BB_IS_GEDA_ITEM_CLASS(item_class));
+
+    item_class->calculate_bounds = bb_geda_pin_calculate_bounds;
+    item_class->clone = bb_geda_pin_clone;
+    item_class->render = bb_geda_pin_render;
+    item_class->translate = bb_geda_pin_translate;
+    item_class->write = bb_geda_pin_write;
+    item_class->write_async = bb_geda_pin_write_async;
+    item_class->write_finish = bb_geda_pin_write_finish;
 
     /* From AdjustableItemColor */
     properties[PROP_ITEM_COLOR] = bb_object_class_override_property(
-        G_OBJECT_CLASS(klasse),
+        object_class,
         PROP_ITEM_COLOR,
         "item-color"
         );
 
     properties[PROP_X0] = bb_object_class_install_property(
-        G_OBJECT_CLASS(klasse),
+        object_class,
         PROP_X0,
         g_param_spec_int(
             "x0",
@@ -221,7 +303,7 @@ bb_geda_pin_class_init(BbGedaPinClass *klasse)
         );
 
     properties[PROP_X1] = bb_object_class_install_property(
-        G_OBJECT_CLASS(klasse),
+        object_class,
         PROP_X1,
         g_param_spec_int(
             "x1",
@@ -235,7 +317,7 @@ bb_geda_pin_class_init(BbGedaPinClass *klasse)
         );
 
     properties[PROP_Y0] = bb_object_class_install_property(
-        G_OBJECT_CLASS(klasse),
+        object_class,
         PROP_Y0,
         g_param_spec_int(
             "y0",
@@ -249,7 +331,7 @@ bb_geda_pin_class_init(BbGedaPinClass *klasse)
         );
 
     properties[PROP_Y1] = bb_object_class_install_property(
-        G_OBJECT_CLASS(klasse),
+        object_class,
         PROP_Y1,
         g_param_spec_int(
             "y1",
@@ -263,7 +345,7 @@ bb_geda_pin_class_init(BbGedaPinClass *klasse)
         );
 
     properties[PROP_PIN_END] = bb_object_class_install_property(
-        G_OBJECT_CLASS(klasse),
+        object_class,
         PROP_PIN_END,
         g_param_spec_int(
             "pin-end",
@@ -277,7 +359,7 @@ bb_geda_pin_class_init(BbGedaPinClass *klasse)
         );
 
     properties[PROP_PIN_TYPE] = bb_object_class_install_property(
-        G_OBJECT_CLASS(klasse),
+        object_class,
         PROP_PIN_TYPE,
         g_param_spec_int(
             "pin-type",
@@ -319,6 +401,20 @@ bb_geda_pin_clone(BbGedaItem *item)
 static void
 bb_geda_pin_dispose(GObject *object)
 {
+    BbGedaPin *pin_item = BB_GEDA_PIN(object);
+    g_return_if_fail(BB_IS_GEDA_PIN(pin_item));
+
+    g_slist_free_full(g_steal_pointer(&pin_item->attributes), g_object_unref);
+}
+
+
+static void
+bb_geda_pin_electrical_init(BbElectricalInterface *iface)
+{
+    g_return_if_fail(iface != NULL);
+
+    iface->add_attribute = bb_geda_pin_add_attribute;
+    iface->foreach = bb_geda_pin_foreach;
 }
 
 
@@ -328,6 +424,18 @@ bb_geda_pin_finalize(GObject *object)
     BbGedaPin *pin = BB_GEDA_PIN(object);
 
     g_return_if_fail(pin != NULL);
+}
+
+
+static void
+bb_geda_pin_foreach(BbElectrical *electrical, GFunc func, gpointer user_data)
+{
+    BbGedaPin *pin_item = BB_GEDA_PIN(electrical);
+
+    g_return_if_fail(BB_IS_GEDA_PIN(pin_item));
+    g_return_if_fail(func != NULL);
+
+    g_slist_foreach(pin_item->attributes, func, user_data);
 }
 
 

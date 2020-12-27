@@ -260,7 +260,7 @@ static void
 bb_schematic_window_invalidate_all(BbToolSubject *tool_subject);
 
 static void
-bb_schematic_window_invalidate_item_cb(BbDrawingTool *tool, BbGedaItem *item, BbSchematicWindow *window);
+bb_schematic_window_invalidate_item_cb(gpointer unused, BbGedaItem *item, BbSchematicWindow *window);
 
 static void
 bb_schematic_window_invalidate_rect_dev(BbToolSubject *tool_subject, double x0, double y0, double x1, double y1);
@@ -1132,8 +1132,15 @@ bb_schematic_window_invalidate_all(BbToolSubject *tool_subject)
 }
 
 
+/**
+ * Invalidate a single item
+ *
+ * @param unused Represents the source, which could be emitted from unrelated classes
+ * @param item The item that changed and needs to be invalidated
+ * @param window This schematic window
+ */
 static void
-bb_schematic_window_invalidate_item_cb(BbDrawingTool *tool, BbGedaItem *item, BbSchematicWindow *window)
+bb_schematic_window_invalidate_item_cb(gpointer unused, BbGedaItem *item, BbSchematicWindow *window)
 {
     g_return_if_fail(window != NULL);
     g_return_if_fail(window->inner_window != NULL);
@@ -1670,6 +1677,12 @@ bb_schematic_window_set_schematic(BbSchematicWindow *window, BbSchematic *schema
     {
         if (window->schematic != NULL)
         {
+            g_signal_handlers_disconnect_by_func(
+                window->schematic,
+                bb_schematic_window_invalidate_item_cb,
+                window
+                );
+
             g_object_unref(window->schematic);
         }
 
@@ -1678,6 +1691,13 @@ bb_schematic_window_set_schematic(BbSchematicWindow *window, BbSchematic *schema
         if (window->schematic != NULL)
         {
             g_object_ref(window->schematic);
+
+            g_signal_connect(
+                window->schematic,
+                "invalidate-item",
+                bb_schematic_window_invalidate_item_cb,
+                window
+                );
         }
 
         g_object_notify_by_pspec(G_OBJECT(window), properties[PROP_SCHEMATIC]);
