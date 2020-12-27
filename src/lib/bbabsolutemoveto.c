@@ -189,7 +189,6 @@ bb_absolute_move_to_get_y(BbAbsoluteMoveTo *command)
 static void
 bb_absolute_move_to_init(BbAbsoluteMoveTo *window)
 {
-    gtk_widget_init_template(GTK_WIDGET(window));
 }
 
 

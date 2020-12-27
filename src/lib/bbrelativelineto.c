@@ -189,7 +189,6 @@ bb_relative_line_to_get_dy(const BbRelativeLineTo *command)
 static void
 bb_relative_line_to_init(BbRelativeLineTo *window)
 {
-    gtk_widget_init_template(GTK_WIDGET(window));
 }
 
 

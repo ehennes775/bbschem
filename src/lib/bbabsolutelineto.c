@@ -187,7 +187,6 @@ bb_absolute_line_to_get_y(const BbAbsoluteLineTo *command)
 static void
 bb_absolute_line_to_init(BbAbsoluteLineTo *window)
 {
-    gtk_widget_init_template(GTK_WIDGET(window));
 }
 
 

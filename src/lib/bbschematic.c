@@ -265,10 +265,7 @@ bb_schematic_calculate_bounds(
         {
             BbBounds *temp = bb_geda_item_calculate_bounds(iter->data, calculator);
 
-            bounds->min_x = MIN(bounds->min_x, temp->min_x);
-            bounds->min_y = MIN(bounds->min_y, temp->min_y);
-            bounds->max_x = MAX(bounds->max_x, temp->max_x);
-            bounds->max_y = MAX(bounds->max_y, temp->max_y);
+            bb_bounds_union(bounds, bounds, temp);
 
             bb_bounds_free(temp);
         }

@@ -189,7 +189,6 @@ bb_relative_move_to_get_dy(const BbRelativeMoveTo *command)
 static void
 bb_relative_move_to_init(BbRelativeMoveTo *window)
 {
-    gtk_widget_init_template(GTK_WIDGET(window));
 }
 
 

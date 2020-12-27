@@ -100,7 +100,6 @@ bb_geda_version_get_property(GObject *object, guint property_id, GValue *value, 
 static void
 bb_geda_version_init(BbGedaVersion *window)
 {
-    gtk_widget_init_template(GTK_WIDGET(window));
 }
 
 

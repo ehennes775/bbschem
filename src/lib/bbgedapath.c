@@ -398,6 +398,8 @@ bb_geda_path_class_init(BbGedaPathClass *klasse)
             G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS
             )
         );
+
+    signals[SIG_INVALIDATE] = g_signal_lookup("invalidate-item", BB_TYPE_GEDA_ITEM);
 }
 
 

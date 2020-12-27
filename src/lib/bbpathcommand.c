@@ -85,11 +85,6 @@ bb_path_command_class_init(BbPathCommandClass *klasse)
     klasse->render = bb_path_command_render_missing;
     klasse->rotate = bb_path_command_rotate_missing;
     klasse->translate = bb_path_command_translate_missing;
-
-    gtk_widget_class_set_template_from_resource(
-        GTK_WIDGET_CLASS(klasse),
-        "/com/github/ehennes775/bbsch/gui/bbpathcommand.ui"
-        );
 }
 
 
@@ -147,7 +142,6 @@ bb_path_command_get_property(GObject *object, guint property_id, GValue *value, 
 static void
 bb_path_command_init(BbPathCommand *window)
 {
-    gtk_widget_init_template(GTK_WIDGET(window));
 }
 
 

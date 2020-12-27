@@ -52,5 +52,7 @@ bb_bounds_new_with_points(int x0, int y0, int x1, int y1);
 void
 bb_bounds_translate(BbBounds *bounds, int dx, int dy);
 
+void
+bb_bounds_union(BbBounds *result, BbBounds *a, BbBounds *b);
 
 #endif

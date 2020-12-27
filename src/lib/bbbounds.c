@@ -47,7 +47,14 @@ bb_bounds_is_empty(const BbBounds *bounds)
 BbBounds*
 bb_bounds_new()
 {
-    return bb_bounds_new_with_points(INT_MAX, INT_MAX, INT_MIN, INT_MIN);
+    BbBounds *bounds = g_new(BbBounds, 1);
+
+    bounds->min_x = G_MAXINT;
+    bounds->min_y = G_MAXINT;
+    bounds->max_x = G_MININT;
+    bounds->max_y = G_MININT;
+
+    return bounds;
 }
 
 
@@ -75,4 +82,18 @@ bb_bounds_translate(BbBounds *bounds, int dx, int dy)
         bounds->max_x += dx;
         bounds->max_y += dy;
     }
+}
+
+
+void
+bb_bounds_union(BbBounds *result, BbBounds *a, BbBounds *b)
+{
+    g_return_if_fail(result != NULL);
+    g_return_if_fail(a != NULL);
+    g_return_if_fail(b != NULL);
+
+    result->min_x = MIN(a->min_x, b->min_x);
+    result->min_y = MIN(a->min_y, b->min_y);
+    result->max_x = MAX(a->max_x, b->max_x);
+    result->max_y = MAX(a->max_y, b->max_y);
 }
