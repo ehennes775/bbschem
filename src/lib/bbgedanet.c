@@ -25,6 +25,7 @@
 #include "bbcolors.h"
 #include "bbparams.h"
 #include "bbcolor.h"
+#include "bbelectrical.h"
 
 
 /**
@@ -77,44 +78,102 @@ struct _BbGedaNet
     int y[2];
 
     int color;
+    
+    GSList *attributes;
 };
 
 
 static void
-bb_geda_net_adjustable_item_color_init(BbAdjustableItemColorInterface *iface);
+bb_geda_net_add_attribute(
+    BbElectrical *electrical,
+    BbAttribute *attribute
+    );
+
+static void
+bb_geda_net_adjustable_item_color_init(
+    BbAdjustableItemColorInterface *iface
+    );
 
 static BbBounds*
-bb_geda_net_calculate_bounds(BbGedaItem *item, BbBoundsCalculator *calculator);
+bb_geda_net_calculate_bounds(
+    BbGedaItem *item,
+    BbBoundsCalculator *calculator
+    );
 
 static BbGedaItem*
-bb_geda_net_clone(BbGedaItem *item);
+bb_geda_net_clone(
+    BbGedaItem *item
+    );
 
 static void
-bb_geda_net_dispose(GObject *object);
+bb_geda_net_dispose(
+    GObject *object
+    );
 
 static void
-bb_geda_net_finalize(GObject *object);
+bb_geda_net_electrical_init(
+    BbElectricalInterface *iface
+    );
+
+static void
+bb_geda_net_finalize(
+    GObject *object
+    );
+
+static void
+bb_geda_net_foreach(
+    BbElectrical *electrical,
+    GFunc func,
+    gpointer user_data
+    );
 
 static int
-bb_geda_net_get_item_color(BbGedaNet *net);
+bb_geda_net_get_item_color(
+    BbGedaNet *net
+    );
 
 static void
-bb_geda_net_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
+bb_geda_net_get_property(
+    GObject *object,
+    guint property_id,
+    GValue *value,
+    GParamSpec *pspec
+    );
 
 static void
-bb_geda_net_render(BbGedaItem *item, BbItemRenderer *renderer);
+bb_geda_net_render(
+    BbGedaItem *item,
+    BbItemRenderer *renderer
+    );
 
 static void
-bb_geda_net_set_item_color(BbGedaNet *net, int color);
+bb_geda_net_set_item_color(
+    BbGedaNet *net,
+    int color
+    );
 
 static void
-bb_geda_net_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
+bb_geda_net_set_property(
+    GObject *object,
+    guint property_id,
+    const GValue *value,
+    GParamSpec *pspec
+    );
 
 static void
-bb_geda_net_translate(BbGedaItem *item, int dx, int dy);
+bb_geda_net_translate(
+    BbGedaItem *item,
+    int dx,
+    int dy
+    );
 
 static gboolean
-bb_geda_net_write(BbGedaItem *item, GOutputStream *stream, GCancellable *cancellable, GError **error);
+bb_geda_net_write(
+    BbGedaItem *item,
+    GOutputStream *stream,
+    GCancellable *cancellable,
+    GError **error
+    );
 
 static void
 bb_geda_net_write_async(
@@ -138,12 +197,28 @@ bb_geda_net_write_finish(
 static GParamSpec *properties[N_PROPERTIES];
 static guint signals[N_SIGNALS];
 
+
 G_DEFINE_TYPE_WITH_CODE(
     BbGedaNet,
     bb_geda_net,
     BB_TYPE_GEDA_ITEM,
     G_IMPLEMENT_INTERFACE(BB_TYPE_ADJUSTABLE_ITEM_COLOR, bb_geda_net_adjustable_item_color_init)
+    G_IMPLEMENT_INTERFACE(BB_TYPE_ELECTRICAL, bb_geda_net_electrical_init)
     )
+
+
+static void
+bb_geda_net_add_attribute(BbElectrical *electrical, BbAttribute *attribute)
+{
+    BbGedaNet *net_item = BB_GEDA_NET(electrical);
+
+    g_return_if_fail(BB_IS_GEDA_NET(net_item));
+    g_return_if_fail(BB_IS_ATTRIBUTE(attribute));
+
+    g_object_ref(attribute);
+
+    net_item->attributes = g_slist_append(net_item->attributes, attribute);
+}
 
 
 static void
@@ -279,11 +354,33 @@ bb_geda_net_dispose(GObject *object)
 
 
 static void
+bb_geda_net_electrical_init(BbElectricalInterface *iface)
+{
+    g_return_if_fail(iface != NULL);
+
+    iface->add_attribute = bb_geda_net_add_attribute;
+    iface->foreach = bb_geda_net_foreach;
+}
+
+
+static void
 bb_geda_net_finalize(GObject *object)
 {
     BbGedaNet *net = BB_GEDA_NET(object);
 
     g_return_if_fail(net != NULL);
+}
+
+
+static void
+bb_geda_net_foreach(BbElectrical *electrical, GFunc func, gpointer user_data)
+{
+    BbGedaNet *net_item = BB_GEDA_NET(electrical);
+
+    g_return_if_fail(BB_IS_GEDA_NET(net_item));
+    g_return_if_fail(func != NULL);
+
+    g_slist_foreach(net_item->attributes, func, user_data);
 }
 
 

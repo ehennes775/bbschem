@@ -25,6 +25,7 @@
 #include "bbcolors.h"
 #include "bbparams.h"
 #include "bbcolor.h"
+#include "bbelectrical.h"
 
 
 /**
@@ -83,74 +84,157 @@ struct _BbGedaBus
     int color;
 
     int direction;
+
+    GSList *attributes;
 };
 
 
 static void
-bb_geda_bus_adjustable_item_color_init(BbAdjustableItemColorInterface *iface);
+bb_geda_bus_add_attribute(
+    BbElectrical *electrical,
+    BbAttribute *attribute
+    );
+
+static void
+bb_geda_bus_adjustable_item_color_init(
+    BbAdjustableItemColorInterface *iface
+    );
 
 static BbBounds*
-bb_geda_bus_calculate_bounds(BbGedaItem *item, BbBoundsCalculator *calculator);
+bb_geda_bus_calculate_bounds(
+    BbGedaItem *item,
+    BbBoundsCalculator *calculator
+    );
 
 static BbGedaItem*
-bb_geda_bus_clone(BbGedaItem *item);
+bb_geda_bus_clone(
+    BbGedaItem *item
+    );
 
 static void
-bb_geda_bus_dispose(GObject *object);
+bb_geda_bus_dispose(
+    GObject *object
+    );
 
 static void
-bb_geda_bus_finalize(GObject *object);
+bb_geda_bus_electrical_init(
+    BbElectricalInterface *iface
+    );
+
+static void
+bb_geda_bus_finalize(
+    GObject *object
+    );
+
+static void
+bb_geda_bus_foreach(
+    BbElectrical *electrical,
+    GFunc func,
+    gpointer user_data
+    );
 
 static int
-bb_geda_bus_get_cap_type(BbGedaBus *bus);
+bb_geda_bus_get_cap_type(
+    BbGedaBus *bus
+    );
 
 static int
-bb_geda_bus_get_dash_length(BbGedaBus *bus);
+bb_geda_bus_get_dash_length(
+    BbGedaBus *bus
+    );
 
 static int
-bb_geda_bus_get_dash_space(BbGedaBus *bus);
+bb_geda_bus_get_dash_space(
+    BbGedaBus *bus
+    );
 
 static int
-bb_geda_bus_get_dash_type(BbGedaBus *bus);
+bb_geda_bus_get_dash_type(
+    BbGedaBus *bus
+    );
 
 static int
-bb_geda_bus_get_item_color(BbGedaBus *bus);
+bb_geda_bus_get_item_color(
+    BbGedaBus *bus
+    );
 
 static int
-bb_geda_bus_get_bus_width(BbGedaBus *bus);
+bb_geda_bus_get_bus_width(
+    BbGedaBus *bus
+    );
 
 static void
-bb_geda_bus_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
+bb_geda_bus_get_property(
+    GObject *object,
+    guint property_id,
+    GValue *value,
+    GParamSpec *pspec
+    );
 
 static void
-bb_geda_bus_render(BbGedaItem *item, BbItemRenderer *renderer);
+bb_geda_bus_render(
+    BbGedaItem *item,
+    BbItemRenderer *renderer
+    );
 
 static void
-bb_geda_bus_set_cap_type(BbGedaBus *bus, int type);
+bb_geda_bus_set_cap_type(
+    BbGedaBus *bus,
+    int type
+    );
 
 static void
-bb_geda_bus_set_dash_length(BbGedaBus *bus, int length);
+bb_geda_bus_set_dash_length(
+    BbGedaBus *bus,
+    int length
+    );
 
 static void
-bb_geda_bus_set_dash_space(BbGedaBus *bus, int space);
+bb_geda_bus_set_dash_space(
+    BbGedaBus *bus,
+    int space
+    );
 
 static void
-bb_geda_bus_set_dash_type(BbGedaBus *bus, int type);
+bb_geda_bus_set_dash_type(
+    BbGedaBus *bus,
+    int type
+    );
 
 static void
-bb_geda_bus_set_item_color(BbGedaBus *bus, int color);
+bb_geda_bus_set_item_color(
+    BbGedaBus *bus,
+    int color
+    );
 
 static void
-bb_geda_bus_set_bus_width(BbGedaBus *bus, int width);
+bb_geda_bus_set_bus_width(
+    BbGedaBus *bus,
+    int width
+    );
 
 static void
-bb_geda_bus_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
+bb_geda_bus_set_property(
+    GObject *object,
+    guint property_id,
+    const GValue *value,
+    GParamSpec *pspec
+    );
 
 static void
-bb_geda_bus_translate(BbGedaItem *item, int dx, int dy);
+bb_geda_bus_translate(
+    BbGedaItem *item,
+    int dx,
+    int dy
+    );
 
 static gboolean
-bb_geda_bus_write(BbGedaItem *item, GOutputStream *stream, GCancellable *cancellable, GError **error);
+bb_geda_bus_write(
+    BbGedaItem *item,
+    GOutputStream *stream,
+    GCancellable *cancellable,
+    GError **error
+    );
 
 static void
 bb_geda_bus_write_async(
@@ -179,7 +263,22 @@ G_DEFINE_TYPE_WITH_CODE(
     bb_geda_bus,
     BB_TYPE_GEDA_ITEM,
     G_IMPLEMENT_INTERFACE(BB_TYPE_ADJUSTABLE_ITEM_COLOR, bb_geda_bus_adjustable_item_color_init)
+    G_IMPLEMENT_INTERFACE(BB_TYPE_ELECTRICAL, bb_geda_bus_electrical_init)
     )
+
+
+static void
+bb_geda_bus_add_attribute(BbElectrical *electrical, BbAttribute *attribute)
+{
+    BbGedaBus *bus_item = BB_GEDA_BUS(electrical);
+
+    g_return_if_fail(BB_IS_GEDA_BUS(bus_item));
+    g_return_if_fail(BB_IS_ATTRIBUTE(attribute));
+
+    g_object_ref(attribute);
+
+    bus_item->attributes = g_slist_append(bus_item->attributes, attribute);
+}
 
 
 static void
@@ -316,11 +415,33 @@ bb_geda_bus_dispose(GObject *object)
 
 
 static void
+bb_geda_bus_electrical_init(BbElectricalInterface *iface)
+{
+    g_return_if_fail(iface != NULL);
+
+    iface->add_attribute = bb_geda_bus_add_attribute;
+    iface->foreach = bb_geda_bus_foreach;
+}
+
+
+static void
 bb_geda_bus_finalize(GObject *object)
 {
     BbGedaBus *bus = BB_GEDA_BUS(object);
 
     g_return_if_fail(bus != NULL);
+}
+
+
+static void
+bb_geda_bus_foreach(BbElectrical *electrical, GFunc func, gpointer user_data)
+{
+    BbGedaBus *bus_item = BB_GEDA_BUS(electrical);
+
+    g_return_if_fail(BB_IS_GEDA_BUS(bus_item));
+    g_return_if_fail(func != NULL);
+
+    g_slist_foreach(bus_item->attributes, func, user_data);
 }
 
 
