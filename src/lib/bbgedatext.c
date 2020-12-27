@@ -28,6 +28,7 @@
 #include "bbtextsize.h"
 #include "bbcolors.h"
 #include "bbcolor.h"
+#include "bbattribute.h"
 
 
 /**
@@ -62,6 +63,10 @@ enum
 
     /* From AdjustableItemColor */
     PROP_ITEM_COLOR,
+
+    /* Properties from BbAttribute */
+    PROP_NAME,
+    PROP_VALUE,
 
     /* From GedaText */
     PROP_ALIGNMENT,
@@ -145,6 +150,11 @@ bb_geda_text_adjustable_item_color_init(
     BbAdjustableItemColorInterface *iface
     );
 
+static void
+bb_geda_text_attribute_init(
+    BbAttributeInterface *iface
+    );
+
 static BbBounds*
 bb_geda_text_calculate_bounds(
     BbGedaItem *item,
@@ -179,12 +189,22 @@ bb_geda_text_get_item_color(
     BbGedaText *text
     );
 
+static gchar*
+bb_geda_text_get_name(
+    BbAttribute *attribute
+    );
+
 static void
 bb_geda_text_get_property(
     GObject *object,
     guint property_id,
     GValue *value,
     GParamSpec *pspec
+    );
+
+static gchar*
+bb_geda_text_get_value(
+    BbAttribute *attribute
     );
 
 static void
@@ -200,11 +220,23 @@ bb_geda_text_set_item_color(
     );
 
 static void
+bb_geda_text_set_name(
+    BbAttribute *attribute,
+    const gchar *value
+    );
+
+static void
 bb_geda_text_set_property(
     GObject *object,
     guint property_id,
     const GValue *value,
     GParamSpec *pspec
+    );
+
+static void
+bb_geda_text_set_value(
+    BbAttribute *attribute,
+    const gchar *value
     );
 
 static void
@@ -249,6 +281,7 @@ G_DEFINE_TYPE_WITH_CODE(
     BbGedaText,
     bb_geda_text,
     BB_TYPE_GEDA_ITEM,
+    G_IMPLEMENT_INTERFACE(BB_TYPE_ATTRIBUTE, bb_geda_text_attribute_init)
     G_IMPLEMENT_INTERFACE(BB_TYPE_ADJUSTABLE_ITEM_COLOR, bb_geda_text_adjustable_item_color_init)
     )
 
@@ -257,6 +290,18 @@ static void
 bb_geda_text_adjustable_item_color_init(BbAdjustableItemColorInterface *iface)
 {
     g_return_if_fail(iface != NULL);
+}
+
+
+static void
+bb_geda_text_attribute_init(BbAttributeInterface *iface)
+{
+    g_return_if_fail(iface != NULL);
+
+    iface->get_name = bb_geda_text_get_name;
+    iface->get_value = bb_geda_text_get_value;
+    iface->set_name = bb_geda_text_set_name;
+    iface->set_value = bb_geda_text_set_value;
 }
 
 
@@ -302,6 +347,19 @@ bb_geda_text_class_init(BbGedaTextClass *klasse)
         object_class,
         PROP_ITEM_COLOR,
         "item-color"
+        );
+
+    /* Properties from BbAttribute */
+    properties[PROP_NAME] = bb_object_class_override_property(
+        object_class,
+        PROP_NAME,
+        "name"
+        );
+
+    properties[PROP_VALUE] = bb_object_class_override_property(
+        object_class,
+        PROP_VALUE,
+        "value"
         );
 
     properties[PROP_ALIGNMENT] = bb_object_class_install_property(
@@ -605,6 +663,16 @@ bb_geda_text_get_line_count(BbParams *params, GError **error)
 }
 
 
+static gchar*
+bb_geda_text_get_name(BbAttribute *attribute)
+{
+    BbGedaText *text_item = BB_GEDA_TEXT(attribute);
+    g_return_val_if_fail(BB_IS_GEDA_TEXT(text_item), "");
+
+    return text_item->attributes[BB_TEXT_PRESENTATION_NAME];
+}
+
+
 static void
 bb_geda_text_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec)
 {
@@ -626,6 +694,10 @@ bb_geda_text_get_property(GObject *object, guint property_id, GValue *value, GPa
             g_value_set_int(value, bb_geda_text_get_item_color(BB_GEDA_TEXT(object)));
             break;
 
+        case PROP_NAME:
+            g_value_set_string(value, bb_geda_text_get_name(BB_ATTRIBUTE(object)));
+            break;
+
         case PROP_PRESENTATION:
             g_value_set_int(value, bb_geda_text_get_presentation(BB_GEDA_TEXT(object)));
             break;
@@ -640,6 +712,10 @@ bb_geda_text_get_property(GObject *object, guint property_id, GValue *value, GPa
 
         case PROP_TEXT:
             g_value_set_string(value, bb_geda_text_get_text(BB_GEDA_TEXT(object)));
+            break;
+
+        case PROP_VALUE:
+            g_value_set_string(value, bb_geda_text_get_value(BB_ATTRIBUTE(object)));
             break;
 
         case PROP_VISIBILITY:
@@ -685,6 +761,16 @@ bb_geda_text_get_text(BbGedaText *text_item)
     g_return_val_if_fail(BB_IS_GEDA_TEXT(text_item), NULL);
 
     return text_item->text;
+}
+
+
+static gchar*
+bb_geda_text_get_value(BbAttribute *attribute)
+{
+    BbGedaText *text_item = BB_GEDA_TEXT(attribute);
+    g_return_val_if_fail(BB_IS_GEDA_TEXT(text_item), "");
+
+    return text_item->attributes[BB_TEXT_PRESENTATION_VALUE];
 }
 
 
@@ -882,6 +968,32 @@ bb_geda_text_set_item_color(BbGedaText *text_item, int color)
 }
 
 
+static void
+bb_geda_text_set_name(BbAttribute *attribute, const gchar *name)
+{
+    BbGedaText *text_item = BB_GEDA_TEXT(attribute);
+    g_return_if_fail(BB_IS_GEDA_TEXT(text_item));
+    g_return_if_fail(name != NULL);
+
+    gboolean change =
+        text_item->attributes[BB_TEXT_PRESENTATION_NAME][0] == 0 &&
+        g_strcmp0(text_item->attributes[BB_TEXT_PRESENTATION_NAME], name) != 0;
+
+    if (change)
+    {
+        gchar *text = g_strdup_printf(
+            "%s=%s",
+            name,
+            text_item->attributes[BB_TEXT_PRESENTATION_VALUE]
+            );
+
+        bb_geda_text_set_text(text_item, text);
+
+        g_free(text);
+    }
+}
+
+
 void
 bb_geda_text_set_presentation(BbGedaText *text_item, BbTextPresentation presentation)
 {
@@ -922,6 +1034,10 @@ bb_geda_text_set_property(GObject *object, guint property_id, const GValue *valu
             bb_geda_text_set_item_color(BB_GEDA_TEXT(object), g_value_get_int(value));
             break;
 
+        case PROP_NAME:
+            bb_geda_text_set_name(BB_ATTRIBUTE(object), g_value_get_string(value));
+            break;
+
         case PROP_PRESENTATION:
             bb_geda_text_set_presentation(BB_GEDA_TEXT(object), g_value_get_int(value));
             break;
@@ -936,6 +1052,10 @@ bb_geda_text_set_property(GObject *object, guint property_id, const GValue *valu
 
         case PROP_TEXT:
             bb_geda_text_set_text(BB_GEDA_TEXT(object), g_value_get_string(value));
+            break;
+
+        case PROP_VALUE:
+            bb_geda_text_set_value(BB_ATTRIBUTE(object), g_value_get_string(value));
             break;
 
         case PROP_VISIBILITY:
@@ -1021,7 +1141,35 @@ bb_geda_text_set_text(BbGedaText *text_item, const gchar *text)
 
         g_signal_emit(text_item, signals[SIG_INVALIDATE], 0);
 
+        g_object_notify_by_pspec(G_OBJECT(text_item), properties[PROP_NAME]);
         g_object_notify_by_pspec(G_OBJECT(text_item), properties[PROP_TEXT]);
+        g_object_notify_by_pspec(G_OBJECT(text_item), properties[PROP_VALUE]);
+    }
+}
+
+
+static void
+bb_geda_text_set_value(BbAttribute *attribute, const gchar *value)
+{
+    BbGedaText *text_item = BB_GEDA_TEXT(attribute);
+    g_return_if_fail(BB_IS_GEDA_TEXT(text_item));
+    g_return_if_fail(value != NULL);
+
+    gboolean change =
+        text_item->attributes[BB_TEXT_PRESENTATION_NAME][0] == 0 &&
+        g_strcmp0(text_item->attributes[BB_TEXT_PRESENTATION_VALUE], value) != 0;
+
+    if (change)
+    {
+        gchar *text = g_strdup_printf(
+            "%s=%s",
+            text_item->attributes[BB_TEXT_PRESENTATION_NAME],
+            value
+            );
+
+        bb_geda_text_set_text(text_item, text);
+
+        g_free(text);
     }
 }
 

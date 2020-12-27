@@ -126,4 +126,6 @@ add_library(bblib
         bbpathparser.h
         bbgedapathfactory.h
         bbgedapathfactory.c
+        bbattribute.c
+        bbattribute.h
         )
