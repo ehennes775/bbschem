@@ -27,6 +27,20 @@ target_link_libraries(bbcoordtest
     )
 
 add_executable(
+    bbgedatexttest
+    bbgedatexttest.c
+    )
+
+target_link_libraries(bbgedatexttest
+    bblib
+    bbext
+    m
+    ${GLIB_LIBRARIES}
+    ${GTK3_LIBRARIES}
+    ${PEAS_LIBRARIES}
+    )
+
+add_executable(
     bbpathscannertest
     bbpathscannertest.c
     )
@@ -51,6 +65,11 @@ add_test(
 add_test(
     bbcoordtest
     gtester bbcoordtest
+    )
+
+add_test(
+    bbgedatexttest
+    gtester bbgedatexttest
     )
 
 add_test(
