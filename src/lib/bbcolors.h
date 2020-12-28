@@ -101,12 +101,12 @@
 /**
  * The default color index for text objects
  */
-#define BB_COLOR_TEXT = (9)
+#define BB_COLOR_TEXT (9)
 
 
 /**
  * The color index for selecting an area to zoom
  */
-#define BB_COLOR_ZOOM_BOX = (13)
+#define BB_COLOR_ZOOM_BOX (13)
 
 #endif

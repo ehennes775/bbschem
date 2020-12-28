@@ -652,6 +652,9 @@ bb_graphics_render_relative_move_to(BbItemRenderer *renderer, int dx, int dy)
 }
 
 
+/*
+ * Temporary until color schemes are implemented
+ */
 static void
 bb_graphics_set_color(BbItemRenderer *renderer, int color)
 {
@@ -661,12 +664,64 @@ bb_graphics_set_color(BbItemRenderer *renderer, int color)
 
     switch (color)
     {
+        case BB_COLOR_ATTRIBUTE:
+            cairo_set_source_rgb(graphics->cairo, 1.0, 1.0, 0.0);
+            break;
+
+        case BB_COLOR_BACKGROUND:
+            cairo_set_source_rgb(graphics->cairo, 0.0, 0.0, 0.0);
+            break;
+
+        case BB_COLOR_BOUNDING_BOX:
+            cairo_set_source_rgb(graphics->cairo, 1.0, 0.65, 0.0);
+            break;
+
+        case BB_COLOR_BUS:
+            cairo_set_source_rgb(graphics->cairo, 0.0, 1.0, 0.0);
+            break;
+
+        case BB_COLOR_DETACHED_ATTRIBUTE:
+            cairo_set_source_rgb(graphics->cairo, 1.0, 0.0, 0.0);
+            break;
+
+        case BB_COLOR_GRAPHIC:
+            cairo_set_source_rgb(graphics->cairo, 0.0, 1.0, 0.0);
+            break;
+
+        case BB_COLOR_JUNCTION:
+            cairo_set_source_rgb(graphics->cairo, 0.0, 1.0, 1.0);  // TODO
+            break;
+
+        case BB_COLOR_LOGIC_BUBBLE:
+            cairo_set_source_rgb(graphics->cairo, 0.0, 1.0, 1.0);
+            break;
+
+        case BB_COLOR_MAJOR_GRID:
+            cairo_set_source_rgb(graphics->cairo, 0.125, 0.125, 0.125);
+            break;
+
+        case BB_COLOR_MINOR_GRID:
+            cairo_set_source_rgb(graphics->cairo, 0.09, 0.09, 0.09);
+            break;
+
         case BB_COLOR_NET:
             cairo_set_source_rgb(graphics->cairo, 0.0, 0.0, 1.0);
             break;
 
         case BB_COLOR_PIN:
             cairo_set_source_rgb(graphics->cairo, 1.0, 1.0, 1.0);
+            break;
+
+        case BB_COLOR_ZOOM_BOX:
+            cairo_set_source_rgb(graphics->cairo, 0.0, 1.0, 1.0);
+            break;
+
+        case BB_COLOR_SELECT:
+            cairo_set_source_rgb(graphics->cairo, 1.0, 0.65, 0.0);
+            break;
+
+        case BB_COLOR_TEXT:
+            cairo_set_source_rgb(graphics->cairo, 0.0, 1.0, 0.0);
             break;
 
         default:
