@@ -882,17 +882,20 @@ bb_geda_text_render(BbGedaItem *item, BbItemRenderer *renderer)
     BbGedaText *text = BB_GEDA_TEXT(item);
     g_return_if_fail(text != NULL);
 
-    bb_item_renderer_set_color(
-        renderer,
-        bb_geda_text_get_item_color(text)
-        );
+    if (text->visibility == BB_TEXT_VISIBILITY_VISIBLE)
+    {
+        bb_item_renderer_set_color(
+            renderer,
+            bb_geda_text_get_item_color(text)
+            );
 
-    bb_item_renderer_render_text(
-        renderer,
-        bb_geda_text_get_insert_x(text),
-        bb_geda_text_get_insert_y(text),
-        bb_geda_text_get_text(text)
-        );
+        bb_item_renderer_render_text(
+            renderer,
+            bb_geda_text_get_insert_x(text),
+            bb_geda_text_get_insert_y(text),
+            bb_geda_text_get_text(text)
+            );
+    }
 }
 
 
