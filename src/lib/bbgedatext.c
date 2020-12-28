@@ -746,6 +746,21 @@ bb_geda_text_get_rotation(BbGedaText *text)
 }
 
 
+static const char*
+bb_geda_text_get_shown_text(BbGedaText *text)
+{
+    g_return_val_if_fail(BB_IS_GEDA_TEXT(text), "");
+
+    if (text->attributes[BB_TEXT_PRESENTATION_NAME][0] = '\0')
+    {
+        return text->text;
+    }
+    else
+    {
+        return text->attributes[text->presentation];
+    }
+}
+
 int
 bb_geda_text_get_size(BbGedaText *text)
 {
@@ -893,7 +908,7 @@ bb_geda_text_render(BbGedaItem *item, BbItemRenderer *renderer)
             renderer,
             bb_geda_text_get_insert_x(text),
             bb_geda_text_get_insert_y(text),
-            bb_geda_text_get_text(text)
+            bb_geda_text_get_shown_text(text)
             );
     }
 }
