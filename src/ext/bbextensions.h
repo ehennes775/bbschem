@@ -22,6 +22,13 @@
 
 
 /**
+ * @brief Compare if two integer type boolean values are equal
+ */
+gboolean
+bb_boolean_equals(gboolean a, gboolean b);
+
+
+/**
  * Override a property from a base class or interface
  *
  * Functions as g_object_class_override_property(), but returns the associated GParamSpec.

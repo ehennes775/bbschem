@@ -863,7 +863,7 @@ bb_graphics_set_reveal(BbItemRenderer *renderer, gboolean reveal)
     BbGraphics *graphics = BB_GRAPHICS(renderer);
     g_return_if_fail(BB_IS_GRAPHICS(graphics));
 
-    if (!!graphics->reveal != !!reveal)
+    if (!bb_boolean_equals(graphics->reveal, reveal))
     {
         graphics->reveal = reveal;
 

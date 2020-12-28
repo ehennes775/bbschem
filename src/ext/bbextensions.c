@@ -19,6 +19,13 @@
 #include "bbextensions.h"
 
 
+gboolean
+bb_boolean_equals(gboolean a, gboolean b)
+{
+    return (a && b) || (!a && !b);
+}
+
+
 GParamSpec*
 bb_object_class_override_property(GObjectClass *object_class, guint property_id, const gchar *name)
 {
