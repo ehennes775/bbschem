@@ -882,7 +882,7 @@ bb_geda_text_render(BbGedaItem *item, BbItemRenderer *renderer)
     BbGedaText *text = BB_GEDA_TEXT(item);
     g_return_if_fail(text != NULL);
 
-    if (text->visibility == BB_TEXT_VISIBILITY_VISIBLE)
+    if (text->visibility == BB_TEXT_VISIBILITY_VISIBLE || bb_item_renderer_get_reveal(renderer))
     {
         bb_item_renderer_set_color(
             renderer,

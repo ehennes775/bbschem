@@ -71,6 +71,6 @@ bb_graphics_draw_zoom_box(BbGraphics *graphics, int x0, int y0, int x1, int y1);
  * @return
  */
 BbGraphics*
-bb_graphics_new(cairo_t *cairo, cairo_matrix_t *widget_matrix, GtkStyleContext *style);
+bb_graphics_new(cairo_t *cairo, cairo_matrix_t *widget_matrix, gboolean reveal, GtkStyleContext *style);
 
 #endif

@@ -714,7 +714,7 @@ bb_schematic_window_draw_cb(BbSchematicWindowInner *inner, cairo_t *cairo, BbSch
     cairo_get_matrix(cairo, &widget_matrix);
 
     GtkStyleContext *style = gtk_widget_get_style_context(GTK_WIDGET(outer));
-    BbGraphics *graphics = bb_graphics_new(cairo, &widget_matrix, style);
+    BbGraphics *graphics = bb_graphics_new(cairo, &widget_matrix, outer->reveal, style);
 
     cairo_save(cairo);
     cairo_transform(cairo, &outer->matrix);
@@ -1662,6 +1662,8 @@ bb_schematic_window_set_reveal(BbRevealSubject *reveal_subject, gboolean reveal)
     if (window->reveal != reveal)
     {
         window->reveal = reveal;
+
+        gtk_widget_queue_draw(window->inner_window);
 
         g_object_notify_by_pspec(G_OBJECT(window), properties[PROP_REVEAL]);
     }

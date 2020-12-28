@@ -29,6 +29,7 @@ enum
     PROP_0,
     PROP_CAIRO,
     PROP_WIDGET_MATRIX,
+    PROP_REVEAL,
     PROP_STYLE,
     N_PROPERTIES
 };
@@ -40,6 +41,8 @@ struct _BbGraphics
 
     cairo_t *cairo;
 
+    gboolean reveal;
+    
     GtkStyleContext *style;
 
     /**
@@ -82,6 +85,9 @@ bb_graphics_finalize(GObject *object);
 
 static void
 bb_graphics_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
+
+static gboolean 
+bb_graphics_get_reveal(BbItemRenderer *renderer);
 
 static gboolean
 bb_graphics_is_major(int value);
@@ -139,6 +145,9 @@ bb_graphics_set_style(BbGraphics *graphics, GtkStyleContext *style);
 static void
 bb_graphics_set_widget_matrix(BbGraphics *graphics, cairo_matrix_t *widget_matrix);
 
+static void
+bb_graphics_set_reveal(BbItemRenderer *renderer, gboolean reveal);
+
 
 GParamSpec *properties[N_PROPERTIES];
 
@@ -158,6 +167,13 @@ bb_graphics_class_init(BbGraphicsClass *klasse)
     G_OBJECT_CLASS(klasse)->finalize = bb_graphics_finalize;
     G_OBJECT_CLASS(klasse)->get_property = bb_graphics_get_property;
     G_OBJECT_CLASS(klasse)->set_property = bb_graphics_set_property;
+
+    /* From BbItemRenderer */
+    properties[PROP_REVEAL] = bb_object_class_override_property(
+        G_OBJECT_CLASS(klasse),
+        PROP_REVEAL,
+        "reveal"
+        );
 
     properties[PROP_CAIRO] = bb_object_class_install_property(
         G_OBJECT_CLASS(klasse),
@@ -366,6 +382,10 @@ bb_graphics_get_property(GObject *object, guint property_id, GValue *value, GPar
             g_value_set_pointer(value, bb_graphics_get_cairo(BB_GRAPHICS(object)));
             break;
 
+        case PROP_REVEAL:
+            g_value_set_boolean(value, bb_graphics_get_reveal(BB_ITEM_RENDERER(object)));
+            break;
+
         case PROP_STYLE:
             g_value_set_object(value, bb_graphics_get_style(BB_GRAPHICS(object)));
             break;
@@ -378,6 +398,17 @@ bb_graphics_get_property(GObject *object, guint property_id, GValue *value, GPar
             G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
     }
 }
+
+
+static gboolean
+bb_graphics_get_reveal(BbItemRenderer *renderer)
+{
+   BbGraphics *graphics = BB_GRAPHICS(renderer);
+   g_return_val_if_fail(BB_IS_GRAPHICS(graphics), FALSE);
+   
+   return graphics->reveal;
+}
+
 
 GtkStyleContext*
 bb_graphics_get_style(BbGraphics *graphics)
@@ -425,12 +456,13 @@ bb_graphics_is_origin(int value)
 
 
 BbGraphics*
-bb_graphics_new(cairo_t *cairo, cairo_matrix_t *widget_matrix, GtkStyleContext *style)
+bb_graphics_new(cairo_t *cairo, cairo_matrix_t *widget_matrix, gboolean reveal, GtkStyleContext *style)
 {
     return BB_GRAPHICS(g_object_new(
         BB_TYPE_GRAPHICS,
         "cairo", cairo,
         "widget-matrix", widget_matrix,
+        "reveal", reveal,
         "style", style,
         NULL
         ));
@@ -443,6 +475,7 @@ bb_graphics_item_renderer_init(BbItemRendererInterface *iface)
     g_return_if_fail(iface != NULL);
 
     iface->close_path = bb_graphics_close_path;
+    iface->get_reveal = bb_graphics_get_reveal;
     iface->render_absolute_line_to = bb_graphics_render_absolute_line_to;
     iface->render_absolute_move_to = bb_graphics_render_absolute_move_to;
     iface->render_arc = bb_graphics_render_arc;
@@ -452,6 +485,7 @@ bb_graphics_item_renderer_init(BbItemRendererInterface *iface)
     iface->set_color = bb_graphics_set_color;
     iface->set_fill_style = bb_graphics_set_fill_style;
     iface->set_line_style = bb_graphics_set_line_style;
+    iface->set_reveal = bb_graphics_set_reveal;
 }
 
 
@@ -693,6 +727,10 @@ bb_graphics_set_property(GObject *object, guint property_id, const GValue *value
             bb_graphics_set_cairo(BB_GRAPHICS(object), g_value_get_pointer(value));
             break;
 
+        case PROP_REVEAL:
+            bb_graphics_set_reveal(BB_ITEM_RENDERER(object), g_value_get_boolean(value));
+            break;
+
         case PROP_STYLE:
             bb_graphics_set_style(BB_GRAPHICS(object), g_value_get_object(value));
             break;
@@ -703,6 +741,21 @@ bb_graphics_set_property(GObject *object, guint property_id, const GValue *value
 
         default:
             G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
+    }
+}
+
+
+static void
+bb_graphics_set_reveal(BbItemRenderer *renderer, gboolean reveal)
+{
+    BbGraphics *graphics = BB_GRAPHICS(renderer);
+    g_return_if_fail(BB_IS_GRAPHICS(graphics));
+
+    if (!!graphics->reveal != !!reveal)
+    {
+        graphics->reveal = reveal;
+
+        g_object_notify_by_pspec(G_OBJECT(graphics), properties[PROP_REVEAL]);
     }
 }
 

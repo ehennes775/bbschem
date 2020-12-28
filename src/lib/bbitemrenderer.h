@@ -32,6 +32,7 @@ struct _BbItemRendererInterface
     GTypeInterface parent;
 
     void (*close_path)(BbItemRenderer *renderer);
+    gboolean (*get_reveal)(BbItemRenderer *renderer);
     void (*render_absolute_line_to)(BbItemRenderer *renderer, int x, int y);
     void (*render_absolute_move_to)(BbItemRenderer *renderer, int x, int y);
     void (*render_arc)(BbItemRenderer *renderer, int x, int y, int radius, int start, int sweep);
@@ -48,12 +49,15 @@ struct _BbItemRendererInterface
     void (*set_color)(BbItemRenderer *renderer, int color);
     void (*set_fill_style)(BbItemRenderer *renderer, BbFillStyle *style);
     void (*set_line_style)(BbItemRenderer *renderer, BbLineStyle *style);
+    void (*set_reveal)(BbItemRenderer *renderer, gboolean reveal);
 };
 
 
 void
 bb_item_renderer_close_path(BbItemRenderer *renderer);
 
+gboolean
+bb_item_renderer_get_reveal(BbItemRenderer *renderer);
 
 void
 bb_item_renderer_render_absolute_line_to(BbItemRenderer *renderer, int x, int y);
@@ -93,6 +97,10 @@ bb_item_renderer_set_fill_style(BbItemRenderer *renderer, BbFillStyle *style);
 
 void
 bb_item_renderer_set_line_style(BbItemRenderer *renderer, BbLineStyle *style);
+
+
+void
+bb_item_renderer_set_reveal(BbItemRenderer *renderer, gboolean reveal);
 
 
 #endif

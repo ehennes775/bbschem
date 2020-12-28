@@ -47,6 +47,9 @@ bb_item_renderer_set_fill_style_missing(BbItemRenderer *renderer, BbFillStyle *s
 static void
 bb_item_renderer_set_line_style_missing(BbItemRenderer *renderer, BbLineStyle *style);
 
+static void
+bb_item_renderer_set_reveal_missing(BbItemRenderer *renderer, gboolean reveal);
+
 
 G_DEFINE_INTERFACE(BbItemRenderer, bb_item_renderer, G_TYPE_OBJECT)
 
@@ -54,6 +57,8 @@ G_DEFINE_INTERFACE(BbItemRenderer, bb_item_renderer, G_TYPE_OBJECT)
 void
 bb_item_renderer_close_path(BbItemRenderer *renderer)
 {
+    g_return_if_fail(BB_IS_ITEM_RENDERER(renderer));
+
     BbItemRendererInterface *iface = BB_ITEM_RENDERER_GET_IFACE(renderer);
 
     g_return_if_fail(iface != NULL);
@@ -70,12 +75,34 @@ bb_item_renderer_close_path_missing(BbItemRenderer *renderer)
 }
 
 
+gboolean
+bb_item_renderer_get_reveal(BbItemRenderer *renderer)
+{
+    g_return_val_if_fail(BB_IS_ITEM_RENDERER(renderer), FALSE);
+
+    BbItemRendererInterface *iface = BB_ITEM_RENDERER_GET_IFACE(renderer);
+
+    g_return_val_if_fail(iface != NULL, FALSE);
+    g_return_val_if_fail(iface->get_reveal != NULL, FALSE);
+
+    return iface->get_reveal(renderer);
+}
+
+
+static gboolean
+bb_item_renderer_get_reveal_missing(BbItemRenderer *renderer)
+{
+    g_error("bb_item_renderer_get_reveal() not overridden");
+}
+
+
 static void
 bb_item_renderer_default_init(BbItemRendererInterface *iface)
 {
     g_return_if_fail(iface != NULL);
 
-    iface->close_path = bb_item_renderer_close_path;
+    iface->close_path = bb_item_renderer_close_path_missing;
+    iface->get_reveal = bb_item_renderer_get_reveal_missing;
     iface->render_absolute_line_to = bb_item_renderer_render_absolute_line_to_missing;
     iface->render_absolute_move_to = bb_item_renderer_render_absolute_move_to_missing;
     iface->render_arc = bb_item_renderer_render_arc_missing;
@@ -84,12 +111,26 @@ bb_item_renderer_default_init(BbItemRendererInterface *iface)
     iface->set_color = bb_item_renderer_set_color_missing;
     iface->set_fill_style = bb_item_renderer_set_fill_style_missing;
     iface->set_line_style = bb_item_renderer_set_line_style_missing;
+    iface->set_reveal = bb_item_renderer_set_reveal_missing;
+
+    g_object_interface_install_property(
+        iface,
+        g_param_spec_boolean(
+            "reveal",
+            "",
+            "",
+            FALSE,
+            G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS
+            )
+        );
 }
 
 
 void
 bb_item_renderer_render_absolute_line_to(BbItemRenderer *renderer, int x, int y)
 {
+    g_return_if_fail(BB_IS_ITEM_RENDERER(renderer));
+
     BbItemRendererInterface *iface = BB_ITEM_RENDERER_GET_IFACE(renderer);
 
     g_return_if_fail(iface != NULL);
@@ -109,6 +150,8 @@ bb_item_renderer_render_absolute_line_to_missing(BbItemRenderer *renderer, int x
 void
 bb_item_renderer_render_absolute_move_to(BbItemRenderer *renderer, int x, int y)
 {
+    g_return_if_fail(BB_IS_ITEM_RENDERER(renderer));
+
     BbItemRendererInterface *iface = BB_ITEM_RENDERER_GET_IFACE(renderer);
 
     g_return_if_fail(iface != NULL);
@@ -128,6 +171,8 @@ bb_item_renderer_render_absolute_move_to_missing(BbItemRenderer *renderer, int x
 void
 bb_item_renderer_render_arc(BbItemRenderer *renderer, int x, int y, int radius, int start, int sweep)
 {
+    g_return_if_fail(BB_IS_ITEM_RENDERER(renderer));
+
     BbItemRendererInterface *iface = BB_ITEM_RENDERER_GET_IFACE(renderer);
 
     g_return_if_fail(iface != NULL);
@@ -147,6 +192,8 @@ bb_item_renderer_render_arc_missing(BbItemRenderer *renderer, int x, int y, int 
 void
 bb_item_renderer_render_relative_line_to(BbItemRenderer *renderer, int dx, int dy)
 {
+    g_return_if_fail(BB_IS_ITEM_RENDERER(renderer));
+
     BbItemRendererInterface *iface = BB_ITEM_RENDERER_GET_IFACE(renderer);
 
     g_return_if_fail(iface != NULL);
@@ -166,6 +213,8 @@ bb_item_renderer_render_relative_line_to_missing(BbItemRenderer *renderer, int d
 void
 bb_item_renderer_render_relative_move_to(BbItemRenderer *renderer, int dx, int dy)
 {
+    g_return_if_fail(BB_IS_ITEM_RENDERER(renderer));
+
     BbItemRendererInterface *iface = BB_ITEM_RENDERER_GET_IFACE(renderer);
 
     g_return_if_fail(iface != NULL);
@@ -190,6 +239,8 @@ bb_item_renderer_render_text(
     char *text
     )
 {
+    g_return_if_fail(BB_IS_ITEM_RENDERER(renderer));
+
     BbItemRendererInterface *iface = BB_ITEM_RENDERER_GET_IFACE(renderer);
 
     g_return_if_fail(iface != NULL);
@@ -214,6 +265,8 @@ bb_item_renderer_render_text_missing(
 void
 bb_item_renderer_set_color(BbItemRenderer *renderer, int color)
 {
+    g_return_if_fail(BB_IS_ITEM_RENDERER(renderer));
+
     BbItemRendererInterface *iface = BB_ITEM_RENDERER_GET_IFACE(renderer);
 
     g_return_if_fail(iface != NULL);
@@ -233,6 +286,8 @@ bb_item_renderer_set_color_missing(BbItemRenderer *renderer, int color)
 void
 bb_item_renderer_set_fill_style(BbItemRenderer *renderer, BbFillStyle *style)
 {
+    g_return_if_fail(BB_IS_ITEM_RENDERER(renderer));
+
     BbItemRendererInterface *iface = BB_ITEM_RENDERER_GET_IFACE(renderer);
 
     g_return_if_fail(iface != NULL);
@@ -252,6 +307,8 @@ bb_item_renderer_set_fill_style_missing(BbItemRenderer *renderer, BbFillStyle *s
 void
 bb_item_renderer_set_line_style(BbItemRenderer *renderer, BbLineStyle *style)
 {
+    g_return_if_fail(BB_IS_ITEM_RENDERER(renderer));
+
     BbItemRendererInterface *iface = BB_ITEM_RENDERER_GET_IFACE(renderer);
 
     g_return_if_fail(iface != NULL);
@@ -265,4 +322,25 @@ static void
 bb_item_renderer_set_line_style_missing(BbItemRenderer *renderer, BbLineStyle *style)
 {
     g_error("bb_item_renderer_set_line_style() not overridden");
+}
+
+
+void
+bb_item_renderer_set_reveal(BbItemRenderer *renderer, gboolean reveal)
+{
+    g_return_if_fail(BB_IS_ITEM_RENDERER(renderer));
+
+    BbItemRendererInterface *iface = BB_ITEM_RENDERER_GET_IFACE(renderer);
+
+    g_return_if_fail(iface != NULL);
+    g_return_if_fail(iface->set_reveal != NULL);
+
+    return iface->set_reveal(renderer, reveal);
+}
+
+
+static void
+bb_item_renderer_set_reveal_missing(BbItemRenderer *renderer, gboolean reveal)
+{
+    g_error("bb_item_renderer_set_reveal() not overridden");
 }
