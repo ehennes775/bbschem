@@ -315,6 +315,178 @@ G_DEFINE_TYPE_WITH_CODE(
     G_IMPLEMENT_INTERFACE(BB_TYPE_CLOSED_SHAPE_DRAWER, bb_geda_circle_closed_shape_drawer_init)
     )
 
+// region From AdjustableFillStyle Interface
+
+static int
+bb_geda_circle_get_angle_1(BbGedaCircle *circle)
+{
+    g_return_val_if_fail(circle != NULL, 0);
+    g_return_val_if_fail(circle->fill_style != NULL, 0);
+
+    return circle->fill_style->angle[0];
+}
+
+
+void
+bb_geda_circle_set_angle_1(BbGedaCircle *circle, int angle)
+{
+    g_return_if_fail(circle != NULL);
+    g_return_if_fail(circle->fill_style != NULL);
+
+    if (circle->fill_style->angle[0] != angle)
+    {
+        circle->fill_style->angle[0] = angle;
+
+        g_signal_emit(circle, signals[SIG_INVALIDATE], 0);
+
+        g_object_notify_by_pspec(G_OBJECT(circle), properties[PROP_ANGLE_1]);
+    }
+}
+
+
+static int
+bb_geda_circle_get_angle_2(BbGedaCircle *circle)
+{
+    g_return_val_if_fail(circle != NULL, 0);
+    g_return_val_if_fail(circle->fill_style != NULL, 0);
+
+    return circle->fill_style->angle[1];
+}
+
+
+void
+bb_geda_circle_set_angle_2(BbGedaCircle *circle, int angle)
+{
+    g_return_if_fail(circle != NULL);
+    g_return_if_fail(circle->fill_style != NULL);
+
+    if (circle->fill_style->angle[1] != angle)
+    {
+        circle->fill_style->angle[1] = angle;
+
+        g_signal_emit(circle, signals[SIG_INVALIDATE], 0);
+
+        g_object_notify_by_pspec(G_OBJECT(circle), properties[PROP_ANGLE_2]);
+    }
+}
+
+
+static int
+bb_geda_circle_get_fill_type(BbGedaCircle *circle)
+{
+    g_return_val_if_fail(circle != NULL, BB_FILL_TYPE_DEFAULT);
+    g_return_val_if_fail(circle->fill_style != NULL, BB_FILL_TYPE_DEFAULT);
+
+    return circle->fill_style->type;
+}
+
+
+void
+bb_geda_circle_set_fill_type(BbGedaCircle *circle, int fill_type)
+{
+    g_return_if_fail(circle != NULL);
+    g_return_if_fail(circle->fill_style != NULL);
+    g_return_if_fail(bb_fill_type_is_valid(fill_type));
+
+    if (circle->fill_style->type != fill_type)
+    {
+        circle->fill_style->type = fill_type;
+
+        g_signal_emit(circle, signals[SIG_INVALIDATE], 0);
+
+        g_object_notify_by_pspec(G_OBJECT(circle), properties[PROP_FILL_TYPE]);
+    }
+}
+
+
+static int
+bb_geda_circle_get_fill_width(BbGedaCircle *circle)
+{
+    g_return_val_if_fail(circle != NULL, 0);
+    g_return_val_if_fail(circle->fill_style != NULL, 0);
+
+    return circle->fill_style->width;
+}
+
+
+void
+bb_geda_circle_set_fill_width(BbGedaCircle *circle, int width)
+{
+    g_return_if_fail(circle != NULL);
+    g_return_if_fail(circle->fill_style != NULL);
+
+    if (circle->fill_style->width != width)
+    {
+        circle->fill_style->width = width;
+
+        g_signal_emit(circle, signals[SIG_INVALIDATE], 0);
+
+        g_object_notify_by_pspec(G_OBJECT(circle), properties[PROP_FILL_WIDTH]);
+    }
+}
+
+
+static int
+bb_geda_circle_get_pitch_1(BbGedaCircle *circle)
+{
+    g_return_val_if_fail(circle != NULL, 0);
+    g_return_val_if_fail(circle->fill_style != NULL, 0);
+
+    return circle->fill_style->pitch[0];
+}
+
+
+void
+bb_geda_circle_set_pitch_1(BbGedaCircle *circle, int pitch)
+{
+    g_return_if_fail(circle != NULL);
+    g_return_if_fail(circle->fill_style != NULL);
+
+    if (circle->fill_style->pitch[0] != pitch)
+    {
+        circle->fill_style->pitch[0] = pitch;
+
+        g_signal_emit(circle, signals[SIG_INVALIDATE], 0);
+
+        g_object_notify_by_pspec(G_OBJECT(circle), properties[PROP_PITCH_1]);
+    }
+}
+
+
+static int
+bb_geda_circle_get_pitch_2(BbGedaCircle *circle)
+{
+    g_return_val_if_fail(circle != NULL, 0);
+    g_return_val_if_fail(circle->fill_style != NULL, 0);
+
+    return circle->fill_style->pitch[1];
+}
+
+
+void
+bb_geda_circle_set_pitch_2(BbGedaCircle *circle, int pitch)
+{
+    g_return_if_fail(circle != NULL);
+    g_return_if_fail(circle->fill_style != NULL);
+
+    if (circle->fill_style->pitch[1] != pitch)
+    {
+        circle->fill_style->pitch[1] = pitch;
+
+        g_signal_emit(circle, signals[SIG_INVALIDATE], 0);
+
+        g_object_notify_by_pspec(G_OBJECT(circle), properties[PROP_PITCH_2]);
+    }
+}
+
+
+static void
+bb_geda_circle_adjustable_fill_style_init(BbAdjustableFillStyleInterface *iface)
+{
+    g_return_if_fail(iface != NULL);
+}
+
+// endregion
 
 // region From BbClosedShapeDrawer Interface
 
@@ -355,12 +527,6 @@ bb_geda_circle_closed_shape_drawer_init(BbClosedShapeDrawerInterface *iface)
 }
 
 // endregion
-
-static void
-bb_geda_circle_adjustable_fill_style_init(BbAdjustableFillStyleInterface *iface)
-{
-    g_return_if_fail(iface != NULL);
-}
 
 
 static void
@@ -590,26 +756,6 @@ bb_geda_circle_finalize(GObject *object)
 
 
 static int
-bb_geda_circle_get_angle_1(BbGedaCircle *circle)
-{
-    g_return_val_if_fail(circle != NULL, 0);
-    g_return_val_if_fail(circle->fill_style != NULL, 0);
-
-    return circle->fill_style->angle[0];
-}
-
-
-static int
-bb_geda_circle_get_angle_2(BbGedaCircle *circle)
-{
-    g_return_val_if_fail(circle != NULL, 0);
-    g_return_val_if_fail(circle->fill_style != NULL, 0);
-
-    return circle->fill_style->angle[1];
-}
-
-
-static int
 bb_geda_circle_get_cap_type(BbGedaCircle *circle)
 {
     g_return_val_if_fail(circle != NULL, BB_CAP_TYPE_DEFAULT);
@@ -668,26 +814,6 @@ bb_geda_circle_get_dash_type(BbGedaCircle *circle)
 
 
 static int
-bb_geda_circle_get_fill_type(BbGedaCircle *circle)
-{
-    g_return_val_if_fail(circle != NULL, BB_FILL_TYPE_DEFAULT);
-    g_return_val_if_fail(circle->fill_style != NULL, BB_FILL_TYPE_DEFAULT);
-
-    return circle->fill_style->type;
-}
-
-
-static int
-bb_geda_circle_get_fill_width(BbGedaCircle *circle)
-{
-    g_return_val_if_fail(circle != NULL, 0);
-    g_return_val_if_fail(circle->fill_style != NULL, 0);
-
-    return circle->fill_style->width;
-}
-
-
-static int
 bb_geda_circle_get_item_color(BbGedaCircle *circle)
 {
     g_return_val_if_fail(circle != NULL, 0);
@@ -703,26 +829,6 @@ bb_geda_circle_get_line_width(BbGedaCircle *circle)
     g_return_val_if_fail(circle->line_style != NULL, 0);
 
     return circle->line_style->line_width;
-}
-
-
-static int
-bb_geda_circle_get_pitch_1(BbGedaCircle *circle)
-{
-    g_return_val_if_fail(circle != NULL, 0);
-    g_return_val_if_fail(circle->fill_style != NULL, 0);
-
-    return circle->fill_style->pitch[0];
-}
-
-
-static int
-bb_geda_circle_get_pitch_2(BbGedaCircle *circle)
-{
-    g_return_val_if_fail(circle != NULL, 0);
-    g_return_val_if_fail(circle->fill_style != NULL, 0);
-
-    return circle->fill_style->pitch[1];
 }
 
 
@@ -944,40 +1050,6 @@ bb_geda_circle_set_cap_type(BbGedaCircle *circle, int cap_type)
 
 
 void
-bb_geda_circle_set_angle_1(BbGedaCircle *circle, int angle)
-{
-    g_return_if_fail(circle != NULL);
-    g_return_if_fail(circle->fill_style != NULL);
-
-    if (circle->fill_style->angle[0] != angle)
-    {
-        circle->fill_style->angle[0] = angle;
-
-        g_signal_emit(circle, signals[SIG_INVALIDATE], 0);
-
-        g_object_notify_by_pspec(G_OBJECT(circle), properties[PROP_ANGLE_1]);
-    }
-}
-
-
-void
-bb_geda_circle_set_angle_2(BbGedaCircle *circle, int angle)
-{
-    g_return_if_fail(circle != NULL);
-    g_return_if_fail(circle->fill_style != NULL);
-
-    if (circle->fill_style->angle[1] != angle)
-    {
-        circle->fill_style->angle[1] = angle;
-
-        g_signal_emit(circle, signals[SIG_INVALIDATE], 0);
-
-        g_object_notify_by_pspec(G_OBJECT(circle), properties[PROP_ANGLE_2]);
-    }
-}
-
-
-void
 bb_geda_circle_set_center_x(BbGedaCircle *circle, int x)
 {
     g_return_if_fail(circle != NULL);
@@ -1065,41 +1137,6 @@ bb_geda_circle_set_dash_type(BbGedaCircle *circle, int dash_type)
 }
 
 
-void
-bb_geda_circle_set_fill_type(BbGedaCircle *circle, int fill_type)
-{
-    g_return_if_fail(circle != NULL);
-    g_return_if_fail(circle->fill_style != NULL);
-    g_return_if_fail(bb_fill_type_is_valid(fill_type));
-
-    if (circle->fill_style->type != fill_type)
-    {
-        circle->fill_style->type = fill_type;
-
-        g_signal_emit(circle, signals[SIG_INVALIDATE], 0);
-
-        g_object_notify_by_pspec(G_OBJECT(circle), properties[PROP_FILL_TYPE]);
-    }
-}
-
-
-void
-bb_geda_circle_set_fill_width(BbGedaCircle *circle, int width)
-{
-    g_return_if_fail(circle != NULL);
-    g_return_if_fail(circle->fill_style != NULL);
-
-    if (circle->fill_style->width != width)
-    {
-        circle->fill_style->width = width;
-
-        g_signal_emit(circle, signals[SIG_INVALIDATE], 0);
-
-        g_object_notify_by_pspec(G_OBJECT(circle), properties[PROP_FILL_WIDTH]);
-    }
-}
-
-
 static void
 bb_geda_circle_set_item_color(BbGedaCircle *circle, int color)
 {
@@ -1132,40 +1169,6 @@ bb_geda_circle_set_line_width(BbGedaCircle *circle, int width)
         g_signal_emit(circle, signals[SIG_INVALIDATE], 0);
 
         g_object_notify_by_pspec(G_OBJECT(circle), properties[PROP_LINE_WIDTH]);
-    }
-}
-
-
-void
-bb_geda_circle_set_pitch_1(BbGedaCircle *circle, int pitch)
-{
-    g_return_if_fail(circle != NULL);
-    g_return_if_fail(circle->fill_style != NULL);
-
-    if (circle->fill_style->pitch[0] != pitch)
-    {
-        circle->fill_style->pitch[0] = pitch;
-
-        g_signal_emit(circle, signals[SIG_INVALIDATE], 0);
-
-        g_object_notify_by_pspec(G_OBJECT(circle), properties[PROP_PITCH_1]);
-    }
-}
-
-
-void
-bb_geda_circle_set_pitch_2(BbGedaCircle *circle, int pitch)
-{
-    g_return_if_fail(circle != NULL);
-    g_return_if_fail(circle->fill_style != NULL);
-
-    if (circle->fill_style->pitch[1] != pitch)
-    {
-        circle->fill_style->pitch[1] = pitch;
-
-        g_signal_emit(circle, signals[SIG_INVALIDATE], 0);
-
-        g_object_notify_by_pspec(G_OBJECT(circle), properties[PROP_PITCH_2]);
     }
 }
 

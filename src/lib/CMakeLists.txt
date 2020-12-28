@@ -132,4 +132,6 @@ add_library(bblib
         bbelectrical.h
         bbclosedshapedrawer.c
         bbclosedshapedrawer.h
+        bbopenshapedrawer.c
+        bbopenshapedrawer.h
         )

@@ -261,6 +261,179 @@ G_DEFINE_TYPE_WITH_CODE(
     G_IMPLEMENT_INTERFACE(BB_TYPE_CLOSED_SHAPE_DRAWER, bb_geda_path_closed_shape_drawer_init)
     )
 
+// region From AdjustableFillStyle Interface
+
+static int
+bb_geda_path_get_angle_1(BbGedaPath *path)
+{
+    g_return_val_if_fail(path != NULL, 0);
+    g_return_val_if_fail(path->fill_style != NULL, 0);
+
+    return path->fill_style->angle[0];
+}
+
+
+void
+bb_geda_path_set_angle_1(BbGedaPath *path, int angle)
+{
+    g_return_if_fail(path != NULL);
+    g_return_if_fail(path->fill_style != NULL);
+
+    if (path->fill_style->angle[0] != angle)
+    {
+        path->fill_style->angle[0] = angle;
+
+        g_signal_emit(path, signals[SIG_INVALIDATE], 0);
+
+        g_object_notify_by_pspec(G_OBJECT(path), properties[PROP_ANGLE_1]);
+    }
+}
+
+
+static int
+bb_geda_path_get_angle_2(BbGedaPath *path)
+{
+    g_return_val_if_fail(path != NULL, 0);
+    g_return_val_if_fail(path->fill_style != NULL, 0);
+
+    return path->fill_style->angle[1];
+}
+
+
+void
+bb_geda_path_set_angle_2(BbGedaPath *path, int angle)
+{
+    g_return_if_fail(path != NULL);
+    g_return_if_fail(path->fill_style != NULL);
+
+    if (path->fill_style->angle[1] != angle)
+    {
+        path->fill_style->angle[1] = angle;
+
+        g_signal_emit(path, signals[SIG_INVALIDATE], 0);
+
+        g_object_notify_by_pspec(G_OBJECT(path), properties[PROP_ANGLE_2]);
+    }
+}
+
+
+static int
+bb_geda_path_get_fill_type(BbGedaPath *path)
+{
+    g_return_val_if_fail(path != NULL, BB_FILL_TYPE_DEFAULT);
+    g_return_val_if_fail(path->fill_style != NULL, BB_FILL_TYPE_DEFAULT);
+
+    return path->fill_style->type;
+}
+
+
+void
+bb_geda_path_set_fill_type(BbGedaPath *path, int fill_type)
+{
+    g_return_if_fail(path != NULL);
+    g_return_if_fail(path->fill_style != NULL);
+    g_return_if_fail(bb_fill_type_is_valid(fill_type));
+
+    if (path->fill_style->type != fill_type)
+    {
+        path->fill_style->type = fill_type;
+
+        g_signal_emit(path, signals[SIG_INVALIDATE], 0);
+
+        g_object_notify_by_pspec(G_OBJECT(path), properties[PROP_FILL_TYPE]);
+    }
+}
+
+
+static int
+bb_geda_path_get_fill_width(BbGedaPath *path)
+{
+    g_return_val_if_fail(path != NULL, 0);
+    g_return_val_if_fail(path->fill_style != NULL, 0);
+
+    return path->fill_style->width;
+}
+
+
+void
+bb_geda_path_set_fill_width(BbGedaPath *path, int width)
+{
+    g_return_if_fail(path != NULL);
+    g_return_if_fail(path->fill_style != NULL);
+
+    if (path->fill_style->width != width)
+    {
+        path->fill_style->width = width;
+
+        g_signal_emit(path, signals[SIG_INVALIDATE], 0);
+
+        g_object_notify_by_pspec(G_OBJECT(path), properties[PROP_FILL_WIDTH]);
+    }
+}
+
+
+static int
+bb_geda_path_get_pitch_1(BbGedaPath *path)
+{
+    g_return_val_if_fail(path != NULL, 0);
+    g_return_val_if_fail(path->fill_style != NULL, 0);
+
+    return path->fill_style->pitch[0];
+}
+
+
+void
+bb_geda_path_set_pitch_1(BbGedaPath *path, int pitch)
+{
+    g_return_if_fail(path != NULL);
+    g_return_if_fail(path->fill_style != NULL);
+
+    if (path->fill_style->pitch[0] != pitch)
+    {
+        path->fill_style->pitch[0] = pitch;
+
+        g_signal_emit(path, signals[SIG_INVALIDATE], 0);
+
+        g_object_notify_by_pspec(G_OBJECT(path), properties[PROP_PITCH_1]);
+    }
+}
+
+
+static int
+bb_geda_path_get_pitch_2(BbGedaPath *path)
+{
+    g_return_val_if_fail(path != NULL, 0);
+    g_return_val_if_fail(path->fill_style != NULL, 0);
+
+    return path->fill_style->pitch[1];
+}
+
+
+void
+bb_geda_path_set_pitch_2(BbGedaPath *path, int pitch)
+{
+    g_return_if_fail(path != NULL);
+    g_return_if_fail(path->fill_style != NULL);
+
+    if (path->fill_style->pitch[1] != pitch)
+    {
+        path->fill_style->pitch[1] = pitch;
+
+        g_signal_emit(path, signals[SIG_INVALIDATE], 0);
+
+        g_object_notify_by_pspec(G_OBJECT(path), properties[PROP_PITCH_2]);
+    }
+}
+
+
+static void
+bb_geda_path_adjustable_fill_style_init(BbAdjustableFillStyleInterface *iface)
+{
+    g_return_if_fail(iface != NULL);
+}
+
+// endregion
+
 
 // region From BbClosedShapeDrawer Interface
 
@@ -306,12 +479,6 @@ bb_geda_path_closed_shape_drawer_init(BbClosedShapeDrawerInterface *iface)
 }
 
 // endregion
-
-static void
-bb_geda_path_adjustable_fill_style_init(BbAdjustableFillStyleInterface *iface)
-{
-}
-
 
 static void
 bb_geda_path_adjustable_item_color_init(BbAdjustableItemColorInterface *iface)
@@ -938,6 +1105,30 @@ bb_geda_path_set_property(GObject *object, guint property_id, const GValue *valu
 
         case PROP_LINE_WIDTH:
             bb_geda_path_set_line_width(BB_GEDA_PATH(object), g_value_get_int(value));
+            break;
+
+        case PROP_ANGLE_1:
+            bb_geda_path_set_angle_1(BB_GEDA_PATH(object), g_value_get_int(value));
+            break;
+
+        case PROP_ANGLE_2:
+            bb_geda_path_set_angle_2(BB_GEDA_PATH(object), g_value_get_int(value));
+            break;
+
+        case PROP_FILL_TYPE:
+            bb_geda_path_set_fill_type(BB_GEDA_PATH(object), g_value_get_int(value));
+            break;
+
+        case PROP_FILL_WIDTH:
+            bb_geda_path_set_fill_width(BB_GEDA_PATH(object), g_value_get_int(value));
+            break;
+
+        case PROP_PITCH_1:
+            bb_geda_path_set_pitch_1(BB_GEDA_PATH(object), g_value_get_int(value));
+            break;
+
+        case PROP_PITCH_2:
+            bb_geda_path_set_pitch_2(BB_GEDA_PATH(object), g_value_get_int(value));
             break;
 
         default:

@@ -26,6 +26,7 @@
 #include "bbparams.h"
 #include "bbcolor.h"
 #include "bbelectrical.h"
+#include "bbopenshapedrawer.h"
 
 
 /**
@@ -88,6 +89,9 @@ struct _BbGedaBus
     GSList *attributes;
 };
 
+
+static void
+bb_geda_bus_open_shaper_drawer_init(BbOpenShapeDrawerInterface *iface);
 
 static void
 bb_geda_bus_add_attribute(
@@ -258,15 +262,40 @@ bb_geda_bus_write_finish(
 static GParamSpec *properties[N_PROPERTIES];
 static guint signals[N_SIGNALS];
 
+
 G_DEFINE_TYPE_WITH_CODE(
     BbGedaBus,
     bb_geda_bus,
     BB_TYPE_GEDA_ITEM,
     G_IMPLEMENT_INTERFACE(BB_TYPE_ADJUSTABLE_ITEM_COLOR, bb_geda_bus_adjustable_item_color_init)
     G_IMPLEMENT_INTERFACE(BB_TYPE_ELECTRICAL, bb_geda_bus_electrical_init)
+    G_IMPLEMENT_INTERFACE(BB_TYPE_OPEN_SHAPE_DRAWER, bb_geda_bus_open_shaper_drawer_init)
     )
 
 
+// region From BbOpenShapeDrawer Interface
+
+static void
+bb_geda_bus_draw_shape(BbOpenShapeDrawer *drawer, BbItemRenderer *renderer)
+{
+    BbGedaBus *bus = BB_GEDA_BUS(drawer);
+    g_return_if_fail(BB_IS_GEDA_BUS(bus));
+
+    bb_item_renderer_render_absolute_move_to(renderer, bus->x[0], bus->y[0]);
+    bb_item_renderer_render_absolute_line_to(renderer, bus->x[1], bus->y[1]);
+}
+
+
+static void
+bb_geda_bus_open_shaper_drawer_init(BbOpenShapeDrawerInterface *iface)
+{
+    g_return_if_fail(iface != NULL);
+
+    iface->draw_shape = bb_geda_bus_draw_shape;
+}
+
+// endregion
+    
 static void
 bb_geda_bus_add_attribute(BbElectrical *electrical, BbAttribute *attribute)
 {
@@ -581,21 +610,22 @@ static void
 bb_geda_bus_render(BbGedaItem *item, BbItemRenderer *renderer)
 {
     BbGedaBus *bus = BB_GEDA_BUS(item);
+    g_return_if_fail(BB_IS_GEDA_BUS(bus));
 
-    g_return_if_fail(bus != NULL);
+    BbLineStyle line_style = // TODO const
+    {
+        .cap_type = BB_CAP_TYPE_SQUARE,
+        .dash_length = 0,
+        .dash_space = 0,
+        .dash_type = BB_DASH_TYPE_SOLID,
+        .line_width = BB_GEDA_BUS_WIDTH
+    };
 
-    bb_item_renderer_set_color(renderer, bus->color);
-
-    bb_item_renderer_render_absolute_move_to(
+    bb_item_renderer_draw_open_shape(
         renderer,
-        bus->x[0],
-        bus->y[0]
-        );
-
-    bb_item_renderer_render_absolute_line_to(
-        renderer,
-        bus->x[1],
-        bus->y[1]
+        bus->color,
+        &line_style,
+        BB_OPEN_SHAPE_DRAWER(item)
         );
 }
 

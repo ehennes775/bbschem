@@ -25,6 +25,7 @@
 #include "bbadjustableitemcolor.h"
 #include "bbcolor.h"
 #include "bbcolors.h"
+#include "bbopenshapedrawer.h"
 
 
 /**
@@ -90,6 +91,10 @@ struct _BbGedaLine
 
     BbLineStyle *line_style;
 };
+
+
+static void
+bb_geda_line_open_shaper_drawer_init(BbOpenShapeDrawerInterface *iface);
 
 
 static void
@@ -189,8 +194,32 @@ G_DEFINE_TYPE_WITH_CODE(
     BB_TYPE_GEDA_ITEM,
     G_IMPLEMENT_INTERFACE(BB_TYPE_ADJUSTABLE_ITEM_COLOR, bb_geda_line_adjustable_item_color_init)
     G_IMPLEMENT_INTERFACE(BB_TYPE_ADJUSTABLE_LINE_STYLE, bb_geda_line_adjustable_line_style_init)
+    G_IMPLEMENT_INTERFACE(BB_TYPE_OPEN_SHAPE_DRAWER, bb_geda_line_open_shaper_drawer_init)
     )
 
+
+// region From BbOpenShapeDrawer Interface
+
+static void
+bb_geda_line_draw_shape(BbOpenShapeDrawer *drawer, BbItemRenderer *renderer)
+{
+    BbGedaLine *line = BB_GEDA_LINE(drawer);
+    g_return_if_fail(BB_IS_GEDA_LINE(line));
+
+    bb_item_renderer_render_absolute_move_to(renderer, line->x[0], line->y[0]);
+    bb_item_renderer_render_absolute_line_to(renderer, line->x[1], line->y[1]);
+}
+
+
+static void
+bb_geda_line_open_shaper_drawer_init(BbOpenShapeDrawerInterface *iface)
+{
+    g_return_if_fail(iface != NULL);
+
+    iface->draw_shape = bb_geda_line_draw_shape;
+}
+
+// endregion
 
 static void
 bb_geda_line_adjustable_item_color_init(BbAdjustableLineStyleInterface *iface)
@@ -619,22 +648,13 @@ static void
 bb_geda_line_render(BbGedaItem *item, BbItemRenderer *renderer)
 {
     BbGedaLine *line = BB_GEDA_LINE(item);
+    g_return_if_fail(BB_IS_GEDA_LINE(line));
 
-    g_return_if_fail(line != NULL);
-
-    bb_item_renderer_set_color(renderer, line->color);
-    bb_item_renderer_set_line_style(renderer, line->line_style);
-
-    bb_item_renderer_render_absolute_move_to(
+    bb_item_renderer_draw_open_shape(
         renderer,
-        line->x[0],
-        line->y[0]
-        );
-
-    bb_item_renderer_render_absolute_line_to(
-        renderer,
-        line->x[1],
-        line->y[1]
+        line->color,
+        line->line_style,
+        BB_OPEN_SHAPE_DRAWER(item)
         );
 }
 

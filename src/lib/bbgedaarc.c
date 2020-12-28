@@ -25,6 +25,7 @@
 #include "bblibrary.h"
 #include "bbcolor.h"
 #include "bbcolors.h"
+#include "bbopenshapedrawer.h"
 
 
 /**
@@ -169,6 +170,9 @@ bb_geda_arc_get_line_width(
     );
 
 static void
+bb_geda_arc_open_shaper_drawer_init(BbOpenShapeDrawerInterface *iface);
+
+static void
 bb_geda_arc_render(
     BbGedaItem *item,
     BbItemRenderer *renderer
@@ -264,6 +268,7 @@ G_DEFINE_TYPE_WITH_CODE(
     BB_TYPE_GEDA_ITEM,
     G_IMPLEMENT_INTERFACE(BB_TYPE_ADJUSTABLE_ITEM_COLOR, bb_geda_arc_adjustable_item_color_init)
     G_IMPLEMENT_INTERFACE(BB_TYPE_ADJUSTABLE_LINE_STYLE, bb_geda_arc_adjustable_line_style_init)
+    G_IMPLEMENT_INTERFACE(BB_TYPE_OPEN_SHAPE_DRAWER, bb_geda_arc_open_shaper_drawer_init)
     )
 
 
@@ -445,6 +450,35 @@ bb_geda_arc_set_line_width(BbGedaArc *arc, int width)
 static void
 bb_geda_arc_adjustable_line_style_init(BbAdjustableLineStyleInterface *iface)
 {
+}
+
+// endregion
+
+// region From BbOpenShapeDrawer Interface
+
+static void
+bb_geda_arc_draw_shape(BbOpenShapeDrawer *drawer, BbItemRenderer *renderer)
+{
+    BbGedaArc *arc = BB_GEDA_ARC(drawer);
+    g_return_if_fail(BB_IS_GEDA_ARC(arc));
+
+    bb_item_renderer_render_arc(
+        renderer,
+        arc->center_x,
+        arc->center_y,
+        arc->radius,
+        arc->start_angle,
+        arc->sweep_angle
+        );
+}
+
+
+static void
+bb_geda_arc_open_shaper_drawer_init(BbOpenShapeDrawerInterface *iface)
+{
+    g_return_if_fail(iface != NULL);
+
+    iface->draw_shape = bb_geda_arc_draw_shape;
 }
 
 // endregion
@@ -951,17 +985,13 @@ static void
 bb_geda_arc_render(BbGedaItem *item, BbItemRenderer *renderer)
 {
     BbGedaArc *arc = BB_GEDA_ARC(item);
+    g_return_if_fail(BB_IS_GEDA_ARC(arc));
 
-    bb_item_renderer_set_color(renderer, arc->color);
-    bb_item_renderer_set_line_style(renderer, arc->line_style);
-
-    bb_item_renderer_render_arc(
+    bb_item_renderer_draw_open_shape(
         renderer,
-        arc->center_x,
-        arc->center_y,
-        arc->radius,
-        arc->start_angle,
-        arc->sweep_angle
+        arc->color,
+        arc->line_style,
+        BB_OPEN_SHAPE_DRAWER(item)
         );
 }
 

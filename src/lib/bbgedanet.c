@@ -84,6 +84,9 @@ struct _BbGedaNet
 
 
 static void
+bb_geda_net_open_shaper_drawer_init(BbOpenShapeDrawerInterface *iface);
+
+static void
 bb_geda_net_add_attribute(
     BbElectrical *electrical,
     BbAttribute *attribute
@@ -204,7 +207,32 @@ G_DEFINE_TYPE_WITH_CODE(
     BB_TYPE_GEDA_ITEM,
     G_IMPLEMENT_INTERFACE(BB_TYPE_ADJUSTABLE_ITEM_COLOR, bb_geda_net_adjustable_item_color_init)
     G_IMPLEMENT_INTERFACE(BB_TYPE_ELECTRICAL, bb_geda_net_electrical_init)
+    G_IMPLEMENT_INTERFACE(BB_TYPE_OPEN_SHAPE_DRAWER, bb_geda_net_open_shaper_drawer_init)
     )
+
+
+// region From BbOpenShapeDrawer Interface
+
+static void
+bb_geda_net_draw_shape(BbOpenShapeDrawer *drawer, BbItemRenderer *renderer)
+{
+    BbGedaNet *net = BB_GEDA_NET(drawer);
+    g_return_if_fail(BB_IS_GEDA_NET(net));
+
+    bb_item_renderer_render_absolute_move_to(renderer, net->x[0], net->y[0]);
+    bb_item_renderer_render_absolute_line_to(renderer, net->x[1], net->y[1]);
+}
+
+
+static void
+bb_geda_net_open_shaper_drawer_init(BbOpenShapeDrawerInterface *iface)
+{
+    g_return_if_fail(iface != NULL);
+
+    iface->draw_shape = bb_geda_net_draw_shape;
+}
+
+// endregion
 
 
 static void
@@ -519,21 +547,22 @@ static void
 bb_geda_net_render(BbGedaItem *item, BbItemRenderer *renderer)
 {
     BbGedaNet *net = BB_GEDA_NET(item);
+    g_return_if_fail(BB_IS_GEDA_NET(net));
 
-    g_return_if_fail(net != NULL);
+    BbLineStyle line_style = // TODO const
+    {
+        .cap_type = BB_CAP_TYPE_SQUARE,
+        .dash_length = 0,
+        .dash_space = 0,
+        .dash_type = BB_DASH_TYPE_SOLID,
+        .line_width = BB_GEDA_NET_WIDTH
+    };
 
-    bb_item_renderer_set_color(renderer, net->color);
-
-    bb_item_renderer_render_absolute_move_to(
+    bb_item_renderer_draw_open_shape(
         renderer,
-        net->x[0],
-        net->y[0]
-        );
-
-    bb_item_renderer_render_absolute_line_to(
-        renderer,
-        net->x[1],
-        net->y[1]
+        net->color,
+        &line_style,
+        BB_OPEN_SHAPE_DRAWER(item)
         );
 }
 

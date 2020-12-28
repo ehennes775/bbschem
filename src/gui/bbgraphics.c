@@ -21,6 +21,7 @@
 #include <bblibrary.h>
 #include <bbextensions.h>
 #include <bbcolors.h>
+#include <bbopenshapedrawer.h>
 #include "bbgraphics.h"
 
 
@@ -240,7 +241,43 @@ bb_graphics_draw_closed_shape(
     BbGraphics *graphics = BB_GRAPHICS(renderer);
     g_return_if_fail(BB_IS_GRAPHICS(graphics));
 
+    bb_graphics_set_color(graphics, color);
+
+    if (fill_style->type == BB_FILL_TYPE_HATCH || fill_style->type == BB_FILL_TYPE_MESH)
+    {
+        cairo_set_line_width(graphics->cairo, fill_style->width);
+
+        bb_closed_shape_drawer_draw_hatch(drawer, renderer);
+    }
+
+    cairo_set_line_width(graphics->cairo, line_style->line_width);
+
     bb_closed_shape_drawer_draw_outline(drawer, renderer);
+
+    if (fill_style->type == BB_FILL_TYPE_SOLID)
+    {
+        cairo_fill_preserve(graphics->cairo);
+    }
+
+    cairo_stroke(graphics->cairo);
+}
+
+
+static void
+bb_graphics_draw_open_shape(
+    BbItemRenderer *renderer,
+    int color,
+    BbLineStyle *line_style,
+    BbOpenShapeDrawer *drawer
+    )
+{
+    BbGraphics *graphics = BB_GRAPHICS(renderer);
+    g_return_if_fail(BB_IS_GRAPHICS(graphics));
+
+    cairo_set_line_width(graphics->cairo, line_style->line_width);
+    bb_graphics_set_color(graphics, color);
+
+    bb_open_shape_drawer_draw_shape(drawer, renderer);
 
     cairo_stroke(graphics->cairo);
 }
@@ -493,6 +530,7 @@ bb_graphics_item_renderer_init(BbItemRendererInterface *iface)
     g_return_if_fail(iface != NULL);
 
     iface->draw_closed_shape = bb_graphics_draw_closed_shape;
+    iface->draw_open_shape = bb_graphics_draw_open_shape;
     iface->close_path = bb_graphics_close_path;
     iface->get_reveal = bb_graphics_get_reveal;
     iface->render_absolute_line_to = bb_graphics_render_absolute_line_to;

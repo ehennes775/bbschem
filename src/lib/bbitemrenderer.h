@@ -22,6 +22,7 @@
 #include "bbfillstyle.h"
 #include "bblinestyle.h"
 #include "bbclosedshapedrawer.h"
+#include "bbopenshapedrawer.h"
 
 #define BB_TYPE_ITEM_RENDERER bb_item_renderer_get_type()
 G_DECLARE_INTERFACE(BbItemRenderer, bb_item_renderer, BB, ITEM_RENDERER, GObject)
@@ -36,6 +37,13 @@ struct _BbItemRendererInterface
         BbFillStyle *fill_style,
         BbLineStyle *line_style,
         BbClosedShapeDrawer *drawer
+        );
+
+    void (*draw_open_shape)(
+        BbItemRenderer *renderer,
+        int color,
+        BbLineStyle *line_style,
+        BbOpenShapeDrawer *drawer
         );
 
     void (*close_path)(BbItemRenderer *renderer);
@@ -76,6 +84,23 @@ bb_item_renderer_draw_closed_shape(
     BbFillStyle *fill_style,
     BbLineStyle *line_style,
     BbClosedShapeDrawer *drawer
+    );
+
+
+/**
+ * Draw an unfilled shape
+ *
+ * @param renderer
+ * @param color
+ * @param line_style
+ * @param drawer
+ */
+void
+bb_item_renderer_draw_open_shape(
+    BbItemRenderer *renderer,
+    int color,
+    BbLineStyle *line_style,
+    BbOpenShapeDrawer *drawer
     );
 
 
