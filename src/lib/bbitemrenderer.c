@@ -18,6 +18,7 @@
 
 #include <gtk/gtk.h>
 #include "bbitemrenderer.h"
+#include "bbcolor.h"
 
 
 static void
@@ -53,6 +54,42 @@ bb_item_renderer_set_reveal_missing(BbItemRenderer *renderer, gboolean reveal);
 
 G_DEFINE_INTERFACE(BbItemRenderer, bb_item_renderer, G_TYPE_OBJECT)
 
+
+void
+bb_item_renderer_draw_closed_shape(
+    BbItemRenderer *renderer,
+    int color,
+    BbFillStyle *fill_style,
+    BbLineStyle *line_style,
+    BbClosedShapeDrawer *drawer
+    )
+{
+    g_return_if_fail(BB_IS_ITEM_RENDERER(renderer));
+    g_return_if_fail(bb_color_is_valid(color));
+    g_return_if_fail(fill_style != NULL);
+    g_return_if_fail(line_style != NULL);
+    g_return_if_fail(BB_IS_CLOSED_SHAPE_DRAWER(drawer));
+
+    BbItemRendererInterface *iface = BB_ITEM_RENDERER_GET_IFACE(renderer);
+
+    g_return_if_fail(iface != NULL);
+    g_return_if_fail(iface->draw_closed_shape != NULL);
+
+    return iface->draw_closed_shape(renderer, color, fill_style, line_style, drawer);
+}
+
+
+static void
+bb_item_renderer_draw_closed_shape_missing(
+    BbItemRenderer *renderer,
+    int color,
+    BbFillStyle *fill_style,
+    BbLineStyle *line_style,
+    BbClosedShapeDrawer *drawer
+    )
+{
+    g_error("bb_item_renderer_draw_closed_shape() not overridden");
+}
 
 void
 bb_item_renderer_close_path(BbItemRenderer *renderer)

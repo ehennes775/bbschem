@@ -135,6 +135,12 @@ struct _TranslateCapture
 
 
 static void
+bb_geda_path_closed_shape_drawer_init(BbClosedShapeDrawerInterface *iface);
+
+static void
+bb_geda_path_draw_outline_lambda(gpointer command, gpointer renderer);
+
+static void
 bb_geda_path_adjustable_fill_style_init(BbAdjustableFillStyleInterface *iface);
 
 
@@ -189,9 +195,6 @@ bb_geda_path_mirror_y_lambda(BbPathCommand *command, MirrorYCapture *capture);
 
 static void
 bb_geda_path_render(BbGedaItem *item, BbItemRenderer *renderer);
-
-static void
-bb_geda_path_render_lambda(gpointer command, gpointer renderer);
 
 static void
 bb_geda_path_rotate(BbGedaItem *item, int cx, int cy, int angle);
@@ -255,8 +258,54 @@ G_DEFINE_TYPE_WITH_CODE(
     G_IMPLEMENT_INTERFACE(BB_TYPE_ADJUSTABLE_FILL_STYLE, bb_geda_path_adjustable_fill_style_init)
     G_IMPLEMENT_INTERFACE(BB_TYPE_ADJUSTABLE_ITEM_COLOR, bb_geda_path_adjustable_item_color_init)
     G_IMPLEMENT_INTERFACE(BB_TYPE_ADJUSTABLE_LINE_STYLE, bb_geda_path_adjustable_line_style_init)
+    G_IMPLEMENT_INTERFACE(BB_TYPE_CLOSED_SHAPE_DRAWER, bb_geda_path_closed_shape_drawer_init)
     )
 
+
+// region From BbClosedShapeDrawer Interface
+
+static void
+bb_geda_path_draw_hatch(BbClosedShapeDrawer *drawer, BbItemRenderer *renderer)
+{
+    BbGedaPath *path = BB_GEDA_PATH(drawer);
+    g_return_if_fail(BB_IS_GEDA_PATH(path));
+    g_return_if_fail(BB_IS_ITEM_RENDERER(renderer));
+}
+
+
+static void
+bb_geda_path_draw_outline(BbClosedShapeDrawer *drawer, BbItemRenderer *renderer)
+{
+    BbGedaPath *path = BB_GEDA_PATH(drawer);
+    g_return_if_fail(BB_IS_GEDA_PATH(path));
+    g_return_if_fail(BB_IS_ITEM_RENDERER(renderer));
+
+    g_slist_foreach(
+        path->commands,
+        bb_geda_path_draw_outline_lambda,
+        renderer
+        );
+}
+
+
+static void
+bb_geda_path_draw_outline_lambda(gpointer command, gpointer renderer)
+{
+    bb_path_command_render(
+        BB_PATH_COMMAND(command),
+        BB_ITEM_RENDERER(renderer)
+        );
+}
+
+
+static void
+bb_geda_path_closed_shape_drawer_init(BbClosedShapeDrawerInterface *iface)
+{
+    iface->draw_hatch = bb_geda_path_draw_hatch;
+    iface->draw_outline = bb_geda_path_draw_outline;
+}
+
+// endregion
 
 static void
 bb_geda_path_adjustable_fill_style_init(BbAdjustableFillStyleInterface *iface)
@@ -722,27 +771,14 @@ static void
 bb_geda_path_render(BbGedaItem *item, BbItemRenderer *renderer)
 {
     BbGedaPath *path = BB_GEDA_PATH(item);
+    g_return_if_fail(BB_IS_GEDA_PATH(path));
 
-    g_return_if_fail(path != NULL);
-
-    bb_item_renderer_set_color(renderer, path->color);
-    bb_item_renderer_set_fill_style(renderer, path->fill_style);
-    bb_item_renderer_set_line_style(renderer, path->line_style);
-
-    g_slist_foreach(
-        path->commands,
-        bb_geda_path_render_lambda,
-        renderer
-        );
-}
-
-
-static void
-bb_geda_path_render_lambda(gpointer command, gpointer renderer)
-{
-    bb_path_command_render(
-        BB_PATH_COMMAND(command),
-        BB_ITEM_RENDERER(renderer)
+    bb_item_renderer_draw_closed_shape(
+        renderer,
+        path->color,
+        path->fill_style,
+        path->line_style,
+        BB_CLOSED_SHAPE_DRAWER(item)
         );
 }
 

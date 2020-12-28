@@ -229,6 +229,24 @@ bb_graphics_dispose(GObject *object)
 
 
 void
+bb_graphics_draw_closed_shape(
+    BbItemRenderer *renderer,
+    int color,
+    BbFillStyle *fill_style,
+    BbLineStyle *line_style,
+    BbClosedShapeDrawer *drawer
+    )
+{
+    BbGraphics *graphics = BB_GRAPHICS(renderer);
+    g_return_if_fail(BB_IS_GRAPHICS(graphics));
+
+    bb_closed_shape_drawer_draw_outline(drawer, renderer);
+
+    cairo_stroke(graphics->cairo);
+}
+
+
+void
 bb_graphics_draw_grid(BbGraphics *graphics, int grid_size)
 {
     cairo_save(graphics->cairo);
@@ -474,6 +492,7 @@ bb_graphics_item_renderer_init(BbItemRendererInterface *iface)
 {
     g_return_if_fail(iface != NULL);
 
+    iface->draw_closed_shape = bb_graphics_draw_closed_shape;
     iface->close_path = bb_graphics_close_path;
     iface->get_reveal = bb_graphics_get_reveal;
     iface->render_absolute_line_to = bb_graphics_render_absolute_line_to;

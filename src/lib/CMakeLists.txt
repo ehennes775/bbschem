@@ -130,4 +130,6 @@ add_library(bblib
         bbattribute.h
         bbelectrical.c
         bbelectrical.h
+        bbclosedshapedrawer.c
+        bbclosedshapedrawer.h
         )

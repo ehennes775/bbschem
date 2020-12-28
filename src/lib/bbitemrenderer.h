@@ -21,8 +21,7 @@
 #include <gtk/gtk.h>
 #include "bbfillstyle.h"
 #include "bblinestyle.h"
-
-/* forward declarations */
+#include "bbclosedshapedrawer.h"
 
 #define BB_TYPE_ITEM_RENDERER bb_item_renderer_get_type()
 G_DECLARE_INTERFACE(BbItemRenderer, bb_item_renderer, BB, ITEM_RENDERER, GObject)
@@ -30,6 +29,14 @@ G_DECLARE_INTERFACE(BbItemRenderer, bb_item_renderer, BB, ITEM_RENDERER, GObject
 struct _BbItemRendererInterface
 {
     GTypeInterface parent;
+
+    void (*draw_closed_shape)(
+        BbItemRenderer *renderer,
+        int color,
+        BbFillStyle *fill_style,
+        BbLineStyle *line_style,
+        BbClosedShapeDrawer *drawer
+        );
 
     void (*close_path)(BbItemRenderer *renderer);
     gboolean (*get_reveal)(BbItemRenderer *renderer);
@@ -51,6 +58,25 @@ struct _BbItemRendererInterface
     void (*set_line_style)(BbItemRenderer *renderer, BbLineStyle *style);
     void (*set_reveal)(BbItemRenderer *renderer, gboolean reveal);
 };
+
+
+/**
+ * Draw a shape that has the capability of being filled
+ *
+ * @param renderer
+ * @param color The color used for both fill and outline
+ * @param fill_style
+ * @param line_style
+ * @param drawer
+ */
+void
+bb_item_renderer_draw_closed_shape(
+    BbItemRenderer *renderer,
+    int color,
+    BbFillStyle *fill_style,
+    BbLineStyle *line_style,
+    BbClosedShapeDrawer *drawer
+    );
 
 
 void

@@ -27,6 +27,7 @@
 #include "bbparams.h"
 #include "bbcolor.h"
 #include "bbcolors.h"
+#include "bbclosedshapedrawer.h"
 
 
 /**
@@ -134,6 +135,9 @@ static BbGedaItem*
 bb_geda_circle_clone(
     BbGedaItem *item
     );
+
+static void
+bb_geda_circle_closed_shape_drawer_init(BbClosedShapeDrawerInterface *iface);
 
 static void
 bb_geda_circle_dispose(
@@ -308,8 +312,49 @@ G_DEFINE_TYPE_WITH_CODE(
     G_IMPLEMENT_INTERFACE(BB_TYPE_ADJUSTABLE_FILL_STYLE, bb_geda_circle_adjustable_fill_style_init)
     G_IMPLEMENT_INTERFACE(BB_TYPE_ADJUSTABLE_ITEM_COLOR, bb_geda_circle_adjustable_item_color_init)
     G_IMPLEMENT_INTERFACE(BB_TYPE_ADJUSTABLE_LINE_STYLE, bb_geda_circle_adjustable_line_style_init)
+    G_IMPLEMENT_INTERFACE(BB_TYPE_CLOSED_SHAPE_DRAWER, bb_geda_circle_closed_shape_drawer_init)
     )
 
+
+// region From BbClosedShapeDrawer Interface
+
+static void
+bb_geda_circle_draw_hatch(BbClosedShapeDrawer *drawer, BbItemRenderer *renderer)
+{
+    BbGedaCircle *circle = BB_GEDA_CIRCLE(drawer);
+    g_return_if_fail(BB_IS_GEDA_CIRCLE(circle));
+    g_return_if_fail(BB_IS_ITEM_RENDERER(renderer));
+
+}
+
+
+static void
+bb_geda_circle_draw_outline(BbClosedShapeDrawer *drawer, BbItemRenderer *renderer)
+{
+    BbGedaCircle *circle = BB_GEDA_CIRCLE(drawer);
+    g_return_if_fail(BB_IS_GEDA_CIRCLE(circle));
+    g_return_if_fail(BB_IS_ITEM_RENDERER(renderer));
+
+    bb_item_renderer_render_arc(
+        renderer,
+        circle->center_x,
+        circle->center_y,
+        circle->radius,
+        0,
+        360
+        );
+
+}
+
+
+static void
+bb_geda_circle_closed_shape_drawer_init(BbClosedShapeDrawerInterface *iface)
+{
+    iface->draw_hatch = bb_geda_circle_draw_hatch;
+    iface->draw_outline = bb_geda_circle_draw_outline;
+}
+
+// endregion
 
 static void
 bb_geda_circle_adjustable_fill_style_init(BbAdjustableFillStyleInterface *iface)
@@ -866,20 +911,14 @@ static void
 bb_geda_circle_render(BbGedaItem *item, BbItemRenderer *renderer)
 {
     BbGedaCircle *circle = BB_GEDA_CIRCLE(item);
+    g_return_if_fail(BB_IS_GEDA_CIRCLE(circle));
 
-    g_return_if_fail(circle != NULL);
-
-    bb_item_renderer_set_color(renderer, circle->color);
-    bb_item_renderer_set_fill_style(renderer, circle->fill_style);
-    bb_item_renderer_set_line_style(renderer, circle->line_style);
-
-    bb_item_renderer_render_arc(
+    bb_item_renderer_draw_closed_shape(
         renderer,
-        circle->center_x,
-        circle->center_y,
-        circle->radius,
-        0,
-        360
+        circle->color,
+        circle->fill_style,
+        circle->line_style,
+        BB_CLOSED_SHAPE_DRAWER(item)
         );
 }
 
