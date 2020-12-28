@@ -25,6 +25,8 @@
 #include "bbgedaline.h"
 #include "bbapplyfunc.h"
 #include "bblibrary.h"
+#include "bbattribute.h"
+#include "bbelectrical.h"
 
 
 enum
@@ -108,7 +110,10 @@ static void
 bb_schematic_invalidate_item_cb(BbGedaItem *item, BbSchematic *schematic);
 
 static void
-bb_schematic_render_lambda(BbGedaItem *item, RenderCapture *capture);
+bb_schematic_render_lambda_1(BbGedaItem *item, RenderCapture *capture);
+
+static void
+bb_schematic_render_lambda_2(BbGedaItem *item, RenderCapture *capture);
 
 static void
 bb_schematic_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
@@ -459,14 +464,37 @@ bb_schematic_render(
 
     g_slist_foreach(
         schematic->items,
-        (GFunc) bb_schematic_render_lambda,
+        (GFunc) bb_schematic_render_lambda_1,
+        &capture
+        );
+
+    g_slist_foreach(
+        schematic->items,
+        (GFunc) bb_schematic_render_lambda_2,
         &capture
         );
 }
 
 
 static void
-bb_schematic_render_lambda(BbGedaItem *item, RenderCapture *capture)
+bb_schematic_render_lambda_1(BbGedaItem *item, RenderCapture *capture)
+{
+    g_return_if_fail(BB_IS_GEDA_ITEM(item));
+    g_return_if_fail(capture != NULL);
+
+    if (BB_IS_ELECTRICAL(item))
+    {
+        bb_electrical_foreach(
+            BB_ELECTRICAL(item),
+            bb_schematic_render_lambda_2,
+            capture
+            );
+    }
+}
+
+
+static void
+bb_schematic_render_lambda_2(BbGedaItem *item, RenderCapture *capture)
 {
     g_return_if_fail(BB_IS_GEDA_ITEM(item));
     g_return_if_fail(capture != NULL);
