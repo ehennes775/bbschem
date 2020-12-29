@@ -134,4 +134,12 @@ add_library(bblib
         bbclosedshapedrawer.h
         bbopenshapedrawer.c
         bbopenshapedrawer.h
+        bbhatch.c
+        bbpoint.h
+        bbline.h
+        bbline.c
+        bbmatrix.h
+        bbmatrix.c
+        bbpoint.c
+        bbhatch.h
         )

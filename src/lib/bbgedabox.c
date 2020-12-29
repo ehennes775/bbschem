@@ -27,6 +27,9 @@
 #include "bbparams.h"
 #include "bbcolor.h"
 #include "bbcolors.h"
+#include "bbpoint.h"
+#include "bbline.h"
+#include "bbhatch.h"
 
 
 /**
@@ -288,6 +291,25 @@ bb_geda_box_draw_hatch(BbClosedShapeDrawer *drawer, BbItemRenderer *renderer)
     g_return_if_fail(BB_IS_GEDA_BOX(box));
     g_return_if_fail(BB_IS_ITEM_RENDERER(renderer));
 
+    GArray *lines = g_array_new(FALSE, FALSE, sizeof(BbLine));
+
+    if (bb_fill_type_uses_first_set(box->fill_style->type))
+    {
+        bb_hatch_box(box->x, box->y, box->fill_style->angle[0], box->fill_style->pitch[0], lines);
+    }
+
+    if (bb_fill_type_uses_second_set(box->fill_style->type))
+    {
+        bb_hatch_box(box->x, box->y, box->fill_style->angle[1], box->fill_style->pitch[1], lines);
+    }
+
+    for (int index = 0; index < lines->len; index++)
+    {
+        BbLine *line = &g_array_index(lines, BbLine, index);
+
+        bb_item_renderer_render_absolute_move_to(renderer, line->x[0], line->y[0]);
+        bb_item_renderer_render_absolute_line_to(renderer, line->x[1], line->y[1]);
+    }
 }
 
 
