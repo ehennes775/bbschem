@@ -248,6 +248,8 @@ bb_graphics_draw_closed_shape(
         cairo_set_line_width(graphics->cairo, fill_style->width);
 
         bb_closed_shape_drawer_draw_hatch(drawer, renderer);
+
+        cairo_stroke(graphics->cairo);
     }
 
     cairo_set_line_width(graphics->cairo, line_style->line_width);

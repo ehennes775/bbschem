@@ -32,6 +32,7 @@ add_subdirectory(src/ext)
 add_subdirectory(src/lib)
 add_subdirectory(src/libtest)
 add_subdirectory(src/gui)
+add_subdirectory(src/gedaplugin)
 
 find_program(GLIB_COMPILE_RESOURCES NAMES glib-compile-resources REQUIRED)
 
@@ -73,6 +74,7 @@ set_source_files_properties(
 #)
 
 target_link_libraries(bbschem
+        #bbgedaplugin
         bbgui
         bblib
         bbext

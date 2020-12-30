@@ -17,6 +17,7 @@
  */
 
 #include <gtk/gtk.h>
+#include <libpeas/peas.h>
 #include <bbextensions.h>
 #include "bbmainwindow.h"
 #include "bbapplication.h"
@@ -85,6 +86,8 @@ struct _BbMainWindow
 {
     GtkApplicationWindow parent;
 
+    PeasExtensionSet *extensions;
+
     BbDocumentWindow *current_page;
     GtkNotebook *document_notebook;
     BbToolStack *tool_stack;
@@ -120,6 +123,30 @@ bb_main_window_update(GtkWidget *child, BbMainWindow *window);
 
 
 G_DEFINE_TYPE(BbMainWindow, bb_main_window, GTK_TYPE_APPLICATION_WINDOW)
+
+
+static void
+bb_main_window_extension_added(
+    PeasExtensionSet *extensions,
+    PeasPluginInfo *plugin_info,
+    PeasExtension *extension,
+    BbMainWindow *main_window
+    )
+{
+    peas_activatable_activate(PEAS_ACTIVATABLE(extension));
+}
+
+
+static void
+bb_main_window_extension_removed(
+    PeasExtensionSet *extensions,
+    PeasPluginInfo *plugin_info,
+    PeasExtension *extension,
+    BbMainWindow *main_window
+    )
+{
+    peas_activatable_deactivate(PEAS_ACTIVATABLE(extension));
+}
 
 
 static gboolean
@@ -331,6 +358,7 @@ bb_main_window_dispose(GObject *object)
     g_return_if_fail(window != NULL);
 
     g_set_object(&window->current_page, NULL);
+    g_clear_object(&window->extensions);
 }
 
 
@@ -541,6 +569,34 @@ bb_main_window_init(BbMainWindow *window)
         G_CALLBACK(bb_main_window_key_released_cb),
         window
         );
+
+    window->extensions = peas_extension_set_new(
+        peas_engine_get_default(),
+        PEAS_TYPE_ACTIVATABLE,
+        "object", window,
+        NULL
+        );
+
+    peas_extension_set_foreach(
+        window->extensions,
+        (PeasExtensionSetForeachFunc) bb_main_window_extension_added,
+        window
+        );
+
+    g_signal_connect(
+        window->extensions,
+        "extension-added",
+        G_CALLBACK(bb_main_window_extension_added),
+        window
+        );
+
+    g_signal_connect(
+        window->extensions,
+        "extension-removed",
+        G_CALLBACK(bb_main_window_extension_removed),
+        window
+        );
+
 }
 
 
