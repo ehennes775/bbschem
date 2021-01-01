@@ -22,7 +22,7 @@
 #include <bblibrary.h>
 #include <bbpropertysubject.h>
 #include "bbgedaeditor.h"
-#include "bbschematicwindowinner.h"
+#include "bbgedaview.h"
 #include "bbarctool.h"
 #include "bbtoolchanger.h"
 #include "bbgraphics.h"
@@ -118,7 +118,7 @@ struct _BbGedaEditor
 {
     BbDocumentWindow parent;
 
-    BbSchematicWindowInner *inner_window;
+    BbGedaView *view;
 
     /**
      * Stores the current drawing tool for this window.
@@ -192,7 +192,7 @@ static void
 bb_geda_editor_dispose(GObject *object);
 
 static void
-bb_geda_editor_draw_cb(BbSchematicWindowInner *inner, cairo_t *cairo, BbGedaEditor *outer);
+bb_geda_editor_draw_cb(BbGedaView *view, cairo_t *cairo, BbGedaEditor *outer);
 
 static void
 bb_geda_editor_finalize(GObject *object);
@@ -682,7 +682,7 @@ bb_geda_editor_set_reveal(BbRevealSubject *reveal_subject, gboolean reveal)
     {
         window->reveal = reveal;
 
-        gtk_widget_queue_draw(GTK_WIDGET(window->inner_window));
+        gtk_widget_queue_draw(GTK_WIDGET(window->view));
 
         g_object_notify_by_pspec(G_OBJECT(window), properties[PROP_REVEAL]);
     }
@@ -855,8 +855,8 @@ bb_geda_editor_pan(BbZoomSubject *zoom_subject, BbPanDirection direction)
     BbGedaEditor *window = BB_GEDA_EDITOR(zoom_subject);
     g_return_if_fail(window != NULL);
 
-    double center_x = gtk_widget_get_allocated_width(GTK_WIDGET(window->inner_window)) / 2.0;
-    double center_y = gtk_widget_get_allocated_height(GTK_WIDGET(window->inner_window)) / 2.0;
+    double center_x = gtk_widget_get_allocated_width(GTK_WIDGET(window->view)) / 2.0;
+    double center_y = gtk_widget_get_allocated_height(GTK_WIDGET(window->view)) / 2.0;
 
     double step = 100.0;
 
@@ -910,8 +910,8 @@ bb_geda_editor_zoom_box(BbToolSubject *tool_subject, double x0, double y0, doubl
         double center_x = (x1 + x0) / 2.0;
         double center_y = (y1 + y0) / 2.0;
 
-        int widget_width = gtk_widget_get_allocated_width(GTK_WIDGET(window->inner_window));
-        int widget_height = gtk_widget_get_allocated_height(GTK_WIDGET(window->inner_window));
+        int widget_width = gtk_widget_get_allocated_width(GTK_WIDGET(window->view));
+        int widget_height = gtk_widget_get_allocated_height(GTK_WIDGET(window->view));
 
         double scale_x = widget_width / width;
         double scale_y = widget_height / height;
@@ -928,8 +928,8 @@ bb_geda_editor_zoom_extents(BbZoomSubject *zoom_subject)
     BbGedaEditor *window = BB_GEDA_EDITOR(zoom_subject);
     g_return_if_fail(window != NULL);
 
-    int width = gtk_widget_get_allocated_width(GTK_WIDGET(window->inner_window));
-    int height = gtk_widget_get_allocated_height(GTK_WIDGET(window->inner_window));
+    int width = gtk_widget_get_allocated_width(GTK_WIDGET(window->view));
+    int height = gtk_widget_get_allocated_height(GTK_WIDGET(window->view));
 
     BbBounds *bounds = bb_bounds_new_with_points(0, 0, 100, 100);
 
@@ -967,7 +967,7 @@ bb_geda_editor_zoom_extents(BbZoomSubject *zoom_subject)
     g_object_notify_by_pspec(G_OBJECT(window), properties[PROP_CAN_ZOOM_IN]);
     g_object_notify_by_pspec(G_OBJECT(window), properties[PROP_CAN_ZOOM_OUT]);
 
-    gtk_widget_queue_draw(GTK_WIDGET(window->inner_window));
+    gtk_widget_queue_draw(GTK_WIDGET(window->view));
 }
 
 
@@ -977,8 +977,8 @@ bb_geda_editor_zoom_in(BbZoomSubject *zoom_subject)
     BbGedaEditor *window = BB_GEDA_EDITOR(zoom_subject);
     g_return_if_fail(window != NULL);
 
-    double center_x = gtk_widget_get_allocated_width(GTK_WIDGET(window->inner_window)) / 2.0;
-    double center_y = gtk_widget_get_allocated_height(GTK_WIDGET(window->inner_window)) / 2.0;
+    double center_x = gtk_widget_get_allocated_width(GTK_WIDGET(window->view)) / 2.0;
+    double center_y = gtk_widget_get_allocated_height(GTK_WIDGET(window->view)) / 2.0;
 
     bb_geda_editor_zoom_point(window, center_x, center_y, BB_ZOOM_IN_FACTOR);
 }
@@ -990,8 +990,8 @@ bb_geda_editor_zoom_out(BbZoomSubject *zoom_subject)
     BbGedaEditor *window = BB_GEDA_EDITOR(zoom_subject);
     g_return_if_fail(window != NULL);
 
-    double center_x = gtk_widget_get_allocated_width(GTK_WIDGET(window->inner_window)) / 2.0;
-    double center_y = gtk_widget_get_allocated_height(GTK_WIDGET(window->inner_window)) / 2.0;
+    double center_x = gtk_widget_get_allocated_width(GTK_WIDGET(window->view)) / 2.0;
+    double center_y = gtk_widget_get_allocated_height(GTK_WIDGET(window->view)) / 2.0;
 
     bb_geda_editor_zoom_point(window, center_x, center_y, BB_ZOOM_OUT_FACTOR);
 }
@@ -1013,8 +1013,8 @@ bb_geda_editor_zoom_point(BbGedaEditor *editor, double x, double y, double facto
 
     cairo_matrix_t matrix;
 
-    double center_x = gtk_widget_get_allocated_width(GTK_WIDGET(editor->inner_window)) / 2.0;
-    double center_y = gtk_widget_get_allocated_height(GTK_WIDGET(editor->inner_window)) / 2.0;
+    double center_x = gtk_widget_get_allocated_width(GTK_WIDGET(editor->view)) / 2.0;
+    double center_y = gtk_widget_get_allocated_height(GTK_WIDGET(editor->view)) / 2.0;
 
     cairo_matrix_init_identity(&matrix);
     cairo_matrix_multiply(&matrix, &matrix, &editor->matrix);
@@ -1038,7 +1038,7 @@ bb_geda_editor_zoom_point(BbGedaEditor *editor, double x, double y, double facto
     g_object_notify_by_pspec(G_OBJECT(editor), properties[PROP_CAN_ZOOM_IN]);
     g_object_notify_by_pspec(G_OBJECT(editor), properties[PROP_CAN_ZOOM_OUT]);
 
-    gtk_widget_queue_draw(GTK_WIDGET(editor->inner_window));
+    gtk_widget_queue_draw(GTK_WIDGET(editor->view));
 }
 
 
@@ -1201,7 +1201,7 @@ bb_geda_editor_class_init(BbGedaEditorClass *klasse)
     gtk_widget_class_bind_template_child(
         GTK_WIDGET_CLASS(klasse),
         BbGedaEditor,
-        inner_window
+        view
         );
 
     /* From BbClipboardSubject */
@@ -1329,7 +1329,7 @@ bb_geda_editor_dispose(GObject *object)
 
 
 static void
-bb_geda_editor_draw_cb(BbSchematicWindowInner *inner, cairo_t *cairo, BbGedaEditor *outer)
+bb_geda_editor_draw_cb(BbGedaView *view, cairo_t *cairo, BbGedaEditor *outer)
 {
     g_return_if_fail(cairo != NULL);
     g_return_if_fail(BB_IS_GEDA_EDITOR(outer));
@@ -1510,7 +1510,7 @@ bb_geda_editor_init(BbGedaEditor *window)
     cairo_matrix_init_identity(&window->matrix);
 
     gtk_widget_add_events(
-        GTK_WIDGET(window->inner_window),
+        GTK_WIDGET(window->view),
         GDK_BUTTON_PRESS_MASK |
             GDK_BUTTON_RELEASE_MASK |
             GDK_KEY_PRESS_MASK |
@@ -1519,42 +1519,42 @@ bb_geda_editor_init(BbGedaEditor *window)
         );
 
     g_signal_connect(
-        window->inner_window,
+        window->view,
         "button-press-event",
         G_CALLBACK(bb_geda_editor_button_pressed_cb),
         window
         );
 
     g_signal_connect(
-        window->inner_window,
+        window->view,
         "button-release-event",
         G_CALLBACK(bb_geda_editor_button_released_cb),
         window
         );
 
     g_signal_connect(
-        window->inner_window,
+        window->view,
         "key-press-event",
         G_CALLBACK(bb_geda_editor_key_pressed_cb),
         window
         );
 
     g_signal_connect(
-        window->inner_window,
+        window->view,
         "key-release-event",
         G_CALLBACK(bb_geda_editor_key_released_cb),
         window
         );
 
     g_signal_connect(
-        window->inner_window,
+        window->view,
         "motion-notify-event",
         G_CALLBACK(bb_geda_editor_motion_notify_cb),
         window
         );
 
     g_signal_connect(
-        window->inner_window,
+        window->view,
         "draw",
         G_CALLBACK(bb_geda_editor_draw_cb),
         window
@@ -1568,9 +1568,9 @@ bb_geda_editor_invalidate_all(BbToolSubject *tool_subject)
     BbGedaEditor *window = BB_GEDA_EDITOR(tool_subject);
 
     g_return_if_fail(window != NULL);
-    g_return_if_fail(window->inner_window != NULL);
+    g_return_if_fail(window->view != NULL);
 
-    gtk_widget_queue_draw(GTK_WIDGET(window->inner_window));
+    gtk_widget_queue_draw(GTK_WIDGET(window->view));
 }
 
 
@@ -1585,10 +1585,10 @@ static void
 bb_geda_editor_invalidate_item_cb(gpointer unused, BbGedaItem *item, BbGedaEditor *window)
 {
     g_return_if_fail(window != NULL);
-    g_return_if_fail(window->inner_window != NULL);
+    g_return_if_fail(window->view != NULL);
 
     // TODO Just invalidate everything until the bounds calculations are working
-    gtk_widget_queue_draw(GTK_WIDGET(window->inner_window));
+    gtk_widget_queue_draw(GTK_WIDGET(window->view));
 }
 
 
@@ -1597,7 +1597,7 @@ bb_geda_editor_invalidate_rect_dev(BbToolSubject *tool_subject, double x0, doubl
 {
     BbGedaEditor *window = BB_GEDA_EDITOR(tool_subject);
     g_return_if_fail(window != NULL);
-    g_return_if_fail(window->inner_window != NULL);
+    g_return_if_fail(window->view != NULL);
 
     int min_x = floor(MIN(x0, x1));
     int min_y = floor(MIN(y0, y1));
@@ -1606,7 +1606,7 @@ bb_geda_editor_invalidate_rect_dev(BbToolSubject *tool_subject, double x0, doubl
     int width = max_x - min_x + 1;
     int height = max_y - min_y + 1;
 
-    gtk_widget_queue_draw_area(GTK_WIDGET(window->inner_window), min_x, min_y, width, height);
+    gtk_widget_queue_draw_area(GTK_WIDGET(window->view), min_x, min_y, width, height);
 }
 
 

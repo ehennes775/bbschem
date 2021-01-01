@@ -31,6 +31,8 @@ add_library(bbgedaplugin SHARED
         bbgedapluginregister.c
         bbgedareader.c
         bbgedareader.h
+        bbgedaview.c
+        bbgedaview.h
         ${CMAKE_CURRENT_BINARY_DIR}/${THING1}
         )
 

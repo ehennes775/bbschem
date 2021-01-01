@@ -5,7 +5,7 @@
             <class name="schematicwindow"/>
         </style>
         <child>
-            <object class="BbSchematicWindowInner" id="inner_window">
+            <object class="BbGedaView" id="view">
                 <property name="hexpand">TRUE</property>
                 <property name="vexpand">TRUE</property>
             </object>

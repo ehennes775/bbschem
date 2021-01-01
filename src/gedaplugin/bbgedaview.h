@@ -20,7 +20,7 @@
 
 #include <gtk/gtk.h>
 
-#define BB_TYPE_SCHEMATIC_WINDOW_INNER bb_schematic_window_inner_get_type()
-G_DECLARE_FINAL_TYPE(BbSchematicWindowInner, bb_schematic_window_inner, BB, SCHEMATIC_WINDOW_INNER, GtkDrawingArea)
+#define BB_TYPE_GEDA_VIEW bb_geda_view_get_type()
+G_DECLARE_FINAL_TYPE(BbGedaView, bb_geda_view, BB, GEDA_VIEW, GtkDrawingArea)
 
 #endif

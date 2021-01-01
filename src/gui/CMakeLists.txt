@@ -128,8 +128,6 @@ add_library(bbschemgui SHARED
         bbselecttool.h
         bbselecttoolpanel.c
         bbselecttoolpanel.h
-        bbschematicwindowinner.c
-        bbschematicwindowinner.h
         bbshowgridaction.c
         bbshowgridaction.h
         bbsnapactiveaction.c

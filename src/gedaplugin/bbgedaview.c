@@ -17,7 +17,7 @@
  */
 
 #include <gtk/gtk.h>
-#include "bbschematicwindowinner.h"
+#include "bbgedaview.h"
 
 
 enum
@@ -29,51 +29,64 @@ enum
 };
 
 
-struct _BbSchematicWindowInner
+struct _BbGedaView
 {
     GtkDrawingArea parent;
 };
 
-G_DEFINE_TYPE(BbSchematicWindowInner, bb_schematic_window_inner, GTK_TYPE_DRAWING_AREA);
+
+static void
+bb_geda_view_dispose(GObject *object);
+
+static void
+bb_geda_view_finalize(GObject *object);
+
+static void
+bb_geda_view_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
+
+static void
+bb_geda_view_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
+
+
+G_DEFINE_DYNAMIC_TYPE_EXTENDED(
+    BbGedaView,
+    bb_geda_view,
+    GTK_TYPE_DRAWING_AREA,
+    0,
+
+    )
 
 
 static void
-bb_schematic_window_inner_dispose(GObject *object);
-
-static void
-bb_schematic_window_inner_finalize(GObject *object);
-
-static void
-bb_schematic_window_inner_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
-
-static void
-bb_schematic_window_inner_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
-
-
-static void
-bb_schematic_window_inner_class_init(BbSchematicWindowInnerClass *klasse)
+bb_geda_view_class_init(BbGedaViewClass *klasse)
 {
-    G_OBJECT_CLASS(klasse)->dispose = bb_schematic_window_inner_dispose;
-    G_OBJECT_CLASS(klasse)->finalize = bb_schematic_window_inner_finalize;
-    G_OBJECT_CLASS(klasse)->get_property = bb_schematic_window_inner_get_property;
-    G_OBJECT_CLASS(klasse)->set_property = bb_schematic_window_inner_set_property;
+    G_OBJECT_CLASS(klasse)->dispose = bb_geda_view_dispose;
+    G_OBJECT_CLASS(klasse)->finalize = bb_geda_view_finalize;
+    G_OBJECT_CLASS(klasse)->get_property = bb_geda_view_get_property;
+    G_OBJECT_CLASS(klasse)->set_property = bb_geda_view_set_property;
 }
 
 
 static void
-bb_schematic_window_inner_dispose(GObject *object)
+bb_geda_view_class_finalize(BbGedaViewClass *klasse)
 {
 }
 
 
 static void
-bb_schematic_window_inner_finalize(GObject *object)
+bb_geda_view_dispose(GObject *object)
 {
 }
 
 
 static void
-bb_schematic_window_inner_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec)
+bb_geda_view_finalize(GObject *object)
+{
+}
+
+
+static void
+bb_geda_view_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec)
 {
     switch (property_id)
     {
@@ -93,20 +106,20 @@ bb_schematic_window_inner_get_property(GObject *object, guint property_id, GValu
 
 
 static void
-bb_schematic_window_inner_init(BbSchematicWindowInner *window)
+bb_geda_view_init(BbGedaView *window)
 {
 }
 
 
-__attribute__((constructor)) void
-bb_schematic_window_inner_register()
+void
+bb_geda_view_register(GTypeModule *module)
 {
-    bb_schematic_window_inner_get_type();
+    bb_geda_view_register_type(module);
 }
 
 
 static void
-bb_schematic_window_inner_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec)
+bb_geda_view_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec)
 {
     switch (property_id)
     {
