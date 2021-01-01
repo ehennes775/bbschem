@@ -22,7 +22,7 @@
 #include "bbmainwindow.h"
 #include "bbpinpropertyeditor.h"
 #include "bbpropertycombobox.h"
-#include "bbschematicwindow.h"
+#include "bbpropertysubject.h"
 
 
 enum
@@ -212,10 +212,10 @@ bb_pin_property_editor_update(BbMainWindow *main_window, BbPinPropertyEditor *ed
     table = g_hash_table_new(NULL, NULL);
     window = bb_main_window_get_current_document_window(main_window);
 
-    if (BB_IS_SCHEMATIC_WINDOW(window))
+    if (BB_IS_PROPERTY_SUBJECT(window))
     {
-        bb_schematic_window_query_selection(
-            BB_SCHEMATIC_WINDOW(window),
+        bb_property_subject_query_selection(
+            BB_PROPERTY_SUBJECT(window),
             bb_pin_property_editor_update_lambda,
             table
             );

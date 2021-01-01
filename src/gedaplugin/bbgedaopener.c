@@ -21,7 +21,7 @@
 #include "bbgedaopener.h"
 #include "bbgedareader.h"
 #include "bbspecificopener.h"
-#include "bbschematicwindow.h"
+#include "bbgedaeditor.h"
 
 
 enum
@@ -165,11 +165,11 @@ bb_geda_opener_open_ready_1(GFile *file, GAsyncResult *result, GTask *task)
             task
             );
 
-        BbSchematicWindow *window = bb_schematic_window_new(schematic);
+        BbGedaEditor *editor = bb_geda_editor_new(schematic);
 
         bb_main_window_add_page(
             opener->main_window,
-            BB_DOCUMENT_WINDOW(window)
+            BB_DOCUMENT_WINDOW(editor)
             );
     }
 }

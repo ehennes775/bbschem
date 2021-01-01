@@ -19,7 +19,7 @@
 #include <gtk/gtk.h>
 #include <bbextensions.h>
 #include "bbsaveallaction.h"
-#include "bbschematicwindow.h"
+#include "gedaplugin/bbgedaeditor.h"
 
 
 enum
@@ -116,9 +116,10 @@ bb_save_all_action_activate(GAction *action, GVariant *parameter)
         bb_save_all_action_get_window(BB_SAVE_ALL_ACTION(action))
         );
 
-    if (BB_IS_SCHEMATIC_WINDOW(window))
-    {
-    }
+    // TODO
+    //if (BB_IS_SCHEMATIC_WINDOW(window))
+    //{
+   // }
 }
 
 
@@ -204,9 +205,11 @@ bb_save_all_action_get_enabled(GAction *action)
         bb_save_all_action_get_window(BB_SAVE_ALL_ACTION(action))
         );
 
-    return
-        BB_IS_SCHEMATIC_WINDOW(window) &&
-        bb_schematic_window_get_can_save(BB_SCHEMATIC_WINDOW(window));
+    return TRUE;
+
+        // TODO
+        //BB_IS_SCHEMATIC_WINDOW(window) &&
+        //bb_schematic_window_get_can_save(BB_SCHEMATIC_WINDOW(window));
 }
 
 

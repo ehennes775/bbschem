@@ -19,7 +19,7 @@
 #include <gtk/gtk.h>
 #include <bbextensions.h>
 #include "bbselectnoneaction.h"
-#include "bbschematicwindow.h"
+#include "gedaplugin/bbgedaeditor.h"
 #include "bbclipboardsubject.h"
 
 

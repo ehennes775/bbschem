@@ -23,7 +23,7 @@
 #include "bbcolorcombobox.h"
 #include "bbcoloreditor.h"
 #include "bbpropertycombobox.h"
-#include "bbschematicwindow.h"
+#include "bbpropertysubject.h"
 
 
 enum
@@ -82,10 +82,10 @@ bb_color_editor_apply(BbColorComboBox *combo, BbColorEditor *editor)
 
     window = bb_main_window_get_current_document_window(editor->main_window);
 
-    g_return_if_fail(BB_IS_SCHEMATIC_WINDOW(window));
+    g_return_if_fail(BB_IS_PROPERTY_SUBJECT(window));
 
-    bb_schematic_window_apply_selection(
-        BB_SCHEMATIC_WINDOW(window),
+    bb_property_subject_apply_selection(
+        BB_PROPERTY_SUBJECT(window),
         bb_color_editor_apply_lambda,
         GINT_TO_POINTER(bb_color_combo_box_get_color(combo))
         );
@@ -255,10 +255,10 @@ bb_color_editor_update(BbMainWindow *main_window, BbColorEditor *editor)
     table = g_hash_table_new(NULL, NULL);
     window = bb_main_window_get_current_document_window(main_window);
 
-    if (BB_IS_SCHEMATIC_WINDOW(window))
+    if (BB_IS_PROPERTY_SUBJECT(window))
     {
-        bb_schematic_window_query_selection(
-            BB_SCHEMATIC_WINDOW(window),
+        bb_property_subject_query_selection(
+            BB_PROPERTY_SUBJECT(window),
             bb_color_editor_update_lambda,
             table
             );

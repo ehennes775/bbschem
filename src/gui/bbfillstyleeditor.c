@@ -23,7 +23,7 @@
 #include "bbfillstyleeditor.h"
 #include "bbint32combobox.h"
 #include "bbpropertycombobox.h"
-#include "bbschematicwindow.h"
+#include "bbpropertysubject.h"
 
 
 enum
@@ -114,10 +114,10 @@ bb_fill_style_editor_apply_angle_1(BbInt32ComboBox *combo, BbFillStyleEditor *ed
 
     window = bb_main_window_get_current_document_window(editor->main_window);
 
-    g_return_if_fail(BB_IS_SCHEMATIC_WINDOW(window));
+    g_return_if_fail(BB_IS_PROPERTY_SUBJECT(window));
 
-    bb_schematic_window_apply_selection(
-        BB_SCHEMATIC_WINDOW(window),
+    bb_property_subject_apply_selection(
+        BB_PROPERTY_SUBJECT(window),
         bb_fill_style_editor_apply_angle_1_lambda,
         GINT_TO_POINTER(bb_int32_combo_box_get_value(combo))
         );
@@ -160,10 +160,10 @@ bb_fill_style_editor_apply_angle_2(BbInt32ComboBox *combo, BbFillStyleEditor *ed
 
     window = bb_main_window_get_current_document_window(editor->main_window);
 
-    g_return_if_fail(BB_IS_SCHEMATIC_WINDOW(window));
+    g_return_if_fail(BB_IS_PROPERTY_SUBJECT(window));
 
-    bb_schematic_window_apply_selection(
-        BB_SCHEMATIC_WINDOW(window),
+    bb_property_subject_apply_selection(
+        BB_PROPERTY_SUBJECT(window),
         bb_fill_style_editor_apply_angle_2_lambda,
         GINT_TO_POINTER(bb_int32_combo_box_get_value(combo))
         );
@@ -206,10 +206,10 @@ bb_fill_style_editor_apply_fill_type(BbPropertyComboBox *combo, BbFillStyleEdito
 
     window = bb_main_window_get_current_document_window(editor->main_window);
 
-    g_return_if_fail(BB_IS_SCHEMATIC_WINDOW(window));
+    g_return_if_fail(BB_IS_PROPERTY_SUBJECT(window));
 
-    bb_schematic_window_apply_selection(
-        BB_SCHEMATIC_WINDOW(window),
+    bb_property_subject_apply_selection(
+        BB_PROPERTY_SUBJECT(window),
         bb_fill_style_editor_apply_fill_type_lambda,
         GINT_TO_POINTER(bb_int32_combo_box_get_value(combo))
         );
@@ -252,10 +252,10 @@ bb_fill_style_editor_apply_fill_width(BbInt32ComboBox *combo, BbFillStyleEditor 
 
     window = bb_main_window_get_current_document_window(editor->main_window);
 
-    g_return_if_fail(BB_IS_SCHEMATIC_WINDOW(window));
+    g_return_if_fail(BB_IS_PROPERTY_SUBJECT(window));
 
-    bb_schematic_window_apply_selection(
-        BB_SCHEMATIC_WINDOW(window),
+    bb_property_subject_apply_selection(
+        BB_PROPERTY_SUBJECT(window),
         bb_fill_style_editor_apply_fill_width_lambda,
         GINT_TO_POINTER(bb_int32_combo_box_get_value(combo))
     );
@@ -297,10 +297,10 @@ bb_fill_style_editor_apply_pitch_1(BbInt32ComboBox *combo, BbFillStyleEditor *ed
 
     window = bb_main_window_get_current_document_window(editor->main_window);
 
-    g_return_if_fail(BB_IS_SCHEMATIC_WINDOW(window));
+    g_return_if_fail(BB_IS_PROPERTY_SUBJECT(window));
 
-    bb_schematic_window_apply_selection(
-        BB_SCHEMATIC_WINDOW(window),
+    bb_property_subject_apply_selection(
+        BB_PROPERTY_SUBJECT(window),
         bb_fill_style_editor_apply_pitch_1_lambda,
         GINT_TO_POINTER(bb_int32_combo_box_get_value(combo))
     );
@@ -343,10 +343,10 @@ bb_fill_style_editor_apply_pitch_2(BbInt32ComboBox *combo, BbFillStyleEditor *ed
 
     window = bb_main_window_get_current_document_window(editor->main_window);
 
-    g_return_if_fail(BB_IS_SCHEMATIC_WINDOW(window));
+    g_return_if_fail(BB_IS_PROPERTY_SUBJECT(window));
 
-    bb_schematic_window_apply_selection(
-        BB_SCHEMATIC_WINDOW(window),
+    bb_property_subject_apply_selection(
+        BB_PROPERTY_SUBJECT(window),
         bb_fill_style_editor_apply_pitch_2_lambda,
         GINT_TO_POINTER(bb_int32_combo_box_get_value(combo))
     );

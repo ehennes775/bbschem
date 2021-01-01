@@ -19,7 +19,7 @@
 #include <gtk/gtk.h>
 #include <bbextensions.h>
 #include "bbreloadaction.h"
-#include "bbschematicwindow.h"
+#include "gedaplugin/bbgedaeditor.h"
 
 enum
 {
@@ -115,14 +115,14 @@ bb_reload_action_activate(GAction *action, GVariant *parameter)
         bb_reload_action_get_window(BB_RELOAD_ACTION(action))
         );
 
-    if (BB_IS_SCHEMATIC_WINDOW(window))
-    {
-        GError *error = NULL;
-
-        bb_schematic_window_reload(BB_SCHEMATIC_WINDOW(window), &error);
-
-        g_clear_error(&error);
-    }
+    //if (BB_IS_SCHEMATIC_WINDOW(window))
+    //{
+    //    GError *error = NULL/;
+//
+//        bb_schematic_window_reload(BB_SCHEMATIC_WINDOW(window), &error);
+//
+//        g_clear_error(&error);
+//    }
 }
 
 
@@ -206,9 +206,9 @@ bb_reload_action_get_enabled(GAction *action)
         bb_reload_action_get_window(BB_RELOAD_ACTION(action))
         );
 
-    return
-        BB_IS_SCHEMATIC_WINDOW(window) &&
-        bb_schematic_window_get_can_reload(BB_SCHEMATIC_WINDOW(window));
+    return FALSE; // TODO
+        //BB_IS_SCHEMATIC_WINDOW(window) &&
+        //bb_schematic_window_get_can_reload(BB_SCHEMATIC_WINDOW(window));
 }
 
 

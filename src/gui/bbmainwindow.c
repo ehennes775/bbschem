@@ -22,7 +22,7 @@
 #include "bbmainwindow.h"
 #include "bbapplication.h"
 #include "bbdocumentwindowtab.h"
-#include "bbschematicwindow.h"
+#include "gedaplugin/bbgedaeditor.h"
 
 #include "bbcopyaction.h"
 #include "bbcutaction.h"
@@ -443,9 +443,6 @@ bb_main_window_init(BbMainWindow *window)
 //        "tool-changer", window->tool_stack,
 //        NULL
 //        ));
-
-    BbDocumentWindow *temp = g_object_new(BB_TYPE_SCHEMATIC_WINDOW, NULL);
-    bb_main_window_add_page(window, temp);
 
     g_action_map_add_action(
         G_ACTION_MAP(window),

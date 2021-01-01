@@ -20,7 +20,7 @@
 #include <bbextensions.h>
 #include "bbopenaction.h"
 #include "bbgeneralopener.h"
-#include "bbschematicwindow.h"
+#include "gedaplugin/bbgedaeditor.h"
 
 
 enum
