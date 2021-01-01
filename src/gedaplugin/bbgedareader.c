@@ -20,7 +20,7 @@
 #include <bblibrary.h>
 #include <bbgedaitemfactory.h>
 #include <bbelectrical.h>
-#include "bbgedaschematicreader.h"
+#include "bbgedareader.h"
 
 
 #define VERSION_TOKEN "v"
@@ -31,14 +31,11 @@
 enum
 {
     PROP_0,
-    PROP_1,
-    PROP_2,
-    PROP_3,
     N_PROPERTIES
 };
 
 
-struct _BbGedaSchematicReader
+struct _BbGedaReader
 {
     GObject parent;
 
@@ -60,71 +57,76 @@ struct _BbTaskData
 };
 
 
-G_DEFINE_TYPE(BbGedaSchematicReader, bb_geda_schematic_reader, G_TYPE_OBJECT);
+G_DEFINE_DYNAMIC_TYPE_EXTENDED(
+    BbGedaReader,
+    bb_geda_reader,
+    G_TYPE_OBJECT,
+    0,
+    )
 
 
-static void
-bb_geda_schematic_reader_dispose(GObject *object);
-
-static void
-bb_geda_schematic_reader_finalize(GObject *object);
-
-static void
-bb_geda_schematic_reader_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
+// region Function prototypes
 
 static void
-bb_geda_schematic_reader_read_attribute_ready(BbGedaItemFactory *factory, GAsyncResult *result, GTask *task);
+bb_geda_reader_dispose(GObject *object);
 
 static void
-bb_geda_schematic_reader_read_item_line_ready(GDataInputStream *stream, GAsyncResult *result, GTask *task);
-
-
-static void
-bb_geda_schematic_reader_read_version_ready(GDataInputStream *stream, GAsyncResult *result, GTask *task);
+bb_geda_reader_finalize(GObject *object);
 
 static void
-bb_geda_schematic_reader_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
+bb_geda_reader_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
+
+static void
+bb_geda_reader_read_attribute_ready(BbGedaItemFactory *factory, GAsyncResult *result, GTask *task);
+
+static void
+bb_geda_reader_read_item_line_ready(GDataInputStream *stream, GAsyncResult *result, GTask *task);
+
+static void
+bb_geda_reader_read_version_ready(GDataInputStream *stream, GAsyncResult *result, GTask *task);
+
+static void
+bb_geda_reader_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
+
+// endregion
 
 
 GParamSpec *properties[N_PROPERTIES];
 
 
 static void
-bb_geda_schematic_reader_class_init(BbGedaSchematicReaderClass *klasse)
+bb_geda_reader_class_init(BbGedaReaderClass *klasse)
 {
-    G_OBJECT_CLASS(klasse)->dispose = bb_geda_schematic_reader_dispose;
-    G_OBJECT_CLASS(klasse)->finalize = bb_geda_schematic_reader_finalize;
-    G_OBJECT_CLASS(klasse)->get_property = bb_geda_schematic_reader_get_property;
-    G_OBJECT_CLASS(klasse)->set_property = bb_geda_schematic_reader_set_property;
+    G_OBJECT_CLASS(klasse)->dispose = bb_geda_reader_dispose;
+    G_OBJECT_CLASS(klasse)->finalize = bb_geda_reader_finalize;
+    G_OBJECT_CLASS(klasse)->get_property = bb_geda_reader_get_property;
+    G_OBJECT_CLASS(klasse)->set_property = bb_geda_reader_set_property;
 }
 
 
 static void
-bb_geda_schematic_reader_dispose(GObject *object)
-{
-}
-
-
-static void
-bb_geda_schematic_reader_finalize(GObject *object)
+bb_geda_reader_class_finalize(BbGedaReaderClass *klasse)
 {
 }
 
 
 static void
-bb_geda_schematic_reader_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec)
+bb_geda_reader_dispose(GObject *object)
+{
+}
+
+
+static void
+bb_geda_reader_finalize(GObject *object)
+{
+}
+
+
+static void
+bb_geda_reader_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec)
 {
     switch (property_id)
     {
-        case PROP_1:
-            break;
-
-        case PROP_2:
-            break;
-
-        case PROP_3:
-            break;
-
         default:
             G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
     }
@@ -132,15 +134,15 @@ bb_geda_schematic_reader_get_property(GObject *object, guint property_id, GValue
 
 
 static void
-bb_geda_schematic_reader_init(BbGedaSchematicReader *reader)
+bb_geda_reader_init(BbGedaReader *reader)
 {
     reader->factory = bb_geda_factory_new();
 }
 
 
 void
-bb_geda_schematic_reader_read_async(
-    BbGedaSchematicReader *reader,
+bb_geda_reader_read_async(
+    BbGedaReader *reader,
     GDataInputStream *stream,
     BbSchematic *schematic,
     GCancellable *cancellable,
@@ -171,7 +173,7 @@ bb_geda_schematic_reader_read_async(
         stream,
         G_PRIORITY_DEFAULT,
         cancellable,
-        (GAsyncReadyCallback) bb_geda_schematic_reader_read_version_ready,
+        (GAsyncReadyCallback) bb_geda_reader_read_version_ready,
         task
         );
 }
@@ -185,7 +187,7 @@ bb_geda_schematic_reader_read_async(
  * @param task
  */
 static void
-bb_geda_schematic_reader_read_attribute_line_ready(GDataInputStream *stream, GAsyncResult *result, GTask *task)
+bb_geda_reader_read_attribute_line_ready(GDataInputStream *stream, GAsyncResult *result, GTask *task)
 {
     g_assert(G_IS_DATA_INPUT_STREAM(stream));
     g_assert(G_IS_ASYNC_RESULT(result));
@@ -234,7 +236,7 @@ bb_geda_schematic_reader_read_attribute_line_ready(GDataInputStream *stream, GAs
                 stream,
                 G_PRIORITY_DEFAULT,
                 g_task_get_cancellable(task),
-                (GAsyncReadyCallback) bb_geda_schematic_reader_read_item_line_ready,
+                (GAsyncReadyCallback) bb_geda_reader_read_item_line_ready,
                 task
                 );
         }
@@ -246,7 +248,7 @@ bb_geda_schematic_reader_read_attribute_line_ready(GDataInputStream *stream, GAs
                 params,
                 stream,
                 g_task_get_cancellable(task),
-                (GAsyncReadyCallback) bb_geda_schematic_reader_read_attribute_ready,
+                (GAsyncReadyCallback) bb_geda_reader_read_attribute_ready,
                 task
                 );
         }
@@ -259,7 +261,7 @@ bb_geda_schematic_reader_read_attribute_line_ready(GDataInputStream *stream, GAs
 
 
 static void
-bb_geda_schematic_reader_read_attribute_ready(BbGedaItemFactory *factory, GAsyncResult *result, GTask *task)
+bb_geda_reader_read_attribute_ready(BbGedaItemFactory *factory, GAsyncResult *result, GTask *task)
 {
     g_assert(BB_IS_GEDA_FACTORY(factory));
     g_assert(G_IS_ASYNC_RESULT(result));
@@ -324,7 +326,7 @@ bb_geda_schematic_reader_read_attribute_ready(BbGedaItemFactory *factory, GAsync
             task_data->stream,
             G_PRIORITY_DEFAULT,
             g_task_get_cancellable(task),
-            (GAsyncReadyCallback) bb_geda_schematic_reader_read_attribute_line_ready,
+            (GAsyncReadyCallback) bb_geda_reader_read_attribute_line_ready,
             task
             );
     }
@@ -339,7 +341,7 @@ bb_geda_schematic_reader_read_attribute_ready(BbGedaItemFactory *factory, GAsync
  * @param task
  */
 static void
-bb_geda_schematic_reader_read_item_ready(BbGedaItemFactory *factory, GAsyncResult *result, GTask *task)
+bb_geda_reader_read_item_ready(BbGedaItemFactory *factory, GAsyncResult *result, GTask *task)
 {
     g_assert(BB_IS_GEDA_FACTORY(factory));
     g_assert(G_IS_ASYNC_RESULT(result));
@@ -380,7 +382,7 @@ bb_geda_schematic_reader_read_item_ready(BbGedaItemFactory *factory, GAsyncResul
             task_data->stream,
             G_PRIORITY_DEFAULT,
             g_task_get_cancellable(task),
-            (GAsyncReadyCallback) bb_geda_schematic_reader_read_item_line_ready,
+            (GAsyncReadyCallback) bb_geda_reader_read_item_line_ready,
             task
             );
     }
@@ -395,7 +397,7 @@ bb_geda_schematic_reader_read_item_ready(BbGedaItemFactory *factory, GAsyncResul
  * @param task
  */
 static void
-bb_geda_schematic_reader_read_item_line_ready(GDataInputStream *stream, GAsyncResult *result, GTask *task)
+bb_geda_reader_read_item_line_ready(GDataInputStream *stream, GAsyncResult *result, GTask *task)
 {
     g_assert(G_IS_DATA_INPUT_STREAM(stream));
     g_assert(G_IS_ASYNC_RESULT(result));
@@ -444,7 +446,7 @@ bb_geda_schematic_reader_read_item_line_ready(GDataInputStream *stream, GAsyncRe
                 stream,
                 G_PRIORITY_DEFAULT,
                 g_task_get_cancellable(task),
-                (GAsyncReadyCallback) bb_geda_schematic_reader_read_attribute_line_ready,
+                (GAsyncReadyCallback) bb_geda_reader_read_attribute_line_ready,
                 task
             );
         }
@@ -458,7 +460,7 @@ bb_geda_schematic_reader_read_item_line_ready(GDataInputStream *stream, GAsyncRe
                 params,
                 stream,
                 g_task_get_cancellable(task),
-                (GAsyncReadyCallback) bb_geda_schematic_reader_read_item_ready,
+                (GAsyncReadyCallback) bb_geda_reader_read_item_ready,
                 task
                 );
         }
@@ -478,7 +480,7 @@ bb_geda_schematic_reader_read_item_line_ready(GDataInputStream *stream, GAsyncRe
  * @param task
  */
 static void
-bb_geda_schematic_reader_read_version_ready(GDataInputStream *stream, GAsyncResult *result, GTask *task)
+bb_geda_reader_read_version_ready(GDataInputStream *stream, GAsyncResult *result, GTask *task)
 {
     g_assert(G_IS_DATA_INPUT_STREAM(stream));
     g_assert(G_IS_ASYNC_RESULT(result));
@@ -525,7 +527,7 @@ bb_geda_schematic_reader_read_version_ready(GDataInputStream *stream, GAsyncResu
                 stream,
                 G_PRIORITY_DEFAULT,
                 g_task_get_cancellable(task),
-                (GAsyncReadyCallback) bb_geda_schematic_reader_read_item_line_ready,
+                (GAsyncReadyCallback) bb_geda_reader_read_item_line_ready,
                 task
             );
         }
@@ -549,33 +551,27 @@ bb_geda_schematic_reader_read_version_ready(GDataInputStream *stream, GAsyncResu
 
 
 void*
-bb_geda_schematic_reader_read_finish(
-    BbGedaSchematicReader *reader,
-    GAsyncResult *result,
-    GError **error
-    )
+bb_geda_reader_read_finish(BbGedaReader *reader, GAsyncResult *result, GError **error)
 {
-    g_assert(BB_IS_GEDA_SCHEMATIC_READER(reader));
+    g_assert(BB_IS_GEDA_READER(reader));
     g_assert(g_task_is_valid(result, reader));
 
     return g_task_propagate_pointer(G_TASK(result), error);
 }
 
 
+void
+bb_geda_reader_register(GTypeModule *module)
+{
+    bb_geda_reader_register_type(module);
+}
+
+
 static void
-bb_geda_schematic_reader_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec)
+bb_geda_reader_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec)
 {
     switch (property_id)
     {
-        case PROP_1:
-            break;
-
-        case PROP_2:
-            break;
-
-        case PROP_3:
-            break;
-
         default:
             G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
     }

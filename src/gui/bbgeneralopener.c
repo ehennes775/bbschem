@@ -19,7 +19,7 @@
 #include <gtk/gtk.h>
 #include <bblibrary.h>
 #include "bbgeneralopener.h"
-#include "bbgedaschematicreader.h"
+#include "gedaplugin/bbgedareader.h"
 #include "bbschematicwindow.h"
 
 
@@ -52,12 +52,6 @@ static void
 bb_general_opener_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
 
 static void
-bb_general_opener_open_open_ready(GFile *file, GAsyncResult *result, GTask *task);
-
-static void
-bb_general_opener_open_read_ready(BbGedaSchematicReader *reader, GAsyncResult *result, GTask *task);
-
-static void
 bb_general_opener_read_content_type_ready_1(GFile *file, GAsyncResult *result, GTask *task);
 
 static void
@@ -84,15 +78,11 @@ bb_general_opener_add_specific_opener(
     g_return_if_fail(content_type != NULL);
     g_return_if_fail(BB_IS_SPECIFIC_OPENER(specific_opener));
 
-    g_message("count: %d", g_hash_table_size(general_opener->openers));
-
     g_hash_table_insert(
         general_opener->openers,
         g_strdup(content_type),
         g_object_ref(specific_opener)
         );
-
-    g_message("count: %d", g_hash_table_size(general_opener->openers));
 }
 
 
@@ -163,143 +153,6 @@ bb_general_opener_new()
 }
 
 
-static void*
-bb_general_opener_open_ready(BbGedaSchematicReader *reader, GAsyncResult *result, BbGeneralOpener *opener)
-{
-    GError *local_error = NULL;
-
-    bb_geda_schematic_reader_read_finish(
-        reader,
-        result,
-        &local_error
-        );
-
-    if (local_error != NULL)
-    {
-        g_message("Error: %s", local_error->message);
-    }
-
-    g_message("Done");
-}
-
-
-BbDocumentWindow*
-bb_general_opener_open_async(
-    BbGeneralOpener *opener,
-    GFile *file,
-    GCancellable *cancellable,
-    GAsyncReadyCallback callback,
-    gpointer user_data
-    )
-{
-    BbSchematic *schematic = bb_schematic_new();
-
-    GTask *task = g_task_new(
-        opener,
-        cancellable,
-        callback,
-        user_data
-        );
-
-    g_task_set_task_data(
-        task,
-        schematic,
-        NULL
-        );
-
-    g_file_read_async(
-        file,
-        G_PRIORITY_DEFAULT,
-        cancellable,
-        (GAsyncReadyCallback) bb_general_opener_open_open_ready,
-        task
-        );
-
-    return BB_DOCUMENT_WINDOW(bb_schematic_window_new(
-        schematic
-        ));
-}
-
-
-static void
-bb_general_opener_open_open_ready(GFile *file, GAsyncResult *result, GTask *task)
-{
-    GError *error = NULL;
-
-    GFileInputStream *file_stream = g_file_read_finish(file, result, &error);
-
-    if (g_task_return_error_if_cancelled(task))
-    {
-        g_object_unref(task);
-    }
-    else if (error != NULL)
-    {
-        g_task_return_error(task, error);
-        g_object_unref(task);
-    }
-    else if (file_stream == NULL)
-    {
-        g_task_return_new_error(task, BB_ERROR_DOMAIN, 0, "Internal Error");
-        g_object_unref(task);
-    }
-    else
-    {
-        GDataInputStream *data_stream = g_data_input_stream_new(G_INPUT_STREAM(file_stream));
-        BbGedaSchematicReader *reader = BB_GEDA_SCHEMATIC_READER(g_object_new(BB_TYPE_GEDA_SCHEMATIC_READER, NULL));
-
-        bb_geda_schematic_reader_read_async(
-            reader,
-            data_stream,
-            BB_SCHEMATIC(g_task_get_task_data(task)),
-            g_task_get_cancellable(task),
-            (GAsyncReadyCallback) bb_general_opener_open_read_ready,
-            task
-            );
-    }
-
-}
-
-
-static void
-bb_general_opener_open_read_ready(BbGedaSchematicReader *reader, GAsyncResult *result, GTask *task)
-{
-    GError *error = NULL;
-
-    bb_geda_schematic_reader_read_finish(reader, result, &error);
-
-    g_object_unref(reader);
-
-    if (g_task_return_error_if_cancelled(task))
-    {
-        g_object_unref(task);
-    }
-    else if (error != NULL)
-    {
-        g_task_return_error(task, error);
-        g_object_unref(task);
-    }
-    else
-    {
-        g_task_return_pointer(task, NULL, NULL);
-        g_object_unref(task);
-    }
-}
-
-
-void*
-bb_general_opener_open_finish(
-    BbGeneralOpener *opener,
-    GAsyncResult *result,
-    GError **error
-    )
-{
-    g_assert(BB_IS_GENERAL_OPENER(opener));
-    g_assert(g_task_is_valid(result, opener));
-
-    return g_task_propagate_pointer(G_TASK(result), error);
-}
-
-
 void
 bb_general_opener_read_content_type_async(
     BbGeneralOpener *opener,
@@ -366,8 +219,6 @@ bb_general_opener_read_content_type_ready_1(GFile *file, GAsyncResult *result, G
             general_opener->openers,
             content_type
             ));
-
-        g_message("count: %d", g_hash_table_size(general_opener->openers));
 
         if (specific_opener == NULL)
         {

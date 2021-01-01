@@ -88,6 +88,18 @@ bb_geda_plugin_activate(PeasActivatable *activatable)
 
     bb_general_opener_add_specific_opener(
         general_opener,
+        "application/x-geda-schematic",
+        BB_SPECIFIC_OPENER(plugin->opener)
+        );
+
+    bb_general_opener_add_specific_opener(
+        general_opener,
+        "application/x-geda-symbol",
+        BB_SPECIFIC_OPENER(plugin->opener)
+        );
+
+    bb_general_opener_add_specific_opener(
+        general_opener,
         "application/x-lepton-schematic",
         BB_SPECIFIC_OPENER(plugin->opener)
         );

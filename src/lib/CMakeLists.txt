@@ -1,6 +1,6 @@
 
 
-add_library(bblib
+add_library(bblib SHARED
         bbabsolutelineto.c
         bbabsolutelineto.h
         bbabsolutemoveto.c

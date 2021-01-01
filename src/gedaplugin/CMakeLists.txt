@@ -6,6 +6,8 @@ add_library(bbgedaplugin SHARED
         bbgedaplugin.c
         bbgedaplugin.h
         bbgedapluginregister.c
+        bbgedareader.c
+        bbgedareader.h
         )
 
 target_link_libraries(bbgedaplugin

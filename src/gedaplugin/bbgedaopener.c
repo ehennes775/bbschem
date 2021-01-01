@@ -19,7 +19,7 @@
 #include <gtk/gtk.h>
 #include <bbextensions.h>
 #include "bbgedaopener.h"
-#include "bbgedaschematicreader.h"
+#include "bbgedareader.h"
 #include "bbspecificopener.h"
 #include "bbschematicwindow.h"
 
@@ -41,7 +41,7 @@ struct _BbGedaOpener
 
     BbMainWindow *main_window;
 
-    BbGedaSchematicReader *reader;
+    BbGedaReader *reader;
 };
 
 
@@ -69,7 +69,7 @@ static void
 bb_geda_opener_open_ready_1(GFile *file, GAsyncResult *result, GTask *task);
 
 static void
-bb_geda_opener_open_ready_2(BbGedaSchematicReader *reader, GAsyncResult *result, GTask *task);
+bb_geda_opener_open_ready_2(BbGedaReader *reader, GAsyncResult *result, GTask *task);
 
 static void
 bb_geda_opener_set_property(
@@ -82,7 +82,7 @@ bb_geda_opener_set_property(
 static void
 bb_geda_opener_set_reader(
     BbGedaOpener *opener,
-    BbGedaSchematicReader *reader
+    BbGedaReader *reader
     );
 
 static void
@@ -95,14 +95,13 @@ bb_geda_opener_specific_opener_init(
 
 GParamSpec *properties[N_PROPERTIES];
 
-
-G_DEFINE_TYPE_WITH_CODE(
+G_DEFINE_DYNAMIC_TYPE_EXTENDED(
     BbGedaOpener,
     bb_geda_opener,
     G_TYPE_OBJECT,
-    G_IMPLEMENT_INTERFACE(BB_TYPE_SPECIFIC_OPENER, bb_geda_opener_specific_opener_init)
+    0,
+    G_IMPLEMENT_INTERFACE_DYNAMIC(BB_TYPE_SPECIFIC_OPENER, bb_geda_opener_specific_opener_init)
     )
-
 
 // region From BbSpecificOpener
 
@@ -157,7 +156,7 @@ bb_geda_opener_open_ready_1(GFile *file, GAsyncResult *result, GTask *task)
         BbGedaOpener *opener = BB_GEDA_OPENER(g_task_get_source_object(task));
         BbSchematic *schematic = bb_schematic_new();
 
-        bb_geda_schematic_reader_read_async(
+        bb_geda_reader_read_async(
             bb_geda_opener_get_reader(BB_GEDA_OPENER(opener)),
             data_stream,
             schematic,
@@ -177,11 +176,11 @@ bb_geda_opener_open_ready_1(GFile *file, GAsyncResult *result, GTask *task)
 
 
 static void
-bb_geda_opener_open_ready_2(BbGedaSchematicReader *reader, GAsyncResult *result, GTask *task)
+bb_geda_opener_open_ready_2(BbGedaReader *reader, GAsyncResult *result, GTask *task)
 {
     GError *local_error = NULL;
 
-    gboolean success = TRUE; bb_geda_schematic_reader_read_finish(reader, result, &local_error);    // TODO
+    gboolean success = TRUE; bb_geda_reader_read_finish(reader, result, &local_error);    // TODO
 
     if (g_task_return_error_if_cancelled(task))
     {
@@ -257,10 +256,16 @@ bb_geda_opener_class_init(BbGedaOpenerClass *klasse)
             "reader",
             "",
             "",
-            BB_TYPE_GEDA_SCHEMATIC_READER,
+            BB_TYPE_GEDA_READER,
             G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS
             )
         );
+}
+
+
+static void
+bb_geda_opener_class_finalize(BbGedaOpenerClass *opener_class)
+{
 }
 
 
@@ -292,7 +297,7 @@ bb_geda_opener_get_property(GObject *object, guint property_id, GValue *value, G
 }
 
 
-BbGedaSchematicReader*
+BbGedaReader*
 bb_geda_opener_get_reader(BbGedaOpener *opener)
 {
     g_return_val_if_fail(BB_IS_GEDA_OPENER(opener), NULL);
@@ -310,8 +315,8 @@ bb_geda_opener_init(BbGedaOpener *opener)
 BbGedaOpener*
 bb_geda_opener_new(BbMainWindow *main_window)
 {
-    BbGedaSchematicReader *reader = BB_GEDA_SCHEMATIC_READER(g_object_new(
-        BB_TYPE_GEDA_SCHEMATIC_READER,
+    BbGedaReader *reader = BB_GEDA_READER(g_object_new(
+        BB_TYPE_GEDA_READER,
         NULL
         ));
 
@@ -321,6 +326,13 @@ bb_geda_opener_new(BbMainWindow *main_window)
         "reader", reader,
         NULL
         ));
+}
+
+
+void
+bb_geda_opener_register(GTypeModule *module)
+{
+    bb_geda_opener_register_type(module);
 }
 
 
@@ -369,7 +381,7 @@ bb_geda_opener_set_property(GObject *object, guint property_id, const GValue *va
 
 
 static void
-bb_geda_opener_set_reader(BbGedaOpener *opener, BbGedaSchematicReader *reader)
+bb_geda_opener_set_reader(BbGedaOpener *opener, BbGedaReader *reader)
 {
     g_return_if_fail(BB_IS_GEDA_OPENER(opener));
 

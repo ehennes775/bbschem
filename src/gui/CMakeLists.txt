@@ -56,8 +56,6 @@ add_library(bbschemgui SHARED
         bbdrawingtool.h
         bbfillstyleeditor.c
         bbfillstyleeditor.h
-        bbgedaschematicreader.c
-        bbgedaschematicreader.h
         bbgeneralopener.c
         bbgeneralopener.h
         bbgraphics.c

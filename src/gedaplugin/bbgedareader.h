@@ -1,5 +1,5 @@
-#ifndef __BBGEDASCHEMATICREADER__
-#define __BBGEDASCHEMATICREADER__
+#ifndef __BBGEDAREADER__
+#define __BBGEDAREADER__
 /*
  * bbschem
  * Copyright (C) 2020 Edward C. Hennessy
@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- * @file bbgedaschematicreader.h
+ * @file bbgedareader.h
  *
  * A class for reading schematics and symbols in the gEDA file format.
  *
@@ -31,8 +31,8 @@
 #include <bblibrary.h>
 
 
-#define BB_TYPE_GEDA_SCHEMATIC_READER bb_geda_schematic_reader_get_type()
-G_DECLARE_FINAL_TYPE(BbGedaSchematicReader, bb_geda_schematic_reader, BB, GEDA_SCHEMATIC_READER, GObject)
+#define BB_TYPE_GEDA_READER bb_geda_reader_get_type()
+G_DECLARE_FINAL_TYPE(BbGedaReader, bb_geda_reader, BB, GEDA_READER, GObject)
 
 
 /**
@@ -40,15 +40,15 @@ G_DECLARE_FINAL_TYPE(BbGedaSchematicReader, bb_geda_schematic_reader, BB, GEDA_S
  *
  * This function is reentrant.
  *
- * @param reader A BbGedaSchematicReader
- * @param stream The GDataInputStream to read the schematic from
+ * @param reader A BbGedaReader to perform the read operation
+ * @param stream A GDataInputStream to read the schematic from
  * @param cancellable A token to cancel the asynchronous operation
- * @param callback The callback function when the asynchronous operation is complete (i.e. ready)
+ * @param callback A callback function when the asynchronous operation is complete (i.e. ready)
  * @param user_data Generic data to pass to the GAsyncReadyCallback callback
  */
 void
-bb_geda_schematic_reader_read_async(
-    BbGedaSchematicReader *reader,
+bb_geda_reader_read_async(
+    BbGedaReader *reader,
     GDataInputStream *stream,
     BbSchematic *schematic,
     GCancellable *cancellable,
@@ -58,18 +58,18 @@ bb_geda_schematic_reader_read_async(
 
 
 /**
- * Obtain the results from reading a gEDA schematic or symbol file asynchronously
+ * Obtain results from reading a gEDA schematic or symbol file asynchronously
  *
  * This function is reentrant.
  *
- * @param reader A BbGedaSchematicReader
+ * @param reader The BbGedaReader passed to bb_geda_reader_read_async()
  * @param result
  * @param error
- * @return An unused pointer
+ * @return
  */
 void*
-bb_geda_schematic_reader_read_finish(
-    BbGedaSchematicReader *reader,
+bb_geda_reader_read_finish(
+    BbGedaReader *reader,
     GAsyncResult *result,
     GError **error
     );

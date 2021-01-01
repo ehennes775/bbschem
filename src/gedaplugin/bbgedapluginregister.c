@@ -22,13 +22,21 @@
 
 
 void
+bb_geda_opener_register(GTypeModule *module);
+
+void
 bb_geda_plugin_register(GTypeModule *module);
+
+void
+bb_geda_reader_register(GTypeModule *module);
 
 
 G_MODULE_EXPORT void
 peas_register_types(PeasObjectModule *module)
 {
+    bb_geda_opener_register(G_TYPE_MODULE(module));
     bb_geda_plugin_register(G_TYPE_MODULE(module));
+    bb_geda_reader_register(G_TYPE_MODULE(module));
 
     peas_object_module_register_extension_type(
         module,
