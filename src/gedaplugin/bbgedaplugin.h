@@ -24,7 +24,4 @@
 #define BB_TYPE_GEDA_PLUGIN bb_geda_plugin_get_type()
 G_DECLARE_FINAL_TYPE(BbGedaPlugin, bb_geda_plugin, BB, GEDA_PLUGIN, PeasExtensionBase)
 
-void
-bb_geda_plugin_register(GTypeModule *type_module);
-
 #endif

@@ -211,7 +211,7 @@ bb_geda_schematic_reader_read_attribute_line_ready(GDataInputStream *stream, GAs
     }
     else if (line == NULL)
     {
-        g_task_return_pointer(task, NULL, NULL);
+        g_task_return_new_error(task, BB_ERROR_DOMAIN, ERROR_UNTERMINATED_ATTRIBUTES, "Unterminated attribute list");
         g_object_unref(task);
     }
     else if (length == 0)
@@ -285,7 +285,7 @@ bb_geda_schematic_reader_read_attribute_ready(BbGedaItemFactory *factory, GAsync
             BB_ERROR_DOMAIN,
             0,
             "Internal error"
-        );
+            );
 
         g_object_unref(task);
     }
@@ -531,7 +531,13 @@ bb_geda_schematic_reader_read_version_ready(GDataInputStream *stream, GAsyncResu
         }
         else
         {
-            g_task_return_new_error(task, BB_ERROR_DOMAIN, ERROR_EXPECTED_VERSION, "Expected version");
+            g_task_return_new_error(
+                task,
+                BB_ERROR_DOMAIN,
+                ERROR_EXPECTED_VERSION,
+                "Expected gEDA file version on first line"
+                );
+
             g_object_unref(task);
         }
 

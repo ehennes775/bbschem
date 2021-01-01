@@ -21,6 +21,10 @@
 #include "bbgedaplugin.h"
 
 
+void
+bb_geda_plugin_register(GTypeModule *module);
+
+
 G_MODULE_EXPORT void
 peas_register_types(PeasObjectModule *module)
 {
