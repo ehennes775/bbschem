@@ -48,6 +48,15 @@ struct _BbOpenAction
 {
     GObject parent;
 
+    BbMainWindow *window;
+};
+
+
+typedef struct _TaskData TaskData;
+
+struct _TaskData
+{
+    GFile *file;
     BbGeneralOpener *opener;
     BbMainWindow *window;
 };
@@ -99,7 +108,7 @@ static void
 bb_open_action_open_uris_lambda(const char *uri, BbOpenAction *open_action);
 
 static void
-bb_open_action_open_uris_lambda_ready(BbGeneralOpener *opener, GAsyncResult *result, BbOpenAction *open_action);
+bb_open_action_open_uris_lambda_ready(BbGeneralOpener *opener, GAsyncResult *result, TaskData *task_data);
 
 static void
 bb_open_action_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
@@ -122,6 +131,8 @@ G_DEFINE_TYPE_WITH_CODE(
 static void
 bb_open_action_action_init(GActionInterface *iface)
 {
+    g_return_if_fail(iface != NULL);
+
     iface->activate = bb_open_action_activate;
     iface->change_state = bb_open_action_change_state;
     iface->get_enabled = bb_open_action_get_enabled;
@@ -237,7 +248,7 @@ bb_open_action_create_dialog(BbOpenAction *open_action)
         "Open",
         GTK_RESPONSE_ACCEPT,
         NULL
-    );
+        );
 
     gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(dialog), TRUE);
 
@@ -369,8 +380,6 @@ static void
 bb_open_action_init(BbOpenAction *open_action)
 {
     g_return_if_fail(BB_IS_OPEN_ACTION(open_action));
-
-    open_action->opener = bb_general_opener_new();
 }
 
 
@@ -392,62 +401,95 @@ bb_open_action_open_uris(BbOpenAction *open_action, GSList *uris)
 }
 
 
+/**
+ * @brief Initiate identification of the content type
+ *
+ * @param uri
+ * @param open_action
+ */
 static void
 bb_open_action_open_uris_lambda(const char *uri, BbOpenAction *open_action)
 {
     g_return_if_fail(uri != NULL);
     g_return_if_fail(BB_IS_OPEN_ACTION(open_action));
 
-    GFile *file = g_file_new_for_path(uri);
+    TaskData *task_data = g_new0(TaskData, 1);
 
-    BbDocumentWindow *page = bb_general_opener_open_async(
-        open_action->opener,
-        file,
+    // g_file_new_for_uri() gets an 'Operation not supported' error
+    task_data->file = g_file_new_for_path(uri);
+    task_data->opener = g_object_ref(bb_main_window_get_opener(open_action->window));
+    task_data->window = g_object_ref(open_action->window);
+
+    bb_general_opener_read_content_type_async(
+        task_data->opener,
+        task_data->file,
         NULL,
         (GAsyncReadyCallback) bb_open_action_open_uris_lambda_ready,
-        open_action
+        task_data
         );
-
-    if (page == NULL)
-    {
-        g_warning("Opener returned %p when opening %s", page, uri);
-    }
-    else
-    {
-        bb_main_window_add_page(open_action->window, page);
-    }
-
-    g_clear_object(&file);
 }
 
 
 static void
-bb_open_action_open_uris_lambda_ready(BbGeneralOpener *opener, GAsyncResult *result, BbOpenAction *open_action)
+bb_open_action_open_uris_lambda_ready(BbGeneralOpener *opener, GAsyncResult *result, TaskData *task_data)
 {
+    g_warn_if_fail(BB_IS_GENERAL_OPENER(opener));
+    g_warn_if_fail(G_IS_ASYNC_RESULT(result));
+    g_warn_if_fail(task_data != NULL);
+
     GError *local_error = NULL;
 
-    bb_general_opener_open_finish(opener, result, &local_error);
+    gboolean success = bb_general_opener_read_content_type_finish(opener, result, &local_error);
 
     if (local_error != NULL)
     {
-        GtkWidget *dialog = gtk_message_dialog_new(
-            GTK_WINDOW(open_action->window),
+        gchar *basename = g_file_get_basename(task_data->file);
+
+        GtkWidget *dialog = gtk_message_dialog_new_with_markup(
+            GTK_WINDOW(task_data->window),
             GTK_DIALOG_MODAL,
             GTK_MESSAGE_ERROR,
             GTK_BUTTONS_OK,
-            "Cannot open file: \n\n    %s\n\n    Domain: %s\n\n    Code: %d\n\n    Message: %s",
-            "unknown",
-            g_quark_to_string(local_error->code),
-            local_error->code,
-            local_error->message
+            "<b>%s</b>\n\nCannot open file: \n\n    %s",
+            local_error->message,
+            basename
             );
+
+        g_free(basename);
+
+        gtk_dialog_run(GTK_DIALOG(dialog));
+
+        gtk_widget_destroy(dialog);
+        g_clear_error(&local_error);
+    }
+    else if (!success)
+    {
+        gchar *basename = g_file_get_basename(task_data->file);
+
+        GtkWidget *dialog = gtk_message_dialog_new(
+            GTK_WINDOW(task_data->window),
+            GTK_DIALOG_MODAL,
+            GTK_MESSAGE_ERROR,
+            GTK_BUTTONS_OK,
+            "<b>%s</b>\n\nCannot open file: \n\n    %s",
+            "Internal Error",
+            basename
+            );
+
+        g_free(basename);
 
         gtk_dialog_run(GTK_DIALOG(dialog));
 
         gtk_widget_destroy(dialog);
     }
 
-    g_clear_error(&local_error);
+    if (task_data != NULL)
+    {
+        g_clear_object(&task_data->file);
+        g_clear_object(&task_data->opener);
+        g_clear_object(&task_data->window);
+        g_free(task_data);
+    }
 }
 
 

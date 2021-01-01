@@ -21,6 +21,7 @@
 #include <gtk/gtk.h>
 #include "bbapplication.h"
 #include "bbdocumentwindow.h"
+#include "bbgeneralopener.h"
 
 
 #define BB_TYPE_MAIN_WINDOW bb_main_window_get_type()
@@ -38,6 +39,9 @@ bb_main_window_add_page(BbMainWindow *window, BbDocumentWindow *page);
 
 GtkWidget*
 bb_main_window_get_current_document_window(BbMainWindow* window);
+
+BbGeneralOpener*
+bb_main_window_get_opener(BbMainWindow *main_window);
 
 BbMainWindow*
 bb_main_window_new(BbApplication *application);

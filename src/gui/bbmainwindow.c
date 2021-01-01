@@ -73,12 +73,15 @@
 #include "bbsnapactiveaction.h"
 #include "bbopenaction.h"
 #include "bbnewaction.h"
+#include "bbgeneralopener.h"
 
 
 enum
 {
     PROP_0,
-    PROP_CURRENT_DOCUMENT_WINDOW
+    PROP_CURRENT_DOCUMENT_WINDOW,
+    PROP_OPENER,
+    N_PROPERTIES
 };
 
 
@@ -90,6 +93,7 @@ struct _BbMainWindow
 
     BbDocumentWindow *current_page;
     GtkNotebook *document_notebook;
+    BbGeneralOpener *general_opener;
     BbToolStack *tool_stack;
 };
 
@@ -116,10 +120,16 @@ static void
 bb_main_window_page_removed(BbMainWindow *window, GtkWidget *child, guint page_num, GtkNotebook *notebook);
 
 static void
+bb_main_window_set_opener(BbMainWindow *main_window, BbGeneralOpener *general_opener);
+
+static void
 bb_main_window_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
 
 static void
 bb_main_window_update(GtkWidget *child, BbMainWindow *window);
+
+
+static GParamSpec *properties[N_PROPERTIES];
 
 
 G_DEFINE_TYPE(BbMainWindow, bb_main_window, GTK_TYPE_APPLICATION_WINDOW)
@@ -292,7 +302,7 @@ bb_main_window_class_init(BbMainWindowClass *class)
     G_OBJECT_CLASS(class)->get_property = bb_main_window_get_property;
     G_OBJECT_CLASS(class)->set_property = bb_main_window_set_property;
 
-    bb_object_class_install_property(
+    properties[PROP_CURRENT_DOCUMENT_WINDOW] = bb_object_class_install_property(
         G_OBJECT_CLASS(class),
         PROP_CURRENT_DOCUMENT_WINDOW,
         g_param_spec_object(
@@ -301,6 +311,18 @@ bb_main_window_class_init(BbMainWindowClass *class)
             "",
             BB_TYPE_DOCUMENT_WINDOW,
             G_PARAM_READABLE
+            )
+        );
+
+    properties[PROP_OPENER] = bb_object_class_install_property(
+        G_OBJECT_CLASS(class),
+        PROP_OPENER,
+        g_param_spec_object(
+            "opener",
+            "",
+            "",
+            BB_TYPE_GENERAL_OPENER,
+            G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS
             )
         );
 
@@ -375,6 +397,16 @@ bb_main_window_get_current_document_window(BbMainWindow* window)
 }
 
 
+BbGeneralOpener*
+bb_main_window_get_opener(BbMainWindow *main_window)
+{
+    g_return_val_if_fail(BB_IS_MAIN_WINDOW(main_window), NULL);
+
+    return main_window->general_opener;
+}
+
+
+
 static void
 bb_main_window_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec)
 {
@@ -382,6 +414,10 @@ bb_main_window_get_property(GObject *object, guint property_id, GValue *value, G
     {
         case PROP_CURRENT_DOCUMENT_WINDOW:
             g_value_set_object(value, bb_main_window_get_current_document_window(BB_MAIN_WINDOW(object)));
+            break;
+
+        case PROP_OPENER:
+            g_value_set_object(value, bb_main_window_get_opener(BB_MAIN_WINDOW(object)));
             break;
 
         default:
@@ -570,6 +606,11 @@ bb_main_window_init(BbMainWindow *window)
         window
         );
 
+    bb_main_window_set_opener(
+        window,
+        bb_general_opener_new()
+        );
+
     window->extensions = peas_extension_set_new(
         peas_engine_get_default(),
         PEAS_TYPE_ACTIVATABLE,
@@ -596,7 +637,6 @@ bb_main_window_init(BbMainWindow *window)
         G_CALLBACK(bb_main_window_extension_removed),
         window
         );
-
 }
 
 
@@ -606,6 +646,7 @@ bb_main_window_new(BbApplication *application)
     return g_object_new(
         BB_TYPE_MAIN_WINDOW,
         "application", application,
+        //"opener", bb_general_opener_new(),
         NULL
         );
 }
@@ -670,10 +711,38 @@ bb_main_window_register()
 
 
 static void
+bb_main_window_set_opener(BbMainWindow *main_window, BbGeneralOpener *general_opener)
+{
+    g_return_if_fail(BB_IS_MAIN_WINDOW(main_window));
+    g_return_if_fail(BB_IS_GENERAL_OPENER(general_opener));
+
+    if (main_window->general_opener != general_opener)
+    {
+        if (main_window->general_opener != NULL)
+        {
+            g_object_unref(general_opener);
+        }
+
+        main_window->general_opener = general_opener;
+
+        if (main_window->general_opener != NULL)
+        {
+            g_object_ref(general_opener);
+        }
+
+        g_object_notify_by_pspec(G_OBJECT(main_window), properties[PROP_OPENER]);
+    }
+}
+
+static void
 bb_main_window_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec)
 {
     switch (property_id)
     {
+        case PROP_OPENER:
+            bb_main_window_set_opener(BB_MAIN_WINDOW(object), BB_GENERAL_OPENER(g_value_get_object(value)));
+            break;
+
         default:
             G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
     }

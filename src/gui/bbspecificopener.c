@@ -20,18 +20,18 @@
 #include "bbspecificopener.h"
 
 
-static BbDocumentWindow*
+static void
 bb_specific_opener_open_async_missing(
-    BbSpecificOpener *opener,
-    GDataInputStream *stream,
+    BbSpecificOpener *specific_opener,
+    GFile *file,
     GCancellable *cancellable,
     GAsyncReadyCallback callback,
     gpointer user_data
     );
 
-void*
+gboolean
 bb_specific_opener_open_finish_missing(
-    BbSpecificOpener *opener,
+    BbSpecificOpener *specific_opener,
     GAsyncResult *result,
     GError **error
     );
@@ -50,30 +50,30 @@ bb_specific_opener_default_init(BbSpecificOpenerInterface *iface)
 }
 
 
-BbDocumentWindow*
+void
 bb_specific_opener_open_async(
-    BbSpecificOpener *opener,
-    GDataInputStream *stream,
+    BbSpecificOpener *specific_opener,
+    GFile *file,
     GCancellable *cancellable,
     GAsyncReadyCallback callback,
     gpointer user_data
     )
 {
-    g_return_val_if_fail(opener != NULL, NULL);
+    g_return_if_fail(BB_IS_SPECIFIC_OPENER(specific_opener));
 
-    BbSpecificOpenerInterface *iface = BB_SPECIFIC_OPENER_GET_IFACE(opener);
+    BbSpecificOpenerInterface *iface = BB_SPECIFIC_OPENER_GET_IFACE(specific_opener);
 
-    g_return_val_if_fail(iface != NULL, NULL);
-    g_return_val_if_fail(iface->open_async != NULL, NULL);
+    g_return_if_fail(iface != NULL);
+    g_return_if_fail(iface->open_async != NULL);
 
-    return iface->open_async(opener, stream, cancellable, callback, user_data);
+    return iface->open_async(specific_opener, file, cancellable, callback, user_data);
 }
 
 
-static BbDocumentWindow*
+static void
 bb_specific_opener_open_async_missing(
-    BbSpecificOpener *opener,
-    GDataInputStream *stream,
+    BbSpecificOpener *specific_opener,
+    GFile *file,
     GCancellable *cancellable,
     GAsyncReadyCallback callback,
     gpointer user_data
@@ -83,27 +83,27 @@ bb_specific_opener_open_async_missing(
 }
 
 
-void*
+gboolean
 bb_specific_opener_open_finish(
-    BbSpecificOpener *opener,
+    BbSpecificOpener *specific_opener,
     GAsyncResult *result,
     GError **error
     )
 {
-    g_return_val_if_fail(opener != NULL, NULL);
+    g_return_val_if_fail(BB_IS_SPECIFIC_OPENER(specific_opener), FALSE);
 
-    BbSpecificOpenerInterface *iface = BB_SPECIFIC_OPENER_GET_IFACE(opener);
+    BbSpecificOpenerInterface *iface = BB_SPECIFIC_OPENER_GET_IFACE(specific_opener);
 
-    g_return_val_if_fail(iface != NULL, NULL);
-    g_return_val_if_fail(iface->open_finish != NULL, NULL);
+    g_return_val_if_fail(iface != NULL, FALSE);
+    g_return_val_if_fail(iface->open_finish != NULL, FALSE);
 
-    return iface->open_finish(opener, result, error);
+    return iface->open_finish(specific_opener, result, error);
 }
 
 
-gpointer
+gboolean
 bb_specific_opener_open_finish_missing(
-    BbSpecificOpener *opener,
+    BbSpecificOpener *specific_opener,
     GAsyncResult *result,
     GError **error
     )

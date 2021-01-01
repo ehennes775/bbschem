@@ -1,6 +1,8 @@
 
 
 add_library(bbgedaplugin SHARED
+        bbgedaopener.c
+        bbgedaopener.h
         bbgedaplugin.c
         bbgedaplugin.h
         bbgedapluginregister.c

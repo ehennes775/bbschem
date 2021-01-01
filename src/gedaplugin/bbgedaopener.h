@@ -19,6 +19,7 @@
  */
 
 #include <gtk/gtk.h>
+#include <bbmainwindow.h>
 #include "bbgedaschematicreader.h"
 
 #define BB_TYPE_GEDA_OPENER bb_geda_opener_get_type()
@@ -26,5 +27,8 @@ G_DECLARE_FINAL_TYPE(BbGedaOpener, bb_geda_opener, BB, GEDA_OPENER, GObject)
 
 BbGedaSchematicReader*
 bb_geda_opener_get_reader(BbGedaOpener *opener);
+
+BbGedaOpener*
+bb_geda_opener_new(BbMainWindow *main_window);
 
 #endif

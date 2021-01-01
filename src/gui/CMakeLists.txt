@@ -1,5 +1,5 @@
 
-add_library(bbgui
+add_library(bbschemgui SHARED
         bbapplication.c
         bbapplication.h
         bbattributeeditor.c
@@ -56,8 +56,6 @@ add_library(bbgui
         bbdrawingtool.h
         bbfillstyleeditor.c
         bbfillstyleeditor.h
-        bbgedaopener.c
-        bbgedaopener.h
         bbgedaschematicreader.c
         bbgedaschematicreader.h
         bbgeneralopener.c

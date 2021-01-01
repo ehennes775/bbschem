@@ -30,35 +30,35 @@ struct _BbSpecificOpenerInterface
 {
     GTypeInterface g_iface;
 
-    BbDocumentWindow* (*open_async)(
-        BbSpecificOpener *opener,
-        GDataInputStream *stream,
+    void (*open_async)(
+        BbSpecificOpener *specific_opener,
+        GFile *file,
         GCancellable *cancellable,
         GAsyncReadyCallback callback,
         gpointer user_data
         );
 
-    gpointer (*open_finish)(
-        BbSpecificOpener *opener,
+    gboolean (*open_finish)(
+        BbSpecificOpener *specific_opener,
         GAsyncResult *result,
         GError **error
         );
 };
 
 
-BbDocumentWindow*
+void
 bb_specific_opener_open_async(
-    BbSpecificOpener *opener,
-    GDataInputStream *stream,
+    BbSpecificOpener *specific_opener,
+    GFile *file,
     GCancellable *cancellable,
     GAsyncReadyCallback callback,
     gpointer user_data
     );
 
 
-gpointer
+gboolean
 bb_specific_opener_open_finish(
-    BbSpecificOpener *opener,
+    BbSpecificOpener *specific_opener,
     GAsyncResult *result,
     GError **error
     );

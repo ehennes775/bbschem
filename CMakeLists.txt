@@ -75,7 +75,7 @@ set_source_files_properties(
 
 target_link_libraries(bbschem
         #bbgedaplugin
-        bbgui
+        bbschemgui
         bblib
         bbext
         m
@@ -83,3 +83,5 @@ target_link_libraries(bbschem
         ${GTK3_LIBRARIES}
         ${PEAS_LIBRARIES}
         )
+
+set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -u bb_general_opener_add_specific_opener")

@@ -18,7 +18,9 @@
 
 #include <libpeas/peas.h>
 #include <bbextensions.h>
+#include <bbgeneralopener.h>
 #include "bbgedaplugin.h"
+#include "bbgedaopener.h"
 
 
 enum
@@ -40,6 +42,8 @@ struct _BbGedaPlugin
      * @brief
      */
     GObject *object;
+
+    BbGedaOpener *opener;
 };
 
 
@@ -76,11 +80,23 @@ G_DEFINE_DYNAMIC_TYPE_EXTENDED(
 static void
 bb_geda_plugin_activate(PeasActivatable *activatable)
 {
-    g_message("%s", __func__);
-    g_message("%s", G_OBJECT_TYPE_NAME(activatable));
-
     BbGedaPlugin *plugin = BB_GEDA_PLUGIN(activatable);
-    g_message("%s", G_OBJECT_TYPE_NAME(plugin->object));
+    g_return_if_fail(BB_IS_GEDA_PLUGIN(plugin));
+
+    BbGeneralOpener *general_opener = bb_main_window_get_opener(BB_MAIN_WINDOW(plugin->object));
+    plugin->opener = bb_geda_opener_new(BB_MAIN_WINDOW(plugin->object));
+
+    bb_general_opener_add_specific_opener(
+        general_opener,
+        "application/x-lepton-schematic",
+        BB_SPECIFIC_OPENER(plugin->opener)
+        );
+
+    bb_general_opener_add_specific_opener(
+        general_opener,
+        "application/x-lepton-symbol",
+        BB_SPECIFIC_OPENER(plugin->opener)
+        );
 }
 
 
@@ -96,7 +112,10 @@ bb_geda_plugin_get_object(BbGedaPlugin *plugin)
 static void
 bb_geda_plugin_deactivate(PeasActivatable *activatable)
 {
-    g_message("%s", __func__);
+    BbGedaPlugin *plugin = BB_GEDA_PLUGIN(activatable);
+    g_return_if_fail(BB_IS_GEDA_PLUGIN(plugin));
+
+    // TODO Remove openers
 }
 
 void
