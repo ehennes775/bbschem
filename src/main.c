@@ -31,12 +31,6 @@ main(int argc, char *argv[])
         plugin_info
         );
 
-    gchar **plugin_names = peas_engine_get_loaded_plugins(engine);
-    gchar *all = g_strjoinv("\n", plugin_names);
-    g_message("Loaded: %s", all);
-    g_free(all);
-    g_strfreev(plugin_names);
-
     int status = g_application_run(
         G_APPLICATION(bb_application_new()),
         argc,
