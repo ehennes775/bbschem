@@ -90,7 +90,7 @@ bb_adjustable_line_style_default_init(BbAdjustableLineStyleInterface *class)
             "Line Width",
             0,
             G_MAXINT,
-            0,
+            10,
             G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS
             )
         );
