@@ -165,7 +165,10 @@ bb_geda_opener_open_ready_1(GFile *file, GAsyncResult *result, GTask *task)
             task
             );
 
-        BbGedaEditor *editor = bb_geda_editor_new(schematic);
+        BbGedaEditor *editor = bb_geda_editor_new(
+            schematic,
+            bb_main_window_get_tool_changer(opener->main_window)
+            );
 
         bb_main_window_add_page(
             opener->main_window,

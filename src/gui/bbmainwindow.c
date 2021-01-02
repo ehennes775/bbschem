@@ -426,6 +426,15 @@ bb_main_window_get_property(GObject *object, guint property_id, GValue *value, G
 }
 
 
+BbToolChanger*
+bb_main_window_get_tool_changer(BbMainWindow *main_window)
+{
+    g_return_val_if_fail(BB_IS_MAIN_WINDOW(main_window), NULL);
+
+    return BB_TOOL_CHANGER(main_window->tool_stack);
+}
+
+
 static void
 bb_main_window_init(BbMainWindow *window)
 {

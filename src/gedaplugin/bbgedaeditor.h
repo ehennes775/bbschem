@@ -50,7 +50,7 @@ bb_geda_editor_get_drawing_tool(BbGedaEditor *editor);
 
 
 BbGedaEditor*
-bb_geda_editor_new(BbSchematic *schematic);
+bb_geda_editor_new(BbSchematic *schematic, BbToolChanger *tool_changer);
 
 
 /**

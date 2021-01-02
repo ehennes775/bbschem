@@ -118,15 +118,14 @@ struct _BbGedaEditor
 {
     BbDocumentWindow parent;
 
-    BbGedaView *view;
-
     /**
      * Stores the current drawing tool for this window.
      */
     BbDrawingTool *drawing_tool;
 
-    BbSchematic *schematic;
-
+    /**
+     * @brief
+     */
     GFile *file;
 
     /**
@@ -158,6 +157,9 @@ struct _BbGedaEditor
      */
     cairo_matrix_t matrix;
 
+    /**
+     * @brief
+     */
     GSList *redo_stack;
 
     /**
@@ -165,13 +167,34 @@ struct _BbGedaEditor
      */
     gboolean reveal;
 
+    /**
+     * @brief
+     */
+    BbSchematic *schematic;
+
+    /**
+     * @brief
+     */
     GHashTable *selection;
 
+    /**
+     * @brief
+     */
     BbToolChanger *tool_changer;
 
+    /**
+     * @brief
+     */
     GSList *undo_stack;
+
+    /**
+     * @brief
+     */
+    BbGedaView *view;
 };
 
+
+// region Function Prototypes
 
 static void
 bb_geda_editor_add_item(BbToolSubject *subject, BbGedaItem *item);
@@ -240,6 +263,9 @@ static void
 bb_geda_editor_notify_grid_control_cb(BbGrid *grid, GParamSpec *pspec, BbGedaEditor *window);
 
 static void
+bb_geda_editor_property_subject_init(BbPropertySubjectInterface *iface);
+
+static void
 bb_geda_editor_reveal_subject_init(BbRevealSubjectInterface *iface);
 
 static void
@@ -296,6 +322,8 @@ bb_geda_editor_zoom_point(BbGedaEditor *editor, double x, double y, double facto
 static void
 bb_geda_editor_zoom_subject_init(BbZoomSubjectInterface *iface);
 
+// endregion
+
 
 static GParamSpec *properties[N_PROPERTIES];
 static guint signals[N_SIGNALS];
@@ -309,6 +337,7 @@ G_DEFINE_DYNAMIC_TYPE_EXTENDED(
     G_IMPLEMENT_INTERFACE_DYNAMIC(BB_TYPE_BOUNDS_CALCULATOR, bb_geda_editor_bounds_calculator_init)
     G_IMPLEMENT_INTERFACE_DYNAMIC(BB_TYPE_CLIPBOARD_SUBJECT, bb_geda_editor_clipboard_subject_init)
     G_IMPLEMENT_INTERFACE_DYNAMIC(BB_TYPE_GRID_SUBJECT, bb_geda_editor_grid_subject_init)
+    G_IMPLEMENT_INTERFACE_DYNAMIC(BB_TYPE_PROPERTY_SUBJECT, bb_geda_editor_property_subject_init)
     G_IMPLEMENT_INTERFACE_DYNAMIC(BB_TYPE_REVEAL_SUBJECT, bb_geda_editor_reveal_subject_init)
     G_IMPLEMENT_INTERFACE_DYNAMIC(BB_TYPE_SAVE_SUBJECT, bb_geda_editor_save_subject_init)
     G_IMPLEMENT_INTERFACE_DYNAMIC(BB_TYPE_TOOL_SUBJECT, bb_geda_editor_tool_subject_init)
@@ -1659,11 +1688,12 @@ bb_geda_editor_motion_notify_cb(GtkWidget *widget, GdkEvent *event, gpointer use
 
 
 BbGedaEditor*
-bb_geda_editor_new(BbSchematic *schematic)
+bb_geda_editor_new(BbSchematic *schematic, BbToolChanger *tool_changer)
 {
     return BB_GEDA_EDITOR(g_object_new(
         BB_TYPE_GEDA_EDITOR,
         "schematic", schematic,
+        "tool-changer", tool_changer,
         NULL
         ));
 }
