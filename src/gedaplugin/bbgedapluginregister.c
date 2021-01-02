@@ -42,6 +42,9 @@ void
 bb_geda_factory_register(GTypeModule *module);
 
 void
+bb_geda_item_factory_register(GTypeModule *module);
+
+void
 bb_geda_line_factory_register(GTypeModule *module);
 
 void
@@ -72,6 +75,9 @@ bb_geda_view_register(GTypeModule *module);
 G_MODULE_EXPORT void
 peas_register_types(PeasObjectModule *module)
 {
+    /* Must be called before classes that implement this interface */
+    bb_geda_item_factory_register(G_TYPE_MODULE(module));
+
     bb_geda_arc_factory_register(G_TYPE_MODULE(module));
     bb_geda_block_factory_register(G_TYPE_MODULE(module));
     bb_geda_box_factory_register(G_TYPE_MODULE(module));

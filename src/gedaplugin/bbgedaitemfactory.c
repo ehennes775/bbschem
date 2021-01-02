@@ -47,12 +47,11 @@ bb_geda_item_factory_create_finish_default(
     GError **error
     );
 
+static void
+bb_geda_item_factory_register_type(GTypeModule *module);
 
-G_DEFINE_INTERFACE(
-    BbGedaItemFactory,
-    bb_geda_item_factory,
-    G_TYPE_OBJECT
-    )
+
+static GType type_id = G_TYPE_INVALID;
 
 
 static void
@@ -165,4 +164,43 @@ bb_geda_item_factory_create_finish_default(
     g_return_val_if_fail(G_IS_TASK(result), NULL);
 
     return g_task_propagate_pointer(G_TASK(result), error);
+}
+
+
+GType
+bb_geda_item_factory_get_type()
+{
+    /* Catch incorrect order in dynamic type registration */
+    g_assert(type_id != G_TYPE_INVALID);
+
+    return type_id;
+}
+
+
+void
+bb_geda_item_factory_register(GTypeModule *module)
+{
+    bb_geda_item_factory_register_type(module);
+}
+
+
+/*
+ * Registration for a dynamic interface
+ */
+static void
+bb_geda_item_factory_register_type(GTypeModule *module)
+{
+    const GTypeInfo type_info =
+    {
+        .class_size = sizeof(BbGedaItemFactoryInterface),
+        .class_init = (GClassInitFunc) bb_geda_item_factory_default_init
+    };
+
+    type_id = g_type_module_register_type(
+        module,
+        G_TYPE_INTERFACE,
+        g_intern_static_string("BbGedaItemFactory"),
+        &type_info,
+        0
+        );
 }
