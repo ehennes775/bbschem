@@ -40,7 +40,7 @@ struct _BbBoxToolPanel
 
 
 static BbDrawingTool*
-bb_box_tool_panel_create_tool(BbToolFactory *factory, BbToolSubject *subject);
+bb_box_tool_panel_select_tool(BbToolFactory *factory, BbDrawingToolSupport *support);
 
 static void
 bb_box_tool_panel_dispose(GObject *object);
@@ -85,9 +85,9 @@ bb_box_tool_panel_class_init(BbBoxToolPanelClass *klasse)
 
 
 static BbDrawingTool*
-bb_box_tool_panel_create_tool(BbToolFactory *factory, BbToolSubject *subject)
+bb_box_tool_panel_select_tool(BbToolFactory *factory, BbDrawingToolSupport *support)
 {
-    return BB_DRAWING_TOOL(bb_box_tool_new(subject));
+    return bb_drawing_tool_support_select_box_tool(support);
 }
 
 
@@ -163,5 +163,5 @@ bb_box_tool_panel_tool_factory_init(BbToolFactoryInterface *iface)
 {
     g_return_if_fail(iface != NULL);
 
-    iface->create_tool = bb_box_tool_panel_create_tool;
+    iface->select_tool = bb_box_tool_panel_select_tool;
 }

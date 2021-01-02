@@ -142,16 +142,16 @@ bb_tool_stack_class_init(BbToolStackClass *klasse)
 
 
 static BbDrawingTool*
-bb_tool_stack_create_tool(BbToolChanger *changer, BbToolSubject *subject)
+bb_tool_stack_select_tool(BbToolChanger *changer, BbDrawingToolSupport *support)
 {
     BbDrawingTool *drawing_tool = NULL;
     GtkWidget *widget = gtk_stack_get_visible_child(GTK_STACK(changer));
 
     if (BB_IS_TOOL_FACTORY(widget))
     {
-        drawing_tool = bb_tool_factory_create_tool(
+        drawing_tool = bb_tool_factory_select_tool(
             BB_TOOL_FACTORY(widget),
-            subject
+            support
             );
     }
 
@@ -303,6 +303,6 @@ bb_tool_stack_tool_changer_init(BbToolChangerInterface *iface)
 {
     g_return_if_fail(iface != NULL);
 
-    iface->create_tool = bb_tool_stack_create_tool;
+    iface->select_tool = bb_tool_stack_select_tool;
 }
 

@@ -22,7 +22,7 @@
 
 
 BbDrawingTool*
-bb_tool_factory_create_tool_missing(BbToolFactory *factory, BbToolSubject *subject);
+bb_tool_factory_select_tool_missing(BbToolFactory *factory, BbDrawingToolSupport *support);
 
 
 G_DEFINE_INTERFACE(BbToolFactory, bb_tool_factory, G_TYPE_OBJECT)
@@ -33,26 +33,26 @@ bb_tool_factory_default_init(BbToolFactoryInterface *iface)
 {
     g_return_if_fail(iface != NULL);
 
-    iface->create_tool = bb_tool_factory_create_tool_missing;
+    iface->select_tool = bb_tool_factory_select_tool_missing;
 }
 
 
 BbDrawingTool*
-bb_tool_factory_create_tool(BbToolFactory *factory, BbToolSubject *subject)
+bb_tool_factory_select_tool(BbToolFactory *factory, BbDrawingToolSupport *support)
 {
     g_return_val_if_fail(factory != NULL, NULL);
 
     BbToolFactoryInterface *iface = BB_TOOL_FACTORY_GET_IFACE(factory);
 
     g_return_val_if_fail(iface != NULL, NULL);
-    g_return_val_if_fail(iface->create_tool != NULL, NULL);
+    g_return_val_if_fail(iface->select_tool != NULL, NULL);
 
-    return iface->create_tool(factory, subject);
+    return iface->select_tool(factory, support);
 }
 
 
 BbDrawingTool*
-bb_tool_factory_create_tool_missing(BbToolFactory *factory, BbToolSubject *subject)
+bb_tool_factory_select_tool_missing(BbToolFactory *factory, BbDrawingToolSupport *support)
 {
-    g_error("bb_tool_factory_create_tool");
+    g_error("bb_tool_factory_select_tool");
 }

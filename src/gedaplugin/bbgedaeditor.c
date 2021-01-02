@@ -21,6 +21,16 @@
 #include <bbextensions.h>
 #include <bblibrary.h>
 #include <bbpropertysubject.h>
+#include <bbdrawingtoolsupport.h>
+#include <bbzoomtool.h>
+#include <bbtexttool.h>
+#include <bbselecttool.h>
+#include <bbpintool.h>
+#include <bbbustool.h>
+#include <bbcircletool.h>
+#include <bblinetool.h>
+#include <bbboxtool.h>
+#include <bbnettool.h>
 #include "bbgedaeditor.h"
 #include "bbgedaview.h"
 #include "bbarctool.h"
@@ -229,6 +239,9 @@ static void
 bb_geda_editor_draw_cb(BbGedaView *view, cairo_t *cairo, BbGedaEditor *editor);
 
 static void
+bb_geda_editor_drawing_tool_support_init(BbDrawingToolSupportInterface *iface);
+
+static void
 bb_geda_editor_finalize(GObject *object);
 
 static gboolean
@@ -350,6 +363,7 @@ G_DEFINE_DYNAMIC_TYPE_EXTENDED(
     0,
     G_IMPLEMENT_INTERFACE_DYNAMIC(BB_TYPE_BOUNDS_CALCULATOR, bb_geda_editor_bounds_calculator_init)
     G_IMPLEMENT_INTERFACE_DYNAMIC(BB_TYPE_CLIPBOARD_SUBJECT, bb_geda_editor_clipboard_subject_init)
+    G_IMPLEMENT_INTERFACE_DYNAMIC(BB_TYPE_DRAWING_TOOL_SUPPORT, bb_geda_editor_drawing_tool_support_init)
     G_IMPLEMENT_INTERFACE_DYNAMIC(BB_TYPE_GRID_SUBJECT, bb_geda_editor_grid_subject_init)
     G_IMPLEMENT_INTERFACE_DYNAMIC(BB_TYPE_PROPERTY_SUBJECT, bb_geda_editor_property_subject_init)
     G_IMPLEMENT_INTERFACE_DYNAMIC(BB_TYPE_REVEAL_SUBJECT, bb_geda_editor_reveal_subject_init)
@@ -574,6 +588,245 @@ bb_geda_editor_clipboard_subject_init(BbClipboardSubjectInterface *iface)
     iface->select_all = bb_geda_editor_select_all;
     iface->select_none = bb_geda_editor_select_none;
     iface->undo = bb_geda_editor_undo;
+}
+
+// endregion
+
+// From BbDrawingToolSupport interface
+
+static BbDrawingTool*
+bb_geda_editor_get_drawing_tool(BbDrawingToolSupport *support)
+{
+    BbGedaEditor *editor = BB_GEDA_EDITOR(support);
+    g_return_val_if_fail(BB_IS_GEDA_EDITOR(editor), NULL);
+
+    return editor->drawing_tool;
+}
+
+
+static void
+bb_geda_editor_set_drawing_tool(BbGedaEditor *editor, BbDrawingTool *tool)
+{
+    g_return_if_fail(BB_IS_GEDA_EDITOR(editor));
+    g_return_if_fail(tool == NULL || BB_IS_DRAWING_TOOL(tool));
+
+    if (editor->drawing_tool != tool)
+    {
+        if (editor->drawing_tool != NULL)
+        {
+            g_signal_handlers_disconnect_by_func(
+                editor->drawing_tool,
+                G_CALLBACK(bb_geda_editor_invalidate_item_cb),
+                editor
+                );
+
+            g_object_unref(editor->drawing_tool);
+        }
+
+        editor->drawing_tool = tool;
+
+        if (editor->drawing_tool != NULL)
+        {
+            g_object_ref(editor->drawing_tool);
+
+            g_signal_connect_object(
+                editor->drawing_tool,
+                "invalidate-item",
+                G_CALLBACK(bb_geda_editor_invalidate_item_cb),
+                editor,
+                0
+                );
+        }
+
+        g_object_notify_by_pspec(G_OBJECT(editor), properties[PROP_DRAWING_TOOL]);
+    }
+}
+
+
+static BbDrawingTool*
+bb_geda_editor_select_arc_tool(BbDrawingToolSupport *support)
+{
+    g_return_val_if_fail(BB_IS_GEDA_EDITOR(support), NULL);
+
+    BbDrawingTool *tool = BB_DRAWING_TOOL(bb_arc_tool_new(BB_TOOL_SUBJECT(support)));
+    
+    bb_geda_editor_set_drawing_tool(BB_GEDA_EDITOR(support), tool);
+    
+    return tool;
+}
+
+
+static BbDrawingTool*
+bb_geda_editor_select_attribute_tool(BbDrawingToolSupport *support)
+{
+    g_return_val_if_fail(BB_IS_GEDA_EDITOR(support), NULL);
+
+    BbDrawingTool *tool = NULL; //BB_DRAWING_TOOL(bb_attribute_tool_new(BB_TOOL_SUBJECT(support)));
+
+    bb_geda_editor_set_drawing_tool(BB_GEDA_EDITOR(support), tool);
+
+    return tool;
+}
+
+
+static BbDrawingTool*
+bb_geda_editor_select_block_tool(BbDrawingToolSupport *support)
+{
+    g_return_val_if_fail(BB_IS_GEDA_EDITOR(support), NULL);
+
+    return NULL; //bb_arc_tool_new(BB_TOOL_SUBJECT(support));
+}
+
+
+static BbDrawingTool*
+bb_geda_editor_select_box_tool(BbDrawingToolSupport *support)
+{
+    g_return_val_if_fail(BB_IS_GEDA_EDITOR(support), NULL);
+
+    BbDrawingTool *tool = BB_DRAWING_TOOL(bb_box_tool_new(BB_TOOL_SUBJECT(support)));
+
+    bb_geda_editor_set_drawing_tool(BB_GEDA_EDITOR(support), tool);
+
+    return tool;
+}
+
+
+static BbDrawingTool*
+bb_geda_editor_select_bus_tool(BbDrawingToolSupport *support)
+{
+    g_return_val_if_fail(BB_IS_GEDA_EDITOR(support), NULL);
+
+    BbDrawingTool *tool = BB_DRAWING_TOOL(bb_bus_tool_new(BB_TOOL_SUBJECT(support)));
+
+    bb_geda_editor_set_drawing_tool(BB_GEDA_EDITOR(support), tool);
+
+    return tool;
+}
+
+
+static BbDrawingTool*
+bb_geda_editor_select_circle_tool(BbDrawingToolSupport *support)
+{
+    g_return_val_if_fail(BB_IS_GEDA_EDITOR(support), NULL);
+
+    BbDrawingTool *tool = BB_DRAWING_TOOL(bb_circle_tool_new(BB_TOOL_SUBJECT(support)));
+    
+    bb_geda_editor_set_drawing_tool(BB_GEDA_EDITOR(support), tool);
+
+    return tool;
+}
+
+
+static BbDrawingTool*
+bb_geda_editor_select_line_tool(BbDrawingToolSupport *support)
+{
+    g_return_val_if_fail(BB_IS_GEDA_EDITOR(support), NULL);
+
+    BbDrawingTool *tool = BB_DRAWING_TOOL(bb_line_tool_new(BB_TOOL_SUBJECT(support)));
+
+    bb_geda_editor_set_drawing_tool(BB_GEDA_EDITOR(support), tool);
+
+    return tool;
+}
+
+
+static BbDrawingTool*
+bb_geda_editor_select_net_tool(BbDrawingToolSupport *support)
+{
+    g_return_val_if_fail(BB_IS_GEDA_EDITOR(support), NULL);
+
+    BbDrawingTool *tool = BB_DRAWING_TOOL(bb_net_tool_new(BB_TOOL_SUBJECT(support)));
+
+    bb_geda_editor_set_drawing_tool(BB_GEDA_EDITOR(support), tool);
+
+    return tool;
+}
+
+
+static BbDrawingTool*
+bb_geda_editor_select_path_tool(BbDrawingToolSupport *support)
+{
+    g_return_val_if_fail(BB_IS_GEDA_EDITOR(support), NULL);
+
+    BbDrawingTool *tool = NULL; //BB_DRAWING_TOOL(bb_path_tool_new(BB_TOOL_SUBJECT(support)));
+
+    bb_geda_editor_set_drawing_tool(BB_GEDA_EDITOR(support), tool);
+
+    return tool;
+}
+
+
+static BbDrawingTool*
+bb_geda_editor_select_pin_tool(BbDrawingToolSupport *support)
+{
+    g_return_val_if_fail(BB_IS_GEDA_EDITOR(support), NULL);
+
+    BbDrawingTool *tool = BB_DRAWING_TOOL(bb_pin_tool_new(BB_TOOL_SUBJECT(support)));
+
+    bb_geda_editor_set_drawing_tool(BB_GEDA_EDITOR(support), tool);
+
+    return tool;
+}
+
+
+static BbDrawingTool*
+bb_geda_editor_select_select_tool(BbDrawingToolSupport *support)
+{
+    g_return_val_if_fail(BB_IS_GEDA_EDITOR(support), NULL);
+
+    BbDrawingTool *tool = BB_DRAWING_TOOL(bb_select_tool_new(BB_TOOL_SUBJECT(support)));
+
+    bb_geda_editor_set_drawing_tool(BB_GEDA_EDITOR(support), tool);
+
+    return tool;
+}
+
+
+static BbDrawingTool*
+bb_geda_editor_select_text_tool(BbDrawingToolSupport *support)
+{
+    g_return_val_if_fail(BB_IS_GEDA_EDITOR(support), NULL);
+
+    BbDrawingTool *tool = BB_DRAWING_TOOL(bb_text_tool_new(BB_TOOL_SUBJECT(support)));
+
+    bb_geda_editor_set_drawing_tool(BB_GEDA_EDITOR(support), tool);
+
+    return tool;
+}
+
+
+static BbDrawingTool*
+bb_geda_editor_select_zoom_tool(BbDrawingToolSupport *support)
+{
+    g_return_val_if_fail(BB_IS_GEDA_EDITOR(support), NULL);
+
+    BbDrawingTool *tool = BB_DRAWING_TOOL(bb_zoom_tool_new(BB_TOOL_SUBJECT(support)));
+
+    bb_geda_editor_set_drawing_tool(BB_GEDA_EDITOR(support), tool);
+
+    return tool;
+}
+
+
+static void
+bb_geda_editor_drawing_tool_support_init(BbDrawingToolSupportInterface *iface)
+{
+    g_return_if_fail(iface != NULL);
+
+    iface->get_drawing_tool = bb_geda_editor_get_drawing_tool;
+    iface->select_arc_tool = bb_geda_editor_select_arc_tool;
+    iface->select_attribute_tool = bb_geda_editor_select_attribute_tool;
+    iface->select_block_tool = bb_geda_editor_select_block_tool;
+    iface->select_box_tool = bb_geda_editor_select_box_tool;
+    iface->select_bus_tool = bb_geda_editor_select_bus_tool;
+    iface->select_circle_tool = bb_geda_editor_select_circle_tool;
+    iface->select_line_tool = bb_geda_editor_select_line_tool;
+    iface->select_net_tool = bb_geda_editor_select_net_tool;
+    iface->select_path_tool = bb_geda_editor_select_path_tool;
+    iface->select_pin_tool = bb_geda_editor_select_pin_tool;
+    iface->select_select_tool = bb_geda_editor_select_select_tool;
+    iface->select_text_tool = bb_geda_editor_select_text_tool;
+    iface->select_zoom_tool = bb_geda_editor_select_zoom_tool;
 }
 
 // endregion
@@ -1488,15 +1741,6 @@ bb_geda_editor_get_can_zoom_extents(BbGedaEditor *window)
 }
 
 
-BbDrawingTool*
-bb_geda_editor_get_drawing_tool(BbGedaEditor *window)
-{
-    g_return_val_if_fail(window != NULL, NULL);
-
-    return window->drawing_tool;
-}
-
-
 static BbGridControl*
 bb_geda_editor_get_grid_control(BbGedaEditor *window)
 {
@@ -1834,44 +2078,6 @@ bb_geda_editor_set_property(GObject *object, guint property_id, const GValue *va
 }
 
 
-void
-bb_geda_editor_set_drawing_tool(BbGedaEditor *window, BbDrawingTool *tool)
-{
-    g_return_if_fail(window != NULL);
-
-    if (window->drawing_tool != tool)
-    {
-        if (window->drawing_tool != NULL)
-        {
-            g_signal_handlers_disconnect_by_func(
-                window->drawing_tool,
-                G_CALLBACK(bb_geda_editor_invalidate_item_cb),
-                window
-                );
-
-            g_object_unref(window->drawing_tool);
-        }
-
-        window->drawing_tool = tool;
-
-        if (window->drawing_tool != NULL)
-        {
-            g_object_ref(window->drawing_tool);
-
-            g_signal_connect_object(
-                window->drawing_tool,
-                "invalidate-item",
-                G_CALLBACK(bb_geda_editor_invalidate_item_cb),
-                window,
-                0
-                );
-        }
-
-        g_object_notify_by_pspec(G_OBJECT(window), properties[PROP_DRAWING_TOOL]);
-    }
-}
-
-
 static void
 bb_geda_editor_set_file(BbGedaEditor *editor, GFile *file)
 {
@@ -2056,7 +2262,7 @@ bb_geda_editor_set_tool_changer(BbGedaEditor *window, BbToolChanger *tool_change
 
             bb_geda_editor_set_drawing_tool(
                 window,
-                bb_tool_changer_create_tool(tool_changer, BB_TOOL_SUBJECT(window))
+                bb_tool_changer_select_tool(tool_changer, BB_DRAWING_TOOL_SUPPORT(window))
                 );
         }
 
@@ -2103,9 +2309,9 @@ bb_geda_editor_tool_changed_cb(BbToolChanger *changer, BbGedaEditor *window)
 {
     bb_geda_editor_set_drawing_tool(
         window,
-        bb_tool_changer_create_tool(
+        bb_tool_changer_select_tool(
             changer,
-            BB_TOOL_SUBJECT(window)
+            BB_DRAWING_TOOL_SUPPORT(window)
             )
         );
 }

@@ -20,7 +20,7 @@
 
 #include <gtk/gtk.h>
 #include "bbdrawingtool.h"
-#include "bbtoolsubject.h"
+#include "bbdrawingtoolsupport.h"
 
 
 #define BB_TYPE_TOOL_CHANGER bb_tool_changer_get_type()
@@ -30,12 +30,12 @@ struct _BbToolChangerInterface
 {
     GTypeInterface g_iface;
 
-    BbDrawingTool *(*create_tool)(BbToolChanger *changer, BbToolSubject *subject);
+    BbDrawingTool* (*select_tool)(BbToolChanger *changer, BbDrawingToolSupport *support);
 };
 
 
 BbDrawingTool*
-bb_tool_changer_create_tool(BbToolChanger *changer, BbToolSubject *subject);
+bb_tool_changer_select_tool(BbToolChanger *changer, BbDrawingToolSupport *support);
 
 
 #endif

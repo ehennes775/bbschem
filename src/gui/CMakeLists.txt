@@ -172,4 +172,6 @@ add_library(bbschemgui SHARED
         bbpropertysubject.h
         bbfilltypecombobox.c
         bbfilltypecombobox.h
+        bbdrawingtoolsupport.c
+        bbdrawingtoolsupport.h
         )

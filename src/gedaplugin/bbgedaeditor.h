@@ -24,6 +24,7 @@
 #include "bbdocumentwindow.h"
 #include "bbdrawingtool.h"
 #include "bbtoolchanger.h"
+#include "bbschematic.h"
 
 
 #define BB_TYPE_GEDA_EDITOR bb_geda_editor_get_type()
@@ -40,15 +41,6 @@ gboolean
 bb_geda_editor_get_can_reload(BbGedaEditor *editor);
 
 
-/**
- * Get the drawing tool for this editor
- *
- * @param editor This editor
- */
-BbDrawingTool*
-bb_geda_editor_get_drawing_tool(BbGedaEditor *editor);
-
-
 BbGedaEditor*
 bb_geda_editor_new(GFile *file, BbSchematic *schematic, BbToolChanger *tool_changer);
 
@@ -61,14 +53,6 @@ bb_geda_editor_new(GFile *file, BbSchematic *schematic, BbToolChanger *tool_chan
 void
 bb_geda_editor_reload(BbGedaEditor *editor, GError **error);
 
-
-/**
- * Set the drawing tool for this editor
- *
- * @param editor This editor
- */
-void
-bb_geda_editor_set_drawing_tool(BbGedaEditor *editor, BbDrawingTool *tool);
 
 void
 bb_geda_editor_set_tool_changer(BbGedaEditor *editor, BbToolChanger *tool_changer);

@@ -21,11 +21,28 @@
 #include "bbtoolchanger.h"
 
 
-BbDrawingTool*
-bb_tool_changer_create_tool_missing(BbToolChanger *changer, BbToolSubject *subject);
-
-
 G_DEFINE_INTERFACE(BbToolChanger, bb_tool_changer, G_TYPE_OBJECT)
+
+
+BbDrawingTool*
+bb_tool_changer_select_tool(BbToolChanger *changer, BbDrawingToolSupport *support)
+{
+    g_return_val_if_fail(changer != NULL, NULL);
+
+    BbToolChangerInterface *iface = BB_TOOL_CHANGER_GET_IFACE(changer);
+
+    g_return_val_if_fail(iface != NULL, NULL);
+    g_return_val_if_fail(iface->select_tool != NULL, NULL);
+
+    return iface->select_tool(changer, support);
+}
+
+
+BbDrawingTool*
+bb_tool_changer_select_tool_missing(BbToolChanger *changer, BbDrawingToolSupport *support)
+{
+    g_error("bb_tool_changer_select_tool() not overridden");
+}
 
 
 static void
@@ -33,7 +50,7 @@ bb_tool_changer_default_init(BbToolChangerInterface *iface)
 {
     g_return_if_fail(iface != NULL);
 
-    iface->create_tool = bb_tool_changer_create_tool_missing;
+    iface->select_tool = bb_tool_changer_select_tool_missing;
 
     g_signal_new(
         "tool-changed",
@@ -46,25 +63,4 @@ bb_tool_changer_default_init(BbToolChangerInterface *iface)
         G_TYPE_NONE,
         0
         );
-}
-
-
-BbDrawingTool*
-bb_tool_changer_create_tool(BbToolChanger *changer, BbToolSubject *subject)
-{
-    g_return_val_if_fail(changer != NULL, NULL);
-
-    BbToolChangerInterface *iface = BB_TOOL_CHANGER_GET_IFACE(changer);
-
-    g_return_val_if_fail(iface != NULL, NULL);
-    g_return_val_if_fail(iface->create_tool != NULL, NULL);
-
-    return iface->create_tool(changer, subject);
-}
-
-
-BbDrawingTool*
-bb_tool_changer_create_tool_missing(BbToolChanger *changer, BbToolSubject *subject)
-{
-    g_error("bb_tool_changer_create_tool() not overridden");
 }

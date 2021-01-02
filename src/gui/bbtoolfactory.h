@@ -21,6 +21,7 @@
 #include <gtk/gtk.h>
 #include "bbdrawingtool.h"
 #include "bbtoolsubject.h"
+#include "bbdrawingtoolsupport.h"
 
 #define BB_TYPE_TOOL_FACTORY bb_tool_factory_get_type()
 G_DECLARE_INTERFACE(BbToolFactory, bb_tool_factory, BB, TOOL_FACTORY, GObject)
@@ -29,12 +30,12 @@ struct _BbToolFactoryInterface
 {
     GTypeInterface g_iface;
 
-    BbDrawingTool *(*create_tool)(BbToolFactory *factory, BbToolSubject *subject);
+    BbDrawingTool *(*select_tool)(BbToolFactory *factory, BbDrawingToolSupport *support);
 };
 
 
 BbDrawingTool*
-bb_tool_factory_create_tool(BbToolFactory *factory, BbToolSubject *subject);
+bb_tool_factory_select_tool(BbToolFactory *factory, BbDrawingToolSupport *support);
 
 
 #endif
