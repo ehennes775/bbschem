@@ -17,6 +17,7 @@
  */
 
 #include <gtk/gtk.h>
+#include <bbextensions.h>
 #include "bbdocumentwindow.h"
 
 
@@ -24,8 +25,8 @@ enum
 {
     PROP_0,
     PROP_CAIRO,
-    PROP_2,
-    PROP_3
+    PROP_TAB,
+    N_PROPERTIES
 };
 
 typedef struct _BbDocumentWindowPrivate BbDocumentWindowPrivate;
@@ -46,17 +47,39 @@ bb_document_window_finalize(GObject *object);
 static void
 bb_document_window_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
 
+static const char*
+bb_document_window_get_tab_missing(BbDocumentWindow *window);
+
 static void
 bb_document_window_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
+
+
+static GParamSpec *properties[N_PROPERTIES];
 
 
 static void
 bb_document_window_class_init(BbDocumentWindowClass *klasse)
 {
+    GObjectClass *object_class = G_OBJECT_CLASS(klasse);
+
     G_OBJECT_CLASS(klasse)->dispose = bb_document_window_dispose;
     G_OBJECT_CLASS(klasse)->finalize = bb_document_window_finalize;
     G_OBJECT_CLASS(klasse)->get_property = bb_document_window_get_property;
     G_OBJECT_CLASS(klasse)->set_property = bb_document_window_set_property;
+
+    klasse->get_tab = bb_document_window_get_tab_missing;
+
+    properties[PROP_TAB] = bb_object_class_install_property(
+        object_class,
+        PROP_TAB,
+        g_param_spec_string(
+            "tab",
+            "",
+            "",
+            "None",
+            G_PARAM_READABLE | G_PARAM_STATIC_STRINGS
+            )
+        );
 
     g_signal_new(
         "update",
@@ -95,10 +118,8 @@ bb_document_window_get_property(GObject *object, guint property_id, GValue *valu
         case PROP_CAIRO:
             break;
 
-        case PROP_2:
-            break;
-
-        case PROP_3:
+        case PROP_TAB:
+            g_value_set_string(value, bb_document_window_get_tab(BB_DOCUMENT_WINDOW(object)));
             break;
 
         default:
@@ -110,7 +131,23 @@ bb_document_window_get_property(GObject *object, guint property_id, GValue *valu
 const char*
 bb_document_window_get_tab(BbDocumentWindow *window)
 {
-    return "file.sch";
+    g_return_val_if_fail(BB_IS_DOCUMENT_WINDOW(window), "None");
+
+    BbDocumentWindowClass *klasse = BB_DOCUMENT_WINDOW_GET_CLASS(window);
+
+    g_return_val_if_fail(klasse != NULL, "None");
+    g_return_val_if_fail(klasse->get_tab != NULL, "None");
+
+    return klasse->get_tab(window);
+}
+
+
+static const char*
+bb_document_window_get_tab_missing(BbDocumentWindow *window)
+{
+    g_warn_if_reached();
+
+    return "None";
 }
 
 
@@ -133,12 +170,6 @@ bb_document_window_set_property(GObject *object, guint property_id, const GValue
     switch (property_id)
     {
         case PROP_CAIRO:
-            break;
-
-        case PROP_2:
-            break;
-
-        case PROP_3:
             break;
 
         default:

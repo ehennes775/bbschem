@@ -18,6 +18,7 @@
 
 #include <gtk/gtk.h>
 #include <bbextensions.h>
+#include <bbzoomsubject.h>
 #include "bbgedaopener.h"
 #include "bbgedareader.h"
 #include "bbspecificopener.h"
@@ -156,16 +157,8 @@ bb_geda_opener_open_ready_1(GFile *file, GAsyncResult *result, GTask *task)
         BbGedaOpener *opener = BB_GEDA_OPENER(g_task_get_source_object(task));
         BbSchematic *schematic = bb_schematic_new();
 
-        bb_geda_reader_read_async(
-            bb_geda_opener_get_reader(BB_GEDA_OPENER(opener)),
-            data_stream,
-            schematic,
-            NULL,
-            (GAsyncReadyCallback) bb_geda_opener_open_ready_2,
-            task
-            );
-
         BbGedaEditor *editor = bb_geda_editor_new(
+            file,
             schematic,
             bb_main_window_get_tool_changer(opener->main_window)
             );
@@ -173,6 +166,15 @@ bb_geda_opener_open_ready_1(GFile *file, GAsyncResult *result, GTask *task)
         bb_main_window_add_page(
             opener->main_window,
             BB_DOCUMENT_WINDOW(editor)
+            );
+
+        bb_geda_reader_read_async(
+            bb_geda_opener_get_reader(BB_GEDA_OPENER(opener)),
+            data_stream,
+            schematic,
+            NULL,
+            (GAsyncReadyCallback) bb_geda_opener_open_ready_2,
+            task
             );
     }
 }

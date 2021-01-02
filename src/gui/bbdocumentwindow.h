@@ -26,6 +26,8 @@ G_DECLARE_DERIVABLE_TYPE(BbDocumentWindow, bb_document_window, BB, DOCUMENT_WIND
 struct _BbDocumentWindowClass
 {
     GtkBoxClass parent_class;
+
+    const char* (*get_tab)(BbDocumentWindow *window);
 };
 
 

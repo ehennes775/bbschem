@@ -103,6 +103,9 @@ enum
     PROP_SCHEMATIC,
     PROP_TOOL_CHANGER,
 
+    PROP_FILE,
+    PROP_TAB,
+
     N_PROPERTIES
 };
 
@@ -127,6 +130,11 @@ struct _BbGedaEditor
      * @brief
      */
     GFile *file;
+
+    /**
+     * @brief
+     */
+    GFileInfo *file_info;
 
     /**
      * The grid for this schematic window
@@ -191,6 +199,9 @@ struct _BbGedaEditor
      * @brief
      */
     BbGedaView *view;
+
+
+    gboolean zoom_hack;
 };
 
 
@@ -215,7 +226,7 @@ static void
 bb_geda_editor_dispose(GObject *object);
 
 static void
-bb_geda_editor_draw_cb(BbGedaView *view, cairo_t *cairo, BbGedaEditor *outer);
+bb_geda_editor_draw_cb(BbGedaView *view, cairo_t *cairo, BbGedaEditor *editor);
 
 static void
 bb_geda_editor_finalize(GObject *object);
@@ -270,6 +281,9 @@ bb_geda_editor_reveal_subject_init(BbRevealSubjectInterface *iface);
 
 static void
 bb_geda_editor_save_subject_init(BbSaveSubjectInterface *iface);
+
+static void
+bb_geda_editor_set_file(BbGedaEditor *editor, GFile *file);
 
 static void
 bb_geda_editor_set_grid(BbGedaEditor *window, BbGrid *grid);
@@ -343,6 +357,26 @@ G_DEFINE_DYNAMIC_TYPE_EXTENDED(
     G_IMPLEMENT_INTERFACE_DYNAMIC(BB_TYPE_TOOL_SUBJECT, bb_geda_editor_tool_subject_init)
     G_IMPLEMENT_INTERFACE_DYNAMIC(BB_TYPE_ZOOM_SUBJECT, bb_geda_editor_zoom_subject_init)
     )
+
+// region From BbDocumentWindow Class
+
+static const char*
+bb_geda_editor_get_tab(BbDocumentWindow *window)
+{
+    BbGedaEditor *editor = BB_GEDA_EDITOR(window);
+    g_return_val_if_fail(BB_IS_GEDA_EDITOR(editor), "");
+
+    if (editor->file_info != NULL)
+    {
+        return g_file_info_get_display_name(editor->file_info);
+    }
+    else
+    {
+        return "Updating";
+    }
+}
+
+// endregion
 
 // region From BbBoundsCalculator interface
 
@@ -1165,10 +1199,14 @@ bb_geda_editor_class_init(BbGedaEditorClass *klasse)
 {
     GObjectClass *object_class = G_OBJECT_CLASS(klasse);
 
-    G_OBJECT_CLASS(klasse)->dispose = bb_geda_editor_dispose;
-    G_OBJECT_CLASS(klasse)->finalize = bb_geda_editor_finalize;
-    G_OBJECT_CLASS(klasse)->get_property = bb_geda_editor_get_property;
-    G_OBJECT_CLASS(klasse)->set_property = bb_geda_editor_set_property;
+    object_class->dispose = bb_geda_editor_dispose;
+    object_class->finalize = bb_geda_editor_finalize;
+    object_class->get_property = bb_geda_editor_get_property;
+    object_class->set_property = bb_geda_editor_set_property;
+
+    BbDocumentWindowClass *document_window_class = BB_DOCUMENT_WINDOW_CLASS(klasse);
+
+    document_window_class->get_tab = bb_geda_editor_get_tab;
 
     bb_object_class_install_property(
         G_OBJECT_CLASS(klasse),
@@ -1343,7 +1381,29 @@ bb_geda_editor_class_init(BbGedaEditorClass *klasse)
         "grid-changed",
         BB_TYPE_GRID_SUBJECT
         );
+
+    /* From BbGedaEditor */
+
+    properties[PROP_FILE] = bb_object_class_install_property(
+        object_class,
+        PROP_FILE,
+        g_param_spec_object(
+            "file",
+            "",
+            "",
+            G_TYPE_FILE,
+            G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS
+            )
+        );
+
+    /* From BbDocumentWindow */
+
+    properties[PROP_TAB] = g_object_class_find_property(
+        object_class,
+        "tab"
+        );
 }
+
 
 static void
 bb_geda_editor_class_finalize(BbGedaEditorClass *klasse)
@@ -1358,36 +1418,43 @@ bb_geda_editor_dispose(GObject *object)
 
 
 static void
-bb_geda_editor_draw_cb(BbGedaView *view, cairo_t *cairo, BbGedaEditor *outer)
+bb_geda_editor_draw_cb(BbGedaView *view, cairo_t *cairo, BbGedaEditor *editor)
 {
+    g_return_if_fail(BB_IS_GEDA_VIEW(view));
     g_return_if_fail(cairo != NULL);
-    g_return_if_fail(BB_IS_GEDA_EDITOR(outer));
+    g_return_if_fail(BB_IS_GEDA_EDITOR(editor));
+
+    if (!editor->zoom_hack)
+    {
+        bb_geda_editor_zoom_extents(BB_ZOOM_SUBJECT(editor));
+        editor->zoom_hack = TRUE;
+    }
 
     cairo_matrix_t widget_matrix;
     cairo_get_matrix(cairo, &widget_matrix);
 
-    GtkStyleContext *style = gtk_widget_get_style_context(GTK_WIDGET(outer));
-    BbGraphics *graphics = bb_graphics_new(cairo, &widget_matrix, outer->reveal, style);
+    GtkStyleContext *style = gtk_widget_get_style_context(GTK_WIDGET(editor));
+    BbGraphics *graphics = bb_graphics_new(cairo, &widget_matrix, editor->reveal, style);
 
     cairo_save(cairo);
-    cairo_transform(cairo, &outer->matrix);
+    cairo_transform(cairo, &editor->matrix);
 
-    if (outer->grid != NULL & (outer->grid_control == NULL || bb_grid_control_get_grid_visible(outer->grid_control)))
+    if (editor->grid != NULL & (editor->grid_control == NULL || bb_grid_control_get_grid_visible(editor->grid_control)))
     {
-        bb_grid_draw(outer->grid, graphics);
+        bb_grid_draw(editor->grid, graphics);
     }
 
-    if (outer->schematic != NULL)
+    if (editor->schematic != NULL)
     {
-        bb_schematic_render(outer->schematic, BB_ITEM_RENDERER(graphics));
+        bb_schematic_render(editor->schematic, BB_ITEM_RENDERER(graphics));
     }
 
     // TODO remove
     cairo_stroke(cairo);
 
-    if (outer->drawing_tool != NULL)
+    if (editor->drawing_tool != NULL)
     {
-        bb_drawing_tool_draw(outer->drawing_tool, graphics);
+        bb_drawing_tool_draw(editor->drawing_tool, graphics);
     }
 
     // TODO remove
@@ -1688,10 +1755,11 @@ bb_geda_editor_motion_notify_cb(GtkWidget *widget, GdkEvent *event, gpointer use
 
 
 BbGedaEditor*
-bb_geda_editor_new(BbSchematic *schematic, BbToolChanger *tool_changer)
+bb_geda_editor_new(GFile *file, BbSchematic *schematic, BbToolChanger *tool_changer)
 {
     return BB_GEDA_EDITOR(g_object_new(
         BB_TYPE_GEDA_EDITOR,
+        "file", file,
         "schematic", schematic,
         "tool-changer", tool_changer,
         NULL
@@ -1756,6 +1824,10 @@ bb_geda_editor_set_property(GObject *object, guint property_id, const GValue *va
             bb_geda_editor_set_tool_changer(BB_GEDA_EDITOR(object), g_value_get_object(value));
             break;
 
+        case PROP_FILE:
+            bb_geda_editor_set_file(BB_GEDA_EDITOR(object), g_value_get_object(value));
+            break;
+
         default:
             G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
     }
@@ -1798,6 +1870,44 @@ bb_geda_editor_set_drawing_tool(BbGedaEditor *window, BbDrawingTool *tool)
         g_object_notify_by_pspec(G_OBJECT(window), properties[PROP_DRAWING_TOOL]);
     }
 }
+
+
+static void
+bb_geda_editor_set_file(BbGedaEditor *editor, GFile *file)
+{
+    g_return_if_fail(BB_IS_GEDA_EDITOR(editor));
+    g_return_if_fail(file == NULL || G_IS_FILE(file));
+
+    if (editor->file != file)
+    {
+        if (editor->file != NULL)
+        {
+            g_object_unref(editor->file);
+        }
+
+        editor->file = file;
+
+        if (editor->file != NULL)
+        {
+            g_object_ref(editor->file);
+        }
+
+        g_object_notify_by_pspec(G_OBJECT(editor), properties[PROP_FILE]);
+
+        GError *local_error = NULL;
+
+        editor->file_info = g_file_query_info(
+            file,
+            G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME,
+            0,
+            NULL,
+            &local_error
+            );
+
+        g_object_notify_by_pspec(G_OBJECT(editor), properties[PROP_TAB]);
+    }
+}
+
 
 void
 bb_geda_editor_set_grid(BbGedaEditor *window, BbGrid *grid)

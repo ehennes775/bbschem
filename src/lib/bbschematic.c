@@ -421,16 +421,7 @@ bb_schematic_get_property(GObject *object, guint property_id, GValue *value, GPa
 static void
 bb_schematic_init(BbSchematic *schematic)
 {
-    BbGedaBox *box = g_object_new(
-        BB_TYPE_GEDA_BOX,
-        "x0", 0,
-        "y0", 0,
-        "x1", 100,
-        "y1", 100,
-        NULL
-        );
-
-    schematic->items = g_slist_append(NULL, box);
+    g_return_if_fail(BB_IS_SCHEMATIC(schematic));
 }
 
 
