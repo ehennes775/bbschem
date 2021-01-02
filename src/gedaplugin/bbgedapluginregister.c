@@ -20,12 +20,41 @@
 #include <libpeas/peas.h>
 #include "bbgedaplugin.h"
 
+void
+bb_geda_arc_factory_register(GTypeModule *module);
+
+void
+bb_geda_block_factory_register(GTypeModule *module);
+
+void
+bb_geda_box_factory_register(GTypeModule *module);
+
+void
+bb_geda_bus_factory_register(GTypeModule *module);
+
+void
+bb_geda_circle_factory_register(GTypeModule *module);
 
 void
 bb_geda_editor_register(GTypeModule *module);
 
 void
+bb_geda_factory_register(GTypeModule *module);
+
+void
+bb_geda_line_factory_register(GTypeModule *module);
+
+void
+bb_geda_net_factory_register(GTypeModule *module);
+
+void
 bb_geda_opener_register(GTypeModule *module);
+
+void
+bb_geda_path_factory_register(GTypeModule *module);
+
+void
+bb_geda_pin_factory_register(GTypeModule *module);
 
 void
 bb_geda_plugin_register(GTypeModule *module);
@@ -34,16 +63,30 @@ void
 bb_geda_reader_register(GTypeModule *module);
 
 void
+bb_geda_text_factory_register(GTypeModule *module);
+
+void
 bb_geda_view_register(GTypeModule *module);
 
 
 G_MODULE_EXPORT void
 peas_register_types(PeasObjectModule *module)
 {
+    bb_geda_arc_factory_register(G_TYPE_MODULE(module));
+    bb_geda_block_factory_register(G_TYPE_MODULE(module));
+    bb_geda_box_factory_register(G_TYPE_MODULE(module));
+    bb_geda_bus_factory_register(G_TYPE_MODULE(module));
+    bb_geda_circle_factory_register(G_TYPE_MODULE(module));
     bb_geda_editor_register(G_TYPE_MODULE(module));
+    bb_geda_factory_register(G_TYPE_MODULE(module));
+    bb_geda_line_factory_register(G_TYPE_MODULE(module));
+    bb_geda_net_factory_register(G_TYPE_MODULE(module));
     bb_geda_opener_register(G_TYPE_MODULE(module));
+    bb_geda_path_factory_register(G_TYPE_MODULE(module));
+    bb_geda_pin_factory_register(G_TYPE_MODULE(module));
     bb_geda_plugin_register(G_TYPE_MODULE(module));
     bb_geda_reader_register(G_TYPE_MODULE(module));
+    bb_geda_text_factory_register(G_TYPE_MODULE(module));
     bb_geda_view_register(G_TYPE_MODULE(module));
 
     peas_object_module_register_extension_type(

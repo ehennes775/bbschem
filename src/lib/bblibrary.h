@@ -61,7 +61,7 @@
 #include "bbgedablock.h"
 #include "bbgedatext.h"
 
-#include "bbgedaitemfactory.h"
-#include "bbgedafactory.h"
+#include "gedaplugin/bbgedaitemfactory.h"
+#include "gedaplugin/bbgedafactory.h"
 
 #endif

@@ -18,7 +18,7 @@
 
 #include <gtk/gtk.h>
 #include <bblibrary.h>
-#include <bbgedaitemfactory.h>
+#include <gedaplugin/bbgedaitemfactory.h>
 #include <bbelectrical.h>
 #include "bbgedareader.h"
 

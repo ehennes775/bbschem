@@ -22,15 +22,39 @@ set_source_files_properties(
         )
 
 add_library(bbgedaplugin SHARED
+        bbgedaarcfactory.c
+        bbgedaarcfactory.h
+        bbgedablockfactory.c
+        bbgedablockfactory.h
+        bbgedaboxfactory.c
+        bbgedaboxfactory.h
+        bbgedabusfactory.c
+        bbgedabusfactory.h
+        bbgedacirclefactory.c
+        bbgedacirclefactory.h
         bbgedaeditor.c
         bbgedaeditor.h
+        bbgedafactory.c
+        bbgedafactory.h
+        bbgedaitemfactory.c
+        bbgedaitemfactory.h
+        bbgedalinefactory.c
+        bbgedalinefactory.h
+        bbgedanetfactory.c
+        bbgedanetfactory.h
         bbgedaopener.c
         bbgedaopener.h
+        bbgedapathfactory.c
+        bbgedapathfactory.h
+        bbgedapinfactory.c
+        bbgedapinfactory.h
         bbgedaplugin.c
         bbgedaplugin.h
         bbgedapluginregister.c
         bbgedareader.c
         bbgedareader.h
+        bbgedatextfactory.c
+        bbgedatextfactory.h
         bbgedaview.c
         bbgedaview.h
         ${CMAKE_CURRENT_BINARY_DIR}/${THING1}

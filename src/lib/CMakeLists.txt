@@ -34,48 +34,26 @@ add_library(bblib SHARED
         bbfilltype.h
         bbgedaarc.c
         bbgedaarc.h
-        bbgedaarcfactory.c
-        bbgedaarcfactory.h
         bbgedablock.c
         bbgedablock.h
-        bbgedablockfactory.c
-        bbgedablockfactory.h
         bbgedabox.c
         bbgedabox.h
-        bbgedaboxfactory.c
-        bbgedaboxfactory.h
         bbgedabus.c
         bbgedabus.h
-        bbgedabusfactory.c
-        bbgedabusfactory.h
         bbgedacircle.c
         bbgedacircle.h
-        bbgedacirclefactory.c
-        bbgedacirclefactory.h
-        bbgedafactory.c
-        bbgedafactory.h
         bbgedaitem.c
         bbgedaitem.h
-        bbgedaitemfactory.c
-        bbgedaitemfactory.h
         bbgedaline.c
         bbgedaline.h
-        bbgedalinefactory.c
-        bbgedalinefactory.h
         bbgedanet.c
         bbgedanet.h
-        bbgedanetfactory.c
-        bbgedanetfactory.h
         bbgedapath.c
         bbgedapath.h
         bbgedapin.c
         bbgedapin.h
-        bbgedapinfactory.c
-        bbgedapinfactory.h
         bbgedatext.c
         bbgedatext.h
-        bbgedatextfactory.c
-        bbgedatextfactory.h
         bbgedaversion.c
         bbgedaversion.h
         bbhashtable.c
@@ -124,8 +102,6 @@ add_library(bblib SHARED
         bbpathscanner.h
         bbpathparser.c
         bbpathparser.h
-        bbgedapathfactory.h
-        bbgedapathfactory.c
         bbattribute.c
         bbattribute.h
         bbelectrical.c
