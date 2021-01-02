@@ -8,6 +8,7 @@
         <file>gui/bbblocktoolpanel.ui</file>
         <file>gui/bbdocumentwindowtab.ui</file>
         <file>gui/bbfillstyleeditor.ui</file>
+        <file>gui/bbfilltypecombobox.ui</file>
         <file>gui/bbint32combobox.ui</file>
         <file>gui/bblinestyleeditor.ui</file>
         <file>gui/bbmainwindow.ui</file>

@@ -126,7 +126,7 @@
                     </packing>
                 </child>
                 <child>
-                    <object class="BbPropertyComboBox" id="fill_type_combo">
+                    <object class="BbFillTypeComboBox" id="fill_type_combo">
                         <property name="hexpand">true</property>
                         <property name="id-column">1</property>
                         <property name="model">fill-type-list</property>
@@ -134,28 +134,6 @@
                         <style>
                             <class name="propedit"/>
                         </style>
-                        <child>
-                            <object class="GtkCellRendererText" id="fill-type-renderer">
-                                <property name="width">25</property>
-                            </object>
-                            <attributes>
-                                <attribute name="fill_type">2</attribute>
-                            </attributes>
-                            <cell-packing>
-                                <property name="expand">false</property>
-                            </cell-packing>
-                        </child>
-                        <child>
-                            <object class="GtkCellRendererText" id="line-type-renderer">
-                                <property name="xpad">5</property>
-                            </object>
-                            <attributes>
-                                <attribute name="text">0</attribute>
-                            </attributes>
-                            <cell-packing>
-                                <property name="expand">true</property>
-                            </cell-packing>
-                        </child>
                     </object>
                     <packing>
                         <property name="left-attach">1</property>

@@ -24,6 +24,7 @@
 #include "bbint32combobox.h"
 #include "bbpropertycombobox.h"
 #include "bbpropertysubject.h"
+#include "bbfilltypecombobox.h"
 
 
 enum
@@ -198,20 +199,20 @@ bb_fill_style_editor_apply_angle_2_lambda(BbGedaItem *item, gpointer user_data)
 static void
 bb_fill_style_editor_apply_fill_type(BbPropertyComboBox *combo, BbFillStyleEditor *editor)
 {
-    GtkWidget *window;
-
-    g_return_if_fail(combo != NULL);
-    g_return_if_fail(editor != NULL);
+    g_return_if_fail(BB_IS_PROPERTY_COMBO_BOX(combo));
+    g_return_if_fail(BB_IS_FILL_STYLE_EDITOR(editor));
     g_return_if_fail(combo == editor->fill_type_combo);
 
-    window = bb_main_window_get_current_document_window(editor->main_window);
+    GtkWidget *window = bb_main_window_get_current_document_window(editor->main_window);
 
     g_return_if_fail(BB_IS_PROPERTY_SUBJECT(window));
+
+    gpointer user_data = GINT_TO_POINTER(bb_fill_type_combo_box_get_fill_type(combo));
 
     bb_property_subject_apply_selection(
         BB_PROPERTY_SUBJECT(window),
         bb_fill_style_editor_apply_fill_type_lambda,
-        GINT_TO_POINTER(bb_int32_combo_box_get_value(combo))
+        user_data
         );
 }
 
@@ -220,7 +221,7 @@ bb_fill_style_editor_apply_fill_type(BbPropertyComboBox *combo, BbFillStyleEdito
  * Apply a new fill pitch to an individual item
  *
  * @param item A schematic item
- * @param user_data The pitch
+ * @param user_data The fill_type
  */
 static void
 bb_fill_style_editor_apply_fill_type_lambda(BbGedaItem *item, gpointer user_data)

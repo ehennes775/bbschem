@@ -24,7 +24,7 @@
 enum
 {
     PROP_0,
-    PROP_ITEM_COLOR
+    PROP_FILL_TYPE
 };
 
 
@@ -93,7 +93,7 @@ bb_color_combo_box_get_property(GObject *object, guint property_id, GValue *valu
 {
     switch (property_id)
     {
-        case PROP_ITEM_COLOR:
+        case PROP_FILL_TYPE:
             g_value_set_int(value, bb_color_combo_box_get_color(BB_COLOR_COMBO_BOX(object)));
             break;
 
@@ -138,7 +138,7 @@ bb_color_combo_box_set_property(GObject *object, guint property_id, const GValue
 {
     switch (property_id)
     {
-        case PROP_ITEM_COLOR:
+        case PROP_FILL_TYPE:
             bb_color_combo_box_set_color(BB_COLOR_COMBO_BOX(object), g_value_get_int(value));
             break;
 

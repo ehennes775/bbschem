@@ -170,4 +170,6 @@ add_library(bbschemgui SHARED
         bbzoomdirection.h
         bbpropertysubject.c
         bbpropertysubject.h
+        bbfilltypecombobox.c
+        bbfilltypecombobox.h
         )
