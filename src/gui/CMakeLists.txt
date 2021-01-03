@@ -156,4 +156,6 @@ add_library(bbschemgui SHARED
         bbzoomtoolpanel.h
         bbtextcontrol.h
         bbtextcontrol.c
+        bbalignmentcombobox.c
+        bbalignmentcombobox.h
         )

@@ -1,8 +1,8 @@
-#ifndef __BBINT32COMBOBOX__
-#define __BBINT32COMBOBOX__
+#ifndef __BBALIGNMENTCOMBOBOX__
+#define __BBALIGNMENTCOMBOBOX__
 /*
  * bbschem
- * Copyright (C) 2020 Edward C. Hennessy
+ * Copyright (C) 2021 Edward C. Hennessy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,18 +19,31 @@
  */
 
 #include <gtk/gtk.h>
+#include <bbtextalignment.h>
 #include "bbpropertycombobox.h"
 
-#define BB_TYPE_INT32_COMBO_BOX bb_int32_combo_box_get_type()
-G_DECLARE_FINAL_TYPE(BbInt32ComboBox, bb_int32_combo_box, BB, INT32_COMBO_BOX, BbPropertyComboBox)
+#define BB_TYPE_ALIGNMENT_COMBO_BOX bb_alignment_combo_box_get_type()
+G_DECLARE_FINAL_TYPE(BbAlignmentComboBox, bb_alignment_combo_box, BB, ALIGNMENT_COMBO_BOX, BbPropertyComboBox)
 
-int
-bb_int32_combo_box_get_value(BbInt32ComboBox *combo);
 
-int
-bb_int32_combo_box_parse_value(BbInt32ComboBox *combo, GError **error);
+/**
+ *
+ *
+ * @param combo
+ * @return
+ */
+BbTextAlignment
+bb_alignment_combo_box_get_alignment(BbAlignmentComboBox *combo);
 
+
+/**
+ *
+ *
+ * @param combo
+ * @param alignment
+ */
 void
-bb_int32_combo_box_set_value(BbInt32ComboBox *combo, int value);
+bb_alignment_combo_box_set_alignment(BbAlignmentComboBox *combo, BbTextAlignment alignment);
+
 
 #endif

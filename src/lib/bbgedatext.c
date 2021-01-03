@@ -751,7 +751,7 @@ bb_geda_text_get_shown_text(BbGedaText *text)
 {
     g_return_val_if_fail(BB_IS_GEDA_TEXT(text), "");
 
-    if (text->attributes[BB_TEXT_PRESENTATION_NAME][0] == '\0')
+    if (text->attributes[BB_TEXT_PRESENTATION_NAME] == NULL || text->attributes[BB_TEXT_PRESENTATION_NAME][0] == '\0')
     {
         return text->text;
     }

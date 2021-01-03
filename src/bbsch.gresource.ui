@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
     <gresource prefix="/com/github/ehennes775/bbsch">
+        <file>gui/bbalignmentcombobox.ui</file>
         <file>gui/bbapplication.css</file>
         <file>gui/bbattributeeditor.ui</file>
         <file>gui/bbarctoolpanel.ui</file>

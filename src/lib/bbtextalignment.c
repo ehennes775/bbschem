@@ -21,6 +21,61 @@
 #include "bberror.h"
 
 
+static const GEnumValue values[] =
+{
+    {
+        .value = BB_TEXT_ALIGNMENT_LOWER_LEFT,
+        .value_name = "BB_TEXT_ALIGNMENT_LOWER_LEFT",
+        .value_nick = ""
+    },
+    {
+        .value = BB_TEXT_ALIGNMENT_LOWER_CENTER,
+        .value_name = "BB_TEXT_ALIGNMENT_LOWER_CENTER",
+        .value_nick = ""
+    },
+    {
+        .value = BB_TEXT_ALIGNMENT_LOWER_RIGHT,
+        .value_name = "BB_TEXT_ALIGNMENT_LOWER_RIGHT",
+        .value_nick = ""
+    },
+    {
+        .value = BB_TEXT_ALIGNMENT_CENTER_LEFT,
+        .value_name = "BB_TEXT_ALIGNMENT_CENTER_LEFT",
+        .value_nick = ""
+    },
+    {
+        .value = BB_TEXT_ALIGNMENT_CENTER_CENTER,
+        .value_name = "BB_TEXT_ALIGNMENT_CENTER_CENTER",
+        .value_nick = ""
+    },
+    {
+        .value = BB_TEXT_ALIGNMENT_CENTER_RIGHT,
+        .value_name = "BB_TEXT_ALIGNMENT_CENTER_RIGHT",
+        .value_nick = ""
+    },
+    {
+        .value = BB_TEXT_ALIGNMENT_UPPER_LEFT,
+        .value_name = "BB_TEXT_ALIGNMENT_UPPER_LEFT",
+        .value_nick = ""
+    },
+    {
+        .value = BB_TEXT_ALIGNMENT_UPPER_CENTER,
+        .value_name = "BB_TEXT_ALIGNMENT_UPPER_CENTER",
+        .value_nick = ""
+    },
+    {
+        .value = BB_TEXT_ALIGNMENT_UPPER_RIGHT,
+        .value_name = "BB_TEXT_ALIGNMENT_UPPER_RIGHT",
+        .value_nick = ""
+    },
+    {
+        .value = 0,
+        .value_name = NULL,
+        .value_nick = NULL
+    }
+};
+
+
 BbTextAlignment
 bb_text_alignment_from_params(BbParams *params, int index, GError **error)
 {
@@ -94,6 +149,23 @@ bb_text_alignment_get_alignment_y(BbTextAlignment alignment)
         default:
             return 0.0;
     }
+}
+
+
+GType
+bb_text_alignment_get_type()
+{
+    static gsize done = 0;
+    static GType type = G_TYPE_INVALID;
+
+    if (g_once_init_enter(&done))
+    {
+        type = g_enum_register_static("BbTextAlignment", values);
+
+        g_once_init_leave(&done, 1);
+    }
+
+    return type;
 }
 
 

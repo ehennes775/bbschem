@@ -25,6 +25,10 @@
 #define BB_TEXT_ALIGNMENT_DEFAULT (BB_TEXT_ALIGNMENT_LOWER_LEFT)
 
 
+GType bb_text_alignment_get_type();
+#define BB_TYPE_TEXT_ALIGNMENT (bb_text_alignment_get_type())
+
+
 /**
  * These items must match the gEDA file format numerically.
  */

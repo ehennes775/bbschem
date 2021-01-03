@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<interface>
+
+    <object class="GtkListStore" id="alignment-list">
+        <columns>
+            <column type="gchararray"/>
+            <column type="BbTextAlignment"/>
+        </columns>
+        <data>
+            <row>
+                <col id="0">Lower Left</col>
+                <col id="1">BB_TEXT_ALIGNMENT_LOWER_LEFT</col>
+            </row>
+            <row>
+                <col id="0">Lower Middle</col>
+                <col id="1">BB_TEXT_ALIGNMENT_LOWER_CENTER</col>
+            </row>
+            <row>
+                <col id="0">Lower Right</col>
+                <col id="1">BB_TEXT_ALIGNMENT_LOWER_RIGHT</col>
+            </row>
+            <row>
+                <col id="0">Liddle Left</col>
+                <col id="1">BB_TEXT_ALIGNMENT_CENTER_LEFT</col>
+            </row>
+            <row>
+                <col id="0">Middle Middle</col>
+                <col id="1">BB_TEXT_ALIGNMENT_CENTER_CENTER</col>
+            </row>
+            <row>
+                <col id="0">Middle Right</col>
+                <col id="1">BB_TEXT_ALIGNMENT_CENTER_RIGHT</col>
+            </row>
+            <row>
+                <col id="0">Upper Left</col>
+                <col id="1">BB_TEXT_ALIGNMENT_UPPER_LEFT</col>
+            </row>
+            <row>
+                <col id="0">Upper Middle</col>
+                <col id="1">BB_TEXT_ALIGNMENT_UPPER_CENTER</col>
+            </row>
+            <row>
+                <col id="0">Upper Right</col>
+                <col id="1">BB_TEXT_ALIGNMENT_UPPER_RIGHT</col>
+            </row>
+        </data>
+    </object>
+
+    <template class="BbAlignmentComboBox" parent="BbPropertyComboBox">
+        <property name="id-column">1</property>
+        <property name="model">alignment-list</property>
+        <!--<property name="wrap-width">3</property>-->
+        <child>
+            <object class="GtkCellRendererText" id="alignment-renderer">
+            </object>
+            <attributes>
+                <attribute name="text">0</attribute>
+            </attributes>
+            <cell-packing>
+                <property name="expand">true</property>
+            </cell-packing>
+        </child>
+    </template>
+
+</interface>

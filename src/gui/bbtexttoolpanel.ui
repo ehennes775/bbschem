@@ -4,20 +4,144 @@
     <template class="BbTextToolPanel" parent="GtkBox">
         <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
         <child>
-            <object class="GtkTextView" id="text-view">
+            <object class="GtkTextView" id="text_view">
                 <property name="vexpand">TRUE</property>
             </object>
         </child>
         <child>
-            <object class="BbTextPropertyEditor" id="text-property-editor">
+            <object class="GtkExpander" id="text-property-editor">
                 <property name="expanded">true</property>
                 <property name="label">Text Properties</property>
-                <property name="visible">TRUE</property>
-                <style>
-                    <class name="propexpander"/>
-                </style>
+                <child>
+                    <object class="GtkGrid" id="grid">
+                        <property name="row-homogeneous">true</property>
+                        <style>
+                            <class name="propgrid"/>
+                        </style>
+                        <child>
+                            <object class="GtkLabel" id="color-label">
+                                <property name="label">Color:</property>
+                                <property name="xalign">0.0</property>
+                                <style>
+                                    <class name="proplabel"/>
+                                </style>
+                            </object>
+                            <packing>
+                                <property name="left-attach">0</property>
+                                <property name="top-attach">0</property>
+                                <property name="width">1</property>
+                                <property name="height">1</property>
+                            </packing>
+                        </child>
+                        <child>
+                            <object class="BbColorComboBox" id="text_color_combo">
+                                <property name="action-name">apply-text-color</property>
+                                <property name="hexpand">true</property>
+                                <style>
+                                    <class name="propedit"/>
+                                </style>
+                            </object>
+                            <packing>
+                                <property name="left-attach">1</property>
+                                <property name="top-attach">0</property>
+                                <property name="width">1</property>
+                                <property name="height">1</property>
+                            </packing>
+                        </child>
+                        <child>
+                            <object class="GtkLabel" id="size-label">
+                                <property name="label">Size:</property>
+                                <property name="xalign">0.0</property>
+                                <style>
+                                    <class name="proplabel"/>
+                                </style>
+                            </object>
+                            <packing>
+                                <property name="left-attach">0</property>
+                                <property name="top-attach">1</property>
+                                <property name="width">1</property>
+                                <property name="height">1</property>
+                            </packing>
+                        </child>
+                        <child>
+                            <object class="BbInt32ComboBox" id="text_size_combo">
+                                <property name="entry-text-column">0</property>
+                                <property name="has-entry">true</property>
+                                <property name="hexpand">true</property>
+                                <style>
+                                    <class name="propedit"/>
+                                </style>
+                            </object>
+                            <packing>
+                                <property name="left-attach">1</property>
+                                <property name="top-attach">1</property>
+                                <property name="width">1</property>
+                                <property name="height">1</property>
+                            </packing>
+                        </child>
+                        <child>
+                            <object class="GtkLabel" id="alignment-label">
+                                <property name="label">Alignment:</property>
+                                <property name="xalign">0.0</property>
+                                <style>
+                                    <class name="proplabel"/>
+                                </style>
+                            </object>
+                            <packing>
+                                <property name="left-attach">0</property>
+                                <property name="top-attach">2</property>
+                                <property name="width">1</property>
+                                <property name="height">1</property>
+                            </packing>
+                        </child>
+                        <child>
+                            <object class="BbAlignmentComboBox" id="text_alignment_combo">
+                                <property name="action-name">apply-text-alignment</property>
+                                <property name="hexpand">true</property>
+                                <style>
+                                    <class name="propedit"/>
+                                </style>
+                            </object>
+                            <packing>
+                                <property name="left-attach">1</property>
+                                <property name="top-attach">2</property>
+                                <property name="width">1</property>
+                                <property name="height">1</property>
+                            </packing>
+                        </child>
+                        <child>
+                            <object class="GtkLabel" id="rotation-label">
+                                <property name="label">Rotation:</property>
+                                <property name="xalign">0.0</property>
+                                <style>
+                                    <class name="proplabel"/>
+                                </style>
+                            </object>
+                            <packing>
+                                <property name="left-attach">0</property>
+                                <property name="top-attach">3</property>
+                                <property name="width">1</property>
+                                <property name="height">1</property>
+                            </packing>
+                        </child>
+                        <child>
+                            <object class="BbPropertyComboBox" id="text_rotation_combo">
+                                <property name="action-name">apply-text-rotation</property>
+                                <property name="hexpand">true</property>
+                                <style>
+                                    <class name="propedit"/>
+                                </style>
+                            </object>
+                            <packing>
+                                <property name="left-attach">1</property>
+                                <property name="top-attach">3</property>
+                                <property name="width">1</property>
+                                <property name="height">1</property>
+                            </packing>
+                        </child>
+                    </object>
+                </child>
             </object>
         </child>
     </template>
-
 </interface>
