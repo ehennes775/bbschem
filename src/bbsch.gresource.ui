@@ -3,6 +3,10 @@
     <gresource prefix="/com/github/ehennes775/bbsch">
         <file>gui/bbapplication.css</file>
         <file>gui/bbattributeeditor.ui</file>
+        <file>gui/bbarctoolpanel.ui</file>
+        <file>gui/bbboxtoolpanel.ui</file>
+        <file>gui/bbbustoolpanel.ui</file>
+        <file>gui/bbcircletoolpanel.ui</file>
         <file>gui/bbcolorcombobox.ui</file>
         <file>gui/bbcoloreditor.ui</file>
         <file>gui/bbblocktoolpanel.ui</file>
@@ -11,10 +15,14 @@
         <file>gui/bbfilltypecombobox.ui</file>
         <file>gui/bbint32combobox.ui</file>
         <file>gui/bblinestyleeditor.ui</file>
+        <file>gui/bblinetoolpanel.ui</file>
         <file>gui/bbmainwindow.ui</file>
         <file>gui/bbmenus.ui</file>
+        <file>gui/bbnettoolpanel.ui</file>
         <file>gui/bbpinpropertyeditor.ui</file>
+        <file>gui/bbpintoolpanel.ui</file>
         <file>gui/bbtextpropertyeditor.ui</file>
+        <file>gui/bbtexttoolpanel.ui</file>
         <file>gui/bbtoolpalette.ui</file>
         <!--
         <file>aedit/AttributeEditor.ui.xml</file>

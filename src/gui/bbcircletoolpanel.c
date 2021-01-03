@@ -20,7 +20,7 @@
 #include <bblibrary.h>
 #include "bbcircletoolpanel.h"
 #include "bbtoolfactory.h"
-#include "bbcircletool.h"
+#include "gedaplugin/bbcircletool.h"
 
 
 enum
@@ -77,10 +77,10 @@ bb_circle_tool_panel_class_init(BbCircleToolPanelClass *klasse)
     G_OBJECT_CLASS(klasse)->get_property = bb_circle_tool_panel_get_property;
     G_OBJECT_CLASS(klasse)->set_property = bb_circle_tool_panel_set_property;
 
-    //gtk_widget_class_set_template_from_resource(
-    //    GTK_WIDGET_CLASS(klasse),
-    //    "/com/github/ehennes775/bbsch/gui/bbcircletoolpanel.ui"
-    //);
+    gtk_widget_class_set_template_from_resource(
+        GTK_WIDGET_CLASS(klasse),
+        "/com/github/ehennes775/bbsch/gui/bbcircletoolpanel.ui"
+        );
 }
 
 
@@ -128,7 +128,7 @@ bb_circle_tool_panel_get_property(GObject *object, guint property_id, GValue *va
 static void
 bb_circle_tool_panel_init(BbCircleToolPanel *window)
 {
-    //gtk_widget_init_template(GTK_WIDGET(window));
+    gtk_widget_init_template(GTK_WIDGET(window));
 }
 
 

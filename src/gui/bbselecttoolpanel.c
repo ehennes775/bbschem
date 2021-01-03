@@ -20,7 +20,7 @@
 #include <bblibrary.h>
 #include "bbselecttoolpanel.h"
 #include "bbtoolfactory.h"
-#include "bbselecttool.h"
+#include "gedaplugin/bbselecttool.h"
 
 
 enum

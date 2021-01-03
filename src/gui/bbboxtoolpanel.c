@@ -20,7 +20,7 @@
 #include <bblibrary.h>
 #include "bbboxtoolpanel.h"
 #include "bbtoolfactory.h"
-#include "bbboxtool.h"
+#include "gedaplugin/bbboxtool.h"
 
 
 enum
@@ -39,9 +39,6 @@ struct _BbBoxToolPanel
 };
 
 
-static BbDrawingTool*
-bb_box_tool_panel_select_tool(BbToolFactory *factory, BbDrawingToolSupport *support);
-
 static void
 bb_box_tool_panel_dispose(GObject *object);
 
@@ -50,6 +47,9 @@ bb_box_tool_panel_finalize(GObject *object);
 
 static void
 bb_box_tool_panel_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
+
+static BbDrawingTool*
+bb_box_tool_panel_select_tool(BbToolFactory *factory, BbDrawingToolSupport *support);
 
 static void
 bb_box_tool_panel_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
@@ -72,15 +72,18 @@ G_DEFINE_TYPE_WITH_CODE(
 static void
 bb_box_tool_panel_class_init(BbBoxToolPanelClass *klasse)
 {
-    G_OBJECT_CLASS(klasse)->dispose = bb_box_tool_panel_dispose;
-    G_OBJECT_CLASS(klasse)->finalize = bb_box_tool_panel_finalize;
-    G_OBJECT_CLASS(klasse)->get_property = bb_box_tool_panel_get_property;
-    G_OBJECT_CLASS(klasse)->set_property = bb_box_tool_panel_set_property;
+    GObjectClass *object_class = G_OBJECT_CLASS(klasse);
+    g_return_if_fail(G_IS_OBJECT_CLASS(object_class));
 
-    //gtk_widget_class_set_template_from_resource(
-    //    GTK_WIDGET_CLASS(klasse),
-    //    "/com/github/ehennes775/bbsch/gui/bbboxtoolpanel.ui"
-    //);
+    object_class->dispose = bb_box_tool_panel_dispose;
+    object_class->finalize = bb_box_tool_panel_finalize;
+    object_class->get_property = bb_box_tool_panel_get_property;
+    object_class->set_property = bb_box_tool_panel_set_property;
+
+    gtk_widget_class_set_template_from_resource(
+        GTK_WIDGET_CLASS(klasse),
+        "/com/github/ehennes775/bbsch/gui/bbboxtoolpanel.ui"
+        );
 }
 
 
@@ -94,14 +97,12 @@ bb_box_tool_panel_select_tool(BbToolFactory *factory, BbDrawingToolSupport *supp
 static void
 bb_box_tool_panel_dispose(GObject *object)
 {
-    // BbBoxToolPanel* privat = BBBOX_TOOL_PANEL_GET_PRIVATE(object);
 }
 
 
 static void
 bb_box_tool_panel_finalize(GObject *object)
 {
-    // BbBoxToolPanel* privat = BBBOX_TOOL_PANEL_GET_PRIVATE(object);
 }
 
 
@@ -110,15 +111,6 @@ bb_box_tool_panel_get_property(GObject *object, guint property_id, GValue *value
 {
     switch (property_id)
     {
-        case PROP_CAIRO:
-            break;
-
-        case PROP_2:
-            break;
-
-        case PROP_3:
-            break;
-
         default:
             G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
     }
@@ -128,7 +120,7 @@ bb_box_tool_panel_get_property(GObject *object, guint property_id, GValue *value
 static void
 bb_box_tool_panel_init(BbBoxToolPanel *window)
 {
-    //gtk_widget_init_template(GTK_WIDGET(window));
+    gtk_widget_init_template(GTK_WIDGET(window));
 }
 
 
@@ -144,15 +136,6 @@ bb_box_tool_panel_set_property(GObject *object, guint property_id, const GValue 
 {
     switch (property_id)
     {
-        case PROP_CAIRO:
-            break;
-
-        case PROP_2:
-            break;
-
-        case PROP_3:
-            break;
-
         default:
             G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
     }

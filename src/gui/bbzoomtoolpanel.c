@@ -20,7 +20,7 @@
 #include <bblibrary.h>
 #include "bbzoomtoolpanel.h"
 #include "bbtoolfactory.h"
-#include "bbzoomtool.h"
+#include "gedaplugin/bbzoomtool.h"
 
 
 enum

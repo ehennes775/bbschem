@@ -20,7 +20,7 @@
 #include <bblibrary.h>
 #include "bbblocktoolpanel.h"
 #include "bbtoolfactory.h"
-#include "bbblocktool.h"
+#include "gedaplugin/bbblocktool.h"
 
 
 struct _BbBlockToolPanel

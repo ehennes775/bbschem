@@ -20,7 +20,7 @@
 #include <bblibrary.h>
 #include "bbbustoolpanel.h"
 #include "bbtoolfactory.h"
-#include "bbbustool.h"
+#include "gedaplugin/bbbustool.h"
 
 
 enum
@@ -77,10 +77,10 @@ bb_bus_tool_panel_class_init(BbBusToolPanelClass *klasse)
     G_OBJECT_CLASS(klasse)->get_property = bb_bus_tool_panel_get_property;
     G_OBJECT_CLASS(klasse)->set_property = bb_bus_tool_panel_set_property;
 
-    //gtk_widget_class_set_template_from_resource(
-    //    GTK_WIDGET_CLASS(klasse),
-    //    "/com/github/ehennes775/bbsch/gui/bbbustoolpanel.ui"
-    //);
+    gtk_widget_class_set_template_from_resource(
+        GTK_WIDGET_CLASS(klasse),
+        "/com/github/ehennes775/bbsch/gui/bbbustoolpanel.ui"
+        );
 }
 
 
@@ -128,7 +128,7 @@ bb_bus_tool_panel_get_property(GObject *object, guint property_id, GValue *value
 static void
 bb_bus_tool_panel_init(BbBusToolPanel *window)
 {
-    //gtk_widget_init_template(GTK_WIDGET(window));
+    gtk_widget_init_template(GTK_WIDGET(window));
 }
 
 

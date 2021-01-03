@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<interface>
+
+    <template class="BbTextToolPanel" parent="GtkBox">
+        <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
+        <child>
+            <object class="GtkTextView" id="text-view">
+                <property name="vexpand">TRUE</property>
+            </object>
+        </child>
+        <child>
+            <object class="BbTextPropertyEditor" id="text-property-editor">
+                <property name="expanded">true</property>
+                <property name="label">Text Properties</property>
+                <property name="visible">TRUE</property>
+                <style>
+                    <class name="propexpander"/>
+                </style>
+            </object>
+        </child>
+    </template>
+
+</interface>

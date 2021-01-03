@@ -22,6 +22,18 @@ set_source_files_properties(
         )
 
 add_library(bbgedaplugin SHARED
+        bbarctool.c
+        bbarctool.h
+        bbattributetool.c
+        bbattributetool.h
+        bbblocktool.c
+        bbblocktool.h
+        bbboxtool.c
+        bbboxtool.h
+        bbbustool.c
+        bbbustool.h
+        bbcircletool.c
+        bbcircletool.h
         bbgedaarcfactory.c
         bbgedaarcfactory.h
         bbgedablockfactory.c
@@ -57,6 +69,14 @@ add_library(bbgedaplugin SHARED
         bbgedatextfactory.h
         bbgedaview.c
         bbgedaview.h
+        bbpintool.c
+        bbpintool.h
+        bbselecttool.c
+        bbselecttool.h
+        bbtexttool.c
+        bbtexttool.h
+        bbzoomtool.c
+        bbzoomtool.h
         ${CMAKE_CURRENT_BINARY_DIR}/${THING1}
         )
 

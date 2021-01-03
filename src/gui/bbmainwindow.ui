@@ -404,7 +404,7 @@
                                                 </child>
                                                 <child>
                                                     <object class="BbTextToolPanel" id ="text_panel">
-                                                        <property name="label">Text</property>
+                                                        <property name="visible">TRUE</property>
                                                     </object>
                                                     <packing>
                                                         <property name="name">text</property>

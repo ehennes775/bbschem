@@ -26,9 +26,6 @@
 enum
 {
     PROP_0,
-    PROP_CAIRO,
-    PROP_2,
-    PROP_3,
     N_PROPERTIES
 };
 
@@ -39,9 +36,6 @@ struct _BbNetToolPanel
 };
 
 
-static BbDrawingTool*
-bb_net_tool_panel_select_tool(BbToolFactory *factory, BbDrawingToolSupport *support);
-
 static void
 bb_net_tool_panel_dispose(GObject *object);
 
@@ -50,6 +44,9 @@ bb_net_tool_panel_finalize(GObject *object);
 
 static void
 bb_net_tool_panel_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
+
+static BbDrawingTool*
+bb_net_tool_panel_select_tool(BbToolFactory *factory, BbDrawingToolSupport *support);
 
 static void
 bb_net_tool_panel_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
@@ -77,10 +74,10 @@ bb_net_tool_panel_class_init(BbNetToolPanelClass *klasse)
     G_OBJECT_CLASS(klasse)->get_property = bb_net_tool_panel_get_property;
     G_OBJECT_CLASS(klasse)->set_property = bb_net_tool_panel_set_property;
 
-    //gtk_widget_class_set_template_from_resource(
-    //    GTK_WIDGET_CLASS(klasse),
-    //    "/com/github/ehennes775/bbsch/gui/bbnettoolpanel.ui"
-    //);
+    gtk_widget_class_set_template_from_resource(
+        GTK_WIDGET_CLASS(klasse),
+        "/com/github/ehennes775/bbsch/gui/bbnettoolpanel.ui"
+        );
 }
 
 
@@ -94,14 +91,12 @@ bb_net_tool_panel_select_tool(BbToolFactory *factory, BbDrawingToolSupport *supp
 static void
 bb_net_tool_panel_dispose(GObject *object)
 {
-    // BbNetToolPanel* privat = BBNET_TOOL_PANEL_GET_PRIVATE(object);
 }
 
 
 static void
 bb_net_tool_panel_finalize(GObject *object)
 {
-    // BbNetToolPanel* privat = BBNET_TOOL_PANEL_GET_PRIVATE(object);
 }
 
 
@@ -110,15 +105,6 @@ bb_net_tool_panel_get_property(GObject *object, guint property_id, GValue *value
 {
     switch (property_id)
     {
-        case PROP_CAIRO:
-            break;
-
-        case PROP_2:
-            break;
-
-        case PROP_3:
-            break;
-
         default:
             G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
     }
@@ -128,7 +114,7 @@ bb_net_tool_panel_get_property(GObject *object, guint property_id, GValue *value
 static void
 bb_net_tool_panel_init(BbNetToolPanel *window)
 {
-    //gtk_widget_init_template(GTK_WIDGET(window));
+    gtk_widget_init_template(GTK_WIDGET(window));
 }
 
 
@@ -144,19 +130,11 @@ bb_net_tool_panel_set_property(GObject *object, guint property_id, const GValue 
 {
     switch (property_id)
     {
-        case PROP_CAIRO:
-            break;
-
-        case PROP_2:
-            break;
-
-        case PROP_3:
-            break;
-
         default:
             G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
     }
 }
+
 
 static void
 bb_net_tool_panel_tool_factory_init(BbToolFactoryInterface *iface)

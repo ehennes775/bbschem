@@ -2,30 +2,25 @@
 add_library(bbschemgui SHARED
         bbapplication.c
         bbapplication.h
-        bbattributeeditor.c
-        bbattributeeditor.h
-        bbattributetool.c
-        bbattributetool.h
-        bbattributetoolpanel.c
-        bbattributetoolpanel.h
-        bbarctool.c
-        bbarctool.h
         bbarctoolpanel.c
         bbarctoolpanel.h
-        bbblocktool.c
-        bbblocktool.h
+        bbattributeeditor.c
+        bbattributeeditor.h
+        bbattributetoolpanel.c
+        bbattributetoolpanel.h
+        bbblocktoolpanel.c
         bbblocktoolpanel.c
         bbblocktoolpanel.h
-        bbboxtool.c
-        bbboxtool.h
+        bbblocktoolpanel.h
         bbboxtoolpanel.c
         bbboxtoolpanel.h
+        bbbustoolpanel.c
+        bbbustoolpanel.h
+        bbbustoolpanel.h
         bbcellrenderercolorswatch.c
         bbcellrenderercolorswatch.h
         bbchoosetoolaction.c
         bbchoosetoolaction.h
-        bbcircletool.c
-        bbcircletool.h
         bbcircletoolpanel.c
         bbcircletoolpanel.h
         bbclipboardsubject.c
@@ -34,18 +29,12 @@ add_library(bbschemgui SHARED
         bbcolorcombobox.h
         bbcoloreditor.c
         bbcoloreditor.h
+        bbcomponentselectorplugin.c
+        bbcomponentselectorplugin.h
         bbcopyaction.c
         bbcopyaction.h
         bbcutaction.c
         bbcutaction.h
-        bbblocktoolpanel.c
-        bbblocktoolpanel.h
-        bbbustool.c
-        bbbustool.h
-        bbbustoolpanel.c
-        bbbustoolpanel.h
-        bbcomponentselectorplugin.c
-        bbcomponentselectorplugin.h
         bbdeleteaction.c
         bbdeleteaction.h
         bbdocumentwindow.c
@@ -54,8 +43,12 @@ add_library(bbschemgui SHARED
         bbdocumentwindowtab.h
         bbdrawingtool.c
         bbdrawingtool.h
+        bbdrawingtoolsupport.c
+        bbdrawingtoolsupport.h
         bbfillstyleeditor.c
         bbfillstyleeditor.h
+        bbfilltypecombobox.c
+        bbfilltypecombobox.h
         bbgeneralopener.c
         bbgeneralopener.h
         bbgraphics.c
@@ -79,7 +72,6 @@ add_library(bbschemgui SHARED
         bbnettool.c
         bbnettool.h
         bbnettoolpanel.c
-        bbbustoolpanel.h
         bbnewaction.c
         bbnewaction.h
         bbopenaction.c
@@ -93,12 +85,12 @@ add_library(bbschemgui SHARED
         bbpasteaction.h
         bbpinpropertyeditor.c
         bbpinpropertyeditor.h
-        bbpintool.c
-        bbpintool.h
         bbpintoolpanel.c
         bbpintoolpanel.h
         bbpropertycombobox.c
         bbpropertycombobox.h
+        bbpropertysubject.c
+        bbpropertysubject.h
         bbquitaction.c
         bbquitaction.h
         bbredoaction.c
@@ -124,8 +116,6 @@ add_library(bbschemgui SHARED
         bbselectallaction.h
         bbselectnoneaction.c
         bbselectnoneaction.h
-        bbselecttool.c
-        bbselecttool.h
         bbselecttoolpanel.c
         bbselecttoolpanel.h
         bbshowgridaction.c
@@ -136,6 +126,8 @@ add_library(bbschemgui SHARED
         bbspecificopener.h
         bbtextpropertyeditor.c
         bbtextpropertyeditor.h
+        bbtexttoolpanel.c
+        bbtexttoolpanel.h
         bbtoolchanger.c
         bbtoolchanger.h
         bbtoolfactory.c
@@ -148,10 +140,7 @@ add_library(bbschemgui SHARED
         bbtoolsubject.h
         bbundoaction.c
         bbundoaction.h
-        bbtexttool.c
-        bbtexttool.h
-        bbtexttoolpanel.c
-        bbtexttoolpanel.h
+        bbzoomdirection.h
         bbzoomdirection.h
         bbzoomextentsaction.c
         bbzoomextentsaction.h
@@ -163,15 +152,6 @@ add_library(bbschemgui SHARED
         bbzoompointaction.h
         bbzoomsubject.c
         bbzoomsubject.h
-        bbzoomtool.c
-        bbzoomtool.h
         bbzoomtoolpanel.c
         bbzoomtoolpanel.h
-        bbzoomdirection.h
-        bbpropertysubject.c
-        bbpropertysubject.h
-        bbfilltypecombobox.c
-        bbfilltypecombobox.h
-        bbdrawingtoolsupport.c
-        bbdrawingtoolsupport.h
         )

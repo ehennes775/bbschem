@@ -21,6 +21,6 @@
 #include <gtk/gtk.h>
 
 #define BB_TYPE_TEXT_TOOL_PANEL bb_text_tool_panel_get_type()
-G_DECLARE_FINAL_TYPE(BbTextToolPanel, bb_text_tool_panel, BB, TEXT_TOOL_PANEL, GtkLabel)
+G_DECLARE_FINAL_TYPE(BbTextToolPanel, bb_text_tool_panel, BB, TEXT_TOOL_PANEL, GtkBox)
 
 #endif

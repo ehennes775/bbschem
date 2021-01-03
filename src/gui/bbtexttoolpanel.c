@@ -20,27 +20,21 @@
 #include <bblibrary.h>
 #include "bbtexttoolpanel.h"
 #include "bbtoolfactory.h"
-#include "bbtexttool.h"
+#include "gedaplugin/bbtexttool.h"
 
 
 enum
 {
     PROP_0,
-    PROP_CAIRO,
-    PROP_2,
-    PROP_3,
     N_PROPERTIES
 };
 
 
 struct _BbTextToolPanel
 {
-    GtkLabel parent;
+    GtkBox parent;
 };
 
-
-static BbDrawingTool*
-bb_text_tool_panel_select_tool(BbToolFactory *factory, BbDrawingToolSupport *support);
 
 static void
 bb_text_tool_panel_dispose(GObject *object);
@@ -50,6 +44,9 @@ bb_text_tool_panel_finalize(GObject *object);
 
 static void
 bb_text_tool_panel_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
+
+static BbDrawingTool*
+bb_text_tool_panel_select_tool(BbToolFactory *factory, BbDrawingToolSupport *support);
 
 static void
 bb_text_tool_panel_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
@@ -64,7 +61,7 @@ GParamSpec *properties[N_PROPERTIES];
 G_DEFINE_TYPE_WITH_CODE(
     BbTextToolPanel,
     bb_text_tool_panel,
-    GTK_TYPE_LABEL,
+    GTK_TYPE_BOX,
     G_IMPLEMENT_INTERFACE(BB_TYPE_TOOL_FACTORY, bb_text_tool_panel_tool_factory_init)
     )
 
@@ -72,15 +69,18 @@ G_DEFINE_TYPE_WITH_CODE(
 static void
 bb_text_tool_panel_class_init(BbTextToolPanelClass *klasse)
 {
-    G_OBJECT_CLASS(klasse)->dispose = bb_text_tool_panel_dispose;
-    G_OBJECT_CLASS(klasse)->finalize = bb_text_tool_panel_finalize;
-    G_OBJECT_CLASS(klasse)->get_property = bb_text_tool_panel_get_property;
-    G_OBJECT_CLASS(klasse)->set_property = bb_text_tool_panel_set_property;
+    GObjectClass *object_class = G_OBJECT_CLASS(klasse);
+    g_return_if_fail(G_IS_OBJECT_CLASS(object_class));
 
-    //gtk_widget_class_set_template_from_resource(
-    //    GTK_WIDGET_CLASS(klasse),
-    //    "/com/github/ehennes775/bbsch/gui/bbtexttoolpanel.ui"
-    //);
+    object_class->dispose = bb_text_tool_panel_dispose;
+    object_class->finalize = bb_text_tool_panel_finalize;
+    object_class->get_property = bb_text_tool_panel_get_property;
+    object_class->set_property = bb_text_tool_panel_set_property;
+
+    gtk_widget_class_set_template_from_resource(
+        GTK_WIDGET_CLASS(klasse),
+        "/com/github/ehennes775/bbsch/gui/bbtexttoolpanel.ui"
+        );
 }
 
 
@@ -94,14 +94,12 @@ bb_text_tool_panel_select_tool(BbToolFactory *factory, BbDrawingToolSupport *sup
 static void
 bb_text_tool_panel_dispose(GObject *object)
 {
-    // BbTextToolPanel* privat = BBTEXT_TOOL_PANEL_GET_PRIVATE(object);
 }
 
 
 static void
 bb_text_tool_panel_finalize(GObject *object)
 {
-    // BbTextToolPanel* privat = BBTEXT_TOOL_PANEL_GET_PRIVATE(object);
 }
 
 
@@ -110,15 +108,6 @@ bb_text_tool_panel_get_property(GObject *object, guint property_id, GValue *valu
 {
     switch (property_id)
     {
-        case PROP_CAIRO:
-            break;
-
-        case PROP_2:
-            break;
-
-        case PROP_3:
-            break;
-
         default:
             G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
     }
@@ -126,9 +115,9 @@ bb_text_tool_panel_get_property(GObject *object, guint property_id, GValue *valu
 
 
 static void
-bb_text_tool_panel_init(BbTextToolPanel *window)
+bb_text_tool_panel_init(BbTextToolPanel *panel)
 {
-    //gtk_widget_init_template(GTK_WIDGET(window));
+    gtk_widget_init_template(GTK_WIDGET(panel));
 }
 
 
@@ -144,19 +133,11 @@ bb_text_tool_panel_set_property(GObject *object, guint property_id, const GValue
 {
     switch (property_id)
     {
-        case PROP_CAIRO:
-            break;
-
-        case PROP_2:
-            break;
-
-        case PROP_3:
-            break;
-
         default:
             G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
     }
 }
+
 
 static void
 bb_text_tool_panel_tool_factory_init(BbToolFactoryInterface *iface)

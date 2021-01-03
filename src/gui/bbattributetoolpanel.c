@@ -20,15 +20,12 @@
 #include <bblibrary.h>
 #include "bbattributetoolpanel.h"
 #include "bbtoolfactory.h"
-#include "bbattributetool.h"
+#include "gedaplugin/bbattributetool.h"
 
 
 enum
 {
     PROP_0,
-    PROP_CAIRO,
-    PROP_2,
-    PROP_3,
     N_PROPERTIES
 };
 
@@ -72,10 +69,13 @@ G_DEFINE_TYPE_WITH_CODE(
 static void
 bb_attribute_tool_panel_class_init(BbAttributeToolPanelClass *klasse)
 {
-    G_OBJECT_CLASS(klasse)->dispose = bb_attribute_tool_panel_dispose;
-    G_OBJECT_CLASS(klasse)->finalize = bb_attribute_tool_panel_finalize;
-    G_OBJECT_CLASS(klasse)->get_property = bb_attribute_tool_panel_get_property;
-    G_OBJECT_CLASS(klasse)->set_property = bb_attribute_tool_panel_set_property;
+    GObjectClass *object_class = G_OBJECT_CLASS(klasse);
+    g_return_if_fail(G_IS_OBJECT_CLASS(object_class));
+
+    object_class->dispose = bb_attribute_tool_panel_dispose;
+    object_class->finalize = bb_attribute_tool_panel_finalize;
+    object_class->get_property = bb_attribute_tool_panel_get_property;
+    object_class->set_property = bb_attribute_tool_panel_set_property;
 
     //gtk_widget_class_set_template_from_resource(
     //    GTK_WIDGET_CLASS(klasse),
@@ -110,15 +110,6 @@ bb_attribute_tool_panel_get_property(GObject *object, guint property_id, GValue 
 {
     switch (property_id)
     {
-        case PROP_CAIRO:
-            break;
-
-        case PROP_2:
-            break;
-
-        case PROP_3:
-            break;
-
         default:
             G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
     }
@@ -144,19 +135,11 @@ bb_attribute_tool_panel_set_property(GObject *object, guint property_id, const G
 {
     switch (property_id)
     {
-        case PROP_CAIRO:
-            break;
-
-        case PROP_2:
-            break;
-
-        case PROP_3:
-            break;
-
         default:
             G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
     }
 }
+
 
 static void
 bb_attribute_tool_panel_tool_factory_init(BbToolFactoryInterface *iface)
