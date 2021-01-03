@@ -125,11 +125,12 @@ static GParamSpec *properties[N_PROPERTIES];
 static guint signals[N_SIGNALS];
 
 
-G_DEFINE_TYPE_WITH_CODE(
+G_DEFINE_DYNAMIC_TYPE_EXTENDED(
     BbArcTool,
     bb_arc_tool,
     G_TYPE_OBJECT,
-    G_IMPLEMENT_INTERFACE(BB_TYPE_DRAWING_TOOL, bb_arc_tool_drawing_tool_init)
+    0,
+    G_IMPLEMENT_INTERFACE_DYNAMIC(BB_TYPE_DRAWING_TOOL, bb_arc_tool_drawing_tool_init)
     )
 
 
@@ -213,6 +214,12 @@ bb_arc_tool_class_init(BbArcToolClass *klasse)
         "invalidate-item",
         BB_TYPE_DRAWING_TOOL
         );
+}
+
+
+static void
+bb_arc_tool_class_finalize(BbArcToolClass *klasse)
+{
 }
 
 
@@ -405,6 +412,13 @@ bb_arc_tool_motion_notify(BbDrawingTool *tool, gdouble x, gdouble y)
     bb_arc_tool_update_with_point(arc_tool, x, y);
 
     return TRUE;
+}
+
+
+void
+bb_arc_tool_register(GTypeModule *module)
+{
+    bb_arc_tool_register_type(module);
 }
 
 

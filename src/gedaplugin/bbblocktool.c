@@ -114,11 +114,12 @@ static GParamSpec *properties[N_PROPERTIES];
 static guint signals[N_SIGNALS];
 
 
-G_DEFINE_TYPE_WITH_CODE(
+G_DEFINE_DYNAMIC_TYPE_EXTENDED(
     BbBlockTool,
     bb_block_tool,
     G_TYPE_OBJECT,
-    G_IMPLEMENT_INTERFACE(BB_TYPE_DRAWING_TOOL, bb_block_tool_drawing_tool_init)
+    0,
+    G_IMPLEMENT_INTERFACE_DYNAMIC(BB_TYPE_DRAWING_TOOL, bb_block_tool_drawing_tool_init)
     )
 
 
@@ -180,6 +181,12 @@ bb_block_tool_class_init(BbBlockToolClass *klasse)
         "invalidate-item",
         BB_TYPE_DRAWING_TOOL
         );
+}
+
+
+static void
+bb_block_tool_class_finalize(BbBlockToolClass *klasse)
+{
 }
 
 
@@ -314,6 +321,13 @@ bb_block_tool_new(BbToolSubject *subject)
         "subject", subject,
         NULL
         ));
+}
+
+
+void
+bb_block_tool_register(GTypeModule *module)
+{
+    bb_block_tool_register_type(module);
 }
 
 

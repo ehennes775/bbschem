@@ -20,6 +20,38 @@
 #include <libpeas/peas.h>
 #include "bbgedaplugin.h"
 
+
+void
+bb_arc_tool_register(GTypeModule *module);
+
+void
+bb_attribute_tool_register(GTypeModule *module);
+
+void
+bb_block_tool_register(GTypeModule *module);
+
+void
+bb_box_tool_register(GTypeModule *module);
+
+void
+bb_bus_tool_register(GTypeModule *module);
+
+void
+bb_circle_tool_register(GTypeModule *module);
+
+void
+bb_pin_tool_register(GTypeModule *module);
+
+void
+bb_select_tool_register(GTypeModule *module);
+
+void
+bb_text_tool_register(GTypeModule *module);
+
+void
+bb_zoom_tool_register(GTypeModule *module);
+
+
 void
 bb_geda_arc_factory_register(GTypeModule *module);
 
@@ -77,6 +109,18 @@ peas_register_types(PeasObjectModule *module)
 {
     /* Must be called before classes that implement this interface */
     bb_geda_item_factory_register(G_TYPE_MODULE(module));
+
+    /* These will be renamed to include geda */
+    bb_arc_tool_register(G_TYPE_MODULE(module));
+    bb_attribute_tool_register(G_TYPE_MODULE(module));
+    bb_block_tool_register(G_TYPE_MODULE(module));
+    bb_box_tool_register(G_TYPE_MODULE(module));
+    bb_bus_tool_register(G_TYPE_MODULE(module));
+    bb_circle_tool_register(G_TYPE_MODULE(module));
+    bb_pin_tool_register(G_TYPE_MODULE(module));
+    bb_select_tool_register(G_TYPE_MODULE(module));
+    bb_text_tool_register(G_TYPE_MODULE(module));
+    bb_zoom_tool_register(G_TYPE_MODULE(module));
 
     bb_geda_arc_factory_register(G_TYPE_MODULE(module));
     bb_geda_block_factory_register(G_TYPE_MODULE(module));
