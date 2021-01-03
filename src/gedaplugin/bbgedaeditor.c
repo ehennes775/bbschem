@@ -783,11 +783,14 @@ bb_geda_editor_select_select_tool(BbDrawingToolSupport *support)
 
 
 static BbDrawingTool*
-bb_geda_editor_select_text_tool(BbDrawingToolSupport *support)
+bb_geda_editor_select_text_tool(BbDrawingToolSupport *support, BbTextControl *text_control)
 {
     g_return_val_if_fail(BB_IS_GEDA_EDITOR(support), NULL);
 
-    BbDrawingTool *tool = BB_DRAWING_TOOL(bb_text_tool_new(BB_TOOL_SUBJECT(support)));
+    BbDrawingTool *tool = BB_DRAWING_TOOL(bb_text_tool_new(
+        BB_TOOL_SUBJECT(support),
+        text_control
+        ));
 
     bb_geda_editor_set_drawing_tool(BB_GEDA_EDITOR(support), tool);
 

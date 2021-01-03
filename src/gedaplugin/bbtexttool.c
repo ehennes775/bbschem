@@ -319,15 +319,60 @@ bb_text_tool_key_released(BbDrawingTool *tool)
 
 
 BbTextTool*
-bb_text_tool_new(BbToolSubject *subject)
+bb_text_tool_new(BbToolSubject *subject, BbTextControl *text_control)
 {
     BbGedaText *prototype = BB_GEDA_TEXT(g_object_new(BB_TYPE_GEDA_TEXT,
-         "color", 3,
-         "size", 10,
-         "text", "Hello",
-         "visibility", BB_TEXT_VISIBILITY_VISIBLE,
+         "alignment", bb_text_control_get_alignment(text_control),
+         "item-color", bb_text_control_get_color(text_control),
+         "presentation", bb_text_control_get_presentation(text_control),
+         "rotation", bb_text_control_get_rotation(text_control),
+         "size", bb_text_control_get_size(text_control),
+         "text", bb_text_control_get_text(text_control),
+         "visibility", bb_text_control_get_visibility(text_control),
          NULL
          ));
+
+    g_object_bind_property(
+        text_control, "alignment",
+        prototype, "alignment",
+        G_BINDING_DEFAULT
+        );
+
+    g_object_bind_property(
+        text_control, "color",
+        prototype, "item-color",
+        G_BINDING_DEFAULT
+        );
+
+    g_object_bind_property(
+        text_control, "presentation",
+        prototype, "presentation",
+        G_BINDING_DEFAULT
+        );
+
+    g_object_bind_property(
+        text_control, "rotation",
+        prototype, "rotation",
+        G_BINDING_DEFAULT
+        );
+
+    g_object_bind_property(
+        text_control, "size",
+        prototype, "size",
+        G_BINDING_DEFAULT
+        );
+
+    g_object_bind_property(
+        text_control, "text",
+        prototype, "text",
+        G_BINDING_DEFAULT
+        );
+
+    g_object_bind_property(
+        text_control, "visibility",
+        prototype, "visibility",
+        G_BINDING_DEFAULT
+        );
 
     return BB_TEXT_TOOL(g_object_new(
         BB_TYPE_TEXT_TOOL,

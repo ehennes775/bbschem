@@ -19,12 +19,13 @@
  */
 
 #include <gtk/gtk.h>
+#include <bbtextcontrol.h>
 #include "bbtoolsubject.h"
 
 #define BB_TYPE_TEXT_TOOL bb_text_tool_get_type()
 G_DECLARE_FINAL_TYPE(BbTextTool, bb_text_tool, BB, TEXT_TOOL, GObject)
 
 BbTextTool*
-bb_text_tool_new(BbToolSubject *subject);
+bb_text_tool_new(BbToolSubject *subject, BbTextControl *text_control);
 
 #endif

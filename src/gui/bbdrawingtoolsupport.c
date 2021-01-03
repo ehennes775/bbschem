@@ -275,7 +275,7 @@ bb_drawing_tool_support_select_select_tool_missing(BbDrawingToolSupport *support
 
 
 BbDrawingTool*
-bb_drawing_tool_support_select_text_tool(BbDrawingToolSupport *support)
+bb_drawing_tool_support_select_text_tool(BbDrawingToolSupport *support, BbTextControl *text_control)
 {
     g_return_val_if_fail(BB_IS_DRAWING_TOOL_SUPPORT(support), NULL);
 
@@ -284,12 +284,12 @@ bb_drawing_tool_support_select_text_tool(BbDrawingToolSupport *support)
     g_return_val_if_fail(iface != NULL, NULL);
     g_return_val_if_fail(iface->select_text_tool != NULL, NULL);
 
-    return iface->select_text_tool(support);
+    return iface->select_text_tool(support, text_control);
 };
 
 
 static BbDrawingTool*
-bb_drawing_tool_support_select_text_tool_missing(BbDrawingToolSupport *support)
+bb_drawing_tool_support_select_text_tool_missing(BbDrawingToolSupport *support, BbTextControl *text_control)
 {
     g_error("bb_drawing_tool_support_select_text_tool() not overridden");
 }

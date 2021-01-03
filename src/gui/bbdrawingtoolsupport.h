@@ -20,6 +20,7 @@
 
 #include <gtk/gtk.h>
 #include "bbdrawingtool.h"
+#include "bbtextcontrol.h"
 
 #define BB_TYPE_DRAWING_TOOL_SUPPORT bb_drawing_tool_support_get_type()
 G_DECLARE_INTERFACE(BbDrawingToolSupport, bb_drawing_tool_support, BB, DRAWING_TOOL_SUPPORT, GObject)
@@ -40,7 +41,7 @@ struct _BbDrawingToolSupportInterface
     BbDrawingTool* (*select_path_tool)(BbDrawingToolSupport *support);
     BbDrawingTool* (*select_pin_tool)(BbDrawingToolSupport *support);
     BbDrawingTool* (*select_select_tool)(BbDrawingToolSupport *support);
-    BbDrawingTool* (*select_text_tool)(BbDrawingToolSupport *support);
+    BbDrawingTool* (*select_text_tool)(BbDrawingToolSupport *support, BbTextControl *text_control);
     BbDrawingTool* (*select_zoom_tool)(BbDrawingToolSupport *support);
 };
 
@@ -82,7 +83,7 @@ BbDrawingTool*
 bb_drawing_tool_support_select_select_tool(BbDrawingToolSupport *support);
 
 BbDrawingTool*
-bb_drawing_tool_support_select_text_tool(BbDrawingToolSupport *support);
+bb_drawing_tool_support_select_text_tool(BbDrawingToolSupport *support, BbTextControl *text_control);
 
 BbDrawingTool*
 bb_drawing_tool_support_select_zoom_tool(BbDrawingToolSupport *support);
