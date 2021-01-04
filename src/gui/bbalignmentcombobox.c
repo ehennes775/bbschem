@@ -17,12 +17,15 @@
  */
 
 #include <gtk/gtk.h>
+#include <bbextensions.h>
 #include "bbalignmentcombobox.h"
 
 
 enum
 {
     PROP_0,
+
+    PROP_ALIGNMENT,
 
     N_PROPERTIES
 };
@@ -47,6 +50,9 @@ static void
 bb_alignment_combo_box_update_cb(BbPropertyComboBox *unused, GVariant *value, BbAlignmentComboBox *combo);
 
 
+static GParamSpec *properties[N_PROPERTIES];
+
+
 G_DEFINE_TYPE(BbAlignmentComboBox, bb_alignment_combo_box, BB_TYPE_PROPERTY_COMBO_BOX);
 
 
@@ -64,6 +70,19 @@ bb_alignment_combo_box_class_init(BbAlignmentComboBoxClass *klasse)
         GTK_WIDGET_CLASS(klasse),
         "/com/github/ehennes775/bbsch/gui/bbalignmentcombobox.ui"
         );
+
+    properties[PROP_ALIGNMENT] = bb_object_class_install_property(
+        G_OBJECT_CLASS(klasse),
+        PROP_ALIGNMENT,
+        g_param_spec_enum(
+            "alignment",
+            "",
+            "",
+            BB_TYPE_TEXT_ALIGNMENT,
+            BB_TEXT_ALIGNMENT_DEFAULT,
+            G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS
+            )
+        );
 }
 
 
@@ -72,9 +91,29 @@ bb_alignment_combo_box_get_alignment(BbAlignmentComboBox *combo)
 {
     g_return_val_if_fail(BB_IS_ALIGNMENT_COMBO_BOX(combo), BB_TEXT_ALIGNMENT_DEFAULT);
 
-    BbTextAlignment alignment = gtk_combo_box_get_active(GTK_COMBO_BOX(combo));
+    GtkTreeModel *model = gtk_combo_box_get_model(GTK_COMBO_BOX(combo));
+    g_return_val_if_fail(GTK_IS_TREE_MODEL(model), BB_TEXT_ALIGNMENT_DEFAULT);
 
-    g_return_val_if_fail(bb_text_alignment_is_valid(alignment), BB_TEXT_ALIGNMENT_DEFAULT);
+    BbTextAlignment alignment = BB_TEXT_ALIGNMENT_DEFAULT;
+    GtkTreeIter iter;
+
+    gboolean success = gtk_combo_box_get_active_iter(GTK_COMBO_BOX(combo), &iter);
+
+    if (success)
+    {
+        GValue value = G_VALUE_INIT;
+
+        gtk_tree_model_get_value(model, &iter, 1, &value);
+
+        BbTextAlignment temp_alignment = g_value_get_enum(&value);
+
+        if (bb_text_alignment_is_valid(temp_alignment))
+        {
+            alignment = temp_alignment;
+        }
+
+        g_value_reset(&value);
+    }
 
     return alignment;
 }
@@ -95,6 +134,8 @@ static void
 bb_alignment_combo_box_init(BbAlignmentComboBox *combo)
 {
     gtk_widget_init_template(GTK_WIDGET(combo));
+
+    gtk_combo_box_set_wrap_width(GTK_COMBO_BOX(combo), 3);
 
     combo->update_handler_id = g_signal_connect(
         combo,
@@ -118,7 +159,32 @@ bb_alignment_combo_box_set_alignment(BbAlignmentComboBox *combo, BbTextAlignment
     g_return_if_fail(BB_IS_ALIGNMENT_COMBO_BOX(combo));
     g_return_if_fail(bb_text_alignment_is_valid(alignment));
 
-    gtk_combo_box_set_active(GTK_COMBO_BOX(combo), alignment);
+    GtkTreeModel *model = gtk_combo_box_get_model(GTK_COMBO_BOX(combo));
+    g_return_if_fail(GTK_IS_TREE_MODEL(model));
+
+    GtkTreeIter iter;
+
+    gboolean success = gtk_tree_model_get_iter_first(model, &iter);
+
+    while (success)
+    {
+        GValue value = G_VALUE_INIT;
+
+        gtk_tree_model_get_value(model, &iter, 1, &value);
+
+        BbTextAlignment temp_alignment = g_value_get_enum(&value);
+
+        g_value_unset(&value);
+
+        if (alignment == temp_alignment)
+        {
+            gtk_combo_box_set_active_iter(GTK_COMBO_BOX(combo), &iter);
+
+            break;
+        }
+
+        success = gtk_tree_model_iter_next(model, &iter);
+    }
 }
 
 
@@ -127,6 +193,10 @@ bb_alignment_combo_box_set_property(GObject *object, guint property_id, const GV
 {
     switch (property_id)
     {
+        case PROP_ALIGNMENT:
+            bb_alignment_combo_box_set_alignment(BB_ALIGNMENT_COMBO_BOX(object), g_value_get_enum(value));
+            break;
+
         default:
             G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
     }

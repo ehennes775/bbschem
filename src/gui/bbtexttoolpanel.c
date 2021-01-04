@@ -116,7 +116,7 @@ static void
 bb_text_tool_panel_text_view_changed(GtkTextBuffer *buffer, BbTextToolPanel *panel);
 
 
-GParamSpec *properties[N_PROPERTIES];
+static GParamSpec *properties[N_PROPERTIES];
 
 
 G_DEFINE_TYPE_WITH_CODE(
@@ -464,7 +464,22 @@ bb_text_tool_panel_init(BbTextToolPanel *panel)
         G_CALLBACK(bb_text_tool_panel_text_view_changed),
         panel
         );
+
+
+    // TODO Initialization inside the combo boxes did not update the presentation of the initial value
+
+    bb_alignment_combo_box_set_alignment(
+        panel->text_alignment_combo,
+        BB_TEXT_ALIGNMENT_DEFAULT
+        );
+
+    bb_color_combo_box_set_color(
+        panel->text_color_combo,
+        BB_COLOR_GRAPHIC
+        );
 }
+
+
 
 
 __attribute__((constructor)) void

@@ -8,30 +8,6 @@
         </columns>
         <data>
             <row>
-                <col id="0">Lower Left</col>
-                <col id="1">BB_TEXT_ALIGNMENT_LOWER_LEFT</col>
-            </row>
-            <row>
-                <col id="0">Lower Middle</col>
-                <col id="1">BB_TEXT_ALIGNMENT_LOWER_CENTER</col>
-            </row>
-            <row>
-                <col id="0">Lower Right</col>
-                <col id="1">BB_TEXT_ALIGNMENT_LOWER_RIGHT</col>
-            </row>
-            <row>
-                <col id="0">Liddle Left</col>
-                <col id="1">BB_TEXT_ALIGNMENT_CENTER_LEFT</col>
-            </row>
-            <row>
-                <col id="0">Middle Middle</col>
-                <col id="1">BB_TEXT_ALIGNMENT_CENTER_CENTER</col>
-            </row>
-            <row>
-                <col id="0">Middle Right</col>
-                <col id="1">BB_TEXT_ALIGNMENT_CENTER_RIGHT</col>
-            </row>
-            <row>
                 <col id="0">Upper Left</col>
                 <col id="1">BB_TEXT_ALIGNMENT_UPPER_LEFT</col>
             </row>
@@ -43,13 +19,35 @@
                 <col id="0">Upper Right</col>
                 <col id="1">BB_TEXT_ALIGNMENT_UPPER_RIGHT</col>
             </row>
+            <row>
+                <col id="0">Middle Left</col>
+                <col id="1">BB_TEXT_ALIGNMENT_CENTER_LEFT</col>
+            </row>
+            <row>
+                <col id="0">Middle Middle</col>
+                <col id="1">BB_TEXT_ALIGNMENT_CENTER_CENTER</col>
+            </row>
+            <row>
+                <col id="0">Middle Right</col>
+                <col id="1">BB_TEXT_ALIGNMENT_CENTER_RIGHT</col>
+            </row>
+            <row>
+                <col id="0">Lower Left</col>
+                <col id="1">BB_TEXT_ALIGNMENT_LOWER_LEFT</col>
+            </row>
+            <row>
+                <col id="0">Lower Middle</col>
+                <col id="1">BB_TEXT_ALIGNMENT_LOWER_CENTER</col>
+            </row>
+            <row>
+                <col id="0">Lower Right</col>
+                <col id="1">BB_TEXT_ALIGNMENT_LOWER_RIGHT</col>
+            </row>
         </data>
     </object>
 
     <template class="BbAlignmentComboBox" parent="BbPropertyComboBox">
-        <property name="id-column">1</property>
         <property name="model">alignment-list</property>
-        <!--<property name="wrap-width">3</property>-->
         <child>
             <object class="GtkCellRendererText" id="alignment-renderer">
             </object>
