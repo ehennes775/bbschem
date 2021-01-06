@@ -1,6 +1,39 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <interface>
 
+    <object class="GtkListStore" id="rotation-list">
+        <columns>
+            <column type="gchararray"/>
+        </columns>
+        <data>
+            <row>
+                <col id="0">0</col>
+            </row>
+            <row>
+                <col id="0">30</col>
+            </row>
+            <row>
+                <col id="0">45</col>
+            </row>
+            <row>
+                <col id="0">60</col>
+            </row>
+            <row>
+                <col id="0">90</col>
+            </row>
+            <row>
+                <col id="0">120</col>
+            </row>
+            <row>
+                <col id="0">135</col>
+            </row>
+            <row>
+                <col id="0">150</col>
+            </row>
+        </data>
+    </object>
+
+
     <template class="BbTextToolPanel" parent="GtkBox">
         <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
         <child>
@@ -125,9 +158,12 @@
                             </packing>
                         </child>
                         <child>
-                            <object class="BbPropertyComboBox" id="text_rotation_combo">
+                            <object class="BbInt32ComboBox" id="text_rotation_combo">
                                 <property name="action-name">apply-text-rotation</property>
+                                <property name="entry-text-column">0</property>
+                                <property name="has-entry">true</property>
                                 <property name="hexpand">true</property>
+                                <property name="model">rotation-list</property>
                                 <style>
                                     <class name="propedit"/>
                                 </style>

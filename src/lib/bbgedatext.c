@@ -29,6 +29,7 @@
 #include "bbcolors.h"
 #include "bbcolor.h"
 #include "bbattribute.h"
+#include "bbangle.h"
 
 
 /**
@@ -908,6 +909,8 @@ bb_geda_text_render(BbGedaItem *item, BbItemRenderer *renderer)
             renderer,
             bb_geda_text_get_insert_x(text),
             bb_geda_text_get_insert_y(text),
+            bb_angle_to_radians(bb_geda_text_get_rotation(text)),
+            bb_geda_text_get_size(text),
             bb_geda_text_get_shown_text(text)
             );
     }

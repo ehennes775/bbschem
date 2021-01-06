@@ -309,6 +309,8 @@ bb_item_renderer_render_text(
     BbItemRenderer *renderer,
     int insert_x,
     int insert_y,
+    double radians,
+    int size,
     char *text
     )
 {
@@ -319,7 +321,7 @@ bb_item_renderer_render_text(
     g_return_if_fail(iface != NULL);
     g_return_if_fail(iface->render_text != NULL);
 
-    return iface->render_text(renderer, insert_x, insert_y, text);
+    return iface->render_text(renderer, insert_x, insert_y, radians, size, text);
 }
 
 
@@ -328,6 +330,8 @@ bb_item_renderer_render_text_missing(
     BbItemRenderer *renderer,
     int insert_x,
     int insert_y,
+    double radians,
+    int size,
     char *text
     )
 {

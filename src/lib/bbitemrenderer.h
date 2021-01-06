@@ -58,6 +58,8 @@ struct _BbItemRendererInterface
         BbItemRenderer *renderer,
         int insert_x,
         int insert_y,
+        double radians,
+        int size,
         char *text
         );
 
@@ -135,6 +137,8 @@ bb_item_renderer_render_text(
     BbItemRenderer *renderer,
     int insert_x,
     int insert_y,
+    double radians,
+    int size,
     char *text
     );
 

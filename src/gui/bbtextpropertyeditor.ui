@@ -116,7 +116,7 @@
                     </packing>
                 </child>
                 <child>
-                    <object class="BbPropertyComboBox" id="rotation-combo">
+                    <object class="BbInt32ComboBox" id="rotation-combo">
                         <property name="action-name">apply-text-rotation</property>
                         <property name="hexpand">true</property>
                         <style>

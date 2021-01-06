@@ -122,6 +122,8 @@ bb_graphics_render_text(
     BbItemRenderer *renderer,
     int insert_x,
     int insert_y,
+    double radians,
+    int size,
     char *text
     );
 
@@ -622,6 +624,8 @@ bb_graphics_render_text(
     BbItemRenderer *renderer,
     int insert_x,
     int insert_y,
+    double radians,
+    int size,
     char *text
     )
 {
@@ -642,8 +646,7 @@ bb_graphics_render_text(
     cairo_move_to(graphics->cairo, insert_x, insert_y);
     cairo_scale(graphics->cairo, 1.0, -1.0);
 
-    double rotation = bb_angle_to_radians(0);
-    cairo_rotate(graphics->cairo, -rotation);
+    cairo_rotate(graphics->cairo, -radians);
 
     int dx = 0;
     int dy = 0;
