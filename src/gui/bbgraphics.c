@@ -638,7 +638,7 @@ bb_graphics_render_text(
 
     PangoLayout *layout = pango_cairo_create_layout(graphics->cairo);
 
-    pango_font_description_set_size(font_description, 100 * PANGO_SCALE);
+    pango_font_description_set_size(font_description, 10 * size * PANGO_SCALE);
     pango_layout_set_font_description(layout, font_description);
     pango_layout_set_spacing(layout, 40000);
     pango_layout_set_markup(layout, text, -1);

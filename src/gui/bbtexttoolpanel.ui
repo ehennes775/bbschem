@@ -10,25 +10,58 @@
                 <col id="0">0</col>
             </row>
             <row>
-                <col id="0">30</col>
-            </row>
-            <row>
-                <col id="0">45</col>
-            </row>
-            <row>
-                <col id="0">60</col>
-            </row>
-            <row>
                 <col id="0">90</col>
             </row>
             <row>
-                <col id="0">120</col>
+                <col id="0">180</col>
             </row>
             <row>
-                <col id="0">135</col>
+                <col id="0">270</col>
+            </row>
+        </data>
+    </object>
+
+
+    <object class="GtkListStore" id="size-list">
+        <columns>
+            <column type="gchararray"/>
+        </columns>
+        <data>
+            <row>
+                <col id="0">8</col>
             </row>
             <row>
-                <col id="0">150</col>
+                <col id="0">9</col>
+            </row>
+            <row>
+                <col id="0">10</col>
+            </row>
+            <row>
+                <col id="0">11</col>
+            </row>
+            <row>
+                <col id="0">12</col>
+            </row>
+            <row>
+                <col id="0">14</col>
+            </row>
+            <row>
+                <col id="0">16</col>
+            </row>
+            <row>
+                <col id="0">16</col>
+            </row>
+            <row>
+                <col id="0">18</col>
+            </row>
+            <row>
+                <col id="0">20</col>
+            </row>
+            <row>
+                <col id="0">24</col>
+            </row>
+            <row>
+                <col id="0">26</col>
             </row>
         </data>
     </object>
@@ -101,6 +134,12 @@
                                 <property name="entry-text-column">0</property>
                                 <property name="has-entry">true</property>
                                 <property name="hexpand">true</property>
+                                <property name="model">size-list</property>
+                                <child internal-child="entry">
+                                    <object class="GtkEntry" id="text_size_entry">
+                                        <property name="text">10</property>
+                                    </object>
+                                </child>
                                 <style>
                                     <class name="propedit"/>
                                 </style>
@@ -164,6 +203,11 @@
                                 <property name="has-entry">true</property>
                                 <property name="hexpand">true</property>
                                 <property name="model">rotation-list</property>
+                                <child internal-child="entry">
+                                    <object class="GtkEntry" id="text_rotation_entry">
+                                        <property name="text">0</property>
+                                    </object>
+                                </child>
                                 <style>
                                     <class name="propedit"/>
                                 </style>
