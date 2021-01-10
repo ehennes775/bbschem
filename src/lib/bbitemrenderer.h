@@ -23,6 +23,7 @@
 #include "bblinestyle.h"
 #include "bbclosedshapedrawer.h"
 #include "bbopenshapedrawer.h"
+#include "bbtextalignment.h"
 
 #define BB_TYPE_ITEM_RENDERER bb_item_renderer_get_type()
 G_DECLARE_INTERFACE(BbItemRenderer, bb_item_renderer, BB, ITEM_RENDERER, GObject)
@@ -51,6 +52,7 @@ struct _BbItemRendererInterface
     void (*render_absolute_line_to)(BbItemRenderer *renderer, int x, int y);
     void (*render_absolute_move_to)(BbItemRenderer *renderer, int x, int y);
     void (*render_arc)(BbItemRenderer *renderer, int x, int y, int radius, int start, int sweep);
+    void (*render_insertion_point)(BbItemRenderer *renderer, int x, int y);
     void (*render_relative_line_to)(BbItemRenderer *renderer, int dx, int dy);
     void (*render_relative_move_to)(BbItemRenderer *renderer, int dx, int dy);
 
@@ -58,6 +60,7 @@ struct _BbItemRendererInterface
         BbItemRenderer *renderer,
         int insert_x,
         int insert_y,
+        BbTextAlignment alignment,
         double radians,
         int size,
         char *text
@@ -125,6 +128,10 @@ bb_item_renderer_render_arc(BbItemRenderer *renderer, int x, int y, int radius, 
 
 
 void
+bb_item_renderer_render_insertion_point(BbItemRenderer *renderer, int x, int y);
+
+
+void
 bb_item_renderer_render_relative_line_to(BbItemRenderer *renderer, int dx, int dy);
 
 
@@ -137,6 +144,7 @@ bb_item_renderer_render_text(
     BbItemRenderer *renderer,
     int insert_x,
     int insert_y,
+    BbTextAlignment alignment,
     double radians,
     int size,
     char *text

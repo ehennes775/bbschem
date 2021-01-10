@@ -112,6 +112,9 @@ static void
 bb_graphics_render_arc(BbItemRenderer *renderer, int x, int y, int radius, int start, int sweep);
 
 static void
+bb_graphics_render_insertion_point(BbItemRenderer *renderer, int x, int y);
+
+static void
 bb_graphics_render_relative_line_to(BbItemRenderer *renderer, int dx, int dy);
 
 static void
@@ -122,6 +125,7 @@ bb_graphics_render_text(
     BbItemRenderer *renderer,
     int insert_x,
     int insert_y,
+    BbTextAlignment alignment,
     double radians,
     int size,
     char *text
@@ -540,6 +544,7 @@ bb_graphics_item_renderer_init(BbItemRendererInterface *iface)
     iface->render_absolute_line_to = bb_graphics_render_absolute_line_to;
     iface->render_absolute_move_to = bb_graphics_render_absolute_move_to;
     iface->render_arc = bb_graphics_render_arc;
+    iface->render_insertion_point = bb_graphics_render_insertion_point;
     iface->render_relative_line_to = bb_graphics_render_relative_line_to;
     iface->render_relative_move_to = bb_graphics_render_relative_move_to;
     iface->render_text = bb_graphics_render_text;
@@ -609,6 +614,30 @@ bb_graphics_render_arc(BbItemRenderer *renderer, int x, int y, int radius, int s
 
 
 static void
+bb_graphics_render_insertion_point(BbItemRenderer *renderer, int x, int y)
+{
+    BbGraphics *graphics = BB_GRAPHICS(renderer);
+    g_return_if_fail(graphics != NULL);
+    g_return_if_fail(graphics->cairo != NULL);
+
+    cairo_save(graphics->cairo);
+
+    cairo_translate(graphics->cairo, x, y);
+
+    cairo_move_to(graphics->cairo, -20.0, -20.0);
+    cairo_line_to(graphics->cairo,  20.0,  20.0);
+    cairo_move_to(graphics->cairo, -20.0,  20.0);
+    cairo_line_to(graphics->cairo,  20.0, -20.0);
+
+    cairo_set_source_rgb(graphics->cairo, 0.5, 0.5, 0.5);
+    cairo_set_line_width(graphics->cairo, 10.0);
+
+    cairo_stroke(graphics->cairo);
+    cairo_restore(graphics->cairo);
+}
+
+
+static void
 bb_graphics_render_relative_line_to(BbItemRenderer *renderer, int dx, int dy)
 {
     BbGraphics *graphics = BB_GRAPHICS(renderer);
@@ -624,6 +653,7 @@ bb_graphics_render_text(
     BbItemRenderer *renderer,
     int insert_x,
     int insert_y,
+    BbTextAlignment alignment,
     double radians,
     int size,
     char *text
@@ -651,7 +681,7 @@ bb_graphics_render_text(
     int dx = 0;
     int dy = 0;
 
-    calculate_text_adjustment(layout, BB_TEXT_ALIGNMENT_LOWER_LEFT, &dx, &dy);
+    calculate_text_adjustment(layout, alignment, &dx, &dy);
 
     cairo_rel_move_to(
         graphics->cairo,

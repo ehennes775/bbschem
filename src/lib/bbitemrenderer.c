@@ -35,6 +35,9 @@ static void
 bb_item_renderer_render_arc_missing(BbItemRenderer *renderer, int x, int y, int radius, int start, int sweep);
 
 static void
+bb_item_renderer_render_insertion_point_missing(BbItemRenderer *renderer, int x, int y);
+
+static void
 bb_item_renderer_render_relative_line_to_missing(BbItemRenderer *renderer, int dx, int dy);
 
 static void
@@ -179,6 +182,7 @@ bb_item_renderer_default_init(BbItemRendererInterface *iface)
     iface->render_absolute_line_to = bb_item_renderer_render_absolute_line_to_missing;
     iface->render_absolute_move_to = bb_item_renderer_render_absolute_move_to_missing;
     iface->render_arc = bb_item_renderer_render_arc_missing;
+    iface->render_insertion_point = bb_item_renderer_render_insertion_point_missing;
     iface->render_relative_line_to = bb_item_renderer_render_relative_line_to_missing;
     iface->render_relative_move_to = bb_item_renderer_render_relative_move_to_missing;
     iface->set_color = bb_item_renderer_set_color_missing;
@@ -263,6 +267,27 @@ bb_item_renderer_render_arc_missing(BbItemRenderer *renderer, int x, int y, int 
 
 
 void
+bb_item_renderer_render_insertion_point(BbItemRenderer *renderer, int x, int y)
+{
+    g_return_if_fail(BB_IS_ITEM_RENDERER(renderer));
+
+    BbItemRendererInterface *iface = BB_ITEM_RENDERER_GET_IFACE(renderer);
+
+    g_return_if_fail(iface != NULL);
+    g_return_if_fail(iface->render_insertion_point != NULL);
+
+    return iface->render_insertion_point(renderer, x, y);
+}
+
+
+static void
+bb_item_renderer_render_insertion_point_missing(BbItemRenderer *renderer, int x, int y)
+{
+    g_error("bb_item_renderer_render_insertion_point() not overridden");
+}
+
+
+void
 bb_item_renderer_render_relative_line_to(BbItemRenderer *renderer, int dx, int dy)
 {
     g_return_if_fail(BB_IS_ITEM_RENDERER(renderer));
@@ -309,6 +334,7 @@ bb_item_renderer_render_text(
     BbItemRenderer *renderer,
     int insert_x,
     int insert_y,
+    BbTextAlignment alignment,
     double radians,
     int size,
     char *text
@@ -321,7 +347,7 @@ bb_item_renderer_render_text(
     g_return_if_fail(iface != NULL);
     g_return_if_fail(iface->render_text != NULL);
 
-    return iface->render_text(renderer, insert_x, insert_y, radians, size, text);
+    return iface->render_text(renderer, insert_x, insert_y, alignment, radians, size, text);
 }
 
 
@@ -330,6 +356,7 @@ bb_item_renderer_render_text_missing(
     BbItemRenderer *renderer,
     int insert_x,
     int insert_y,
+    BbTextAlignment alignment,
     double radians,
     int size,
     char *text

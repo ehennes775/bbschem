@@ -900,6 +900,12 @@ bb_geda_text_render(BbGedaItem *item, BbItemRenderer *renderer)
 
     if (text->visibility == BB_TEXT_VISIBILITY_VISIBLE || bb_item_renderer_get_reveal(renderer))
     {
+        bb_item_renderer_render_insertion_point(
+            renderer,
+            bb_geda_text_get_insert_x(text),
+            bb_geda_text_get_insert_y(text)
+            );
+
         bb_item_renderer_set_color(
             renderer,
             bb_geda_text_get_item_color(text)
@@ -909,6 +915,7 @@ bb_geda_text_render(BbGedaItem *item, BbItemRenderer *renderer)
             renderer,
             bb_geda_text_get_insert_x(text),
             bb_geda_text_get_insert_y(text),
+            bb_geda_text_get_alignment(text),
             bb_angle_to_radians(bb_geda_text_get_rotation(text)),
             bb_geda_text_get_size(text),
             bb_geda_text_get_shown_text(text)
