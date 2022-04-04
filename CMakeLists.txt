@@ -33,6 +33,7 @@ add_subdirectory(src/lib)
 add_subdirectory(src/libtest)
 add_subdirectory(src/gui)
 add_subdirectory(src/gedaplugin)
+add_subdirectory(tests)
 
 find_program(GLIB_COMPILE_RESOURCES NAMES glib-compile-resources REQUIRED)
 
@@ -56,7 +57,7 @@ add_custom_command(
 add_executable(bbschem
         src/main.c
         ${CMAKE_CURRENT_BINARY_DIR}/${THING1}
-        )
+        tests/tests.c)
 
 set_source_files_properties(
         ${CMAKE_CURRENT_BINARY_DIR}/${THING1}
