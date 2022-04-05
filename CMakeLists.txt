@@ -2,11 +2,14 @@ cmake_minimum_required(VERSION 3.16)
 
 enable_testing()
 
-project(bbschem C)
+project(bbschem)
 
 set(CMAKE_C_STANDARD 11)
+set(CMAKE_CXX_STANDARD 20)
 
 find_package(PkgConfig REQUIRED)
+find_package(Catch2 REQUIRED)
+
 PKG_CHECK_MODULES(GLIB REQUIRED glib-2.0)
 PKG_CHECK_MODULES(GTK3 REQUIRED gtk+-3.0)
 PKG_CHECK_MODULES(PEAS REQUIRED libpeas-1.0)
@@ -33,6 +36,7 @@ add_subdirectory(src/lib)
 add_subdirectory(src/libtest)
 add_subdirectory(src/gui)
 add_subdirectory(src/gedaplugin)
+add_subdirectory(src/lib2)
 add_subdirectory(tests)
 
 find_program(GLIB_COMPILE_RESOURCES NAMES glib-compile-resources REQUIRED)
@@ -57,7 +61,7 @@ add_custom_command(
 add_executable(bbschem
         src/main.c
         ${CMAKE_CURRENT_BINARY_DIR}/${THING1}
-        tests/tests.c)
+        )
 
 set_source_files_properties(
         ${CMAKE_CURRENT_BINARY_DIR}/${THING1}
@@ -78,11 +82,15 @@ target_link_libraries(bbschem
         #bbgedaplugin
         bbschemgui
         bblib
+        #bblib2
         bbext
         m
         ${GLIB_LIBRARIES}
         ${GTK3_LIBRARIES}
         ${PEAS_LIBRARIES}
         )
+
+#set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIE")
+#set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -fPIE")
 
 set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -u bb_general_opener_add_specific_opener")
