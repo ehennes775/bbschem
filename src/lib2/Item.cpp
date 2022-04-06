@@ -20,5 +20,5 @@
 
 namespace bb
 {
-    Item::IdType Item::next_item_id = 1;
+    std::atomic<Item::IdType> Item::next_item_id { 1 };
 }

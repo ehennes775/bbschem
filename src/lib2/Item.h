@@ -25,7 +25,7 @@ namespace bb
     public:
         typedef unsigned long long IdType;
 
-        Item() : item_id(next_item_id++) {}
+        Item() : item_id(next_item_id.fetch_add(1)) {}
         virtual ~Item() = default;
 
         [[nodiscard]] IdType get_id() const { return item_id; }
@@ -43,7 +43,7 @@ namespace bb
     private:
         IdType item_id;
 
-        static IdType next_item_id;
+        static std::atomic<IdType> next_item_id;
     };
 
     template<class T>

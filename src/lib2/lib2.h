@@ -19,6 +19,7 @@
  */
 
 #include <any>
+#include <atomic>
 #include <map>
 #include <memory>
 #include <optional>
