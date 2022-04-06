@@ -1,5 +1,5 @@
-#ifndef BBSCHEM_LIB2_H
-#define BBSCHEM_LIB2_H
+#ifndef BBSCHEM_REVERTITEMCHANGES_H
+#define BBSCHEM_REVERTITEMCHANGES_H
 /*
  * bbschem
  * Copyright (C) 2022 Edward C. Hennessy
@@ -18,26 +18,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <any>
-#include <map>
-#include <memory>
-#include <optional>
-#include <set>
-#include <utility>
-#include <vector>
 
-#include "PropertyId.h"
+namespace bb
+{
+    class RevertItemChanges : public Edit
+    {
+    public:
+        explicit RevertItemChanges(std::map<Item::IdType,std::shared_ptr<Item>> revert_map);
 
-#include "Item.h"
-#include "Schematic.h"
+        [[nodiscard]] bool canMake(const EditState &state) const override;
 
-#include "items/CircleItem.h"
-#include "items/LineItem.h"
+        [[nodiscard]] EditResult make(const EditState &state) const override;
 
-#include "Edit.h"
-
-#include "edits/RevertItemChanges.h"
-
-#include "edits/ApplySetProperty.h"
+    private:
+        std::map<Item::IdType,std::shared_ptr<Item>> stuff;
+    };
+}
 
 #endif

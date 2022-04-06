@@ -1,5 +1,5 @@
-#ifndef BBSCHEM_LIB2_H
-#define BBSCHEM_LIB2_H
+#ifndef BBSCHEM_EDIT_H
+#define BBSCHEM_EDIT_H
 /*
  * bbschem
  * Copyright (C) 2022 Edward C. Hennessy
@@ -18,26 +18,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <any>
-#include <map>
-#include <memory>
-#include <optional>
-#include <set>
-#include <utility>
-#include <vector>
+namespace bb
+{
+    typedef std::set<Item::IdType> Selection;
 
-#include "PropertyId.h"
+    typedef struct EditResult EditResult;
+    typedef struct EditState EditState;
 
-#include "Item.h"
-#include "Schematic.h"
+    class Edit
+    {
+    public:
+        [[nodiscard]] virtual bool canMake(const EditState& state) const = 0;
+        [[nodiscard]] virtual EditResult make(const EditState& state) const = 0;
+    };
 
-#include "items/CircleItem.h"
-#include "items/LineItem.h"
+    struct EditState
+    {
+        Schematic schematic;
+        Selection selection;
+    };
 
-#include "Edit.h"
-
-#include "edits/RevertItemChanges.h"
-
-#include "edits/ApplySetProperty.h"
+    struct EditResult
+    {
+        std::shared_ptr<Edit> revert;    /**< An edit for reverting the previous edit  */
+        EditState modified_state;        /**< The document and selection after the previous edit */
+    };
+}
 
 #endif
