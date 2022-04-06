@@ -35,10 +35,13 @@ namespace bb
 
         template<class T> std::optional<T> get_property(PropertyId property_id) const;
 
+        template<class T> std::shared_ptr<Item> with_property(PropertyId propertyId, T value) const;
+
     protected:
         explicit Item(IdType id) : item_id(id) {};
 
         [[nodiscard]] virtual std::optional<std::any> get_any_property(PropertyId property_id) const = 0;
+        [[nodiscard]] virtual std::shared_ptr<Item> with_any_property(PropertyId propertyId, std::any value) const = 0;
 
     private:
         IdType item_id;
@@ -51,7 +54,15 @@ namespace bb
     {
         auto property = get_any_property(property_id);
 
-        return property.has_value() ? std::any_cast<T>(property.value()) : std::nullopt;
+        return property.has_value() ?
+            std::make_optional(std::any_cast<T>(property.value())) :
+            std::nullopt;
+    }
+
+    template<class T>
+    std::shared_ptr<Item> Item::with_property(PropertyId property_id, T value) const
+    {
+        return with_any_property(property_id, std::make_any<T>(value));
     }
 }
 

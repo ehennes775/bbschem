@@ -39,6 +39,7 @@ namespace bb
 
     protected:
         [[nodiscard]] std::optional<std::any> get_any_property(PropertyId property_id) const override;
+        [[nodiscard]] std::shared_ptr<Item> with_any_property(PropertyId propertyId, std::any value) const override;
 
     private:
         int center_x;

@@ -17,6 +17,8 @@
  */
 
 #include "../lib2.h"
+#include "CircleItem.h"
+
 
 namespace bb
 {
@@ -69,6 +71,31 @@ namespace bb
         }
 
         return property;
+    }
+
+    std::shared_ptr<Item> CircleItem::with_any_property(PropertyId propertyId, std::any value) const
+    {
+        std::shared_ptr<Item> result;
+
+        switch (propertyId)
+        {
+            case PropertyId::CIRCLE_CENTER_X:
+                result = with_center_x(std::any_cast<int>(value));
+                break;
+
+            case PropertyId::CIRCLE_CENTER_Y:
+                result = with_center_y(std::any_cast<int>(value));
+                break;
+
+            case PropertyId::CIRCLE_RADIUS:
+                result = with_radius(std::any_cast<int>(value));
+                break;
+
+            default:
+                break;
+        }
+
+        return result;
     }
 }
 

@@ -70,7 +70,7 @@ namespace bb
 
                         if (property.has_value())
                         {
-                            modified_item = item;    // set property
+                            modified_item = item->template with_property(property_id, value);
 
                             revert_map.insert({modified_item->get_id(), item});
                         }

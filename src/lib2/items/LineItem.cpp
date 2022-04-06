@@ -17,6 +17,8 @@
  */
 
 #include "../lib2.h"
+#include "LineItem.h"
+
 
 namespace bb
 {
@@ -77,6 +79,35 @@ namespace bb
         }
 
         return property;
+    }
+
+    std::shared_ptr<Item> LineItem::with_any_property(PropertyId propertyId, std::any value) const
+    {
+        std::shared_ptr<Item> result;
+
+        switch (propertyId)
+        {
+            case PropertyId::LINE_X0:
+                result = with_x0(std::any_cast<int>(value));
+                break;
+
+            case PropertyId::LINE_Y0:
+                result = with_y0(std::any_cast<int>(value));
+                break;
+
+            case PropertyId::LINE_X1:
+                result = with_x1(std::any_cast<int>(value));
+                break;
+
+            case PropertyId::LINE_Y1:
+                result = with_y1(std::any_cast<int>(value));
+                break;
+
+            default:
+                break;
+        }
+
+        return result;
     }
 }
 
