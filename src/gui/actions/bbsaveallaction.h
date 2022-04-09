@@ -1,5 +1,5 @@
-#ifndef __BBOPENACTION__
-#define __BBOPENACTION__
+#ifndef __BBSAVEALLACTION__
+#define __BBSAVEALLACTION__
 /*
  * bbschem
  * Copyright (C) 2020 Edward C. Hennessy
@@ -18,17 +18,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <gtk/gtk.h>
-#include "bbmainwindow.h"
+#include <glib-object.h>
+#include "bbsaveallreceiver.h"
 
-#define BB_TYPE_OPEN_ACTION bb_open_action_get_type()
-G_DECLARE_FINAL_TYPE(BbOpenAction, bb_open_action, BB, OPEN_ACTION, GObject)
+G_BEGIN_DECLS
 
-BbMainWindow*
-bb_open_action_get_window(BbOpenAction *open_action);
+#define BB_TYPE_SAVE_ALL_ACTION bb_save_all_action_get_type()
+G_DECLARE_FINAL_TYPE(BbSaveAllAction, bb_save_all_action, BB, SAVE_ALL_ACTION, GObject)
 
+BbSaveAllAction*
+bb_save_all_action_new(BbSaveAllReceiver *receiver);
 
-BbOpenAction*
-bb_open_action_new(BbMainWindow *window);
+BbSaveAllReceiver*
+bb_save_all_action_get_receiver(BbSaveAllAction *action);
+
+void
+bb_save_all_action_set_receiver(BbSaveAllAction *action, BbSaveAllReceiver *receiver);
+
+G_END_DECLS
 
 #endif

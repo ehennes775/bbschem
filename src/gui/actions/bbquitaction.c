@@ -17,7 +17,7 @@
  */
 
 #include <gtk/gtk.h>
-#include <bbextensions.h>
+#include "bbextensions.h"
 #include "bbquitaction.h"
 
 
@@ -38,7 +38,7 @@ struct _BbQuitAction
 {
     GObject parent;
 
-    BbMainWindow* window;
+    GObject* receiver;
 };
 
 
@@ -162,10 +162,10 @@ bb_quit_action_class_init(BbQuitActionClass *klasse)
             G_OBJECT_CLASS(klasse),
             PROP_RECEIVER,
             properties[PROP_RECEIVER] = g_param_spec_object(
-            "window",
+            "receiver",
             "",
             "",
-            BB_TYPE_MAIN_WINDOW,
+            BB_TYPE_QUIT_RECEIVER,
             G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS
             )
         );
@@ -180,10 +180,10 @@ bb_quit_action_dispose(GObject *object)
     BbQuitAction *action = BB_QUIT_ACTION(object);
     g_return_if_fail(action != NULL);
 
-    if (action->window != NULL)
+    if (action->receiver != NULL)
     {
-        g_object_unref(action->window);
-        action->window = NULL;
+        g_object_unref(action->receiver);
+        action->receiver = NULL;
     }
 }
 
@@ -249,12 +249,21 @@ bb_quit_action_get_property(GObject *object, guint property_id, GValue *value, G
             break;
 
         case PROP_RECEIVER:
-            g_value_set_object(value, bb_quit_action_get_window(BB_QUIT_ACTION(object)));
+            g_value_set_object(value, bb_quit_action_get_receiver(BB_QUIT_ACTION(object)));
             break;
 
         default:
             G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
     }
+}
+
+
+BbQuitReceiver *
+bb_quit_action_get_receiver(BbQuitAction *action)
+{
+    g_return_val_if_fail(action != NULL, NULL);
+
+    return action->receiver;
 }
 
 
@@ -285,37 +294,21 @@ bb_quit_action_get_state_type(GAction *action)
 }
 
 
-BbMainWindow*
-bb_quit_action_get_window(BbQuitAction *action)
-{
-    g_return_val_if_fail(action != NULL, NULL);
-
-    return action->window;
-}
-
-
 static void
 bb_quit_action_init(BbQuitAction *action)
 {
-    action->window = NULL;
+    action->receiver = NULL;
 }
 
 
 BbQuitAction *
-bb_quit_action_new(BbMainWindow *window)
+bb_quit_action_new(BbQuitReceiver *receiver)
 {
     return BB_QUIT_ACTION(g_object_new(
         BB_TYPE_QUIT_ACTION,
-        "window", window,
+        "receiver", receiver,
         NULL
     ));
-}
-
-
-__attribute__((constructor)) void
-bb_quit_action_register()
-{
-    bb_quit_action_get_type();
 }
 
 
@@ -325,7 +318,7 @@ bb_quit_action_set_property(GObject *object, guint property_id, const GValue *va
     switch (property_id)
     {
         case PROP_RECEIVER:
-            bb_quit_action_set_window(BB_QUIT_ACTION(object), BB_MAIN_WINDOW(g_value_get_object(value)));
+            bb_quit_action_set_receiver(BB_QUIT_ACTION(object), BB_QUIT_RECEIVER(g_value_get_object(value)));
             break;
 
         default:
@@ -335,22 +328,22 @@ bb_quit_action_set_property(GObject *object, guint property_id, const GValue *va
 
 
 void
-bb_quit_action_set_window(BbQuitAction *action, BbMainWindow* window)
+bb_quit_action_set_receiver(BbQuitAction *action, BbQuitReceiver *receiver)
 {
-    g_return_if_fail(action != NULL);
+    g_return_if_fail(BB_IS_QUIT_ACTION(action));
 
-    if (action->window != window)
+    if (action->receiver != receiver)
     {
-        if (action->window != NULL)
+        if (action->receiver != NULL)
         {
-            g_object_unref(action->window);
+            g_object_unref(action->receiver);
         }
 
-        action->window = window;
+        action->receiver = receiver;
 
-        if (action->window != NULL)
+        if (action->receiver != NULL)
         {
-            g_object_ref(action->window);
+            g_object_ref(action->receiver);
         }
 
         g_object_notify_by_pspec(G_OBJECT(action), properties[PROP_RECEIVER]);

@@ -18,7 +18,7 @@
 
 #include <gtk/gtk.h>
 #include <bbextensions.h>
-#include <bbzoomsubject.h>
+#include "actions/bbzoomreceiver.h"
 #include "bbgedaopener.h"
 #include "bbgedareader.h"
 #include "bbspecificopener.h"

@@ -1,5 +1,5 @@
-#ifndef __BBSNAPACTIVEACTION__
-#define __BBSNAPACTIVEACTION__
+#ifndef __BBQUITACTION__
+#define __BBQUITACTION__
 /*
  * bbschem
  * Copyright (C) 2020 Edward C. Hennessy
@@ -18,10 +18,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <gtk/gtk.h>
-#include "bbgridcontrol.h"
+#include <glib-object.h>
+#include "bbquitreceiver.h"
 
-GAction*
-bb_snap_active_action_new(BbGridControl *grid_control);
+G_BEGIN_DECLS
+
+#define BB_TYPE_QUIT_ACTION bb_quit_action_get_type()
+G_DECLARE_FINAL_TYPE(BbQuitAction, bb_quit_action, BB, QUIT_ACTION, GObject)
+
+BbQuitAction*
+bb_quit_action_new(BbQuitReceiver *receiver);
+
+BbQuitReceiver*
+bb_quit_action_get_receiver(BbQuitAction *action);
+
+void
+bb_quit_action_set_receiver(BbQuitAction *action, BbQuitReceiver *receiver);
+
+G_END_DECLS
 
 #endif

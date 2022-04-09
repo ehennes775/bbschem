@@ -17,9 +17,9 @@
  */
 
 #include <gtk/gtk.h>
-#include <bbextensions.h>
+#include "bbextensions.h"
 #include "bbpanaction.h"
-#include "bbzoomsubject.h"
+#include "actions/bbzoomreceiver.h"
 
 enum
 {
@@ -30,7 +30,7 @@ enum
     PROP_STATE,
     PROP_STATE_HINT,
     PROP_STATE_TYPE,
-    PROP_SUBJECT,
+    PROP_RECEIVER,
     N_PROPERTIES
 };
 
@@ -125,10 +125,10 @@ bb_pan_action_activate(GAction *action, GVariant *parameter)
 
     GObject *subject = bb_pan_action_get_subject(BB_PAN_ACTION(action));
 
-    if (BB_IS_ZOOM_SUBJECT(subject))
+    if (BB_IS_ZOOM_RECEIVER(subject))
     {
-        bb_zoom_subject_pan(
-            BB_ZOOM_SUBJECT(subject),
+        bb_zoom_receiver_pan(
+            BB_ZOOM_RECEIVER(subject),
             (BbPanDirection) g_variant_get_int32(parameter)
             );
     }
@@ -181,10 +181,10 @@ bb_pan_action_class_init(BbPanActionClass *klasse)
         "state-type"
         );
 
-    properties[PROP_SUBJECT] = bb_object_class_install_property(
-        object_class,
-        PROP_SUBJECT,
-        g_param_spec_object(
+    properties[PROP_RECEIVER] = bb_object_class_install_property(
+            object_class,
+            PROP_RECEIVER,
+            g_param_spec_object(
             "subject",
             "",
             "",
@@ -265,7 +265,7 @@ bb_pan_action_get_property(GObject *object, guint property_id, GValue *value, GP
             g_value_set_boxed(value, bb_pan_action_get_state_type(G_ACTION(object)));
             break;
 
-        case PROP_SUBJECT:
+        case PROP_RECEIVER:
             g_value_set_object(value, bb_pan_action_get_subject(BB_PAN_ACTION(object)));
             break;
 
@@ -360,7 +360,7 @@ bb_pan_action_set_property(GObject *object, guint property_id, const GValue *val
 {
     switch (property_id)
     {
-        case PROP_SUBJECT:
+        case PROP_RECEIVER:
             bb_pan_action_set_subject(BB_PAN_ACTION(object), g_value_get_object(value));
             break;
 
@@ -402,6 +402,6 @@ bb_pan_action_set_subject(BbPanAction *action, GObject* subject)
                 );
         }
 
-        g_object_notify_by_pspec(G_OBJECT(action), properties[PROP_SUBJECT]);
+        g_object_notify_by_pspec(G_OBJECT(action), properties[PROP_RECEIVER]);
     }
 }

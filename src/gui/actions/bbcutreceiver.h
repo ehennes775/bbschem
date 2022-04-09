@@ -18,7 +18,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <gtk/gtk.h>
+#include <glib-object.h>
+
+G_BEGIN_DECLS
 
 #define BB_TYPE_CUT_RECEIVER bb_cut_receiver_get_type()
 G_DECLARE_INTERFACE(BbCutReceiver, bb_cut_receiver, BB, CUT_RECEIVER, GObject)
@@ -37,5 +39,7 @@ bb_cut_receiver_can_cut(BbCutReceiver *receiver);
 
 void
 bb_cut_receiver_cut(BbCutReceiver *receiver);
+
+G_END_DECLS
 
 #endif

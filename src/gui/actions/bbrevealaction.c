@@ -30,7 +30,7 @@ enum
     PROP_STATE,
     PROP_STATE_HINT,
     PROP_STATE_TYPE,
-    PROP_SUBJECT,
+    PROP_RECEIVER,
     N_PROPERTIES
 };
 
@@ -173,14 +173,14 @@ bb_reveal_action_class_init(BbRevealActionClass *klasse)
         "state-type"
         );
 
-    properties[PROP_SUBJECT] = bb_object_class_install_property(
-        object_class,
-        PROP_SUBJECT,
-        g_param_spec_object(
-            "subject",
+    properties[PROP_RECEIVER] = bb_object_class_install_property(
+            object_class,
+            PROP_RECEIVER,
+            g_param_spec_object(
+            "receiver",
             "",
             "",
-            BB_TYPE_DOCUMENT_WINDOW,
+            BB_TYPE_REVEAL_RECEIVER,
             G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS
         )
     );
@@ -265,7 +265,7 @@ bb_reveal_action_get_property(GObject *object, guint property_id, GValue *value,
             g_value_set_boxed(value, bb_reveal_action_get_state_type(G_ACTION(object)));
             break;
 
-        case PROP_SUBJECT:
+        case PROP_RECEIVER:
             g_value_set_object(value, bb_reveal_action_get_receiver(BB_REVEAL_ACTION(object)));
             break;
 
@@ -331,20 +331,12 @@ bb_reveal_action_init(BbRevealAction *action)
 
 
 BbRevealAction*
-bb_reveal_action_new(BbMainWindow *window)
+bb_reveal_action_new()
 {
     BbRevealAction *reveal_action = BB_REVEAL_ACTION(g_object_new(
         BB_TYPE_REVEAL_ACTION,
         NULL
         ));
-
-    g_object_bind_property(
-        window,
-        "current-document-window",
-        reveal_action,
-        "subject",
-        G_BINDING_SYNC_CREATE
-        );
 
     return reveal_action;
 }
@@ -365,7 +357,7 @@ bb_reveal_action_set_property(GObject *object, guint property_id, const GValue *
 {
     switch (property_id)
     {
-        case PROP_SUBJECT:
+        case PROP_RECEIVER:
             bb_reveal_action_set_receiver(BB_REVEAL_ACTION(object), g_value_get_object(value));
             break;
 
@@ -407,6 +399,6 @@ bb_reveal_action_set_receiver(BbRevealAction *action, GObject* receiver)
                 );
         }
 
-        g_object_notify_by_pspec(G_OBJECT(action), properties[PROP_SUBJECT]);
+        g_object_notify_by_pspec(G_OBJECT(action), properties[PROP_RECEIVER]);
     }
 }

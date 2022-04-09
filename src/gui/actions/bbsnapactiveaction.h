@@ -1,5 +1,5 @@
-#ifndef __BBSAVEALLACTION__
-#define __BBSAVEALLACTION__
+#ifndef __BBSNAPACTIVEACTION__
+#define __BBSNAPACTIVEACTION__
 /*
  * bbschem
  * Copyright (C) 2020 Edward C. Hennessy
@@ -18,23 +18,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <gtk/gtk.h>
-#include "bbmainwindow.h"
+#include <glib-object.h>
+#include "bbgridcontrol.h"
 
-#define BB_TYPE_SAVE_ALL_ACTION bb_save_all_action_get_type()
-G_DECLARE_FINAL_TYPE(BbSaveAllAction, bb_save_all_action, BB, SAVE_ALL_ACTION, GObject)
-
-
-BbMainWindow*
-bb_save_all_action_get_window(BbSaveAllAction *action);
-
-
-BbSaveAllAction*
-bb_save_all_action_new(BbMainWindow *window);
-
-
-void
-bb_save_all_action_set_window(BbSaveAllAction *action, BbMainWindow* window);
-
+GAction*
+bb_snap_active_action_new(BbGridControl *grid_control);
 
 #endif

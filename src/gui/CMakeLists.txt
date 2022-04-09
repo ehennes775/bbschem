@@ -1,5 +1,85 @@
 
 add_library(bbschemgui SHARED
+        actions/bbcopyaction.c
+        actions/bbcopyaction.h
+        actions/bbcopyreceiver.c
+        actions/bbcopyreceiver.h
+        actions/bbcutaction.c
+        actions/bbcutaction.h
+        actions/bbcutreceiver.c
+        actions/bbcutreceiver.h
+        actions/bbdeleteaction.c
+        actions/bbdeleteaction.h
+        actions/bbdeletereceiver.c
+        actions/bbdeletereceiver.h
+        actions/bbdeletereceiver.h
+        actions/bbgridsubject.c
+        actions/bbgridsubject.h
+        actions/bbnewaction.c
+        actions/bbnewaction.h
+        actions/bbopenaction.c
+        actions/bbopenaction.h
+        actions/bbpanaction.c
+        actions/bbpanaction.h
+        actions/bbpanpointaction.c
+        actions/bbpanpointaction.h
+        actions/bbpasteaction.c
+        actions/bbpasteaction.h
+        actions/bbpastereceiver.c
+        actions/bbpastereceiver.h
+        actions/bbquitaction.c
+        actions/bbquitaction.h
+        actions/bbquitreceiver.c
+        actions/bbquitreceiver.h
+        actions/bbredoaction.c
+        actions/bbredoaction.h
+        actions/bbredoreceiver.c
+        actions/bbredoreceiver.h
+        actions/bbreloadaction.c
+        actions/bbreloadaction.h
+        actions/bbrevealaction.c
+        actions/bbrevealaction.h
+        actions/bbrevealreceiver.c
+        actions/bbrevealreceiver.h
+        actions/bbsaveaction.c
+        actions/bbsaveaction.h
+        actions/bbsaveallaction.c
+        actions/bbsaveallaction.h
+        actions/bbsaveasaction.c
+        actions/bbsaveasaction.h
+        actions/bbsavereceiver.c
+        actions/bbsavereceiver.h
+        actions/bbscalegridaction.c
+        actions/bbscalegridaction.h
+        actions/bbselectallaction.c
+        actions/bbselectallaction.h
+        actions/bbselectnoneaction.c
+        actions/bbselectnoneaction.h
+        actions/bbselectreceiver.c
+        actions/bbshowgridaction.c
+        actions/bbshowgridaction.h
+        actions/bbsnapactiveaction.c
+        actions/bbsnapactiveaction.h
+        actions/bbundoaction.c
+        actions/bbundoaction.h
+        actions/bbundoreceiver.c
+        actions/bbundoreceiver.h
+        actions/bbzoomextentsaction.c
+        actions/bbzoomextentsaction.h
+        actions/bbzoominaction.c
+        actions/bbzoominaction.h
+        actions/bbzoomoutaction.c
+        actions/bbzoomoutaction.h
+        actions/bbzoompointaction.c
+        actions/bbzoompointaction.h
+        actions/bbzoomreceiver.c
+        actions/bbzoomreceiver.h
+        actions/types/bbpandirection.h
+        actions/types/bbscalegriddirection.h
+        actions/types/bbzoomdirection.h
+        actions/types/bbzoomdirection.h
+        bbalignmentcombobox.c
+        bbalignmentcombobox.h
         bbapplication.c
         bbapplication.h
         bbarctoolpanel.c
@@ -49,8 +129,6 @@ add_library(bbschemgui SHARED
         bbgrid.h
         bbgridcontrol.c
         bbgridcontrol.h
-        bbgridsubject.c
-        bbgridsubject.h
         bbint32combobox.c
         bbint32combobox.h
         bblinestyleeditor.c
@@ -64,15 +142,6 @@ add_library(bbschemgui SHARED
         bbnettool.c
         bbnettool.h
         bbnettoolpanel.c
-        bbnewaction.c
-        bbnewaction.h
-        bbopenaction.c
-        bbopenaction.h
-        bbpanaction.c
-        bbpanaction.h
-        bbpandirection.h
-        bbpanpointaction.c
-        bbpanpointaction.h
         bbpinpropertyeditor.c
         bbpinpropertyeditor.h
         bbpintoolpanel.c
@@ -81,27 +150,12 @@ add_library(bbschemgui SHARED
         bbpropertycombobox.h
         bbpropertysubject.c
         bbpropertysubject.h
-        bbquitaction.c
-        bbquitaction.h
-        bbreloadaction.c
-        bbreloadaction.h
-        bbsaveallaction.c
-        bbsaveallaction.h
-        bbscalegridaction.c
-        bbscalegridaction.h
-        bbscalegriddirection.h
-        actions/bbselectallaction.c
-        actions/bbselectallaction.h
-        actions/bbselectnoneaction.c
-        actions/bbselectnoneaction.h
         bbselecttoolpanel.c
         bbselecttoolpanel.h
-        bbshowgridaction.c
-        bbshowgridaction.h
-        bbsnapactiveaction.c
-        bbsnapactiveaction.h
         bbspecificopener.c
         bbspecificopener.h
+        bbtextcontrol.c
+        bbtextcontrol.h
         bbtextpropertyeditor.c
         bbtextpropertyeditor.h
         bbtexttoolpanel.c
@@ -116,58 +170,8 @@ add_library(bbschemgui SHARED
         bbtoolstack.h
         bbtoolsubject.c
         bbtoolsubject.h
-        bbzoomdirection.h
-        bbzoomdirection.h
-        bbzoomextentsaction.c
-        bbzoomextentsaction.h
-        bbzoominaction.c
-        bbzoominaction.h
-        bbzoomoutaction.c
-        bbzoomoutaction.h
-        bbzoompointaction.c
-        bbzoompointaction.h
-        bbzoomsubject.c
-        bbzoomsubject.h
         bbzoomtoolpanel.c
         bbzoomtoolpanel.h
-        bbtextcontrol.h
-        bbtextcontrol.c
-        bbalignmentcombobox.c
-        bbalignmentcombobox.h
-        actions/bbcopyaction.c
-        actions/bbcopyaction.h
-        actions/bbcopyreceiver.c
-        actions/bbcopyreceiver.h
-        actions/bbcutaction.c
-        actions/bbcutaction.h
-        actions/bbcutreceiver.c
-        actions/bbcutreceiver.h
-        actions/bbdeleteaction.c
-        actions/bbdeleteaction.h
-        actions/bbdeletereceiver.c
-        actions/bbdeletereceiver.h
-        actions/bbpasteaction.c
-        actions/bbpasteaction.h
-        actions/bbpastereceiver.c
-        actions/bbpastereceiver.h
-        actions/bbredoaction.c
-        actions/bbredoaction.h
-        actions/bbredoreceiver.c
-        actions/bbredoreceiver.h
-        actions/bbrevealaction.c
-        actions/bbrevealaction.h
-        actions/bbrevealreceiver.c
-        actions/bbrevealreceiver.h
-        actions/bbsaveaction.c
-        actions/bbsaveaction.h
-        actions/bbsaveasaction.c
-        actions/bbsaveasaction.h
-        actions/bbsavereceiver.c
-        actions/bbsavereceiver.h
-        actions/bbundoaction.c
-        actions/bbundoaction.h
-        actions/bbundoreceiver.c
-        actions/bbundoreceiver.h
-        actions/bbselectreceiver.c
-        actions/bbdeletereceiver.h
+        actions/bbsaveallreceiver.c
+        actions/bbsaveallreceiver.h
         )

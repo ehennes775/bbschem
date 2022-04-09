@@ -18,8 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <gtk/gtk.h>
-#include "bbscalegriddirection.h"
+#include <glib-object.h>
+#include "actions/types/bbscalegriddirection.h"
 
 #define BB_TYPE_GRID_SUBJECT bb_grid_subject_get_type()
 G_DECLARE_INTERFACE(BbGridSubject, bb_grid_subject, BB, GRID_SUBJECT, GObject)

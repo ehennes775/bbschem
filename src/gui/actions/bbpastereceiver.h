@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <gtk/gtk.h>
+#include <glib-object.h>
 
 #define BB_TYPE_PASTE_RECEIVER bb_paste_receiver_get_type()
 G_DECLARE_INTERFACE(BbPasteReceiver, bb_paste_receiver, BB, PASTE_RECEIVER, GObject)

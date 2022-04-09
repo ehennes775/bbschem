@@ -18,8 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <gtk/gtk.h>
-#include "bbmainwindow.h"
+#include <glib-object.h>
 
 G_BEGIN_DECLS
 

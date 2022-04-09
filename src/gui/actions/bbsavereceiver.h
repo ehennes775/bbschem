@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <gtk/gtk.h>
+#include <glib-object.h>
 
 #define BB_TYPE_SAVE_RECEIVER bb_save_receiver_get_type()
 G_DECLARE_INTERFACE(BbSaveReceiver, bb_save_receiver, BB, SAVE_RECEIVER, GObject)

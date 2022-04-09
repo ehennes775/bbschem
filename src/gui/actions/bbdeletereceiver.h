@@ -18,7 +18,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <gtk/gtk.h>
+#include <glib-object.h>
+
+G_BEGIN_DECLS
 
 #define BB_TYPE_DELETE_RECEIVER bb_delete_receiver_get_type()
 G_DECLARE_INTERFACE(BbDeleteReceiver, bb_delete_receiver, BB, DELETE_RECEIVER, GObject)
@@ -37,5 +39,7 @@ bb_delete_receiver_can_delete(BbDeleteReceiver *receiver);
 
 void
 bb_delete_receiver_delete(BbDeleteReceiver *receiver);
+
+G_END_DECLS
 
 #endif

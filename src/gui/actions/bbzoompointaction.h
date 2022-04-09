@@ -1,8 +1,8 @@
-#ifndef __BBCOPYRECEIVER__
-#define __BBCOPYRECEIVER__
+#ifndef __BBZOOMPOINTACTION__
+#define __BBZOOMPOINTACTION__
 /*
  * bbschem
- * Copyright (C) 2022 Edward C. Hennessy
+ * Copyright (C) 2020 Edward C. Hennessy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,23 +22,11 @@
 
 G_BEGIN_DECLS
 
-#define BB_TYPE_COPY_RECEIVER bb_copy_receiver_get_type()
-G_DECLARE_INTERFACE(BbCopyReceiver, bb_copy_receiver, BB, COPY_RECEIVER, GObject)
+#define BB_TYPE_ZOOM_POINT_ACTION bb_zoom_point_action_get_type()
+G_DECLARE_FINAL_TYPE(BbZoomPointAction, bb_zoom_point_action, BB, ZOOM_POINT_ACTION, GObject)
 
-struct _BbCopyReceiverInterface
-{
-    GTypeInterface g_iface;
-
-    gboolean (*can_copy)(BbCopyReceiver *receiver);
-    void (*copy)(BbCopyReceiver *receiver);
-
-};
-
-gboolean
-bb_copy_receiver_can_copy(BbCopyReceiver *receiver);
-
-void
-bb_copy_receiver_copy(BbCopyReceiver *receiver);
+BbZoomPointAction*
+bb_zoom_point_action_new();
 
 G_END_DECLS
 

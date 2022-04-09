@@ -1,5 +1,5 @@
-#ifndef __BBZOOMINACTION__
-#define __BBZOOMINACTION__
+#ifndef __BBSHOWGRIDACTION__
+#define __BBSHOWGRIDACTION__
 /*
  * bbschem
  * Copyright (C) 2020 Edward C. Hennessy
@@ -18,13 +18,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <gtk/gtk.h>
-#include "bbmainwindow.h"
+#include <glib-object.h>
+#include "bbgridcontrol.h"
 
-#define BB_TYPE_ZOOM_IN_ACTION bb_zoom_in_action_get_type()
-G_DECLARE_FINAL_TYPE(BbZoomInAction, bb_zoom_in_action, BB, ZOOM_IN_ACTION, GObject)
-
-BbZoomInAction*
-bb_zoom_in_action_new(BbMainWindow *window);
+GAction*
+bb_show_grid_action_new(BbGridControl *grid_control);
 
 #endif

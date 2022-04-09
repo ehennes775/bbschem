@@ -17,9 +17,10 @@
  */
 
 #include <gtk/gtk.h>
-#include <bbextensions.h>
+#include "bbextensions.h"
 #include "bbsaveallaction.h"
 #include "gedaplugin/bbgedaeditor.h"
+#include "bbsavereceiver.h"
 
 
 enum
@@ -40,7 +41,7 @@ struct _BbSaveAllAction
 {
     GObject parent;
 
-    BbMainWindow* window;
+    BbSaveAllReceiver *receiver;
 };
 
 
@@ -49,6 +50,9 @@ bb_save_all_action_action_init(GActionInterface *iface);
 
 static void
 bb_save_all_action_activate(GAction *action, GVariant *parameter);
+
+static void
+bb_save_all_action_activate_lambda(gpointer data, gpointer unused);
 
 static void
 bb_save_all_action_change_state(GAction *action, GVariant *value);
@@ -112,14 +116,36 @@ bb_save_all_action_action_init(GActionInterface *iface)
 static void
 bb_save_all_action_activate(GAction *action, GVariant *parameter)
 {
-    GtkWidget *window = bb_main_window_get_current_document_window(
-        bb_save_all_action_get_window(BB_SAVE_ALL_ACTION(action))
+    g_return_if_fail(BB_IS_SAVE_ALL_ACTION(action));
+
+    GSList *list = NULL;
+
+    g_slist_foreach(
+        list,
+        bb_save_all_action_activate_lambda,
+        NULL
         );
 
-    // TODO
-    //if (BB_IS_SCHEMATIC_WINDOW(window))
-    //{
-   // }
+    g_slist_free(list);
+}
+
+
+static void
+bb_save_all_action_activate_lambda(gpointer data, gpointer unused)
+{
+    if (BB_IS_SAVE_RECEIVER(data))
+    {
+        BbSaveReceiver *receiver = BB_SAVE_RECEIVER(data);
+
+        if (receiver != NULL)
+        {
+            GError *error = NULL;
+
+            bb_save_receiver_save(receiver, &error);
+
+            g_clear_error(&error);
+        }
+    }
 }
 
 
@@ -172,10 +198,10 @@ bb_save_all_action_class_init(BbSaveAllActionClass *klasse)
             G_OBJECT_CLASS(klasse),
             PROP_RECEIVER,
             properties[PROP_RECEIVER] = g_param_spec_object(
-            "window",
+            "receiver",
             "",
             "",
-            BB_TYPE_MAIN_WINDOW,
+            BB_TYPE_SAVE_ALL_RECEIVER,
             G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS
             )
         );
@@ -201,9 +227,9 @@ bb_save_all_action_get_enabled(GAction *action)
 {
     g_return_val_if_fail(action != NULL, FALSE);
 
-    GtkWidget *window = bb_main_window_get_current_document_window(
-        bb_save_all_action_get_window(BB_SAVE_ALL_ACTION(action))
-        );
+    GSList *list = NULL;
+
+
 
     return TRUE;
 
@@ -261,12 +287,21 @@ bb_save_all_action_get_property(GObject *object, guint property_id, GValue *valu
             break;
 
         case PROP_RECEIVER:
-            g_value_set_object(value, bb_save_all_action_get_window(BB_SAVE_ALL_ACTION(object)));
+            g_value_set_object(value, bb_save_all_action_get_receiver(BB_SAVE_ALL_ACTION(object)));
             break;
 
         default:
             G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
     }
+}
+
+
+BbSaveAllReceiver *
+bb_save_all_action_get_receiver(BbSaveAllAction *action)
+{
+    g_return_val_if_fail(action != NULL, NULL);
+
+    return action->receiver;
 }
 
 
@@ -297,37 +332,21 @@ bb_save_all_action_get_state_type(GAction *action)
 }
 
 
-BbMainWindow*
-bb_save_all_action_get_window(BbSaveAllAction *action)
-{
-    g_return_val_if_fail(action != NULL, NULL);
-
-    return action->window;
-}
-
-
 static void
 bb_save_all_action_init(BbSaveAllAction *action)
 {
-    action->window = NULL;
+    action->receiver = NULL;
 }
 
 
 BbSaveAllAction*
-bb_save_all_action_new(BbMainWindow *window)
+bb_save_all_action_new(BbSaveAllReceiver *receiver)
 {
     return BB_SAVE_ALL_ACTION(g_object_new(
         BB_TYPE_SAVE_ALL_ACTION,
-        "window", window,
+        "receiver", receiver,
         NULL
         ));
-}
-
-
-__attribute__((constructor)) void
-bb_save_all_action_register()
-{
-    bb_save_all_action_get_type();
 }
 
 
@@ -337,7 +356,7 @@ bb_save_all_action_set_property(GObject *object, guint property_id, const GValue
     switch (property_id)
     {
         case PROP_RECEIVER:
-            bb_save_all_action_set_window(BB_SAVE_ALL_ACTION(object), g_value_get_object(value));
+            bb_save_all_action_set_receiver(BB_SAVE_ALL_ACTION(object), BB_SAVE_ALL_RECEIVER(g_value_get_object(value)));
             break;
 
         default:
@@ -347,22 +366,22 @@ bb_save_all_action_set_property(GObject *object, guint property_id, const GValue
 
 
 void
-bb_save_all_action_set_window(BbSaveAllAction *action, BbMainWindow* window)
+bb_save_all_action_set_receiver(BbSaveAllAction *action, BbSaveAllReceiver *receiver)
 {
     g_return_if_fail(action != NULL);
 
-    if (action->window != window)
+    if (action->receiver != receiver)
     {
-        if (action->window != NULL)
+        if (action->receiver != NULL)
         {
-            g_object_unref(action->window);
+            g_object_unref(action->receiver);
         }
 
-        action->window = window;
+        action->receiver = receiver;
 
-        if (action->window != NULL)
+        if (action->receiver != NULL)
         {
-            g_object_ref(action->window);
+            g_object_ref(action->receiver);
         }
 
         g_object_notify_by_pspec(G_OBJECT(action), properties[PROP_RECEIVER]);

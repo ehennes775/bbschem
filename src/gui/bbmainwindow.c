@@ -28,15 +28,15 @@
 #include "actions/bbcutaction.h"
 #include "actions/bbdeleteaction.h"
 #include "actions/bbpasteaction.h"
-#include "bbquitaction.h"
+#include "actions/bbquitaction.h"
 #include "actions/bbselectallaction.h"
 #include "actions/bbselectnoneaction.h"
 #include "actions/bbundoaction.h"
 #include "actions/bbredoaction.h"
 #include "actions/bbsaveaction.h"
-#include "bbsaveallaction.h"
+#include "actions/bbsaveallaction.h"
 #include "actions/bbsaveasaction.h"
-#include "bbreloadaction.h"
+#include "actions/bbreloadaction.h"
 #include "bbfillstyleeditor.h"
 #include "bblinestyleeditor.h"
 #include "bbattributeeditor.h"
@@ -56,23 +56,23 @@
 #include "bbattributetoolpanel.h"
 #include "bbzoomtoolpanel.h"
 #include "bbselecttoolpanel.h"
-#include "bbzoomextentsaction.h"
-#include "bbzoominaction.h"
-#include "bbzoomoutaction.h"
+#include "actions/bbzoomextentsaction.h"
+#include "actions/bbzoominaction.h"
+#include "actions/bbzoomoutaction.h"
 #include "actions/bbrevealaction.h"
-#include "bbzoompointaction.h"
-#include "bbzoomdirection.h"
-#include "bbpanaction.h"
-#include "bbpandirection.h"
-#include "bbpanpointaction.h"
+#include "actions/bbzoompointaction.h"
+#include "actions/types/bbzoomdirection.h"
+#include "actions/bbpanaction.h"
+#include "actions/types/bbpandirection.h"
+#include "actions/bbpanpointaction.h"
 #include "bbpintoolpanel.h"
 #include "bbbustoolpanel.h"
 #include "bbnettoolpanel.h"
-#include "bbscalegridaction.h"
-#include "bbshowgridaction.h"
-#include "bbsnapactiveaction.h"
-#include "bbopenaction.h"
-#include "bbnewaction.h"
+#include "actions/bbscalegridaction.h"
+#include "actions/bbshowgridaction.h"
+#include "actions/bbsnapactiveaction.h"
+#include "actions/bbopenaction.h"
+#include "actions/bbnewaction.h"
 #include "bbgeneralopener.h"
 
 
@@ -565,17 +565,17 @@ bb_main_window_init(BbMainWindow *window)
 
     g_action_map_add_action(
         G_ACTION_MAP(window),
-        G_ACTION(bb_scale_grid_action_new(window, BB_SCALE_GRID_DIRECTION_DOWN))
+        G_ACTION(bb_scale_grid_action_new(BB_SCALE_GRID_DIRECTION_DOWN))
         );
 
     g_action_map_add_action(
         G_ACTION_MAP(window),
-        G_ACTION(bb_scale_grid_action_new(window, BB_SCALE_GRID_DIRECTION_RESET))
+        G_ACTION(bb_scale_grid_action_new(BB_SCALE_GRID_DIRECTION_RESET))
         );
 
     g_action_map_add_action(
         G_ACTION_MAP(window),
-        G_ACTION(bb_scale_grid_action_new(window, BB_SCALE_GRID_DIRECTION_UP))
+        G_ACTION(bb_scale_grid_action_new(BB_SCALE_GRID_DIRECTION_UP))
         );
 
     g_action_map_add_action(

@@ -1,5 +1,5 @@
-#ifndef __BBSHOWGRIDACTION__
-#define __BBSHOWGRIDACTION__
+#ifndef __BBZOOMEXTENTSACTION__
+#define __BBZOOMEXTENTSACTION__
 /*
  * bbschem
  * Copyright (C) 2020 Edward C. Hennessy
@@ -18,10 +18,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <gtk/gtk.h>
-#include "bbgridcontrol.h"
+#include <glib-object.h>
+#include "bbmainwindow.h"
 
-GAction*
-bb_show_grid_action_new(BbGridControl *grid_control);
+#define BB_TYPE_ZOOM_EXTENTS_ACTION bb_zoom_extents_action_get_type()
+G_DECLARE_FINAL_TYPE(BbZoomExtentsAction, bb_zoom_extents_action, BB, ZOOM_EXTENTS_ACTION, GObject)
+
+BbMainWindow*
+bb_zoom_extents_action_get_window(BbZoomExtentsAction *action);
+
+BbZoomExtentsAction*
+bb_zoom_extents_action_new(BbMainWindow *window);
+
+void
+bb_zoom_extents_action_set_window(BbZoomExtentsAction *action, BbMainWindow* window);
 
 #endif

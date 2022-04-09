@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <gtk/gtk.h>
+#include <glib-object.h>
 
 #define BB_TYPE_UNDO_RECEIVER bb_undo_receiver_get_type()
 G_DECLARE_INTERFACE(BbUndoReceiver, bb_undo_receiver, BB, UNDO_RECEIVER, GObject)

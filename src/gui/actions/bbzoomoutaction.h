@@ -1,5 +1,5 @@
-#ifndef __BBNEWACTION__
-#define __BBNEWACTION__
+#ifndef __BBZOOMOUTACTION__
+#define __BBZOOMOUTACTION__
 /*
  * bbschem
  * Copyright (C) 2020 Edward C. Hennessy
@@ -18,13 +18,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <gtk/gtk.h>
+#include <glib-object.h>
 #include "bbmainwindow.h"
 
-#define BB_TYPE_NEW_ACTION bb_new_action_get_type()
-G_DECLARE_FINAL_TYPE(BbNewAction, bb_new_action, BB, NEW_ACTION, GObject)
+#define BB_TYPE_ZOOM_OUT_ACTION bb_zoom_out_action_get_type()
+G_DECLARE_FINAL_TYPE(BbZoomOutAction, bb_zoom_out_action, BB, ZOOM_OUT_ACTION, GObject)
 
-BbNewAction*
-bb_new_action_new(BbMainWindow *window);
+BbZoomOutAction*
+bb_zoom_out_action_new(BbMainWindow *window);
 
 #endif

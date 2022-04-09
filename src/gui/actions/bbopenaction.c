@@ -17,7 +17,7 @@
  */
 
 #include <gtk/gtk.h>
-#include <bbextensions.h>
+#include "bbextensions.h"
 #include "bbopenaction.h"
 #include "bbgeneralopener.h"
 #include "gedaplugin/bbgedaeditor.h"

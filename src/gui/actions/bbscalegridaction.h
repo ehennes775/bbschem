@@ -1,5 +1,5 @@
-#ifndef __BBRELOADACTION__
-#define __BBRELOADACTION__
+#ifndef __BBSCALEGRIDACTION__
+#define __BBSCALEGRIDACTION__
 /*
  * bbschem
  * Copyright (C) 2020 Edward C. Hennessy
@@ -18,23 +18,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <gtk/gtk.h>
-#include "bbmainwindow.h"
+#include <glib-object.h>
+#include "types/bbscalegriddirection.h"
 
-#define BB_TYPE_RELOAD_ACTION bb_reload_action_get_type()
-G_DECLARE_FINAL_TYPE(BbReloadAction, bb_reload_action, BB, RELOAD_ACTION, GObject)
+#define BB_TYPE_SCALE_GRID_ACTION bb_scale_grid_action_get_type()
+G_DECLARE_FINAL_TYPE(BbScaleGridAction, bb_scale_grid_action, BB, SCALE_GRID_ACTION, GObject)
 
+BbScaleGridAction*
+bb_scale_grid_action_new(BbScaleGridDirection direction);
 
-BbMainWindow*
-bb_reload_action_get_window(BbReloadAction *action);
+GObject*
+bb_scale_grid_action_get_receiver(BbScaleGridAction *action);
 
-
-BbReloadAction*
-bb_reload_action_new(BbMainWindow *window);
-
+BbScaleGridDirection
+bb_scale_grid_action_get_direction(BbScaleGridAction *action);
 
 void
-bb_reload_action_set_window(BbReloadAction *action, BbMainWindow* window);
-
+bb_scale_grid_action_set_receiver(BbScaleGridAction *action, GObject *receiver);
 
 #endif

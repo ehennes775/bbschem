@@ -1,5 +1,5 @@
-#ifndef __BBZOOMEXTENTSACTION__
-#define __BBZOOMEXTENTSACTION__
+#ifndef __BBSAVEALLRECEIVER__
+#define __BBSAVEALLRECEIVER__
 /*
  * bbschem
  * Copyright (C) 2020 Edward C. Hennessy
@@ -18,19 +18,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <gtk/gtk.h>
-#include "bbmainwindow.h"
+#include <glib-object.h>
 
-#define BB_TYPE_ZOOM_EXTENTS_ACTION bb_zoom_extents_action_get_type()
-G_DECLARE_FINAL_TYPE(BbZoomExtentsAction, bb_zoom_extents_action, BB, ZOOM_EXTENTS_ACTION, GObject)
+#define BB_TYPE_SAVE_ALL_RECEIVER bb_save_all_receiver_get_type()
+G_DECLARE_INTERFACE(BbSaveAllReceiver, bb_save_all_receiver, BB, SAVE_ALL_RECEIVER, GObject)
 
-BbMainWindow*
-bb_zoom_extents_action_get_window(BbZoomExtentsAction *action);
-
-BbZoomExtentsAction*
-bb_zoom_extents_action_new(BbMainWindow *window);
-
-void
-bb_zoom_extents_action_set_window(BbZoomExtentsAction *action, BbMainWindow* window);
+struct _BbSaveAllReceiverInterface
+{
+    GTypeInterface g_iface;
+};
 
 #endif

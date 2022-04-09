@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <gtk/gtk.h>
+#include <glib-object.h>
 #include "bbmainwindow.h"
 
 #define BB_TYPE_SELECT_ALL_ACTION bb_select_all_action_get_type()

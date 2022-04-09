@@ -20,7 +20,7 @@
 
 #include <gtk/gtk.h>
 #include "bbtoolsubject.h"
-#include "bbscalegriddirection.h"
+#include "actions/types/bbscalegriddirection.h"
 #include "bbgraphics.h"
 
 

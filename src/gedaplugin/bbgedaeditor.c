@@ -36,10 +36,10 @@
 #include "bbarctool.h"
 #include "bbtoolchanger.h"
 #include "bbgraphics.h"
-#include "bbzoomsubject.h"
+#include "actions/bbzoomreceiver.h"
 #include "actions/bbrevealreceiver.h"
-#include "bbgridsubject.h"
-#include "bbpandirection.h"
+#include "actions/bbgridsubject.h"
+#include "actions/types/bbpandirection.h"
 #include "actions/bbsavereceiver.h"
 #include "bbgrid.h"
 #include "bbgridcontrol.h"
@@ -1514,7 +1514,7 @@ bb_geda_editor_draw_cb(BbGedaView *view, cairo_t *cairo, BbGedaEditor *editor)
 
     if (!editor->zoom_hack)
     {
-        bb_geda_editor_zoom_extents(BB_ZOOM_SUBJECT(editor));
+        bb_geda_editor_zoom_extents(BB_ZOOM_RECEIVER(editor));
         editor->zoom_hack = TRUE;
     }
 

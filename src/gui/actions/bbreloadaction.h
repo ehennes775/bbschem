@@ -1,5 +1,5 @@
-#ifndef __BBPANACTION__
-#define __BBPANACTION__
+#ifndef __BBRELOADACTION__
+#define __BBRELOADACTION__
 /*
  * bbschem
  * Copyright (C) 2020 Edward C. Hennessy
@@ -18,13 +18,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <gtk/gtk.h>
-#include "bbmainwindow.h"
+#include <glib-object.h>
 
-#define BB_TYPE_PAN_ACTION bb_pan_action_get_type()
-G_DECLARE_FINAL_TYPE(BbPanAction, bb_pan_action, BB, PAN_ACTION, GObject)
+G_BEGIN_DECLS
 
-BbPanAction*
-bb_pan_action_new(BbMainWindow *window);
+#define BB_TYPE_RELOAD_ACTION bb_reload_action_get_type()
+G_DECLARE_FINAL_TYPE(BbReloadAction, bb_reload_action, BB, RELOAD_ACTION, GObject)
+
+BbReloadAction*
+bb_reload_action_new();
+
+GObject*
+bb_reload_action_get_receiver(BbReloadAction *action);
+
+void
+bb_reload_action_set_receiver(BbReloadAction *action, GObject *receiver);
+
+G_END_DECLS
 
 #endif

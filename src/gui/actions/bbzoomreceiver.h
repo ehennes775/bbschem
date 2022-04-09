@@ -1,5 +1,5 @@
-#ifndef __BBZOOMSUBJECT__
-#define __BBZOOMSUBJECT__
+#ifndef __BBZOOMRECEIVER__
+#define __BBZOOMRECEIVER__
 /*
  * bbschem
  * Copyright (C) 2020 Edward C. Hennessy
@@ -18,79 +18,81 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <gtk/gtk.h>
-#include "bbzoomdirection.h"
-#include "bbpandirection.h"
+#include <glib-object.h>
+#include "actions/types/bbzoomdirection.h"
+#include "actions/types/bbpandirection.h"
 
-#define BB_TYPE_ZOOM_SUBJECT bb_zoom_subject_get_type()
-G_DECLARE_INTERFACE(BbZoomSubject, bb_zoom_subject, BB, ZOOM_SUBJECT, GObject)
+G_BEGIN_DECLS
 
-struct _BbZoomSubjectInterface
+#define BB_TYPE_ZOOM_RECEIVER bb_zoom_receiver_get_type()
+G_DECLARE_INTERFACE(BbZoomReceiver, bb_zoom_receiver, BB, ZOOM_RECEIVER, GObject)
+
+struct _BbZoomReceiverInterface
 {
     GTypeInterface g_iface;
 
-    void (*pan)(BbZoomSubject *zoom_subject, BbPanDirection direction);
-    void (*pan_point)(BbZoomSubject *zoom_subject);
-    void (*zoom_extents)(BbZoomSubject *zoom_subject);
-    void (*zoom_in)(BbZoomSubject *zoom_subject);
-    void (*zoom_out)(BbZoomSubject *zoom_subject);
-    void (*zoom_point)(BbZoomSubject *zoom_subject, BbZoomDirection direction);
+    void (*pan)(BbZoomReceiver *zoom_receiver, BbPanDirection direction);
+    void (*pan_point)(BbZoomReceiver *zoom_receiver);
+    void (*zoom_extents)(BbZoomReceiver *zoom_receiver);
+    void (*zoom_in)(BbZoomReceiver *zoom_receiver);
+    void (*zoom_out)(BbZoomReceiver *zoom_receiver);
+    void (*zoom_point)(BbZoomReceiver *zoom_receiver, BbZoomDirection direction);
 };
 
 
 /**
  * Indicates the zoom extents action operation can be performed
  *
- * @param zoom_subject The object to test
+ * @param zoom_receiver The object to test
  */
 gboolean
-bb_zoom_subject_get_can_zoom_extents(BbZoomSubject *zoom_subject);
+bb_zoom_receiver_get_can_zoom_extents(BbZoomReceiver *zoom_receiver);
 
 
 /**
  * Indicates the zoom in action operation can be performed
  *
- * @param zoom_subject The object to test
+ * @param zoom_receiver The object to test
  */
 gboolean
-bb_zoom_subject_get_can_zoom_in(BbZoomSubject *zoom_subject);
+bb_zoom_receiver_get_can_zoom_in(BbZoomReceiver *zoom_receiver);
 
 
 /**
  * Indicates the zoom out action operation can be performed
  *
- * @param zoom_subject The object to test
+ * @param zoom_receiver The object to test
  */
 gboolean
-bb_zoom_subject_get_can_zoom_out(BbZoomSubject *zoom_subject);
+bb_zoom_receiver_get_can_zoom_out(BbZoomReceiver *zoom_receiver);
 
 
 /**
  * Pan the window contents in a direction
  *
- * @param zoom_subject The object to perform the pan operation
+ * @param zoom_receiver The object to perform the pan operation
  * @param direction The direction to pan the window
  */
 void
-bb_zoom_subject_pan(BbZoomSubject *zoom_subject, BbPanDirection direction);
+bb_zoom_receiver_pan(BbZoomReceiver *zoom_receiver, BbPanDirection direction);
 
 
 /**
  * Center the location of the mouse cursor on the screen
  *
- * @param zoom_subject The object to perform the pan operation
+ * @param zoom_receiver The object to perform the pan operation
  */
 void
-bb_zoom_subject_pan_point(BbZoomSubject *zoom_subject);
+bb_zoom_receiver_pan_point(BbZoomReceiver *zoom_receiver);
 
 
 /**
  * Zoom to fit the contents into the visible window
  *
- * @param zoom_subject The object to perform the zoom extents
+ * @param zoom_receiver The object to perform the zoom extents
  */
 void
-bb_zoom_subject_zoom_extents(BbZoomSubject *zoom_subject);
+bb_zoom_receiver_zoom_extents(BbZoomReceiver *zoom_receiver);
 
 
 /**
@@ -98,10 +100,10 @@ bb_zoom_subject_zoom_extents(BbZoomSubject *zoom_subject);
  *
  * Zoom in and zoom out actions are separate, since they can be enabled and disabled independently.
  *
- * @param zoom_subject The object to perform the zoom extents
+ * @param zoom_receiver The object to perform the zoom extents
  */
 void
-bb_zoom_subject_zoom_in(BbZoomSubject *zoom_subject);
+bb_zoom_receiver_zoom_in(BbZoomReceiver *zoom_receiver);
 
 
 /**
@@ -109,10 +111,10 @@ bb_zoom_subject_zoom_in(BbZoomSubject *zoom_subject);
  *
  * Zoom in and zoom out actions are separate, since they can be enabled and disabled independently.
  *
- * @param zoom_subject The object to perform the zoom extents
+ * @param zoom_receiver The object to perform the zoom extents
  */
 void
-bb_zoom_subject_zoom_out(BbZoomSubject *zoom_subject);
+bb_zoom_receiver_zoom_out(BbZoomReceiver *zoom_receiver);
 
 
 /**
@@ -121,10 +123,12 @@ bb_zoom_subject_zoom_out(BbZoomSubject *zoom_subject);
  * Zooming in or out at a point expects to be activated by a hot key. A corresponding can-zoom-point doesn't exist. If
  * the operation cannot be performed, the action is ignored.
  *
- * @param zoom_subject The object to perform the zoom in or out
+ * @param zoom_receiver The object to perform the zoom in or out
  * @param direction Indicates whether to zoom in or out
  */
 void
-bb_zoom_subject_zoom_point(BbZoomSubject *zoom_subject, BbZoomDirection direction);
+bb_zoom_receiver_zoom_point(BbZoomReceiver *zoom_receiver, BbZoomDirection direction);
+
+G_END_DECLS
 
 #endif

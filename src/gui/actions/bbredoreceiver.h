@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <gtk/gtk.h>
+#include <glib-object.h>
 
 #define BB_TYPE_REDO_RECEIVER bb_redo_receiver_get_type()
 G_DECLARE_INTERFACE(BbRedoReceiver, bb_redo_receiver, BB, REDO_RECEIVER, GObject)

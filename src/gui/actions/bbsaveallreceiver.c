@@ -1,5 +1,3 @@
-#ifndef __BBSCALEGRIDACTION__
-#define __BBSCALEGRIDACTION__
 /*
  * bbschem
  * Copyright (C) 2020 Edward C. Hennessy
@@ -19,22 +17,36 @@
  */
 
 #include <gtk/gtk.h>
-#include "bbscalegriddirection.h"
-#include "bbmainwindow.h"
-
-#define BB_TYPE_SCALE_GRID_ACTION bb_scale_grid_action_get_type()
-G_DECLARE_FINAL_TYPE(BbScaleGridAction, bb_scale_grid_action, BB, SCALE_GRID_ACTION, GObject)
+#include "bbsaveallreceiver.h"
 
 
-GObject*
-bb_scale_grid_action_get_subject(BbScaleGridAction *action);
+static gboolean
+bb_save_all_receiver_get_save_all_missing(BbSaveAllReceiver *save_all_receiver);
+
+void
+bb_save_all_receiver_set_save_all_missing(BbSaveAllReceiver *save_all_receiver, gboolean save_all);
 
 
-BbScaleGridDirection
-bb_scale_grid_action_get_direction(BbScaleGridAction *action);
+G_DEFINE_INTERFACE(
+    BbSaveAllReceiver,
+    bb_save_all_receiver,
+    G_TYPE_OBJECT
+    )
 
 
-BbScaleGridAction*
-bb_scale_grid_action_new(BbMainWindow *main_window, BbScaleGridDirection direction);
+static void
+bb_save_all_receiver_default_init(BbSaveAllReceiverInterface *iface)
+{
+    g_return_if_fail(iface != NULL);
 
-#endif
+    g_object_interface_install_property(
+        iface,
+        g_param_spec_boolean(
+            "save_all",
+            "",
+            "",
+            FALSE,
+            G_PARAM_READABLE | G_PARAM_STATIC_STRINGS
+            )
+        );
+}

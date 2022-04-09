@@ -1,5 +1,5 @@
-#ifndef __BBQUITACTION__
-#define __BBQUITACTION__
+#ifndef __BBZOOMINACTION__
+#define __BBZOOMINACTION__
 /*
  * bbschem
  * Copyright (C) 2020 Edward C. Hennessy
@@ -18,23 +18,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <gtk/gtk.h>
+#include <glib-object.h>
 #include "bbmainwindow.h"
 
-#define BB_TYPE_QUIT_ACTION bb_quit_action_get_type()
-G_DECLARE_FINAL_TYPE(BbQuitAction, bb_quit_action, BB, QUIT_ACTION, GObject)
+#define BB_TYPE_ZOOM_IN_ACTION bb_zoom_in_action_get_type()
+G_DECLARE_FINAL_TYPE(BbZoomInAction, bb_zoom_in_action, BB, ZOOM_IN_ACTION, GObject)
 
-
-BbMainWindow*
-bb_quit_action_get_window(BbQuitAction *action);
-
-
-BbQuitAction*
-bb_quit_action_new(BbMainWindow *window);
-
-
-void
-bb_quit_action_set_window(BbQuitAction *action, BbMainWindow* window);
-
+BbZoomInAction*
+bb_zoom_in_action_new(BbMainWindow *window);
 
 #endif

@@ -174,7 +174,7 @@ bb_copy_action_class_init(BbCopyActionClass *klasse)
             "window",
             "",
             "",
-            BB_TYPE_MAIN_WINDOW,
+            G_TYPE_OBJECT,
             G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS
             )
         );

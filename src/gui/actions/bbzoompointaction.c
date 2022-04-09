@@ -17,9 +17,9 @@
  */
 
 #include <gtk/gtk.h>
-#include <bbextensions.h>
+#include "bbextensions.h"
 #include "bbzoompointaction.h"
-#include "bbzoomsubject.h"
+#include "actions/bbzoomreceiver.h"
 
 enum
 {
@@ -30,7 +30,7 @@ enum
     PROP_STATE,
     PROP_STATE_HINT,
     PROP_STATE_TYPE,
-    PROP_SUBJECT,
+    PROP_RECEIVER,
     N_PROPERTIES
 };
 
@@ -39,7 +39,7 @@ struct _BbZoomPointAction
 {
     GObject parent;
 
-    GObject *subject;
+    GObject *receiver;
 };
 
 
@@ -80,7 +80,7 @@ static const GVariantType*
 bb_zoom_point_action_get_state_type(GAction *action);
 
 GObject*
-bb_zoom_point_action_get_subject(BbZoomPointAction *action);
+bb_zoom_point_action_get_receiver(BbZoomPointAction *action);
 
 static void
 bb_zoom_point_action_notify(gpointer unused, GParamSpec *pspec, BbZoomPointAction *action);
@@ -123,12 +123,12 @@ bb_zoom_point_action_activate(GAction *action, GVariant *parameter)
     g_return_if_fail(BB_IS_ZOOM_POINT_ACTION(action));
     g_return_if_fail(g_variant_is_of_type(parameter, G_VARIANT_TYPE_INT32));
 
-    GObject *subject = bb_zoom_point_action_get_subject(BB_ZOOM_POINT_ACTION(action));
+    GObject *subject = bb_zoom_point_action_get_receiver(BB_ZOOM_POINT_ACTION(action));
 
-    if (BB_IS_ZOOM_SUBJECT(subject))
+    if (BB_IS_ZOOM_RECEIVER(subject))
     {
-        bb_zoom_subject_zoom_point(
-            BB_ZOOM_SUBJECT(subject),
+        bb_zoom_receiver_zoom_point(
+            BB_ZOOM_RECEIVER(subject),
             (BbZoomDirection) g_variant_get_int32(parameter)
             );
     }
@@ -181,14 +181,14 @@ bb_zoom_point_action_class_init(BbZoomPointActionClass *klasse)
         "state-type"
         );
 
-    properties[PROP_SUBJECT] = bb_object_class_install_property(
-        object_class,
-        PROP_SUBJECT,
-        g_param_spec_object(
-            "subject",
+    properties[PROP_RECEIVER] = bb_object_class_install_property(
+            object_class,
+            PROP_RECEIVER,
+            g_param_spec_object(
+            "receiver",
             "",
             "",
-            BB_TYPE_DOCUMENT_WINDOW,
+            BB_TYPE_ZOOM_RECEIVER,
             G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS
         )
     );
@@ -265,13 +265,25 @@ bb_zoom_point_action_get_property(GObject *object, guint property_id, GValue *va
             g_value_set_boxed(value, bb_zoom_point_action_get_state_type(G_ACTION(object)));
             break;
 
-        case PROP_SUBJECT:
-            g_value_set_object(value, bb_zoom_point_action_get_subject(BB_ZOOM_POINT_ACTION(object)));
+        case PROP_RECEIVER:
+            g_value_set_object(value, bb_zoom_point_action_get_receiver(BB_ZOOM_POINT_ACTION(object)));
             break;
 
         default:
             G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
     }
+}
+
+
+GObject*
+bb_zoom_point_action_get_receiver(BbZoomPointAction *action)
+{
+    g_return_val_if_fail(BB_IS_ZOOM_POINT_ACTION(action), NULL);
+
+    BbZoomPointAction *zoom_point_action = BB_ZOOM_POINT_ACTION(action);
+    g_return_val_if_fail(zoom_point_action != NULL, NULL);
+
+    return zoom_point_action->receiver;
 }
 
 
@@ -302,18 +314,6 @@ bb_zoom_point_action_get_state_type(GAction *action)
 }
 
 
-GObject*
-bb_zoom_point_action_get_subject(BbZoomPointAction *action)
-{
-    g_return_val_if_fail(BB_IS_ZOOM_POINT_ACTION(action), NULL);
-
-    BbZoomPointAction *zoom_point_action = BB_ZOOM_POINT_ACTION(action);
-    g_return_val_if_fail(zoom_point_action != NULL, NULL);
-
-    return zoom_point_action->subject;
-}
-
-
 static void
 bb_zoom_point_action_init(BbZoomPointAction *action)
 {
@@ -327,20 +327,12 @@ bb_zoom_point_action_init(BbZoomPointAction *action)
 
 
 BbZoomPointAction*
-bb_zoom_point_action_new(BbMainWindow *window)
+bb_zoom_point_action_new()
 {
     BbZoomPointAction *zoom_point_action = BB_ZOOM_POINT_ACTION(g_object_new(
         BB_TYPE_ZOOM_POINT_ACTION,
         NULL
         ));
-
-    g_object_bind_property(
-        window,
-        "current-document-window",
-        zoom_point_action,
-        "subject",
-        G_BINDING_SYNC_CREATE
-        );
 
     return zoom_point_action;
 }
@@ -360,7 +352,7 @@ bb_zoom_point_action_set_property(GObject *object, guint property_id, const GVal
 {
     switch (property_id)
     {
-        case PROP_SUBJECT:
+        case PROP_RECEIVER:
             bb_zoom_point_action_set_subject(BB_ZOOM_POINT_ACTION(object), g_value_get_object(value));
             break;
 
@@ -375,9 +367,9 @@ bb_zoom_point_action_set_subject(BbZoomPointAction *action, GObject* subject)
 {
     g_return_if_fail(BB_IS_ZOOM_POINT_ACTION(action));
 
-    if (action->subject != subject)
+    if (action->receiver != subject)
     {
-        if (action->subject != NULL)
+        if (action->receiver != NULL)
         {
             g_signal_handlers_disconnect_by_func(
                 subject,
@@ -385,14 +377,14 @@ bb_zoom_point_action_set_subject(BbZoomPointAction *action, GObject* subject)
                 G_CALLBACK(bb_zoom_point_action_notify)
                 );
 
-            g_object_unref(action->subject);
+            g_object_unref(action->receiver);
         }
 
-        action->subject = subject;
+        action->receiver = subject;
 
-        if (action->subject != NULL)
+        if (action->receiver != NULL)
         {
-            g_object_ref(action->subject);
+            g_object_ref(action->receiver);
 
             g_signal_connect(
                 subject,
@@ -402,6 +394,6 @@ bb_zoom_point_action_set_subject(BbZoomPointAction *action, GObject* subject)
                 );
         }
 
-        g_object_notify_by_pspec(G_OBJECT(action), properties[PROP_SUBJECT]);
+        g_object_notify_by_pspec(G_OBJECT(action), properties[PROP_RECEIVER]);
     }
 }

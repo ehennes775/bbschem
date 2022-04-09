@@ -30,7 +30,7 @@ enum
     PROP_CAN_SCALE_UP,
     PROP_DRAW_SIZE,
     PROP_SNAP_SIZE,
-    PROP_SUBJECT,
+    PROP_RECEIVER,
     N_PROPERTIES
 };
 
@@ -184,10 +184,10 @@ bb_grid_class_init(BbGridClass *klasse)
         )
     );
 
-    properties[PROP_SUBJECT] = bb_object_class_install_property(
-        object_class,
-        PROP_SUBJECT,
-        g_param_spec_object(
+    properties[PROP_RECEIVER] = bb_object_class_install_property(
+            object_class,
+            PROP_RECEIVER,
+            g_param_spec_object(
             "subject",
             "",
             "",
@@ -297,7 +297,7 @@ bb_grid_get_property(GObject *object, guint property_id, GValue *value, GParamSp
             g_value_set_boolean(value, bb_grid_get_can_scale_up(BB_GRID(object)));
             break;
 
-        case PROP_SUBJECT:
+        case PROP_RECEIVER:
             g_value_set_object(value, bb_grid_get_subject(BB_GRID(object)));
             break;
 
@@ -426,7 +426,7 @@ bb_grid_set_property(GObject *object, guint property_id, const GValue *value, GP
 {
     switch (property_id)
     {
-        case PROP_SUBJECT:
+        case PROP_RECEIVER:
             bb_grid_set_subject(BB_GRID(object), g_value_get_object(value));
             break;
 
@@ -455,7 +455,7 @@ bb_grid_set_subject(BbGrid *grid, BbToolSubject *subject)
             g_object_ref(grid->subject);
         }
 
-        g_object_notify_by_pspec(G_OBJECT(grid), properties[PROP_SUBJECT]);
+        g_object_notify_by_pspec(G_OBJECT(grid), properties[PROP_RECEIVER]);
     }
 }
 

@@ -1,5 +1,5 @@
-#ifndef __BBZOOMPOINTACTION__
-#define __BBZOOMPOINTACTION__
+#ifndef __BBOPENACTION__
+#define __BBOPENACTION__
 /*
  * bbschem
  * Copyright (C) 2020 Edward C. Hennessy
@@ -18,13 +18,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <gtk/gtk.h>
+#include <glib-object.h>
 #include "bbmainwindow.h"
 
-#define BB_TYPE_ZOOM_POINT_ACTION bb_zoom_point_action_get_type()
-G_DECLARE_FINAL_TYPE(BbZoomPointAction, bb_zoom_point_action, BB, ZOOM_POINT_ACTION, GObject)
+#define BB_TYPE_OPEN_ACTION bb_open_action_get_type()
+G_DECLARE_FINAL_TYPE(BbOpenAction, bb_open_action, BB, OPEN_ACTION, GObject)
 
-BbZoomPointAction*
-bb_zoom_point_action_new(BbMainWindow *window);
+BbMainWindow*
+bb_open_action_get_window(BbOpenAction *open_action);
+
+
+BbOpenAction*
+bb_open_action_new(BbMainWindow *window);
 
 #endif

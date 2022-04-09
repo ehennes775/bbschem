@@ -1,8 +1,8 @@
-#ifndef __BBPANPOINTACTION__
-#define __BBPANPOINTACTION__
+#ifndef __BBQUITRECEIVER__
+#define __BBQUITRECEIVER__
 /*
  * bbschem
- * Copyright (C) 2020 Edward C. Hennessy
+ * Copyright (C) 2022 Edward C. Hennessy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,13 +18,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <gtk/gtk.h>
-#include "bbmainwindow.h"
+#include <glib-object.h>
 
-#define BB_TYPE_PAN_POINT_ACTION bb_pan_point_action_get_type()
-G_DECLARE_FINAL_TYPE(BbPanPointAction, bb_pan_point_action, BB, PAN_POINT_ACTION, GObject)
+#define BB_TYPE_QUIT_RECEIVER bb_quit_receiver_get_type()
+G_DECLARE_INTERFACE(BbQuitReceiver, bb_quit_receiver, BB, QUIT_RECEIVER, GObject)
 
-BbPanPointAction*
-bb_pan_point_action_new(BbMainWindow *window);
+struct _BbQuitReceiverInterface
+{
+    GTypeInterface g_iface;
+
+    gboolean (*can_quit)(BbQuitReceiver *receiver);
+    void (*quit)(BbQuitReceiver *receiver);
+
+};
+
+gboolean
+bb_quit_receiver_can_quit(BbQuitReceiver *receiver);
+
+void
+bb_quit_receiver_quit(BbQuitReceiver *receiver);
 
 #endif

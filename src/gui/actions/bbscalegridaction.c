@@ -17,7 +17,7 @@
  */
 
 #include <gtk/gtk.h>
-#include <bbextensions.h>
+#include "bbextensions.h"
 #include "bbscalegridaction.h"
 #include "bbgridsubject.h"
 
@@ -32,7 +32,7 @@ enum
     PROP_STATE_TYPE,
 
     PROP_DIRECTION,
-    PROP_SUBJECT,
+    PROP_RECEIVER,
 
     N_PROPERTIES
 };
@@ -131,7 +131,7 @@ bb_scale_grid_action_activate(GAction *action, GVariant *parameter)
     g_return_if_fail(BB_IS_SCALE_GRID_ACTION(action));
     g_return_if_fail(parameter == NULL);
 
-    GObject *subject = bb_scale_grid_action_get_subject(BB_SCALE_GRID_ACTION(action));
+    GObject *subject = bb_scale_grid_action_get_receiver(BB_SCALE_GRID_ACTION(action));
 
     if (BB_IS_GRID_SUBJECT(subject))
     {
@@ -206,10 +206,10 @@ bb_scale_grid_action_class_init(BbScaleGridActionClass *klasse)
             )
         );
 
-    properties[PROP_SUBJECT] = bb_object_class_install_property(
-        object_class,
-        PROP_SUBJECT,
-        g_param_spec_object(
+    properties[PROP_RECEIVER] = bb_object_class_install_property(
+            object_class,
+            PROP_RECEIVER,
+            g_param_spec_object(
             "subject",
             "",
             "",
@@ -251,7 +251,7 @@ bb_scale_grid_action_get_enabled(GAction *action)
 {
     g_return_val_if_fail(BB_IS_SCALE_GRID_ACTION(action), FALSE);
 
-    GObject *subject = bb_scale_grid_action_get_subject(BB_SCALE_GRID_ACTION(action));
+    GObject *subject = bb_scale_grid_action_get_receiver(BB_SCALE_GRID_ACTION(action));
 
     return
         BB_IS_GRID_SUBJECT(subject) &&
@@ -327,8 +327,8 @@ bb_scale_grid_action_get_property(GObject *object, guint property_id, GValue *va
             g_value_set_boxed(value, bb_scale_grid_action_get_state_type(G_ACTION(object)));
             break;
 
-        case PROP_SUBJECT:
-            g_value_set_object(value, bb_scale_grid_action_get_subject(BB_SCALE_GRID_ACTION(object)));
+        case PROP_RECEIVER:
+            g_value_set_object(value, bb_scale_grid_action_get_receiver(BB_SCALE_GRID_ACTION(object)));
             break;
 
         default:
@@ -365,7 +365,7 @@ bb_scale_grid_action_get_state_type(GAction *action)
 
 
 GObject*
-bb_scale_grid_action_get_subject(BbScaleGridAction *action)
+bb_scale_grid_action_get_receiver(BbScaleGridAction *action)
 {
     BbScaleGridAction *scale_action = BB_SCALE_GRID_ACTION(action);
     g_return_val_if_fail(scale_action != NULL, NULL);
@@ -389,7 +389,7 @@ bb_scale_grid_action_init(BbScaleGridAction *window)
 }
 
 BbScaleGridAction*
-bb_scale_grid_action_new(BbMainWindow *main_window, BbScaleGridDirection direction)
+bb_scale_grid_action_new(BbScaleGridDirection direction)
 {
     BbScaleGridAction *scale_grid_action = BB_SCALE_GRID_ACTION(g_object_new(
         BB_TYPE_SCALE_GRID_ACTION,
@@ -397,23 +397,7 @@ bb_scale_grid_action_new(BbMainWindow *main_window, BbScaleGridDirection directi
         NULL
         ));
 
-    g_object_bind_property(
-        main_window,
-        "current-document-window",
-        scale_grid_action,
-        "subject",
-        G_BINDING_SYNC_CREATE
-        );
-
-
     return scale_grid_action;
-}
-
-
-__attribute__((constructor)) void
-bb_scale_grid_action_register()
-{
-    bb_scale_grid_action_get_type();
 }
 
 
@@ -440,7 +424,7 @@ bb_scale_grid_action_set_property(GObject *object, guint property_id, const GVal
             bb_scale_grid_action_set_direction(BB_SCALE_GRID_ACTION(object), g_value_get_int(value));
             break;
 
-        case PROP_SUBJECT:
+        case PROP_RECEIVER:
             bb_scale_grid_action_set_subject(BB_SCALE_GRID_ACTION(object), g_value_get_object(value));
             break;
 
@@ -482,6 +466,6 @@ bb_scale_grid_action_set_subject(BbScaleGridAction *action, GObject* subject)
                 );
         }
 
-        g_object_notify_by_pspec(G_OBJECT(action), properties[PROP_SUBJECT]);
+        g_object_notify_by_pspec(G_OBJECT(action), properties[PROP_RECEIVER]);
     }
 }

@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <gtk/gtk.h>
+#include <glib-object.h>
 
 #define BB_TYPE_REVEAL_RECEIVER bb_reveal_receiver_get_type()
 G_DECLARE_INTERFACE(BbRevealReceiver, bb_reveal_receiver, BB, REVEAL_RECEIVER, GObject)

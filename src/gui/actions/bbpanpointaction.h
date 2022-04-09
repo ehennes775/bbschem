@@ -1,8 +1,8 @@
-#ifndef __BBCOPYRECEIVER__
-#define __BBCOPYRECEIVER__
+#ifndef __BBPANPOINTACTION__
+#define __BBPANPOINTACTION__
 /*
  * bbschem
- * Copyright (C) 2022 Edward C. Hennessy
+ * Copyright (C) 2020 Edward C. Hennessy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,27 +19,12 @@
  */
 
 #include <glib-object.h>
+#include "bbmainwindow.h"
 
-G_BEGIN_DECLS
+#define BB_TYPE_PAN_POINT_ACTION bb_pan_point_action_get_type()
+G_DECLARE_FINAL_TYPE(BbPanPointAction, bb_pan_point_action, BB, PAN_POINT_ACTION, GObject)
 
-#define BB_TYPE_COPY_RECEIVER bb_copy_receiver_get_type()
-G_DECLARE_INTERFACE(BbCopyReceiver, bb_copy_receiver, BB, COPY_RECEIVER, GObject)
-
-struct _BbCopyReceiverInterface
-{
-    GTypeInterface g_iface;
-
-    gboolean (*can_copy)(BbCopyReceiver *receiver);
-    void (*copy)(BbCopyReceiver *receiver);
-
-};
-
-gboolean
-bb_copy_receiver_can_copy(BbCopyReceiver *receiver);
-
-void
-bb_copy_receiver_copy(BbCopyReceiver *receiver);
-
-G_END_DECLS
+BbPanPointAction*
+bb_pan_point_action_new(BbMainWindow *window);
 
 #endif

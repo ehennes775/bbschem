@@ -27,7 +27,7 @@ enum
 {
     PROP_0,
     PROP_ITEM,
-    PROP_SUBJECT,
+    PROP_RECEIVER,
     N_PROPERTIES
 };
 
@@ -186,10 +186,10 @@ bb_circle_tool_class_init(BbCircleToolClass *klasse)
             )
         );
 
-    properties[PROP_SUBJECT] = bb_object_class_install_property(
-        object_class,
-        PROP_SUBJECT,
-        g_param_spec_object(
+    properties[PROP_RECEIVER] = bb_object_class_install_property(
+            object_class,
+            PROP_RECEIVER,
+            g_param_spec_object(
             "subject",
             "",
             "",
@@ -291,7 +291,7 @@ bb_circle_tool_get_property(GObject *object, guint property_id, GValue *value, G
             g_value_set_object(value, bb_circle_tool_get_item(BB_CIRCLE_TOOL(object)));
             break;
 
-        case PROP_SUBJECT:
+        case PROP_RECEIVER:
             g_value_set_object(value, bb_circle_tool_get_subject(BB_CIRCLE_TOOL(object)));
             break;
 
@@ -450,7 +450,7 @@ bb_circle_tool_set_property(GObject *object, guint property_id, const GValue *va
             bb_circle_tool_set_item(BB_CIRCLE_TOOL(object), BB_GEDA_CIRCLE(g_value_get_object(value)));
             break;
 
-        case PROP_SUBJECT:
+        case PROP_RECEIVER:
             bb_circle_tool_set_subject(BB_CIRCLE_TOOL(object), BB_TOOL_SUBJECT(g_value_get_object(value)));
             break;
 
@@ -479,7 +479,7 @@ bb_circle_tool_set_subject(BbCircleTool *tool, BbToolSubject *subject)
             g_object_ref(tool->subject);
         }
 
-        g_object_notify_by_pspec(G_OBJECT(tool), properties[PROP_SUBJECT]);
+        g_object_notify_by_pspec(G_OBJECT(tool), properties[PROP_RECEIVER]);
     }
 }
 

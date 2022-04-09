@@ -17,7 +17,7 @@
  */
 
 #include <gtk/gtk.h>
-#include <bbextensions.h>
+#include "bbextensions.h"
 #include "bbreloadaction.h"
 #include "gedaplugin/bbgedaeditor.h"
 
@@ -39,7 +39,7 @@ struct _BbReloadAction
 {
     GObject parent;
 
-    BbMainWindow* window;
+    GObject* receiver;
 };
 
 
@@ -111,15 +111,15 @@ bb_reload_action_action_init(GActionInterface *iface)
 static void
 bb_reload_action_activate(GAction *action, GVariant *parameter)
 {
-    GtkWidget *window = bb_main_window_get_current_document_window(
-        bb_reload_action_get_window(BB_RELOAD_ACTION(action))
-        );
+    //GtkWidget *receiver = bb_main_receiver_get_current_document_receiver(
+    //    bb_reload_action_get_receiver(BB_RELOAD_ACTION(action))
+    //    );
 
-    //if (BB_IS_SCHEMATIC_WINDOW(window))
+    //if (BB_IS_SCHEMATIC_RECEIVER(receiver))
     //{
     //    GError *error = NULL/;
 //
-//        bb_schematic_window_reload(BB_SCHEMATIC_WINDOW(window), &error);
+//        bb_schematic_receiver_reload(BB_SCHEMATIC_RECEIVER(receiver), &error);
 //
 //        g_clear_error(&error);
 //    }
@@ -175,10 +175,10 @@ bb_reload_action_class_init(BbReloadActionClass *klasse)
             G_OBJECT_CLASS(klasse),
             PROP_RECEIVER,
             properties[PROP_RECEIVER] = g_param_spec_object(
-            "window",
+            "receiver",
             "",
             "",
-            BB_TYPE_MAIN_WINDOW,
+            G_TYPE_OBJECT,
             G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS
             )
         );
@@ -202,13 +202,13 @@ bb_reload_action_get_enabled(GAction *action)
 {
     g_return_val_if_fail(action != NULL, FALSE);
 
-    GtkWidget *window = bb_main_window_get_current_document_window(
-        bb_reload_action_get_window(BB_RELOAD_ACTION(action))
-        );
+    //GtkWidget *receiver = bb_main_receiver_get_current_document_receiver(
+   ///     bb_reload_action_get_receiver(BB_RELOAD_ACTION(action))
+     //   );
 
     return FALSE; // TODO
-        //BB_IS_SCHEMATIC_WINDOW(window) &&
-        //bb_schematic_window_get_can_reload(BB_SCHEMATIC_WINDOW(window));
+        //BB_IS_SCHEMATIC_RECEIVER(receiver) &&
+        //bb_schematic_receiver_get_can_reload(BB_SCHEMATIC_RECEIVER(receiver));
 }
 
 
@@ -260,7 +260,7 @@ bb_reload_action_get_property(GObject *object, guint property_id, GValue *value,
             break;
 
         case PROP_RECEIVER:
-            g_value_set_object(value, bb_reload_action_get_window(BB_RELOAD_ACTION(object)));
+            g_value_set_object(value, bb_reload_action_get_receiver(BB_RELOAD_ACTION(object)));
             break;
 
         default:
@@ -296,28 +296,27 @@ bb_reload_action_get_state_type(GAction *action)
 }
 
 
-BbMainWindow*
-bb_reload_action_get_window(BbReloadAction *action)
+GObject *
+bb_reload_action_get_receiver(BbReloadAction *action)
 {
     g_return_val_if_fail(action != NULL, NULL);
 
-    return action->window;
+    return action->receiver;
 }
 
 
 static void
 bb_reload_action_init(BbReloadAction *action)
 {
-    action->window = NULL;
+    action->receiver = NULL;
 }
 
 
 BbReloadAction*
-bb_reload_action_new(BbMainWindow *window)
+bb_reload_action_new()
 {
     return BB_RELOAD_ACTION(g_object_new(
         BB_TYPE_RELOAD_ACTION,
-        "window", window,
         NULL
         ));
 }
@@ -336,7 +335,7 @@ bb_reload_action_set_property(GObject *object, guint property_id, const GValue *
     switch (property_id)
     {
         case PROP_RECEIVER:
-            bb_reload_action_set_window(BB_RELOAD_ACTION(object), g_value_get_object(value));
+            bb_reload_action_set_receiver(BB_RELOAD_ACTION(object), g_value_get_object(value));
             break;
 
         default:
@@ -346,22 +345,22 @@ bb_reload_action_set_property(GObject *object, guint property_id, const GValue *
 
 
 void
-bb_reload_action_set_window(BbReloadAction *action, BbMainWindow* window)
+bb_reload_action_set_receiver(BbReloadAction *action, GObject* receiver)
 {
     g_return_if_fail(action != NULL);
 
-    if (action->window != window)
+    if (action->receiver != receiver)
     {
-        if (action->window != NULL)
+        if (action->receiver != NULL)
         {
-            g_object_unref(action->window);
+            g_object_unref(action->receiver);
         }
 
-        action->window = window;
+        action->receiver = receiver;
 
-        if (action->window != NULL)
+        if (action->receiver != NULL)
         {
-            g_object_ref(action->window);
+            g_object_ref(action->receiver);
         }
 
         g_object_notify_by_pspec(G_OBJECT(action), properties[PROP_RECEIVER]);
