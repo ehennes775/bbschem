@@ -222,13 +222,6 @@ bb_absolute_line_to_new(int x, int y)
 }
 
 
-__attribute__((constructor)) void
-bb_absolute_line_to_register()
-{
-    bb_absolute_line_to_get_type();
-}
-
-
 static void
 bb_absolute_line_to_render(BbPathCommand *command, BbItemRenderer *renderer)
 {

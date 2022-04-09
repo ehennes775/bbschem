@@ -482,13 +482,6 @@ bb_text_tool_panel_init(BbTextToolPanel *panel)
 
 
 
-__attribute__((constructor)) void
-bb_text_tool_panel_register()
-{
-    bb_text_tool_panel_get_type();
-}
-
-
 static void
 bb_text_tool_panel_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec)
 {

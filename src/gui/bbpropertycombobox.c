@@ -324,13 +324,6 @@ bb_property_combo_box_notify_active(BbPropertyComboBox *combo, GParamSpec *pspec
 }
 
 
-__attribute__((constructor)) void
-bb_property_combo_box_register()
-{
-    bb_property_combo_box_get_type();
-}
-
-
 static void
 bb_property_combo_box_remove_widget(BbPropertyComboBox *combo, GtkWidget *widget, gpointer unused)
 {
@@ -345,6 +338,8 @@ bb_property_combo_box_remove_widget(BbPropertyComboBox *combo, GtkWidget *widget
 void
 bb_property_combo_box_set_action_group(BbPropertyComboBox *combo, GActionGroup *group)
 {
+    g_return_if_fail(BB_IS_PROPERTY_COMBO_BOX(combo));
+
     BbPropertyComboBoxPrivate *privat = bb_property_combo_box_get_instance_private(combo);
     g_return_if_fail(privat != NULL);
 

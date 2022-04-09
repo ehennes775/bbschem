@@ -223,13 +223,6 @@ bb_geda_item_is_significant_missing(BbGedaItem *item)
 }
 
 
-__attribute__((constructor)) void
-bb_geda_item_register()
-{
-    bb_geda_item_get_type();
-}
-
-
 void
 bb_geda_item_render(BbGedaItem *item, BbItemRenderer *renderer)
 {

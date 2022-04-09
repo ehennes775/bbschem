@@ -224,13 +224,6 @@ bb_relative_line_to_new(int dx, int dy)
 }
 
 
-__attribute__((constructor)) void
-bb_relative_line_to_register()
-{
-    bb_relative_line_to_get_type();
-}
-
-
 static void
 bb_relative_line_to_render(BbPathCommand *command, BbItemRenderer *renderer)
 {

@@ -117,13 +117,6 @@ bb_attribute_editor_init(BbAttributeEditor *window)
 }
 
 
-__attribute__((constructor)) void
-bb_attribute_editor_register()
-{
-    bb_attribute_editor_get_type();
-}
-
-
 void
 bb_attribute_editor_set_document_window(BbAttributeEditor *editor, BbDocumentWindow *window)
 {

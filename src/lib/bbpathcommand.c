@@ -202,13 +202,6 @@ bb_path_command_output_missing(BbPathCommand *command, GSList *collector)
 }
 
 
-__attribute__((constructor)) void
-bb_path_command_register()
-{
-    bb_path_command_get_type();
-}
-
-
 void
 bb_path_command_render(BbPathCommand *command, BbItemRenderer *renderer)
 {

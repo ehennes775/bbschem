@@ -132,13 +132,6 @@ bb_circle_tool_panel_init(BbCircleToolPanel *window)
 }
 
 
-__attribute__((constructor)) void
-bb_circle_tool_panel_register()
-{
-    bb_circle_tool_panel_get_type();
-}
-
-
 static void
 bb_circle_tool_panel_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec)
 {

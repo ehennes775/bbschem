@@ -146,13 +146,6 @@ bb_alignment_combo_box_init(BbAlignmentComboBox *combo)
 }
 
 
-__attribute__((constructor)) void
-bb_alignment_combo_box_register()
-{
-    bb_alignment_combo_box_get_type();
-}
-
-
 void
 bb_alignment_combo_box_set_alignment(BbAlignmentComboBox *combo, BbTextAlignment alignment)
 {

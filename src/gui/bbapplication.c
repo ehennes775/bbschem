@@ -7,6 +7,7 @@ struct _BbApplication
     GtkApplication parent;
 };
 
+
 G_DEFINE_TYPE(BbApplication, bb_application, GTK_TYPE_APPLICATION);
 
 
@@ -46,12 +47,12 @@ bb_application_init(BbApplication *app)
 BbApplication*
 bb_application_new(void)
 {
-    return g_object_new(
-        BB_APPLICATION_TYPE,
-        "application-id", "com.github.ehennes775.bbsch",
+    return BB_APPLICATION(g_object_new(
+        BB_TYPE_APPLICATION,
+        "application-id", "com.github.ehennes775.bbschem",
         "flags", G_APPLICATION_HANDLES_OPEN,
         NULL
-        );
+        ));
 }
 
 

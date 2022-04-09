@@ -399,13 +399,6 @@ bb_line_style_editor_init(BbLineStyleEditor *editor)
 }
 
 
-__attribute__((constructor)) void
-bb_line_style_editor_register()
-{
-    bb_line_style_editor_get_type();
-}
-
-
 void
 bb_line_style_editor_set_main_window(BbLineStyleEditor *editor, BbMainWindow *window)
 {

@@ -132,13 +132,6 @@ bb_bus_tool_panel_init(BbBusToolPanel *window)
 }
 
 
-__attribute__((constructor)) void
-bb_bus_tool_panel_register()
-{
-    bb_bus_tool_panel_get_type();
-}
-
-
 static void
 bb_bus_tool_panel_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec)
 {

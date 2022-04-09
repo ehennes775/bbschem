@@ -116,13 +116,6 @@ bb_text_property_editor_init(BbTextPropertyEditor *editor)
 }
 
 
-__attribute__((constructor)) void
-bb_text_property_editor_register()
-{
-    bb_text_property_editor_get_type();
-}
-
-
 void
 bb_text_property_editor_set_main_window(BbTextPropertyEditor *editor, BbMainWindow *window)
 {

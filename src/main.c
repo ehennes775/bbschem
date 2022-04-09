@@ -7,6 +7,7 @@
 int
 main(int argc, char *argv[])
 {
+#if 0
     PeasEngine *engine = peas_engine_get_default();
 
     peas_engine_add_search_path(
@@ -30,6 +31,7 @@ main(int argc, char *argv[])
         engine,
         plugin_info
         );
+#endif
 
     int status = g_application_run(
         G_APPLICATION(bb_application_new()),
@@ -37,7 +39,9 @@ main(int argc, char *argv[])
         argv
         );
 
+#if 0
     g_clear_object(&engine);
+#endif
 
     return status;
 }

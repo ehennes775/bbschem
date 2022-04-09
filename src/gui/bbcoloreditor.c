@@ -178,13 +178,6 @@ bb_color_editor_init(BbColorEditor *window)
 }
 
 
-__attribute__((constructor)) void
-bb_color_editor_register()
-{
-    bb_color_editor_get_type();
-}
-
-
 void
 bb_color_editor_set_main_window(BbColorEditor *editor, BbMainWindow *window)
 {

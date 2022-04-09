@@ -117,13 +117,6 @@ bb_color_combo_box_init(BbColorComboBox *combo)
 }
 
 
-__attribute__((constructor)) void
-bb_color_combo_box_register()
-{
-    bb_color_combo_box_get_type();
-}
-
-
 void
 bb_color_combo_box_set_color(BbColorComboBox *combo, int index)
 {

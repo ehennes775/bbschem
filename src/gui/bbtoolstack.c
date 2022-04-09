@@ -242,13 +242,6 @@ bb_tool_stack_notify_visible_child_cb(BbToolStack *stack, GParamSpec *psped, gpo
 }
 
 
-__attribute__((constructor)) void
-bb_tool_stack_register()
-{
-    bb_tool_stack_get_type();
-}
-
-
 static void
 bb_tool_stack_set_grid_visible(BbGridControl *grid_control, gboolean visible)
 {

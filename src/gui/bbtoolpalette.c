@@ -190,13 +190,6 @@ bb_tool_palette_init(BbToolPalette *palette)
 }
 
 
-__attribute__((constructor)) void
-bb_tool_palette_register()
-{
-    bb_tool_palette_get_type();
-}
-
-
 void
 bb_tool_palette_set_main_window(BbToolPalette *palette, BbMainWindow *window)
 {

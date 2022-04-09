@@ -111,13 +111,6 @@ bb_cell_renderer_color_swatch_init(BbCellRendererColorSwatch *renderer)
 }
 
 
-__attribute__((constructor)) void
-bb_cell_renderer_color_swatch_register()
-{
-    bb_cell_renderer_color_swatch_get_type();
-}
-
-
 static void
 bb_cell_renderer_color_swatch_render(
     GtkCellRenderer *cell,

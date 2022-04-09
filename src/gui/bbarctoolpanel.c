@@ -116,13 +116,6 @@ bb_arc_tool_panel_init(BbArcToolPanel *panel)
 }
 
 
-__attribute__((constructor)) void
-bb_arc_tool_panel_register()
-{
-    bb_arc_tool_panel_get_type();
-}
-
-
 static BbDrawingTool*
 bb_arc_tool_panel_select_tool(BbToolFactory *factory, BbDrawingToolSupport *support)
 {

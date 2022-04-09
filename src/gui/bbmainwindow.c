@@ -74,6 +74,7 @@
 #include "actions/bbopenaction.h"
 #include "actions/bbnewaction.h"
 #include "bbgeneralopener.h"
+#include "bbint32combobox.h"
 
 
 enum
@@ -120,6 +121,9 @@ static void
 bb_main_window_page_removed(BbMainWindow *window, GtkWidget *child, guint page_num, GtkNotebook *notebook);
 
 static void
+bb_main_window_quit_receiver_init(BbQuitReceiverInterface *iface);
+
+static void
 bb_main_window_set_opener(BbMainWindow *main_window, BbGeneralOpener *general_opener);
 
 static void
@@ -132,7 +136,13 @@ bb_main_window_update(GtkWidget *child, BbMainWindow *window);
 static GParamSpec *properties[N_PROPERTIES];
 
 
-G_DEFINE_TYPE(BbMainWindow, bb_main_window, GTK_TYPE_APPLICATION_WINDOW)
+G_DEFINE_TYPE_EXTENDED(
+        BbMainWindow,
+        bb_main_window,
+        GTK_TYPE_APPLICATION_WINDOW,
+        0,
+        G_IMPLEMENT_INTERFACE(BB_TYPE_QUIT_RECEIVER, bb_main_window_quit_receiver_init)
+        )
 
 
 static void
@@ -143,8 +153,31 @@ bb_main_window_extension_added(
     BbMainWindow *main_window
     )
 {
-    peas_activatable_activate(PEAS_ACTIVATABLE(extension));
+  //  peas_activatable_activate(PEAS_ACTIVATABLE(extension));
 }
+
+
+// region From BbQuitReceiver interface
+
+static void
+bb_main_window_quit(BbQuitReceiver *receiver)
+{
+    GtkWindow *window = GTK_WINDOW(receiver);
+
+    GApplication *application = G_APPLICATION(gtk_window_get_application(window));
+
+    g_application_quit(application);
+}
+
+static void
+bb_main_window_quit_receiver_init(BbQuitReceiverInterface *iface)
+{
+    g_return_if_fail(iface != NULL);
+
+    iface->quit = bb_main_window_quit;
+}
+
+// endregion
 
 
 static void
@@ -155,7 +188,7 @@ bb_main_window_extension_removed(
     BbMainWindow *main_window
     )
 {
-    peas_activatable_deactivate(PEAS_ACTIVATABLE(extension));
+//    peas_activatable_deactivate(PEAS_ACTIVATABLE(extension));
 }
 
 
@@ -275,6 +308,8 @@ bb_main_window_add_page(BbMainWindow *window, BbDocumentWindow *page)
 static void
 bb_main_window_class_init(BbMainWindowClass *class)
 {
+    BB_TYPE_INT32_COMBO_BOX;
+
     BB_TYPE_ATTRIBUTE_EDITOR;
     BB_TYPE_COLOR_EDITOR;
     BB_TYPE_FILL_STYLE_EDITOR;
@@ -296,7 +331,6 @@ bb_main_window_class_init(BbMainWindowClass *class)
     BB_TYPE_PIN_TOOL_PANEL;
     BB_TYPE_BUS_TOOL_PANEL;
     BB_TYPE_NET_TOOL_PANEL;
-
 
     G_OBJECT_CLASS(class)->dispose = bb_main_window_dispose;
     G_OBJECT_CLASS(class)->get_property = bb_main_window_get_property;
@@ -381,6 +415,8 @@ bb_main_window_dispose(GObject *object)
 
     g_set_object(&window->current_page, NULL);
     g_clear_object(&window->extensions);
+
+    G_OBJECT_CLASS(bb_main_window_parent_class)->dispose(object);
 }
 
 
@@ -440,6 +476,12 @@ bb_main_window_init(BbMainWindow *window)
 {
     gtk_widget_init_template(GTK_WIDGET(window));
 
+    g_action_map_add_action(
+        G_ACTION_MAP(window),
+        G_ACTION(bb_quit_action_new(BB_QUIT_RECEIVER(window)))
+        );
+
+#if 0
 //    bb_main_window_add_page(window, g_object_new(
 //        BB_TYPE_SCHEMATIC_WINDOW,
 //        "grid-control", window->tool_stack,
@@ -471,11 +513,6 @@ bb_main_window_init(BbMainWindow *window)
     g_action_map_add_action(
         G_ACTION_MAP(window),
         G_ACTION(bb_paste_action_new(window))
-        );
-
-    g_action_map_add_action(
-        G_ACTION_MAP(window),
-        G_ACTION(bb_quit_action_new(window))
         );
 
     g_action_map_add_action(
@@ -643,6 +680,7 @@ bb_main_window_init(BbMainWindow *window)
         G_CALLBACK(bb_main_window_extension_removed),
         window
         );
+#endif
 }
 
 
@@ -652,7 +690,6 @@ bb_main_window_new(BbApplication *application)
     return g_object_new(
         BB_TYPE_MAIN_WINDOW,
         "application", application,
-        //"opener", bb_general_opener_new(),
         NULL
         );
 }
@@ -706,13 +743,6 @@ bb_main_window_page_removed(BbMainWindow *window, GtkWidget *child, guint page_n
         G_CALLBACK(bb_main_window_update),
         window
         );
-}
-
-
-__attribute__((constructor)) void
-bb_main_window_register()
-{
-    bb_main_window_get_type();
 }
 
 

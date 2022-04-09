@@ -322,13 +322,6 @@ bb_reload_action_new()
 }
 
 
-__attribute__((constructor)) void
-bb_reload_action_register()
-{
-    bb_reload_action_get_type();
-}
-
-
 static void
 bb_reload_action_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec)
 {

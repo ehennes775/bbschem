@@ -23,23 +23,16 @@
 G_DEFINE_INTERFACE(BbQuitReceiver, bb_quit_receiver, G_TYPE_OBJECT)
 
 
-gboolean
-bb_quit_receiver_can_quit(BbQuitReceiver *receiver)
-{
-    g_return_val_if_fail(BB_IS_QUIT_RECEIVER(receiver), FALSE);
-
-    BbQuitReceiverInterface *iface = BB_QUIT_RECEIVER_GET_IFACE(receiver);
-
-    g_return_val_if_fail(iface != NULL, FALSE);
-
-    return iface->can_quit(receiver);
-}
+void
+bb_quit_receiver_quit_default(BbQuitReceiver *receiver);
 
 
 static void
-bb_quit_receiver_default_init(BbQuitReceiverInterface *class)
+bb_quit_receiver_default_init(BbQuitReceiverInterface *klasse)
 {
-    g_return_if_fail(class != NULL);
+    g_return_if_fail(klasse != NULL);
+
+    klasse->quit = bb_quit_receiver_quit_default;
 }
 
 
@@ -51,6 +44,14 @@ bb_quit_receiver_quit(BbQuitReceiver *receiver)
     BbQuitReceiverInterface *iface = BB_QUIT_RECEIVER_GET_IFACE(receiver);
 
     g_return_if_fail(iface != NULL);
+    g_return_if_fail(iface->quit != NULL);
 
     iface->quit(receiver);
+}
+
+
+void
+bb_quit_receiver_quit_default(BbQuitReceiver *receiver)
+{
+    g_message("Not implemented: bb_quit_receiver_quit");
 }

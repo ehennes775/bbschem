@@ -33,6 +33,7 @@ typedef struct _BbDocumentWindowPrivate BbDocumentWindowPrivate;
 
 struct _BbDocumentWindowPrivate
 {
+    int dummy;
 };
 
 G_DEFINE_TYPE_WITH_PRIVATE(BbDocumentWindow, bb_document_window, GTK_TYPE_BOX);
@@ -154,13 +155,6 @@ bb_document_window_get_tab_missing(BbDocumentWindow *window)
 static void
 bb_document_window_init(BbDocumentWindow *window)
 {
-}
-
-
-__attribute__((constructor)) void
-bb_document_window_register()
-{
-    bb_document_window_get_type();
 }
 
 

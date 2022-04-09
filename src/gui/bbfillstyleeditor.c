@@ -498,13 +498,6 @@ bb_fill_style_editor_init(BbFillStyleEditor *window)
 }
 
 
-__attribute__((constructor)) void
-bb_fill_style_editor_register()
-{
-    bb_fill_style_editor_get_type();
-}
-
-
 void
 bb_fill_style_editor_set_main_window(BbFillStyleEditor *editor, BbMainWindow *window)
 {

@@ -338,19 +338,19 @@ static void
 bb_geda_editor_zoom_box(BbToolSubject *tool_subject, double x0, double y0, double x1, double y1);
 
 static void
-bb_geda_editor_zoom_extents(BbZoomSubject *zoom_subject);
+bb_geda_editor_zoom_extents(BbZoomReceiver *zoom_subject);
 
 static void
-bb_geda_editor_zoom_in(BbZoomSubject *zoom_subject);
+bb_geda_editor_zoom_in(BbZoomReceiver *zoom_subject);
 
 static void
-bb_geda_editor_zoom_out(BbZoomSubject *zoom_subject);
+bb_geda_editor_zoom_out(BbZoomReceiver *zoom_subject);
 
 static void
 bb_geda_editor_zoom_point(BbGedaEditor *editor, double x, double y, double factor);
 
 static void
-bb_geda_editor_zoom_subject_init(BbZoomSubjectInterface *iface);
+bb_geda_editor_zoom_receiver_init(BbZoomReceiverInterface *iface);
 
 // endregion
 
@@ -377,7 +377,7 @@ G_DEFINE_DYNAMIC_TYPE_EXTENDED(
     G_IMPLEMENT_INTERFACE_DYNAMIC(BB_TYPE_GRID_SUBJECT, bb_geda_editor_grid_subject_init)
     G_IMPLEMENT_INTERFACE_DYNAMIC(BB_TYPE_PROPERTY_SUBJECT, bb_geda_editor_property_subject_init)
     G_IMPLEMENT_INTERFACE_DYNAMIC(BB_TYPE_TOOL_SUBJECT, bb_geda_editor_tool_subject_init)
-    G_IMPLEMENT_INTERFACE_DYNAMIC(BB_TYPE_ZOOM_SUBJECT, bb_geda_editor_zoom_subject_init)
+    G_IMPLEMENT_INTERFACE_DYNAMIC(BB_TYPE_ZOOM_RECEIVER, bb_geda_editor_zoom_receiver_init)
     )
 
 // region From BbDocumentWindow Class
@@ -1001,7 +1001,7 @@ bb_geda_editor_get_can_zoom_out(BbGedaEditor *window)
 
 
 static void
-bb_geda_editor_pan(BbZoomSubject *zoom_subject, BbPanDirection direction)
+bb_geda_editor_pan(BbZoomReceiver *zoom_subject, BbPanDirection direction)
 {
     BbGedaEditor *window = BB_GEDA_EDITOR(zoom_subject);
     g_return_if_fail(window != NULL);
@@ -1038,7 +1038,7 @@ bb_geda_editor_pan(BbZoomSubject *zoom_subject, BbPanDirection direction)
 
 
 static void
-bb_geda_editor_pan_point(BbZoomSubject *zoom_subject)
+bb_geda_editor_pan_point(BbZoomReceiver *zoom_subject)
 {
     BbGedaEditor *window = BB_GEDA_EDITOR(zoom_subject);
     g_return_if_fail(window != NULL);
@@ -1074,7 +1074,7 @@ bb_geda_editor_zoom_box(BbToolSubject *tool_subject, double x0, double y0, doubl
 
 
 static void
-bb_geda_editor_zoom_extents(BbZoomSubject *zoom_subject)
+bb_geda_editor_zoom_extents(BbZoomReceiver *zoom_subject)
 {
     BbGedaEditor *window = BB_GEDA_EDITOR(zoom_subject);
     g_return_if_fail(window != NULL);
@@ -1123,7 +1123,7 @@ bb_geda_editor_zoom_extents(BbZoomSubject *zoom_subject)
 
 
 static void
-bb_geda_editor_zoom_in(BbZoomSubject *zoom_subject)
+bb_geda_editor_zoom_in(BbZoomReceiver *zoom_subject)
 {
     BbGedaEditor *window = BB_GEDA_EDITOR(zoom_subject);
     g_return_if_fail(window != NULL);
@@ -1136,7 +1136,7 @@ bb_geda_editor_zoom_in(BbZoomSubject *zoom_subject)
 
 
 static void
-bb_geda_editor_zoom_out(BbZoomSubject *zoom_subject)
+bb_geda_editor_zoom_out(BbZoomReceiver *zoom_subject)
 {
     BbGedaEditor *window = BB_GEDA_EDITOR(zoom_subject);
     g_return_if_fail(window != NULL);
@@ -1194,7 +1194,7 @@ bb_geda_editor_zoom_point(BbGedaEditor *editor, double x, double y, double facto
 
 
 static void
-bb_geda_editor_zoom_point2(BbZoomSubject *zoom_subject, BbZoomDirection direction)
+bb_geda_editor_zoom_point2(BbZoomReceiver *zoom_subject, BbZoomDirection direction)
 {
     BbGedaEditor *window = BB_GEDA_EDITOR(zoom_subject);
     g_return_if_fail(window != NULL);
@@ -1216,7 +1216,7 @@ bb_geda_editor_zoom_point2(BbZoomSubject *zoom_subject, BbZoomDirection directio
 
 
 static void
-bb_geda_editor_zoom_subject_init(BbZoomSubjectInterface *iface)
+bb_geda_editor_zoom_receiver_init(BbZoomReceiverInterface *iface)
 {
     g_return_if_fail(iface != NULL);
 
@@ -1631,17 +1631,17 @@ bb_geda_editor_get_property(GObject *object, guint property_id, GValue *value, G
             g_value_set_boolean(value, bb_geda_editor_get_can_scale_up(BB_GRID_SUBJECT(object)));
             break;
 
-        case PROP_CAN_SELECT_ALL:
-            g_value_set_boolean(value, bb_geda_editor_get_can_select_all(BB_CLIPBOARD_SUBJECT(object)));
-            break;
-
-        case PROP_CAN_SELECT_NONE:
-            g_value_set_boolean(value, bb_geda_editor_get_can_select_none(BB_CLIPBOARD_SUBJECT(object)));
-            break;
-
-        case PROP_CAN_UNDO:
-            g_value_set_boolean(value, bb_geda_editor_get_can_undo(BB_CLIPBOARD_SUBJECT(object)));
-            break;
+//        case PROP_CAN_SELECT_ALL:
+//            g_value_set_boolean(value, bb_geda_editor_get_can_select_all(BB_CLIPBOARD_SUBJECT(object)));
+//            break;
+//
+//        case PROP_CAN_SELECT_NONE:
+//            g_value_set_boolean(value, bb_geda_editor_get_can_select_none(BB_CLIPBOARD_SUBJECT(object)));
+//            break;
+//
+//        case PROP_CAN_UNDO:
+//            g_value_set_boolean(value, bb_geda_editor_get_can_undo(BB_CLIPBOARD_SUBJECT(object)));
+//            break;
 
         case PROP_CAN_ZOOM_EXTENTS:
             g_value_set_boolean(value, bb_geda_editor_get_can_zoom_extents(window));

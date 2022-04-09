@@ -158,12 +158,6 @@ bb_component_selector_plugin_init(BbComponentSelectorPlugin *plugin)
 }
 
 
-__attribute__((constructor)) void
-bb_component_selector_plugin_register()
-{
-}
-
-
 void
 bb_component_selector_plugin_set_object(BbComponentSelectorPlugin *plugin, GObject *object)
 {

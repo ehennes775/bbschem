@@ -24,12 +24,19 @@
 enum
 {
     PROP_0,
+
+    /* From GAction */
+
     PROP_ENABLED,
     PROP_NAME,
     PROP_PARAMETER_TYPE,
     PROP_STATE,
     PROP_STATE_TYPE,
+
+    /* From BbQuitAction */
+
     PROP_RECEIVER,
+
     N_PROPERTIES
 };
 
@@ -38,7 +45,7 @@ struct _BbQuitAction
 {
     GObject parent;
 
-    GObject* receiver;
+    BbQuitReceiver* receiver;
 };
 
 
@@ -110,7 +117,13 @@ bb_quit_action_action_init(GActionInterface *iface)
 static void
 bb_quit_action_activate(GAction *action, GVariant *parameter)
 {
-    g_message("bb_quit_action_activate");
+    g_return_if_fail(BB_IS_QUIT_ACTION(action));
+
+    BbQuitReceiver *receiver = bb_quit_action_get_receiver(action);
+
+    g_return_if_fail(receiver != NULL);
+
+    bb_quit_receiver_quit(receiver);
 }
 
 
@@ -175,16 +188,13 @@ bb_quit_action_class_init(BbQuitActionClass *klasse)
 static void
 bb_quit_action_dispose(GObject *object)
 {
-    g_return_if_fail(object != NULL);
-
     BbQuitAction *action = BB_QUIT_ACTION(object);
+
     g_return_if_fail(action != NULL);
 
-    if (action->receiver != NULL)
-    {
-        g_object_unref(action->receiver);
-        action->receiver = NULL;
-    }
+    bb_quit_action_set_receiver(action, NULL);
+
+    G_OBJECT_CLASS(bb_quit_action_parent_class)->dispose(object);
 }
 
 
@@ -206,11 +216,9 @@ bb_quit_action_get_enabled(GAction *action)
 static const gchar *
 bb_quit_action_get_name(GAction *action)
 {
-    const gchar *name = "quit";
+    g_warn_if_fail(action != NULL);
 
-    g_return_val_if_fail(action != NULL, name);
-
-    return name;
+    return "quit";
 }
 
 

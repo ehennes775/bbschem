@@ -202,13 +202,6 @@ bb_int32_combo_box_parse_value(BbInt32ComboBox *combo, GError **error)
 }
 
 
-__attribute__((constructor)) void
-bb_int32_combo_box_register()
-{
-    bb_int32_combo_box_get_type();
-}
-
-
 void
 bb_int32_combo_box_set_value(BbInt32ComboBox *combo, int value)
 {

@@ -161,13 +161,6 @@ bb_document_window_tab_notify(GObject *unused, GParamSpec *pspec, BbDocumentWind
 }
 
 
-__attribute__((constructor)) void
-bb_document_window_tab_register()
-{
-    bb_document_window_tab_get_type();
-}
-
-
 void
 bb_document_window_tab_set_document_window(BbDocumentWindowTab *tab, BbDocumentWindow *window)
 {

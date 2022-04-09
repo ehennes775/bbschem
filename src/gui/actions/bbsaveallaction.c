@@ -26,13 +26,20 @@
 enum
 {
     PROP_0,
+
+    /* From GAction */
+
     PROP_ENABLED,
     PROP_NAME,
     PROP_PARAMETER_TYPE,
     PROP_STATE,
     PROP_STATE_HINT,
     PROP_STATE_TYPE,
+
+    /* From BbSaveAllAction */
+
     PROP_RECEIVER,
+
     N_PROPERTIES
 };
 
@@ -211,14 +218,19 @@ bb_save_all_action_class_init(BbSaveAllActionClass *klasse)
 static void
 bb_save_all_action_dispose(GObject *object)
 {
-    // BbSaveAllAction* privat = BbSave_all_action_GET_PRIVATE(object);
+    BbSaveAllAction *action = BB_SAVE_ALL_ACTION(object);
+
+    g_return_if_fail(action != NULL);
+
+    bb_save_all_action_set_receiver(action, NULL);
+
+    G_OBJECT_GET_CLASS(bb_save_all_action_parent_class)->dispose(object);
 }
 
 
 static void
 bb_save_all_action_finalize(GObject *object)
 {
-    // BbSaveAllAction* privat = BbSave_all_action_GET_PRIVATE(object);
 }
 
 
@@ -227,15 +239,23 @@ bb_save_all_action_get_enabled(GAction *action)
 {
     g_return_val_if_fail(action != NULL, FALSE);
 
+    gboolean enabled = FALSE;
     GSList *list = NULL;
 
+    for (GSList *iter = list; iter != NULL && !enabled; iter = iter->next)
+    {
+        if (BB_IS_SAVE_RECEIVER(iter->data))
+        {
+            BbSaveReceiver *receiver = BB_SAVE_RECEIVER(iter->data);
 
+            if (receiver != NULL)
+            {
+                enabled = bb_save_receiver_get_can_save(receiver);
+            }
+        }
+    }
 
-    return TRUE;
-
-        // TODO
-        //BB_IS_SCHEMATIC_WINDOW(window) &&
-        //bb_schematic_window_get_can_save(BB_SCHEMATIC_WINDOW(window));
+    return enabled;
 }
 
 

@@ -324,13 +324,6 @@ bb_paste_action_new()
 }
 
 
-__attribute__((constructor)) void
-bb_paste_action_register()
-{
-    bb_paste_action_get_type();
-}
-
-
 static void
 bb_paste_action_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec)
 {

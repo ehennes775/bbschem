@@ -142,13 +142,6 @@ bb_pin_property_editor_init(BbPinPropertyEditor *editor)
 }
 
 
-__attribute__((constructor)) void
-bb_pin_property_editor_register()
-{
-    bb_pin_property_editor_get_type();
-}
-
-
 void
 bb_pin_property_editor_set_main_window(BbPinPropertyEditor *editor, BbMainWindow *window)
 {

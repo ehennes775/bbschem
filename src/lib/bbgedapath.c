@@ -927,13 +927,6 @@ bb_geda_path_rotate_lambda(BbPathCommand *command, RotateCapture *capture)
 }
 
 
-__attribute__((constructor)) void
-bb_geda_path_register()
-{
-    bb_geda_path_get_type();
-}
-
-
 static void
 bb_geda_path_render(BbGedaItem *item, BbItemRenderer *renderer)
 {

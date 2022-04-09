@@ -334,13 +334,6 @@ bb_save_action_new()
 }
 
 
-__attribute__((constructor)) void
-bb_save_action_register()
-{
-    bb_save_action_get_type();
-}
-
-
 static void
 bb_save_action_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec)
 {

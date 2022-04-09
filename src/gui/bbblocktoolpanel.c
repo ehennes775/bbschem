@@ -68,13 +68,6 @@ bb_block_tool_panel_init(BbBlockToolPanel *window)
 }
 
 
-__attribute__((constructor)) void
-bb_block_tool_panel_register()
-{
-    bb_block_tool_panel_get_type();
-}
-
-
 static void
 bb_block_tool_panel_tool_factory_init(BbToolFactoryInterface *iface)
 {

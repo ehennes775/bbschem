@@ -106,13 +106,6 @@ bb_fill_type_combo_box_init(BbFillTypeComboBox *combo)
 }
 
 
-__attribute__((constructor)) void
-bb_fill_type_combo_box_register()
-{
-    bb_fill_type_combo_box_get_type();
-}
-
-
 void
 bb_fill_type_combo_box_set_fill_type(BbFillTypeComboBox *combo, BbFillType fill_type)
 {

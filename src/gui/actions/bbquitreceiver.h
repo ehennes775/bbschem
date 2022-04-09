@@ -27,13 +27,8 @@ struct _BbQuitReceiverInterface
 {
     GTypeInterface g_iface;
 
-    gboolean (*can_quit)(BbQuitReceiver *receiver);
     void (*quit)(BbQuitReceiver *receiver);
-
 };
-
-gboolean
-bb_quit_receiver_can_quit(BbQuitReceiver *receiver);
 
 void
 bb_quit_receiver_quit(BbQuitReceiver *receiver);

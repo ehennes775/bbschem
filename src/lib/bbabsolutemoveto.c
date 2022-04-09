@@ -228,13 +228,6 @@ bb_absolute_move_to_mirror_y(BbPathCommand *command, int cy)
 }
 
 
-__attribute__((constructor)) void
-bb_absolute_move_to_register()
-{
-    bb_absolute_move_to_get_type();
-}
-
-
 static void
 bb_absolute_move_to_render(BbPathCommand *command, BbItemRenderer *renderer)
 {
