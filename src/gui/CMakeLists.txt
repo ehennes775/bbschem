@@ -23,20 +23,12 @@ add_library(bbschemgui SHARED
         bbchoosetoolaction.h
         bbcircletoolpanel.c
         bbcircletoolpanel.h
-        bbclipboardsubject.c
-        bbclipboardsubject.h
         bbcolorcombobox.c
         bbcolorcombobox.h
         bbcoloreditor.c
         bbcoloreditor.h
         bbcomponentselectorplugin.c
         bbcomponentselectorplugin.h
-        bbcopyaction.c
-        bbcopyaction.h
-        bbcutaction.c
-        bbcutaction.h
-        bbdeleteaction.c
-        bbdeleteaction.h
         bbdocumentwindow.c
         bbdocumentwindow.h
         bbdocumentwindowtab.c
@@ -81,8 +73,6 @@ add_library(bbschemgui SHARED
         bbpandirection.h
         bbpanpointaction.c
         bbpanpointaction.h
-        bbpasteaction.c
-        bbpasteaction.h
         bbpinpropertyeditor.c
         bbpinpropertyeditor.h
         bbpintoolpanel.c
@@ -93,29 +83,17 @@ add_library(bbschemgui SHARED
         bbpropertysubject.h
         bbquitaction.c
         bbquitaction.h
-        bbredoaction.c
-        bbredoaction.h
         bbreloadaction.c
         bbreloadaction.h
-        bbrevealaction.c
-        bbrevealaction.h
-        bbrevealsubject.c
-        bbrevealsubject.h
-        bbsaveaction.c
-        bbsaveaction.h
         bbsaveallaction.c
         bbsaveallaction.h
-        bbsaveasaction.c
-        bbsaveasaction.h
-        bbsavesubject.c
-        bbsavesubject.h
         bbscalegridaction.c
         bbscalegridaction.h
         bbscalegriddirection.h
-        bbselectallaction.c
-        bbselectallaction.h
-        bbselectnoneaction.c
-        bbselectnoneaction.h
+        actions/bbselectallaction.c
+        actions/bbselectallaction.h
+        actions/bbselectnoneaction.c
+        actions/bbselectnoneaction.h
         bbselecttoolpanel.c
         bbselecttoolpanel.h
         bbshowgridaction.c
@@ -138,8 +116,6 @@ add_library(bbschemgui SHARED
         bbtoolstack.h
         bbtoolsubject.c
         bbtoolsubject.h
-        bbundoaction.c
-        bbundoaction.h
         bbzoomdirection.h
         bbzoomdirection.h
         bbzoomextentsaction.c
@@ -158,4 +134,40 @@ add_library(bbschemgui SHARED
         bbtextcontrol.c
         bbalignmentcombobox.c
         bbalignmentcombobox.h
+        actions/bbcopyaction.c
+        actions/bbcopyaction.h
+        actions/bbcopyreceiver.c
+        actions/bbcopyreceiver.h
+        actions/bbcutaction.c
+        actions/bbcutaction.h
+        actions/bbcutreceiver.c
+        actions/bbcutreceiver.h
+        actions/bbdeleteaction.c
+        actions/bbdeleteaction.h
+        actions/bbdeletereceiver.c
+        actions/bbdeletereceiver.h
+        actions/bbpasteaction.c
+        actions/bbpasteaction.h
+        actions/bbpastereceiver.c
+        actions/bbpastereceiver.h
+        actions/bbredoaction.c
+        actions/bbredoaction.h
+        actions/bbredoreceiver.c
+        actions/bbredoreceiver.h
+        actions/bbrevealaction.c
+        actions/bbrevealaction.h
+        actions/bbrevealreceiver.c
+        actions/bbrevealreceiver.h
+        actions/bbsaveaction.c
+        actions/bbsaveaction.h
+        actions/bbsaveasaction.c
+        actions/bbsaveasaction.h
+        actions/bbsavereceiver.c
+        actions/bbsavereceiver.h
+        actions/bbundoaction.c
+        actions/bbundoaction.h
+        actions/bbundoreceiver.c
+        actions/bbundoreceiver.h
+        actions/bbselectreceiver.c
+        actions/bbdeletereceiver.h
         )

@@ -29,7 +29,7 @@ enum
     PROP_PARAMETER_TYPE,
     PROP_STATE,
     PROP_STATE_TYPE,
-    PROP_WINDOW,
+    PROP_RECEIVER,
     N_PROPERTIES
 };
 
@@ -159,9 +159,9 @@ bb_quit_action_class_init(BbQuitActionClass *klasse)
         );
 
     bb_object_class_install_property(
-        G_OBJECT_CLASS(klasse),
-        PROP_WINDOW,
-        properties[PROP_WINDOW] = g_param_spec_object(
+            G_OBJECT_CLASS(klasse),
+            PROP_RECEIVER,
+            properties[PROP_RECEIVER] = g_param_spec_object(
             "window",
             "",
             "",
@@ -248,7 +248,7 @@ bb_quit_action_get_property(GObject *object, guint property_id, GValue *value, G
             g_value_set_boxed(value, bb_quit_action_get_state_type(G_ACTION(object)));
             break;
 
-        case PROP_WINDOW:
+        case PROP_RECEIVER:
             g_value_set_object(value, bb_quit_action_get_window(BB_QUIT_ACTION(object)));
             break;
 
@@ -324,7 +324,7 @@ bb_quit_action_set_property(GObject *object, guint property_id, const GValue *va
 {
     switch (property_id)
     {
-        case PROP_WINDOW:
+        case PROP_RECEIVER:
             bb_quit_action_set_window(BB_QUIT_ACTION(object), BB_MAIN_WINDOW(g_value_get_object(value)));
             break;
 
@@ -353,6 +353,6 @@ bb_quit_action_set_window(BbQuitAction *action, BbMainWindow* window)
             g_object_ref(action->window);
         }
 
-        g_object_notify_by_pspec(G_OBJECT(action), properties[PROP_WINDOW]);
+        g_object_notify_by_pspec(G_OBJECT(action), properties[PROP_RECEIVER]);
     }
 }

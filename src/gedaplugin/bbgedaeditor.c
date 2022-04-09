@@ -37,13 +37,16 @@
 #include "bbtoolchanger.h"
 #include "bbgraphics.h"
 #include "bbzoomsubject.h"
-#include "bbrevealsubject.h"
+#include "actions/bbrevealreceiver.h"
 #include "bbgridsubject.h"
-#include "bbclipboardsubject.h"
 #include "bbpandirection.h"
-#include "bbsavesubject.h"
+#include "actions/bbsavereceiver.h"
 #include "bbgrid.h"
 #include "bbgridcontrol.h"
+#include "actions/bbcopyreceiver.h"
+#include "actions/bbpastereceiver.h"
+#include "actions/bbdeletereceiver.h"
+#include "actions/bbcutreceiver.h"
 
 
 
@@ -229,8 +232,8 @@ bb_geda_editor_button_pressed_cb(GtkWidget *widget, GdkEvent *event, gpointer us
 static gboolean
 bb_geda_editor_button_released_cb(GtkWidget *widget, GdkEvent *event, gpointer user_data);
 
-static void
-bb_geda_editor_clipboard_subject_init(BbClipboardSubjectInterface *iface);
+//static void
+//bb_geda_editor_clipboard_subject_init(BbClipboardSubjectInterface *iface);
 
 static void
 bb_geda_editor_dispose(GObject *object);
@@ -260,7 +263,7 @@ static void
 bb_geda_editor_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
 
 static gboolean
-bb_geda_editor_get_reveal(BbRevealSubject *reveal_subject);
+bb_geda_editor_get_reveal(BbRevealReceiver *reveal_subject);
 
 static void
 bb_geda_editor_grid_subject_init(BbGridSubjectInterface *iface);
@@ -290,10 +293,10 @@ static void
 bb_geda_editor_property_subject_init(BbPropertySubjectInterface *iface);
 
 static void
-bb_geda_editor_reveal_subject_init(BbRevealSubjectInterface *iface);
+bb_geda_editor_reveal_receiver_init(BbRevealReceiverInterface *iface);
 
 static void
-bb_geda_editor_save_subject_init(BbSaveSubjectInterface *iface);
+bb_geda_editor_save_receiver_init(BbSaveReceiverInterface *iface);
 
 static void
 bb_geda_editor_set_file(BbGedaEditor *editor, GFile *file);
@@ -308,7 +311,7 @@ static void
 bb_geda_editor_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
 
 static void
-bb_geda_editor_set_reveal(BbRevealSubject *reveal_subject, gboolean reveal);
+bb_geda_editor_set_reveal(BbRevealReceiver *reveal_subject, gboolean reveal);
 
 static void
 bb_geda_editor_set_schematic(BbGedaEditor *window, BbSchematic *schematic);
@@ -322,8 +325,8 @@ bb_geda_editor_tool_changed_cb(BbToolChanger *changer, BbGedaEditor *window);
 static void
 bb_geda_editor_tool_subject_init(BbToolSubjectInterface *iface);
 
-static void
-bb_geda_editor_undo(BbClipboardSubject *clipboard_subject);
+//static void
+//bb_geda_editor_undo(BbClipboardSubject *clipboard_subject);
 
 static void
 bb_geda_editor_user_to_widget_distance(BbToolSubject *subject, double ux, double uy, double *wx, double *wy);
@@ -362,12 +365,17 @@ G_DEFINE_DYNAMIC_TYPE_EXTENDED(
     BB_TYPE_DOCUMENT_WINDOW,
     0,
     G_IMPLEMENT_INTERFACE_DYNAMIC(BB_TYPE_BOUNDS_CALCULATOR, bb_geda_editor_bounds_calculator_init)
-    G_IMPLEMENT_INTERFACE_DYNAMIC(BB_TYPE_CLIPBOARD_SUBJECT, bb_geda_editor_clipboard_subject_init)
+
+    //G_IMPLEMENT_INTERFACE_DYNAMIC(BB_TYPE_COPY_RECEIVER, bb_geda_editor_clipboard_subject_init)
+    //G_IMPLEMENT_INTERFACE_DYNAMIC(BB_TYPE_CUT_RECEIVER, bb_geda_editor_clipboard_subject_init)
+    //G_IMPLEMENT_INTERFACE_DYNAMIC(BB_TYPE_DELETE_RECEIVER, bb_geda_editor_clipboard_subject_init)
+    //G_IMPLEMENT_INTERFACE_DYNAMIC(BB_TYPE_PASTE_RECEIVER, bb_geda_editor_clipboard_subject_init)
+    G_IMPLEMENT_INTERFACE_DYNAMIC(BB_TYPE_REVEAL_RECEIVER, bb_geda_editor_reveal_receiver_init)
+    G_IMPLEMENT_INTERFACE_DYNAMIC(BB_TYPE_SAVE_RECEIVER, bb_geda_editor_save_receiver_init)
+
     G_IMPLEMENT_INTERFACE_DYNAMIC(BB_TYPE_DRAWING_TOOL_SUPPORT, bb_geda_editor_drawing_tool_support_init)
     G_IMPLEMENT_INTERFACE_DYNAMIC(BB_TYPE_GRID_SUBJECT, bb_geda_editor_grid_subject_init)
     G_IMPLEMENT_INTERFACE_DYNAMIC(BB_TYPE_PROPERTY_SUBJECT, bb_geda_editor_property_subject_init)
-    G_IMPLEMENT_INTERFACE_DYNAMIC(BB_TYPE_REVEAL_SUBJECT, bb_geda_editor_reveal_subject_init)
-    G_IMPLEMENT_INTERFACE_DYNAMIC(BB_TYPE_SAVE_SUBJECT, bb_geda_editor_save_subject_init)
     G_IMPLEMENT_INTERFACE_DYNAMIC(BB_TYPE_TOOL_SUBJECT, bb_geda_editor_tool_subject_init)
     G_IMPLEMENT_INTERFACE_DYNAMIC(BB_TYPE_ZOOM_SUBJECT, bb_geda_editor_zoom_subject_init)
     )
@@ -415,182 +423,6 @@ bb_geda_editor_bounds_calculator_init(BbBoundsCalculatorInterface *iface)
 
 // endregion
 
-// region From BbClipboardSubject interface
-
-static gboolean
-bb_geda_editor_get_can_copy(BbClipboardSubject *clipboard_subject)
-{
-    g_return_val_if_fail(clipboard_subject != NULL, FALSE);
-
-    return TRUE; // (g_hash_table_size(window->selection) > 0);
-}
-
-
-static gboolean
-bb_geda_editor_get_can_cut(BbClipboardSubject *clipboard_subject)
-{
-    g_return_val_if_fail(clipboard_subject != NULL, FALSE);
-
-    return TRUE; // (g_hash_table_size(window->selection) > 0);
-}
-
-
-static gboolean
-bb_geda_editor_get_can_delete(BbClipboardSubject *clipboard_subject)
-{
-    g_return_val_if_fail(clipboard_subject != NULL, FALSE);
-
-    return TRUE; // (g_hash_table_size(window->selection) > 0);
-}
-
-
-static gboolean
-bb_geda_editor_get_can_paste(BbClipboardSubject *clipboard_subject)
-{
-    g_return_val_if_fail(clipboard_subject != NULL, FALSE);
-
-    return TRUE;
-}
-
-
-static gboolean
-bb_geda_editor_get_can_redo(BbClipboardSubject *clipboard_subject)
-{
-    g_return_val_if_fail(clipboard_subject != NULL, FALSE);
-
-    return TRUE; //(window->redo_stack != NULL);
-}
-
-
-static gboolean
-bb_geda_editor_get_can_select_all(BbClipboardSubject *clipboard_subject)
-{
-    BbGedaEditor *window = BB_GEDA_EDITOR(clipboard_subject);
-
-    g_return_val_if_fail(window != NULL, FALSE);
-    g_return_val_if_fail(window->selection != NULL, FALSE);
-
-    return TRUE;
-}
-
-
-static gboolean
-bb_geda_editor_get_can_select_none(BbClipboardSubject *clipboard_subject)
-{
-    BbGedaEditor *window = BB_GEDA_EDITOR(clipboard_subject);
-
-    g_return_val_if_fail(window != NULL, FALSE);
-    g_return_val_if_fail(window->selection != NULL, FALSE);
-
-    return (g_hash_table_size(window->selection) > 0);
-}
-
-
-static gboolean
-bb_geda_editor_get_can_undo(BbClipboardSubject *clipboard_subject)
-{
-    g_return_val_if_fail(clipboard_subject != NULL, FALSE);
-
-    return TRUE; //(window->undo_stack != NULL);
-}
-
-
-static void
-bb_geda_editor_copy(BbClipboardSubject *clipboard_subject)
-{
-    g_return_if_fail(clipboard_subject != NULL);
-
-    g_message("bb_geda_editor_copy");
-}
-
-
-static void
-bb_geda_editor_cut(BbClipboardSubject *clipboard_subject)
-{
-    g_return_if_fail(clipboard_subject != NULL);
-
-    g_message("bb_geda_editor_cut");
-}
-
-
-static void
-bb_geda_editor_delete(BbClipboardSubject *clipboard_subject)
-{
-    g_return_if_fail(clipboard_subject != NULL);
-
-    g_message("bb_geda_editor_delete");
-}
-
-
-static void
-bb_geda_editor_paste(BbClipboardSubject *clipboard_subject)
-{
-    g_return_if_fail(clipboard_subject != NULL);
-
-    g_message("bb_geda_editor_paste");
-}
-
-
-static void
-bb_geda_editor_redo(BbClipboardSubject *clipboard_subject)
-{
-    g_return_if_fail(clipboard_subject != NULL);
-
-    g_message("bb_geda_editor_redo");
-}
-
-
-static void
-bb_geda_editor_select_all(BbClipboardSubject *clipboard_subject)
-{
-    g_return_if_fail(clipboard_subject != NULL);
-
-    g_message("bb_geda_editor_select_all");
-}
-
-
-static void
-bb_geda_editor_select_none(BbClipboardSubject *clipboard_subject)
-{
-    g_return_if_fail(clipboard_subject != NULL);
-
-    g_message("bb_geda_editor_select_none");
-}
-
-
-static void
-bb_geda_editor_undo(BbClipboardSubject *clipboard_subject)
-{
-    g_return_if_fail(clipboard_subject != NULL);
-
-    g_message("bb_geda_editor_undo");
-}
-
-
-static void
-bb_geda_editor_clipboard_subject_init(BbClipboardSubjectInterface *iface)
-{
-    g_return_if_fail(iface != NULL);
-
-    iface->get_can_copy = bb_geda_editor_get_can_copy;
-    iface->get_can_cut = bb_geda_editor_get_can_cut;
-    iface->get_can_delete = bb_geda_editor_get_can_delete;
-    iface->get_can_paste = bb_geda_editor_get_can_paste;
-    iface->get_can_redo = bb_geda_editor_get_can_redo;
-    iface->get_can_select_all = bb_geda_editor_get_can_select_all;
-    iface->get_can_select_none = bb_geda_editor_get_can_select_none;
-    iface->get_can_undo = bb_geda_editor_get_can_undo;
-    iface->copy = bb_geda_editor_copy;
-    iface->cut = bb_geda_editor_cut;
-    iface->delete = bb_geda_editor_delete;
-    iface->paste = bb_geda_editor_paste;
-    iface->redo = bb_geda_editor_redo;
-    iface->select_all = bb_geda_editor_select_all;
-    iface->select_none = bb_geda_editor_select_none;
-    iface->undo = bb_geda_editor_undo;
-}
-
-// endregion
 
 // From BbDrawingToolSupport interface
 
@@ -979,10 +811,10 @@ bb_geda_editor_property_subject_init(BbPropertySubjectInterface *iface)
 
 // endregion
 
-// region From BbRevealSubject interface
+// region From BbRevealReceiver interface
 
 static gboolean
-bb_geda_editor_get_reveal(BbRevealSubject *reveal_subject)
+bb_geda_editor_get_reveal(BbRevealReceiver *reveal_subject)
 {
     BbGedaEditor *window = BB_GEDA_EDITOR(reveal_subject);
     g_return_val_if_fail(window != NULL, FALSE);
@@ -992,7 +824,7 @@ bb_geda_editor_get_reveal(BbRevealSubject *reveal_subject)
 
 
 static void
-bb_geda_editor_set_reveal(BbRevealSubject *reveal_subject, gboolean reveal)
+bb_geda_editor_set_reveal(BbRevealReceiver *reveal_subject, gboolean reveal)
 {
     BbGedaEditor *window = BB_GEDA_EDITOR(reveal_subject);
     g_return_if_fail(window != NULL);
@@ -1009,7 +841,7 @@ bb_geda_editor_set_reveal(BbRevealSubject *reveal_subject, gboolean reveal)
 
 
 static void
-bb_geda_editor_reveal_subject_init(BbRevealSubjectInterface *iface)
+bb_geda_editor_reveal_receiver_init(BbRevealReceiverInterface *iface)
 {
     iface->get_reveal = bb_geda_editor_get_reveal;
     iface->set_reveal = bb_geda_editor_set_reveal;
@@ -1017,10 +849,10 @@ bb_geda_editor_reveal_subject_init(BbRevealSubjectInterface *iface)
 
 // endregion
 
-// region From BbSaveSubject interface
+// region From BbSaveReceiver interface
 
 static gboolean
-bb_geda_editor_get_can_save(BbSaveSubject *subject)
+bb_geda_editor_get_can_save(BbSaveReceiver *subject)
 {
     BbGedaEditor *window = BB_GEDA_EDITOR(subject);
     g_return_val_if_fail(window != NULL, FALSE);
@@ -1030,7 +862,7 @@ bb_geda_editor_get_can_save(BbSaveSubject *subject)
 
 
 static gboolean
-bb_geda_editor_get_can_save_as(BbSaveSubject *subject)
+bb_geda_editor_get_can_save_as(BbSaveReceiver *subject)
 {
     BbGedaEditor *window = BB_GEDA_EDITOR(subject);
     g_return_val_if_fail(window != NULL, FALSE);
@@ -1040,7 +872,7 @@ bb_geda_editor_get_can_save_as(BbSaveSubject *subject)
 
 
 static void
-bb_geda_editor_save(BbSaveSubject *subject, GError **error)
+bb_geda_editor_save(BbSaveReceiver *subject, GError **error)
 {
     BbGedaEditor *window = BB_GEDA_EDITOR(subject);
     g_return_if_fail(window != NULL);
@@ -1078,7 +910,7 @@ bb_geda_editor_save(BbSaveSubject *subject, GError **error)
 
 
 static void
-bb_geda_editor_save_as(BbSaveSubject *subject, GError **error)
+bb_geda_editor_save_as(BbSaveReceiver *subject, GError **error)
 {
     BbGedaEditor *window = BB_GEDA_EDITOR(subject);
     g_return_if_fail(window != NULL);
@@ -1133,7 +965,7 @@ bb_geda_editor_save_as(BbSaveSubject *subject, GError **error)
 }
 
 static void
-bb_geda_editor_save_subject_init(BbSaveSubjectInterface *iface)
+bb_geda_editor_save_receiver_init(BbSaveReceiverInterface *iface)
 {
     g_return_if_fail(iface != NULL);
 
@@ -1591,7 +1423,7 @@ bb_geda_editor_class_init(BbGedaEditorClass *klasse)
         "can-scale-up"
         );
 
-    /* From BbRevealSubject */
+    /* From BbRevealReceiver */
 
     properties[PROP_REVEAL] = bb_object_class_override_property(
         object_class,
@@ -1599,7 +1431,7 @@ bb_geda_editor_class_init(BbGedaEditorClass *klasse)
         "reveal"
         );
 
-    /* From BbSaveSubject */
+    /* From BbSaveReceiver */
 
     properties[PROP_CAN_SAVE] = bb_object_class_override_property(
         object_class,
@@ -1761,6 +1593,7 @@ bb_geda_editor_get_property(GObject *object, guint property_id, GValue *value, G
 
     switch (property_id)
     {
+/*
         case PROP_CAN_COPY:
             g_value_set_boolean(value, bb_geda_editor_get_can_copy(BB_CLIPBOARD_SUBJECT(object)));
             break;
@@ -1780,13 +1613,14 @@ bb_geda_editor_get_property(GObject *object, guint property_id, GValue *value, G
         case PROP_CAN_REDO:
             g_value_set_boolean(value, bb_geda_editor_get_can_redo(BB_CLIPBOARD_SUBJECT(object)));
             break;
+*/
 
         case PROP_CAN_SAVE:
-            g_value_set_boolean(value, bb_geda_editor_get_can_save(BB_SAVE_SUBJECT(object)));
+            g_value_set_boolean(value, bb_geda_editor_get_can_save(BB_SAVE_RECEIVER(object)));
             break;
 
         case PROP_CAN_SAVE_AS:
-            g_value_set_boolean(value, bb_geda_editor_get_can_save_as(BB_SAVE_SUBJECT(object)));
+            g_value_set_boolean(value, bb_geda_editor_get_can_save_as(BB_SAVE_RECEIVER(object)));
             break;
 
         case PROP_CAN_SCALE_DOWN:
@@ -1826,7 +1660,7 @@ bb_geda_editor_get_property(GObject *object, guint property_id, GValue *value, G
             break;
 
         case PROP_REVEAL:
-            g_value_set_boolean(value, bb_geda_editor_get_reveal(BB_REVEAL_SUBJECT(object)));
+            g_value_set_boolean(value, bb_geda_editor_get_reveal(BB_REVEAL_RECEIVER(object)));
             break;
 
         case PROP_DRAWING_TOOL:
@@ -2060,7 +1894,7 @@ bb_geda_editor_set_property(GObject *object, guint property_id, const GValue *va
             break;
 
         case PROP_REVEAL:
-            bb_geda_editor_set_reveal(BB_REVEAL_SUBJECT(object), g_value_get_boolean(value));
+            bb_geda_editor_set_reveal(BB_REVEAL_RECEIVER(object), g_value_get_boolean(value));
             break;
 
         case PROP_SCHEMATIC:

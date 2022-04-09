@@ -1,0 +1,82 @@
+/*
+ * bbschem
+ * Copyright (C) 2022 Edward C. Hennessy
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <gtk/gtk.h>
+#include "bbselectreceiver.h"
+
+
+G_DEFINE_INTERFACE(BbSelectReceiver, bb_select_receiver, G_TYPE_OBJECT)
+
+
+gboolean
+bb_select_receiver_can_select_all(BbSelectReceiver *receiver)
+{
+    g_return_val_if_fail(BB_IS_SELECT_RECEIVER(receiver), FALSE);
+
+    BbSelectReceiverInterface *iface = BB_SELECT_RECEIVER_GET_IFACE(receiver);
+
+    g_return_val_if_fail(iface != NULL, FALSE);
+
+    return iface->can_select_all(receiver);
+}
+
+
+gboolean
+bb_select_receiver_can_select_none(BbSelectReceiver *receiver)
+{
+    g_return_val_if_fail(BB_IS_SELECT_RECEIVER(receiver), FALSE);
+
+    BbSelectReceiverInterface *iface = BB_SELECT_RECEIVER_GET_IFACE(receiver);
+
+    g_return_val_if_fail(iface != NULL, FALSE);
+
+    return iface->can_select_none(receiver);
+}
+
+
+static void
+bb_select_receiver_default_init(BbSelectReceiverInterface *class)
+{
+    g_return_if_fail(class != NULL);
+}
+
+
+void
+bb_select_receiver_select_all(BbSelectReceiver *receiver)
+{
+    g_return_if_fail(BB_IS_SELECT_RECEIVER(receiver));
+
+    BbSelectReceiverInterface *iface = BB_SELECT_RECEIVER_GET_IFACE(receiver);
+
+    g_return_if_fail(iface != NULL);
+
+    iface->select_all(receiver);
+}
+
+
+void
+bb_select_receiver_select_none(BbSelectReceiver *receiver)
+{
+    g_return_if_fail(BB_IS_SELECT_RECEIVER(receiver));
+
+    BbSelectReceiverInterface *iface = BB_SELECT_RECEIVER_GET_IFACE(receiver);
+
+    g_return_if_fail(iface != NULL);
+
+    iface->select_none(receiver);
+}
