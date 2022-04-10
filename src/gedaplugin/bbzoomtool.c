@@ -115,12 +115,12 @@ static GParamSpec *properties[N_PROPERTIES];
 static guint signals[N_SIGNALS];
 
 
-G_DEFINE_DYNAMIC_TYPE_EXTENDED(
+G_DEFINE_TYPE_EXTENDED(
     BbZoomTool,
     bb_zoom_tool,
     G_TYPE_OBJECT,
     0,
-    G_IMPLEMENT_INTERFACE_DYNAMIC(BB_TYPE_DRAWING_TOOL, bb_zoom_tool_drawing_tool_init)
+    G_IMPLEMENT_INTERFACE(BB_TYPE_DRAWING_TOOL, bb_zoom_tool_drawing_tool_init)
     )
 
 
@@ -313,11 +313,11 @@ bb_zoom_tool_new(BbToolSubject *subject)
 }
 
 
-void
-bb_zoom_tool_register(GTypeModule *module)
-{
-    bb_zoom_tool_register_type(module);
-}
+//void
+//bb_zoom_tool_register(GTypeModule *module)
+//{
+//    bb_zoom_tool_register_type(module);
+//}
 
 
 static void

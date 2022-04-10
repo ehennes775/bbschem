@@ -57,7 +57,7 @@ struct _BbTaskData
 };
 
 
-G_DEFINE_DYNAMIC_TYPE_EXTENDED(
+G_DEFINE_TYPE_EXTENDED(
     BbGedaReader,
     bb_geda_reader,
     G_TYPE_OBJECT,
@@ -560,11 +560,13 @@ bb_geda_reader_read_finish(BbGedaReader *reader, GAsyncResult *result, GError **
 }
 
 
+#if 0
 void
 bb_geda_reader_register(GTypeModule *module)
 {
     bb_geda_reader_register_type(module);
 }
+#endif
 
 
 static void

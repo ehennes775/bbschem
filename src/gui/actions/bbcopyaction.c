@@ -20,6 +20,7 @@
 #include "bbextensions.h"
 #include "bbcopyaction.h"
 #include "bbcopyreceiver.h"
+#include "bbgenericreceiver.h"
 
 
 enum
@@ -48,37 +49,16 @@ static void
 bb_copy_action_action_init(GActionInterface *iface);
 
 static void
-bb_copy_action_activate(GAction *action, GVariant *parameter);
-
-static void
-bb_copy_action_change_state(GAction *action, GVariant *value);
-
-static void
 bb_copy_action_dispose(GObject *object);
 
 static void
 bb_copy_action_finalize(GObject *object);
 
-static gboolean
-bb_copy_action_get_enabled(GAction *action);
-
-static const gchar *
-bb_copy_action_get_name(GAction *action);
-
-static const GVariantType *
-bb_copy_action_get_parameter_type(GAction *action);
+static void
+bb_copy_action_generic_receiver_init(BbGenericReceiverInterface *iface);
 
 static void
 bb_copy_action_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
-
-static GVariant *
-bb_copy_action_get_state(GAction *action);
-
-static GVariant *
-bb_copy_action_get_state_hint(GAction *action);
-
-static const GVariantType *
-bb_copy_action_get_state_type(GAction *action);
 
 static void
 bb_copy_action_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
@@ -92,22 +72,10 @@ G_DEFINE_TYPE_WITH_CODE(
     bb_copy_action,
     G_TYPE_OBJECT,
     G_IMPLEMENT_INTERFACE(G_TYPE_ACTION, bb_copy_action_action_init)
+    G_IMPLEMENT_INTERFACE(BB_TYPE_GENERIC_RECEIVER, bb_copy_action_generic_receiver_init)
 )
 
-
-static void
-bb_copy_action_action_init(GActionInterface *iface)
-{
-    iface->activate = bb_copy_action_activate;
-    iface->change_state = bb_copy_action_change_state;
-    iface->get_enabled = bb_copy_action_get_enabled;
-    iface->get_name = bb_copy_action_get_name;
-    iface->get_parameter_type = bb_copy_action_get_parameter_type;
-    iface->get_state = bb_copy_action_get_state;
-    iface->get_state_hint = bb_copy_action_get_state_hint;
-    iface->get_state_type = bb_copy_action_get_state_type;
-}
-
+// region From GAction interface
 
 static void
 bb_copy_action_activate(GAction *action, GVariant *parameter)
@@ -128,6 +96,104 @@ bb_copy_action_change_state(GAction *action, GVariant *value)
 {
 }
 
+
+static gboolean
+bb_copy_action_get_enabled(GAction *action)
+{
+    g_return_val_if_fail(action != NULL, FALSE);
+
+    GObject *receiver = bb_copy_action_get_receiver(BB_COPY_ACTION(action));
+
+    return
+            BB_IS_COPY_RECEIVER(receiver) &&
+            bb_copy_receiver_can_copy(BB_COPY_RECEIVER(receiver));
+}
+
+
+static const gchar *
+bb_copy_action_get_name(GAction *action)
+{
+    g_warn_if_fail(action != NULL);
+
+    return "edit-copy";
+}
+
+
+static const GVariantType *
+bb_copy_action_get_parameter_type(GAction *action)
+{
+    g_return_val_if_fail(action != NULL, NULL);
+
+    return NULL;
+}
+
+
+static GVariant *
+bb_copy_action_get_state(GAction *action)
+{
+    g_return_val_if_fail(action != NULL, NULL);
+
+    return NULL;
+}
+
+
+static GVariant *
+bb_copy_action_get_state_hint(GAction *action)
+{
+    g_return_val_if_fail(action != NULL, NULL);
+
+    return NULL;
+}
+
+
+static const GVariantType*
+bb_copy_action_get_state_type(GAction *action)
+{
+    g_return_val_if_fail(action != NULL, NULL);
+
+    return NULL;
+}
+
+
+static void
+bb_copy_action_action_init(GActionInterface *iface)
+{
+    iface->activate = bb_copy_action_activate;
+    iface->change_state = bb_copy_action_change_state;
+    iface->get_enabled = bb_copy_action_get_enabled;
+    iface->get_name = bb_copy_action_get_name;
+    iface->get_parameter_type = bb_copy_action_get_parameter_type;
+    iface->get_state = bb_copy_action_get_state;
+    iface->get_state_hint = bb_copy_action_get_state_hint;
+    iface->get_state_type = bb_copy_action_get_state_type;
+}
+
+// endregion
+
+// region From BbGenericReceiver interface
+
+static GObject *
+bb_copy_action_generic_receiver_get_receiver(BbGenericReceiver *object)
+{
+    return bb_copy_action_get_receiver(BB_COPY_ACTION(object));
+}
+
+static void
+bb_copy_action_generic_receiver_set_receiver(BbGenericReceiver *object, GObject *receiver)
+{
+    bb_copy_action_set_receiver(BB_COPY_ACTION(object), receiver);
+}
+
+static void
+bb_copy_action_generic_receiver_init(BbGenericReceiverInterface *iface)
+{
+    g_return_if_fail(iface != NULL);
+
+    iface->get_receiver = bb_copy_action_generic_receiver_get_receiver;
+    iface->set_receiver = bb_copy_action_generic_receiver_set_receiver;
+}
+
+// endregion
 
 static void
 bb_copy_action_class_init(BbCopyActionClass *klasse)
@@ -200,36 +266,6 @@ bb_copy_action_finalize(GObject *object)
 }
 
 
-static gboolean
-bb_copy_action_get_enabled(GAction *action)
-{
-    g_return_val_if_fail(action != NULL, FALSE);
-
-    GObject *receiver = bb_copy_action_get_receiver(BB_COPY_ACTION(action));
-
-    return
-        BB_IS_COPY_RECEIVER(receiver) &&
-        bb_copy_receiver_can_copy(BB_COPY_RECEIVER(receiver));
-}
-
-
-static const gchar *
-bb_copy_action_get_name(GAction *action)
-{
-    g_warn_if_fail(action != NULL);
-
-    return "edit-copy";
-}
-
-
-static const GVariantType *
-bb_copy_action_get_parameter_type(GAction *action)
-{
-    g_return_val_if_fail(action != NULL, NULL);
-
-    return NULL;
-}
-
 
 static void
 bb_copy_action_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec)
@@ -276,33 +312,6 @@ bb_copy_action_get_receiver(BbCopyAction *action)
     g_return_val_if_fail(action != NULL, NULL);
 
     return action->receiver;
-}
-
-
-static GVariant *
-bb_copy_action_get_state(GAction *action)
-{
-    g_return_val_if_fail(action != NULL, NULL);
-
-    return NULL;
-}
-
-
-static GVariant *
-bb_copy_action_get_state_hint(GAction *action)
-{
-    g_return_val_if_fail(action != NULL, NULL);
-
-    return NULL;
-}
-
-
-static const GVariantType*
-bb_copy_action_get_state_type(GAction *action)
-{
-    g_return_val_if_fail(action != NULL, NULL);
-
-    return NULL;
 }
 
 
@@ -357,6 +366,7 @@ bb_copy_action_set_receiver(BbCopyAction *action, GObject* receiver)
             g_object_ref(action->receiver);
         }
 
+        g_object_notify_by_pspec(G_OBJECT(action), properties[PROP_ENABLED]);
         g_object_notify_by_pspec(G_OBJECT(action), properties[PROP_RECEIVER]);
     }
 }

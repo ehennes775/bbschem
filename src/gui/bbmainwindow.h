@@ -23,6 +23,7 @@
 #include "bbdocumentwindow.h"
 #include "bbgeneralopener.h"
 #include "bbtoolchanger.h"
+#include "bbgenericreceiver.h"
 
 
 #define BB_TYPE_MAIN_WINDOW bb_main_window_get_type()
@@ -34,6 +35,9 @@ struct _BbMainWindowClass
     GtkApplicationWindowClass parent;
 };
 
+
+void
+bb_main_window_add_document_action(BbMainWindow *main_window, BbGenericReceiver *action);
 
 void
 bb_main_window_add_page(BbMainWindow *window, BbDocumentWindow *page);

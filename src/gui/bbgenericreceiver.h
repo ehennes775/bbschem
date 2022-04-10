@@ -1,8 +1,8 @@
-#ifndef __BBOPENACTION__
-#define __BBOPENACTION__
+#ifndef __BBGENERICRECEIVER__
+#define __BBGENERICRECEIVER__
 /*
  * bbschem
- * Copyright (C) 2020 Edward C. Hennessy
+ * Copyright (C) 2022 Edward C. Hennessy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,17 +19,26 @@
  */
 
 #include <glib-object.h>
-#include "bbmainwindow.h"
-#include "bbopenreceiver.h"
 
-#define BB_TYPE_OPEN_ACTION bb_open_action_get_type()
-G_DECLARE_FINAL_TYPE(BbOpenAction, bb_open_action, BB, OPEN_ACTION, GObject)
+G_BEGIN_DECLS
 
-BbMainWindow*
-bb_open_action_get_window(BbOpenAction *open_action);
+#define BB_TYPE_GENERIC_RECEIVER bb_generic_receiver_get_type()
+G_DECLARE_INTERFACE(BbGenericReceiver, bb_generic_receiver, BB, GENERIC_RECEIVER, GObject)
 
+struct _BbGenericReceiverInterface
+{
+    GTypeInterface g_iface;
 
-BbOpenAction*
-bb_open_action_new(BbMainWindow *window);
+    GObject* (*get_receiver)(BbGenericReceiver *object);
+    void (*set_receiver)(BbGenericReceiver *object, GObject *receiver);
+};
+
+GObject *
+bb_generic_receiver_get_receiver(BbGenericReceiver *object);
+
+void
+bb_generic_receiver_set_receiver(BbGenericReceiver *object, GObject *receiver);
+
+G_END_DECLS
 
 #endif

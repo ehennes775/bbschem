@@ -232,6 +232,12 @@ bb_geda_editor_button_pressed_cb(GtkWidget *widget, GdkEvent *event, gpointer us
 static gboolean
 bb_geda_editor_button_released_cb(GtkWidget *widget, GdkEvent *event, gpointer user_data);
 
+static void
+bb_geda_editor_copy_receiver_init(BbCopyReceiverInterface *iface);
+
+static void
+bb_geda_editor_cut_receiver_init(BbCutReceiverInterface *iface);
+
 //static void
 //bb_geda_editor_clipboard_subject_init(BbClipboardSubjectInterface *iface);
 
@@ -359,26 +365,82 @@ static GParamSpec *properties[N_PROPERTIES];
 static guint signals[N_SIGNALS];
 
 
-G_DEFINE_DYNAMIC_TYPE_EXTENDED(
+G_DEFINE_TYPE_EXTENDED(
     BbGedaEditor,
     bb_geda_editor,
     BB_TYPE_DOCUMENT_WINDOW,
     0,
-    G_IMPLEMENT_INTERFACE_DYNAMIC(BB_TYPE_BOUNDS_CALCULATOR, bb_geda_editor_bounds_calculator_init)
+    G_IMPLEMENT_INTERFACE(BB_TYPE_BOUNDS_CALCULATOR, bb_geda_editor_bounds_calculator_init)
 
-    //G_IMPLEMENT_INTERFACE_DYNAMIC(BB_TYPE_COPY_RECEIVER, bb_geda_editor_clipboard_subject_init)
-    //G_IMPLEMENT_INTERFACE_DYNAMIC(BB_TYPE_CUT_RECEIVER, bb_geda_editor_clipboard_subject_init)
-    //G_IMPLEMENT_INTERFACE_DYNAMIC(BB_TYPE_DELETE_RECEIVER, bb_geda_editor_clipboard_subject_init)
-    //G_IMPLEMENT_INTERFACE_DYNAMIC(BB_TYPE_PASTE_RECEIVER, bb_geda_editor_clipboard_subject_init)
-    G_IMPLEMENT_INTERFACE_DYNAMIC(BB_TYPE_REVEAL_RECEIVER, bb_geda_editor_reveal_receiver_init)
-    G_IMPLEMENT_INTERFACE_DYNAMIC(BB_TYPE_SAVE_RECEIVER, bb_geda_editor_save_receiver_init)
+    G_IMPLEMENT_INTERFACE(BB_TYPE_COPY_RECEIVER, bb_geda_editor_copy_receiver_init)
+    G_IMPLEMENT_INTERFACE(BB_TYPE_CUT_RECEIVER, bb_geda_editor_cut_receiver_init)
 
-    G_IMPLEMENT_INTERFACE_DYNAMIC(BB_TYPE_DRAWING_TOOL_SUPPORT, bb_geda_editor_drawing_tool_support_init)
-    G_IMPLEMENT_INTERFACE_DYNAMIC(BB_TYPE_GRID_SUBJECT, bb_geda_editor_grid_subject_init)
-    G_IMPLEMENT_INTERFACE_DYNAMIC(BB_TYPE_PROPERTY_SUBJECT, bb_geda_editor_property_subject_init)
-    G_IMPLEMENT_INTERFACE_DYNAMIC(BB_TYPE_TOOL_SUBJECT, bb_geda_editor_tool_subject_init)
-    G_IMPLEMENT_INTERFACE_DYNAMIC(BB_TYPE_ZOOM_RECEIVER, bb_geda_editor_zoom_receiver_init)
+    //G_IMPLEMENT_INTERFACE(BB_TYPE_CUT_RECEIVER, bb_geda_editor_clipboard_subject_init)
+    //G_IMPLEMENT_INTERFACE(BB_TYPE_DELETE_RECEIVER, bb_geda_editor_clipboard_subject_init)
+    //G_IMPLEMENT_INTERFACE(BB_TYPE_PASTE_RECEIVER, bb_geda_editor_clipboard_subject_init)
+    G_IMPLEMENT_INTERFACE(BB_TYPE_REVEAL_RECEIVER, bb_geda_editor_reveal_receiver_init)
+    G_IMPLEMENT_INTERFACE(BB_TYPE_SAVE_RECEIVER, bb_geda_editor_save_receiver_init)
+
+    G_IMPLEMENT_INTERFACE(BB_TYPE_DRAWING_TOOL_SUPPORT, bb_geda_editor_drawing_tool_support_init)
+    G_IMPLEMENT_INTERFACE(BB_TYPE_GRID_SUBJECT, bb_geda_editor_grid_subject_init)
+    G_IMPLEMENT_INTERFACE(BB_TYPE_PROPERTY_SUBJECT, bb_geda_editor_property_subject_init)
+    G_IMPLEMENT_INTERFACE(BB_TYPE_TOOL_SUBJECT, bb_geda_editor_tool_subject_init)
+    G_IMPLEMENT_INTERFACE(BB_TYPE_ZOOM_RECEIVER, bb_geda_editor_zoom_receiver_init)
     )
+
+// region From BbCopyReceiver interface
+
+static gboolean
+bb_geda_editor_copy_receiver_can_copy(BbCopyReceiver *recevier)
+{
+    return TRUE;
+}
+
+
+static void
+bb_geda_editor_copy_receiver_copy(BbCopyReceiver *recevier)
+{
+    g_message("copy");
+}
+
+
+static void
+bb_geda_editor_copy_receiver_init(BbCopyReceiverInterface *iface)
+{
+    g_return_if_fail(iface != NULL);
+
+    iface->can_copy = bb_geda_editor_copy_receiver_can_copy;
+    iface->copy = bb_geda_editor_copy_receiver_copy;
+}
+
+// endregion
+
+// region From BbCutReceiver interface
+
+static gboolean
+bb_geda_editor_cut_receiver_can_cut(BbCutReceiver *recevier)
+{
+    return TRUE;
+}
+
+
+static void
+bb_geda_editor_cut_receiver_cut(BbCutReceiver *recevier)
+{
+    g_message("cut");
+}
+
+
+static void
+bb_geda_editor_cut_receiver_init(BbCutReceiverInterface *iface)
+{
+    g_return_if_fail(iface != NULL);
+
+    iface->can_cut = bb_geda_editor_cut_receiver_can_cut;
+    iface->cut = bb_geda_editor_cut_receiver_cut;
+}
+
+// endregion
 
 // region From BbDocumentWindow Class
 
@@ -1871,11 +1933,11 @@ bb_geda_editor_reload(BbGedaEditor *window, GError **error)
 }
 
 
-void
-bb_geda_editor_register(GTypeModule *module)
-{
-    bb_geda_editor_register_type(module);
-}
+//void
+//bb_geda_editor_register(GTypeModule *module)
+//{
+//    bb_geda_editor_register_type(module);
+//}
 
 
 static void

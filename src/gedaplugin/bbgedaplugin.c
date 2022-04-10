@@ -66,12 +66,12 @@ bb_geda_plugin_set_property(GObject *object, guint property_id, const GValue *va
 GParamSpec *properties[N_PROPERTIES];
 
 
-G_DEFINE_DYNAMIC_TYPE_EXTENDED(
+G_DEFINE_TYPE_EXTENDED(
     BbGedaPlugin,
     bb_geda_plugin,
     PEAS_TYPE_EXTENSION_BASE,
     0,
-    G_IMPLEMENT_INTERFACE_DYNAMIC(PEAS_TYPE_ACTIVATABLE, bb_geda_plugin_peas_activatable_init)
+    G_IMPLEMENT_INTERFACE(PEAS_TYPE_ACTIVATABLE, bb_geda_plugin_peas_activatable_init)
     )
 
 
@@ -85,6 +85,8 @@ bb_geda_plugin_activate(PeasActivatable *activatable)
 
     BbGeneralOpener *general_opener = bb_main_window_get_opener(BB_MAIN_WINDOW(plugin->object));
     plugin->opener = bb_geda_opener_new(BB_MAIN_WINDOW(plugin->object));
+
+    g_message("activating plugin");
 
     bb_general_opener_add_specific_opener(
         general_opener,

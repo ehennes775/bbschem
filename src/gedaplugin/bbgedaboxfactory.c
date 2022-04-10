@@ -77,12 +77,12 @@ bb_geda_box_factory_set_property(GObject *object, guint property_id, const GValu
 GParamSpec *properties[N_PROPERTIES];
 
 
-G_DEFINE_DYNAMIC_TYPE_EXTENDED(
+G_DEFINE_TYPE_EXTENDED(
     BbGedaBoxFactory,
     bb_geda_box_factory,
     G_TYPE_OBJECT,
     0,
-    G_IMPLEMENT_INTERFACE_DYNAMIC(BB_TYPE_GEDA_ITEM_FACTORY, bb_geda_box_factory_item_factory_init)
+    G_IMPLEMENT_INTERFACE(BB_TYPE_GEDA_ITEM_FACTORY, bb_geda_box_factory_item_factory_init)
     )
 
 
@@ -212,11 +212,11 @@ bb_geda_box_factory_new()
 }
 
 
-void
-bb_geda_box_factory_register(GTypeModule *module)
-{
-    bb_geda_box_factory_register_type(module);
-}
+//void
+//bb_geda_box_factory_register(GTypeModule *module)
+//{
+//    bb_geda_box_factory_register_type(module);
+//}
 
 
 static void

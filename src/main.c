@@ -27,10 +27,13 @@ main(int argc, char *argv[])
         "bbgedaplugin"
         );
 
-    peas_engine_load_plugin(
+    gboolean success = peas_engine_load_plugin(
         engine,
         plugin_info
         );
+
+    g_message("peas_engine_load_plugin() = %d", success);
+
 #endif
 
     int status = g_application_run(

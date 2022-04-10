@@ -96,12 +96,12 @@ bb_geda_opener_specific_opener_init(
 
 GParamSpec *properties[N_PROPERTIES];
 
-G_DEFINE_DYNAMIC_TYPE_EXTENDED(
+G_DEFINE_TYPE_EXTENDED(
     BbGedaOpener,
     bb_geda_opener,
     G_TYPE_OBJECT,
     0,
-    G_IMPLEMENT_INTERFACE_DYNAMIC(BB_TYPE_SPECIFIC_OPENER, bb_geda_opener_specific_opener_init)
+    G_IMPLEMENT_INTERFACE(BB_TYPE_SPECIFIC_OPENER, bb_geda_opener_specific_opener_init)
     )
 
 // region From BbSpecificOpener
@@ -333,12 +333,13 @@ bb_geda_opener_new(BbMainWindow *main_window)
         ));
 }
 
-
+#if 0
 void
 bb_geda_opener_register(GTypeModule *module)
 {
     bb_geda_opener_register_type(module);
 }
+#endif
 
 
 static void

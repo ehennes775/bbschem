@@ -48,7 +48,7 @@ static void
 bb_geda_view_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
 
 
-G_DEFINE_DYNAMIC_TYPE_EXTENDED(
+G_DEFINE_TYPE_EXTENDED(
     BbGedaView,
     bb_geda_view,
     GTK_TYPE_DRAWING_AREA,
@@ -111,11 +111,11 @@ bb_geda_view_init(BbGedaView *window)
 }
 
 
-void
-bb_geda_view_register(GTypeModule *module)
-{
-    bb_geda_view_register_type(module);
-}
+//void
+//bb_geda_view_register(GTypeModule *module)
+//{
+//    bb_geda_view_register_type(module);
+//}
 
 
 static void

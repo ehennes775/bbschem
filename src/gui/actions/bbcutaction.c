@@ -21,6 +21,7 @@
 #include "bbcutaction.h"
 #include "gedaplugin/bbgedaeditor.h"
 #include "bbcutreceiver.h"
+#include "bbgenericreceiver.h"
 
 
 enum
@@ -60,6 +61,9 @@ bb_cut_action_dispose(GObject *object);
 static void
 bb_cut_action_finalize(GObject *object);
 
+static void
+bb_cut_action_generic_receiver_init(BbGenericReceiverInterface *iface);
+
 static gboolean
 bb_cut_action_get_enabled(GAction *action);
 
@@ -93,8 +97,33 @@ G_DEFINE_TYPE_WITH_CODE(
     bb_cut_action,
     G_TYPE_OBJECT,
     G_IMPLEMENT_INTERFACE(G_TYPE_ACTION, bb_cut_action_action_init)
+    G_IMPLEMENT_INTERFACE(BB_TYPE_GENERIC_RECEIVER, bb_cut_action_generic_receiver_init)
     )
 
+// region From BbGenericReceiver interface
+
+static GObject *
+bb_cut_action_generic_receiver_get_receiver(BbGenericReceiver *object)
+{
+    return bb_cut_action_get_receiver(BB_CUT_ACTION(object));
+}
+
+static void
+bb_cut_action_generic_receiver_set_receiver(BbGenericReceiver *object, GObject *receiver)
+{
+    bb_cut_action_set_receiver(BB_CUT_ACTION(object), receiver);
+}
+
+static void
+bb_cut_action_generic_receiver_init(BbGenericReceiverInterface *iface)
+{
+    g_return_if_fail(iface != NULL);
+
+    iface->get_receiver = bb_cut_action_generic_receiver_get_receiver;
+    iface->set_receiver = bb_cut_action_generic_receiver_set_receiver;
+}
+
+// endregion
 
 static void
 bb_cut_action_action_init(GActionInterface *iface)
@@ -359,6 +388,7 @@ bb_cut_action_set_receiver(BbCutAction *action, GObject* receiver)
             g_object_ref(action->receiver);
         }
 
+        g_object_notify_by_pspec(G_OBJECT(action), properties[PROP_ENABLED]);
         g_object_notify_by_pspec(G_OBJECT(action), properties[PROP_RECEIVER]);
     }
 }

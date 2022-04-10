@@ -1,8 +1,8 @@
-#ifndef __BBOPENACTION__
-#define __BBOPENACTION__
+#ifndef __BBOPENRECEIVER__
+#define __BBOPENRECEIVER__
 /*
  * bbschem
- * Copyright (C) 2020 Edward C. Hennessy
+ * Copyright (C) 2022 Edward C. Hennessy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,17 +19,23 @@
  */
 
 #include <glib-object.h>
-#include "bbmainwindow.h"
-#include "bbopenreceiver.h"
+#include "../bbdocumentwindow.h"
 
-#define BB_TYPE_OPEN_ACTION bb_open_action_get_type()
-G_DECLARE_FINAL_TYPE(BbOpenAction, bb_open_action, BB, OPEN_ACTION, GObject)
+G_BEGIN_DECLS
 
-BbMainWindow*
-bb_open_action_get_window(BbOpenAction *open_action);
+#define BB_TYPE_OPEN_RECEIVER bb_open_receiver_get_type()
+G_DECLARE_INTERFACE(BbOpenReceiver, bb_open_receiver, BB, OPEN_RECEIVER, GObject)
 
+struct _BbOpenReceiverInterface
+{
+    GTypeInterface g_iface;
 
-BbOpenAction*
-bb_open_action_new(BbMainWindow *window);
+    void (*add_window)(BbOpenReceiver *receiver, BbDocumentWindow *window);
+};
+
+void
+bb_open_receiver_add_window(BbOpenReceiver *receiver, BbDocumentWindow *window);
+
+G_END_DECLS
 
 #endif

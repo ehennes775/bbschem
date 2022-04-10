@@ -1,8 +1,6 @@
-#ifndef __BBOPENACTION__
-#define __BBOPENACTION__
 /*
  * bbschem
- * Copyright (C) 2020 Edward C. Hennessy
+ * Copyright (C) 2022 Edward C. Hennessy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,18 +16,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <glib-object.h>
-#include "bbmainwindow.h"
+#include <gtk/gtk.h>
 #include "bbopenreceiver.h"
 
-#define BB_TYPE_OPEN_ACTION bb_open_action_get_type()
-G_DECLARE_FINAL_TYPE(BbOpenAction, bb_open_action, BB, OPEN_ACTION, GObject)
 
-BbMainWindow*
-bb_open_action_get_window(BbOpenAction *open_action);
+G_DEFINE_INTERFACE(BbOpenReceiver, bb_open_receiver, G_TYPE_OBJECT)
 
 
-BbOpenAction*
-bb_open_action_new(BbMainWindow *window);
+static void
+bb_open_receiver_default_init(BbOpenReceiverInterface *class)
+{
+    g_return_if_fail(class != NULL);
+}
 
-#endif
+
+void
+bb_open_receiver_open(BbOpenReceiver *receiver, BbDocumentWindow *window)
+{
+    g_return_if_fail(BB_IS_OPEN_RECEIVER(receiver));
+    g_return_if_fail(BB_IS_DOCUMENT_WINDOW(window));
+
+    BbOpenReceiverInterface *iface = BB_OPEN_RECEIVER_GET_IFACE(receiver);
+
+    g_return_if_fail(iface != NULL);
+    g_return_if_fail(iface->add_window != NULL);
+
+    iface->add_window(receiver, window);
+}

@@ -75,6 +75,8 @@
 #include "actions/bbnewaction.h"
 #include "bbgeneralopener.h"
 #include "bbint32combobox.h"
+#include "actions/bbopenreceiver.h"
+#include "gedaplugin/bbgedaopener.h"
 
 
 enum
@@ -96,6 +98,8 @@ struct _BbMainWindow
     GtkNotebook *document_notebook;
     BbGeneralOpener *general_opener;
     BbToolStack *tool_stack;
+
+    GSList *document_actions;
 };
 
 
@@ -115,6 +119,9 @@ static void
 bb_main_window_notify_page_num(BbMainWindow *window, GParamSpec *pspec, GtkNotebook *notebook);
 
 static void
+bb_main_window_open_receiver_init(BbOpenReceiverInterface *iface);
+
+static void
 bb_main_window_page_added(BbMainWindow *window, GtkWidget *child, guint page_num, GtkNotebook *notebook);
 
 static void
@@ -122,6 +129,9 @@ bb_main_window_page_removed(BbMainWindow *window, GtkWidget *child, guint page_n
 
 static void
 bb_main_window_quit_receiver_init(BbQuitReceiverInterface *iface);
+
+static void
+bb_main_window_save_all_receiver_init(BbSaveAllReceiverInterface *iface);
 
 static void
 bb_main_window_set_opener(BbMainWindow *main_window, BbGeneralOpener *general_opener);
@@ -141,21 +151,28 @@ G_DEFINE_TYPE_EXTENDED(
         bb_main_window,
         GTK_TYPE_APPLICATION_WINDOW,
         0,
+        G_IMPLEMENT_INTERFACE(BB_TYPE_OPEN_RECEIVER, bb_main_window_open_receiver_init)
+        G_IMPLEMENT_INTERFACE(BB_TYPE_SAVE_ALL_RECEIVER, bb_main_window_save_all_receiver_init)
         G_IMPLEMENT_INTERFACE(BB_TYPE_QUIT_RECEIVER, bb_main_window_quit_receiver_init)
         )
 
+// region From BbOpenReceiver interface
 
 static void
-bb_main_window_extension_added(
-    PeasExtensionSet *extensions,
-    PeasPluginInfo *plugin_info,
-    PeasExtension *extension,
-    BbMainWindow *main_window
-    )
+bb_main_window_add_window(BbOpenReceiver *receiver, BbDocumentWindow *window)
 {
-  //  peas_activatable_activate(PEAS_ACTIVATABLE(extension));
+    bb_main_window_add_page(BB_MAIN_WINDOW(receiver), window);
 }
 
+static void
+bb_main_window_open_receiver_init(BbOpenReceiverInterface *iface)
+{
+    g_return_if_fail(iface != NULL);
+
+    iface->add_window = bb_main_window_add_window;
+}
+
+// endregion
 
 // region From BbQuitReceiver interface
 
@@ -179,6 +196,28 @@ bb_main_window_quit_receiver_init(BbQuitReceiverInterface *iface)
 
 // endregion
 
+// region From BbSaveAllReceiver interface
+
+static void
+bb_main_window_save_all_receiver_init(BbSaveAllReceiverInterface *iface)
+{
+    g_return_if_fail(iface != NULL);
+}
+
+// endregion
+
+static void
+bb_main_window_extension_added(
+        PeasExtensionSet *extensions,
+        PeasPluginInfo *plugin_info,
+        PeasExtension *extension,
+        BbMainWindow *main_window
+)
+{
+    g_message("bb_main_window_extension_added");
+
+    peas_activatable_activate(PEAS_ACTIVATABLE(extension));
+}
 
 static void
 bb_main_window_extension_removed(
@@ -188,7 +227,9 @@ bb_main_window_extension_removed(
     BbMainWindow *main_window
     )
 {
-//    peas_activatable_deactivate(PEAS_ACTIVATABLE(extension));
+    g_message("bb_main_window_extension_removed");
+
+    peas_activatable_deactivate(PEAS_ACTIVATABLE(extension));
 }
 
 
@@ -285,6 +326,23 @@ static gboolean
 bb_main_window_key_released_cb(GtkWidget *unused, GdkEvent *event, BbMainWindow *window)
 {
     g_message("bb_main_window_key_released_cb");
+}
+
+
+void
+bb_main_window_add_document_action(BbMainWindow *main_window, BbGenericReceiver *action)
+{
+    g_return_if_fail(BB_IS_MAIN_WINDOW(main_window));
+
+    main_window->document_actions = g_slist_append(
+        main_window->document_actions,
+        g_object_ref(action)
+        );
+
+    g_action_map_add_action(
+        G_ACTION_MAP(main_window),
+        G_ACTION(action)
+        );
 }
 
 
@@ -478,7 +536,27 @@ bb_main_window_init(BbMainWindow *window)
 
     g_action_map_add_action(
         G_ACTION_MAP(window),
+        G_ACTION(bb_open_action_new(BB_OPEN_RECEIVER(window)))
+        );
+
+    g_action_map_add_action(
+        G_ACTION_MAP(window),
         G_ACTION(bb_quit_action_new(BB_QUIT_RECEIVER(window)))
+        );
+
+    g_action_map_add_action(
+        G_ACTION_MAP(window),
+        G_ACTION(bb_save_all_action_new(BB_SAVE_ALL_RECEIVER(window)))
+        );
+
+    bb_main_window_add_document_action(
+        window,
+        BB_GENERIC_RECEIVER(bb_copy_action_new())
+        );
+
+    bb_main_window_add_document_action(
+        window,
+        BB_GENERIC_RECEIVER(bb_cut_action_new())
         );
 
 #if 0
@@ -494,16 +572,6 @@ bb_main_window_init(BbMainWindow *window)
 //        "tool-changer", window->tool_stack,
 //        NULL
 //        ));
-
-    g_action_map_add_action(
-        G_ACTION_MAP(window),
-        G_ACTION(bb_copy_action_new(window))
-        );
-
-    g_action_map_add_action(
-        G_ACTION_MAP(window),
-        G_ACTION(bb_cut_action_new(window))
-        );
 
     g_action_map_add_action(
         G_ACTION_MAP(window),
@@ -528,11 +596,6 @@ bb_main_window_init(BbMainWindow *window)
     g_action_map_add_action(
         G_ACTION_MAP(window),
         G_ACTION(bb_save_action_new(window))
-        );
-
-    g_action_map_add_action(
-        G_ACTION_MAP(window),
-        G_ACTION(bb_save_all_action_new(window))
         );
 
     g_action_map_add_action(
@@ -627,11 +690,6 @@ bb_main_window_init(BbMainWindow *window)
 
     g_action_map_add_action(
         G_ACTION_MAP(window),
-        G_ACTION(bb_open_action_new(window))
-        );
-
-    g_action_map_add_action(
-        G_ACTION_MAP(window),
         G_ACTION(bb_new_action_new(window))
         );
 
@@ -648,12 +706,12 @@ bb_main_window_init(BbMainWindow *window)
         G_CALLBACK(bb_main_window_key_released_cb),
         window
         );
-
+#endif
     bb_main_window_set_opener(
         window,
         bb_general_opener_new()
         );
-
+#if 0
     window->extensions = peas_extension_set_new(
         peas_engine_get_default(),
         PEAS_TYPE_ACTIVATABLE,
@@ -681,6 +739,34 @@ bb_main_window_init(BbMainWindow *window)
         window
         );
 #endif
+
+    BbGeneralOpener *general_opener = bb_main_window_get_opener(window);
+    BbGedaOpener *geda_opener = bb_geda_opener_new(window);
+    BbSpecificOpener *specific_opener = BB_SPECIFIC_OPENER(geda_opener);
+
+    bb_general_opener_add_specific_opener(
+        general_opener,
+        "application/x-geda-schematic",
+        specific_opener
+        );
+
+    bb_general_opener_add_specific_opener(
+        general_opener,
+        "application/x-geda-symbol",
+        specific_opener
+        );
+
+    bb_general_opener_add_specific_opener(
+        general_opener,
+        "application/x-lepton-schematic",
+        specific_opener
+        );
+
+    bb_general_opener_add_specific_opener(
+        general_opener,
+        "application/x-lepton-symbol",
+        specific_opener
+        );
 }
 
 
@@ -698,7 +784,7 @@ bb_main_window_new(BbApplication *application)
 static void
 bb_main_window_notify_page_num(BbMainWindow *window, GParamSpec *pspec, GtkNotebook *notebook)
 {
-    g_return_if_fail(window != NULL);
+    g_return_if_fail(BB_IS_MAIN_WINDOW(window));
 
     GtkWidget *temp_page = bb_main_window_get_current_document_window(window);
     BbDocumentWindow *next_page = BB_IS_DOCUMENT_WINDOW(temp_page) ? BB_DOCUMENT_WINDOW(temp_page) : NULL;
@@ -706,6 +792,14 @@ bb_main_window_notify_page_num(BbMainWindow *window, GParamSpec *pspec, GtkNoteb
     if (window->current_page != next_page)
     {
         g_set_object(&window->current_page, next_page);
+
+        for (GSList *iter = window->document_actions; iter != NULL; iter = iter->next)
+        {
+            bb_generic_receiver_set_receiver(
+                    BB_GENERIC_RECEIVER(iter->data),
+                    G_OBJECT(next_page)
+                    );
+        }
 
         g_signal_emit_by_name(window, "update");
         g_object_notify(G_OBJECT(window), "current-document-window");

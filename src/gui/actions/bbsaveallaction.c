@@ -125,6 +125,8 @@ bb_save_all_action_activate(GAction *action, GVariant *parameter)
 {
     g_return_if_fail(BB_IS_SAVE_ALL_ACTION(action));
 
+    g_message("saveall activate");
+
     GSList *list = NULL;
 
     g_slist_foreach(
