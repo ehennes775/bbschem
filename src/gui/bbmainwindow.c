@@ -559,6 +559,35 @@ bb_main_window_init(BbMainWindow *window)
         BB_GENERIC_RECEIVER(bb_cut_action_new())
         );
 
+    bb_main_window_add_document_action(
+        window,
+        BB_GENERIC_RECEIVER(bb_delete_action_new())
+        );
+
+    bb_main_window_add_document_action(
+        window,
+        BB_GENERIC_RECEIVER(bb_paste_action_new())
+        );
+
+    bb_main_window_add_document_action(
+        window,
+        BB_GENERIC_RECEIVER(bb_redo_action_new())
+        );
+
+    bb_main_window_add_document_action(
+        window,
+        BB_GENERIC_RECEIVER(bb_select_all_action_new())
+        );
+
+    bb_main_window_add_document_action(
+        window,
+        BB_GENERIC_RECEIVER(bb_select_none_action_new())
+        );
+
+    bb_main_window_add_document_action(
+        window,
+        BB_GENERIC_RECEIVER(bb_undo_action_new())
+        );
 #if 0
 //    bb_main_window_add_page(window, g_object_new(
 //        BB_TYPE_SCHEMATIC_WINDOW,

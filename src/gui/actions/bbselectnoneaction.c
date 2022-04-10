@@ -60,6 +60,9 @@ bb_select_none_action_dispose(GObject *object);
 static void
 bb_select_none_action_finalize(GObject *object);
 
+static void
+bb_select_none_action_generic_receiver_init(BbGenericReceiverInterface *iface);
+
 static gboolean
 bb_select_none_action_get_enabled(GAction *action);
 
@@ -93,7 +96,33 @@ G_DEFINE_TYPE_WITH_CODE(
     bb_select_none_action,
     G_TYPE_OBJECT,
     G_IMPLEMENT_INTERFACE(G_TYPE_ACTION, bb_select_none_action_action_init)
+    G_IMPLEMENT_INTERFACE(BB_TYPE_GENERIC_RECEIVER, bb_select_none_action_generic_receiver_init)
     )
+
+// region From BbGenericReceiver interface
+
+static GObject *
+bb_select_none_action_generic_receiver_get_receiver(BbGenericReceiver *object)
+{
+    return bb_select_none_action_get_receiver(BB_SELECT_NONE_ACTION(object));
+}
+
+static void
+bb_select_none_action_generic_receiver_set_receiver(BbGenericReceiver *object, GObject *receiver)
+{
+    bb_select_none_action_set_receiver(BB_SELECT_NONE_ACTION(object), receiver);
+}
+
+static void
+bb_select_none_action_generic_receiver_init(BbGenericReceiverInterface *iface)
+{
+    g_return_if_fail(iface != NULL);
+
+    iface->get_receiver = bb_select_none_action_generic_receiver_get_receiver;
+    iface->set_receiver = bb_select_none_action_generic_receiver_set_receiver;
+}
+
+// endregion
 
 
 static void
@@ -361,6 +390,7 @@ bb_select_none_action_set_receiver(BbSelectNoneAction *action, GObject* receiver
             g_object_ref(action->receiver);
         }
 
+        g_object_notify_by_pspec(G_OBJECT(action), properties[PROP_ENABLED]);
         g_object_notify_by_pspec(G_OBJECT(action), properties[PROP_RECEIVER]);
     }
 }

@@ -25,13 +25,20 @@
 enum
 {
     PROP_0,
+
+    /* From GAction */
+
     PROP_ENABLED,
     PROP_NAME,
     PROP_PARAMETER_TYPE,
     PROP_STATE,
     PROP_STATE_HINT,
     PROP_STATE_TYPE,
+
+    /* From BbPGenericReceiver */
+
     PROP_RECEIVER,
+
     N_PROPERTIES
 };
 
@@ -58,6 +65,9 @@ bb_paste_action_dispose(GObject *object);
 
 static void
 bb_paste_action_finalize(GObject *object);
+
+static void
+bb_paste_action_generic_receiver_init(BbGenericReceiverInterface *iface);
 
 static gboolean
 bb_paste_action_get_enabled(GAction *action);
@@ -92,6 +102,7 @@ G_DEFINE_TYPE_WITH_CODE(
     bb_paste_action,
     G_TYPE_OBJECT,
     G_IMPLEMENT_INTERFACE(G_TYPE_ACTION, bb_paste_action_action_init)
+    G_IMPLEMENT_INTERFACE(BB_TYPE_GENERIC_RECEIVER, bb_paste_action_generic_receiver_init)
 )
 
 
@@ -107,6 +118,32 @@ bb_paste_action_action_init(GActionInterface *iface)
     iface->get_state_hint = bb_paste_action_get_state_hint;
     iface->get_state_type = bb_paste_action_get_state_type;
 }
+
+
+// region From BbGenericReceiver interface
+
+static GObject *
+bb_paste_action_generic_receiver_get_receiver(BbGenericReceiver *object)
+{
+    return bb_paste_action_get_receiver(BB_PASTE_ACTION(object));
+}
+
+static void
+bb_paste_action_generic_receiver_set_receiver(BbGenericReceiver *object, GObject *receiver)
+{
+    bb_paste_action_set_receiver(BB_PASTE_ACTION(object), receiver);
+}
+
+static void
+bb_paste_action_generic_receiver_init(BbGenericReceiverInterface *iface)
+{
+    g_return_if_fail(iface != NULL);
+
+    iface->get_receiver = bb_paste_action_generic_receiver_get_receiver;
+    iface->set_receiver = bb_paste_action_generic_receiver_set_receiver;
+}
+
+// endregion
 
 
 static void
@@ -342,7 +379,7 @@ bb_paste_action_set_property(GObject *object, guint property_id, const GValue *v
 void
 bb_paste_action_set_receiver(BbPasteAction *action, GObject* receiver)
 {
-    g_return_if_fail(action != NULL);
+    g_return_if_fail(BB_IS_PASTE_ACTION(action));
 
     if (action->receiver != receiver)
     {
@@ -358,6 +395,7 @@ bb_paste_action_set_receiver(BbPasteAction *action, GObject* receiver)
             g_object_ref(action->receiver);
         }
 
+        g_object_notify_by_pspec(G_OBJECT(action), properties[PROP_ENABLED]);
         g_object_notify_by_pspec(G_OBJECT(action), properties[PROP_RECEIVER]);
     }
 }

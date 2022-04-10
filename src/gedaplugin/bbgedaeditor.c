@@ -47,6 +47,9 @@
 #include "actions/bbpastereceiver.h"
 #include "actions/bbdeletereceiver.h"
 #include "actions/bbcutreceiver.h"
+#include "actions/bbundoreceiver.h"
+#include "actions/bbredoreceiver.h"
+#include "actions/bbselectreceiver.h"
 
 
 
@@ -238,6 +241,15 @@ bb_geda_editor_copy_receiver_init(BbCopyReceiverInterface *iface);
 static void
 bb_geda_editor_cut_receiver_init(BbCutReceiverInterface *iface);
 
+static void
+bb_geda_editor_delete_receiver_init(BbDeleteReceiverInterface *iface);
+
+static void
+bb_geda_editor_paste_receiver_init(BbPasteReceiverInterface *iface);
+
+static void
+bb_geda_editor_select_receiver_init(BbSelectReceiverInterface *iface);
+
 //static void
 //bb_geda_editor_clipboard_subject_init(BbClipboardSubjectInterface *iface);
 
@@ -303,6 +315,12 @@ bb_geda_editor_reveal_receiver_init(BbRevealReceiverInterface *iface);
 
 static void
 bb_geda_editor_save_receiver_init(BbSaveReceiverInterface *iface);
+
+static void
+bb_geda_editor_redo_receiver_init(BbRedoReceiverInterface *iface);
+
+static void
+bb_geda_editor_undo_receiver_init(BbUndoReceiverInterface *iface);
 
 static void
 bb_geda_editor_set_file(BbGedaEditor *editor, GFile *file);
@@ -371,15 +389,15 @@ G_DEFINE_TYPE_EXTENDED(
     BB_TYPE_DOCUMENT_WINDOW,
     0,
     G_IMPLEMENT_INTERFACE(BB_TYPE_BOUNDS_CALCULATOR, bb_geda_editor_bounds_calculator_init)
-
     G_IMPLEMENT_INTERFACE(BB_TYPE_COPY_RECEIVER, bb_geda_editor_copy_receiver_init)
     G_IMPLEMENT_INTERFACE(BB_TYPE_CUT_RECEIVER, bb_geda_editor_cut_receiver_init)
-
-    //G_IMPLEMENT_INTERFACE(BB_TYPE_CUT_RECEIVER, bb_geda_editor_clipboard_subject_init)
-    //G_IMPLEMENT_INTERFACE(BB_TYPE_DELETE_RECEIVER, bb_geda_editor_clipboard_subject_init)
-    //G_IMPLEMENT_INTERFACE(BB_TYPE_PASTE_RECEIVER, bb_geda_editor_clipboard_subject_init)
+    G_IMPLEMENT_INTERFACE(BB_TYPE_DELETE_RECEIVER, bb_geda_editor_delete_receiver_init)
+    G_IMPLEMENT_INTERFACE(BB_TYPE_PASTE_RECEIVER, bb_geda_editor_paste_receiver_init)
+    G_IMPLEMENT_INTERFACE(BB_TYPE_REDO_RECEIVER, bb_geda_editor_redo_receiver_init)
     G_IMPLEMENT_INTERFACE(BB_TYPE_REVEAL_RECEIVER, bb_geda_editor_reveal_receiver_init)
     G_IMPLEMENT_INTERFACE(BB_TYPE_SAVE_RECEIVER, bb_geda_editor_save_receiver_init)
+    G_IMPLEMENT_INTERFACE(BB_TYPE_SELECT_RECEIVER, bb_geda_editor_select_receiver_init)
+    G_IMPLEMENT_INTERFACE(BB_TYPE_UNDO_RECEIVER, bb_geda_editor_undo_receiver_init)
 
     G_IMPLEMENT_INTERFACE(BB_TYPE_DRAWING_TOOL_SUPPORT, bb_geda_editor_drawing_tool_support_init)
     G_IMPLEMENT_INTERFACE(BB_TYPE_GRID_SUBJECT, bb_geda_editor_grid_subject_init)
@@ -438,6 +456,157 @@ bb_geda_editor_cut_receiver_init(BbCutReceiverInterface *iface)
 
     iface->can_cut = bb_geda_editor_cut_receiver_can_cut;
     iface->cut = bb_geda_editor_cut_receiver_cut;
+}
+
+// endregion
+
+// region From BbSelectReceiver interface
+
+static gboolean
+bb_geda_editor_select_receiver_can_select_all(BbSelectReceiver *recevier)
+{
+    return TRUE;
+}
+
+
+static gboolean
+bb_geda_editor_select_receiver_can_select_none(BbSelectReceiver *recevier)
+{
+    return TRUE;
+}
+
+
+static void
+bb_geda_editor_select_receiver_select_all(BbSelectReceiver *recevier)
+{
+    g_message("select all");
+}
+
+
+static void
+bb_geda_editor_select_receiver_select_none(BbSelectReceiver *recevier)
+{
+    g_message("select none");
+}
+
+
+static void
+bb_geda_editor_select_receiver_init(BbSelectReceiverInterface *iface)
+{
+    g_return_if_fail(iface != NULL);
+
+    iface->can_select_all = bb_geda_editor_select_receiver_can_select_all;
+    iface->can_select_none = bb_geda_editor_select_receiver_can_select_none;
+    iface->select_all = bb_geda_editor_select_receiver_select_all;
+    iface->select_none = bb_geda_editor_select_receiver_select_none;
+}
+
+// endregion
+
+// region From BbDeleteReceiver interface
+
+static gboolean
+bb_geda_editor_delete_receiver_can_delete(BbDeleteReceiver *recevier)
+{
+    return TRUE;
+}
+
+
+static void
+bb_geda_editor_delete_receiver_delete(BbDeleteReceiver *recevier)
+{
+    g_message("delete");
+}
+
+
+static void
+bb_geda_editor_delete_receiver_init(BbDeleteReceiverInterface *iface)
+{
+    g_return_if_fail(iface != NULL);
+
+    iface->can_delete = bb_geda_editor_delete_receiver_can_delete;
+    iface->delete = bb_geda_editor_delete_receiver_delete;
+}
+
+// endregion
+
+// region From BbPasteReceiver interface
+
+static gboolean
+bb_geda_editor_paste_receiver_can_paste(BbPasteReceiver *recevier)
+{
+    return TRUE;
+}
+
+
+static void
+bb_geda_editor_paste_receiver_paste(BbPasteReceiver *recevier)
+{
+    g_message("paste");
+}
+
+
+static void
+bb_geda_editor_paste_receiver_init(BbPasteReceiverInterface *iface)
+{
+    g_return_if_fail(iface != NULL);
+
+    iface->can_paste = bb_geda_editor_paste_receiver_can_paste;
+    iface->paste = bb_geda_editor_paste_receiver_paste;
+}
+
+// endregion
+
+// region From BbRedoReceiver interface
+
+static gboolean
+bb_geda_editor_redo_receiver_can_redo(BbRedoReceiver *recevier)
+{
+    return TRUE;
+}
+
+
+static void
+bb_geda_editor_redo_receiver_redo(BbRedoReceiver *recevier)
+{
+    g_message("redo");
+}
+
+
+static void
+bb_geda_editor_redo_receiver_init(BbRedoReceiverInterface *iface)
+{
+    g_return_if_fail(iface != NULL);
+
+    iface->can_redo = bb_geda_editor_redo_receiver_can_redo;
+    iface->redo = bb_geda_editor_redo_receiver_redo;
+}
+
+// endregion
+
+// region From BbUndoReceiver interface
+
+static gboolean
+bb_geda_editor_undo_receiver_can_undo(BbUndoReceiver *recevier)
+{
+    return TRUE;
+}
+
+
+static void
+bb_geda_editor_undo_receiver_undo(BbUndoReceiver *recevier)
+{
+    g_message("undo");
+}
+
+
+static void
+bb_geda_editor_undo_receiver_init(BbUndoReceiverInterface *iface)
+{
+    g_return_if_fail(iface != NULL);
+
+    iface->can_undo = bb_geda_editor_undo_receiver_can_undo;
+    iface->undo = bb_geda_editor_undo_receiver_undo;
 }
 
 // endregion

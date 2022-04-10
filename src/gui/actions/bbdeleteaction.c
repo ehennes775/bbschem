@@ -21,6 +21,7 @@
 #include "bbdeleteaction.h"
 #include "gedaplugin/bbgedaeditor.h"
 #include "bbdeletereceiver.h"
+#include "bbgenericreceiver.h"
 
 enum
 {
@@ -59,6 +60,9 @@ bb_delete_action_dispose(GObject *object);
 static void
 bb_delete_action_finalize(GObject *object);
 
+static void
+bb_delete_action_generic_receiver_init(BbGenericReceiverInterface *iface);
+
 static gboolean
 bb_delete_action_get_enabled(GAction *action);
 
@@ -92,6 +96,7 @@ G_DEFINE_TYPE_WITH_CODE(
     bb_delete_action,
     G_TYPE_OBJECT,
     G_IMPLEMENT_INTERFACE(G_TYPE_ACTION, bb_delete_action_action_init)
+    G_IMPLEMENT_INTERFACE(BB_TYPE_GENERIC_RECEIVER, bb_delete_action_generic_receiver_init)
     )
 
 
@@ -107,6 +112,32 @@ bb_delete_action_action_init(GActionInterface *iface)
     iface->get_state_hint = bb_delete_action_get_state_hint;
     iface->get_state_type = bb_delete_action_get_state_type;
 }
+
+
+// region From BbGenericReceiver interface
+
+static GObject *
+bb_delete_action_generic_receiver_get_receiver(BbGenericReceiver *object)
+{
+    return bb_delete_action_get_receiver(BB_DELETE_ACTION(object));
+}
+
+static void
+bb_delete_action_generic_receiver_set_receiver(BbGenericReceiver *object, GObject *receiver)
+{
+    bb_delete_action_set_receiver(BB_DELETE_ACTION(object), receiver);
+}
+
+static void
+bb_delete_action_generic_receiver_init(BbGenericReceiverInterface *iface)
+{
+    g_return_if_fail(iface != NULL);
+
+    iface->get_receiver = bb_delete_action_generic_receiver_get_receiver;
+    iface->set_receiver = bb_delete_action_generic_receiver_set_receiver;
+}
+
+// endregion
 
 
 static void
@@ -357,6 +388,7 @@ bb_delete_action_set_receiver(BbDeleteAction *action, GObject* receiver)
             g_object_ref(action->receiver);
         }
 
+        g_object_notify_by_pspec(G_OBJECT(action), properties[PROP_ENABLED]);
         g_object_notify_by_pspec(G_OBJECT(action), properties[PROP_RECEIVER]);
     }
 }
