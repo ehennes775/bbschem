@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+    <template class="BbTextEditor">
+        <child>
+            <object class="GtkSourceView" id="view">
+                <property name="hexpand">TRUE</property>
+                <property name="vexpand">TRUE</property>
+            </object>
+        </child>
+    </template>
+</interface>

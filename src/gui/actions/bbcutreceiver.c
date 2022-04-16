@@ -44,7 +44,7 @@ bb_cut_receiver_default_init(BbCutReceiverInterface *class)
 
 
 void
-bb_cut_receiver_cut(BbCutReceiver *receiver)
+bb_cut_receiver_cut(BbCutReceiver *receiver, GtkClipboard *clipboard)
 {
     g_return_if_fail(BB_IS_CUT_RECEIVER(receiver));
 
@@ -52,5 +52,5 @@ bb_cut_receiver_cut(BbCutReceiver *receiver)
 
     g_return_if_fail(iface != NULL);
 
-    iface->cut(receiver);
+    iface->cut(receiver, clipboard);
 }

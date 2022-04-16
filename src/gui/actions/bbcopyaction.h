@@ -28,11 +28,14 @@ G_DECLARE_FINAL_TYPE(BbCopyAction, bb_copy_action, BB, COPY_ACTION, GObject)
 BbCopyAction*
 bb_copy_action_new();
 
+GtkClipboard *
+bb_copy_action_get_clipboard(BbCopyAction *action);
+
 GObject*
-bb_copy_action_get_receiver(BbCopyAction *receiver);
+bb_copy_action_get_receiver(BbCopyAction *action);
 
 void
-bb_copy_action_set_receiver(BbCopyAction *receiver, GObject *object);
+bb_copy_action_set_receiver(BbCopyAction *action, GObject *object);
 
 G_END_DECLS
 

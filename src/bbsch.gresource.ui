@@ -55,6 +55,8 @@
         <file>gui/img/ZoomIn.svg</file>
         <file>gui/img/ZoomOut.svg</file>
         <file>gui/img/ZoomTool.svg</file>
+
+        <file>gui/textedit/bbtexteditor.ui</file>
         <!--
         <file>libw/LibraryWidget.ui.xml</file>
         <file>libw/LibraryWidgetMenu.ui.xml</file>

@@ -19,7 +19,6 @@
 #include <gtk/gtk.h>
 #include "bbextensions.h"
 #include "bbcutaction.h"
-#include "gedaplugin/bbgedaeditor.h"
 #include "bbcutreceiver.h"
 #include "bbgenericreceiver.h"
 
@@ -33,7 +32,11 @@ enum
     PROP_STATE,
     PROP_STATE_HINT,
     PROP_STATE_TYPE,
+
     PROP_RECEIVER,
+
+    PROP_CLIPBOARD,
+
     N_PROPERTIES
 };
 
@@ -42,7 +45,8 @@ struct _BbCutAction
 {
     GObject parent;
 
-    GObject* receiver;
+    GtkClipboard *clipboard;
+    GObject *receiver;
 };
 
 
@@ -148,7 +152,9 @@ bb_cut_action_activate(GAction *action, GVariant *parameter)
 
     if (BB_IS_CUT_RECEIVER(receiver))
     {
-        bb_cut_receiver_cut(BB_CUT_RECEIVER(receiver));
+        GtkClipboard *clipboard = bb_cut_action_get_clipboard(BB_CUT_ACTION(action));
+
+        bb_cut_receiver_cut(BB_CUT_RECEIVER(receiver), clipboard);
     }
 }
 
@@ -209,6 +215,18 @@ bb_cut_action_class_init(BbCutActionClass *klasse)
             G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS
             )
         );
+
+    bb_object_class_install_property(
+        G_OBJECT_CLASS(klasse),
+        PROP_CLIPBOARD,
+        properties[PROP_CLIPBOARD] = g_param_spec_object(
+            "clipboard",
+            "",
+            "",
+            GTK_TYPE_CLIPBOARD,
+            G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS
+            )
+        );
 }
 
 
@@ -228,6 +246,17 @@ bb_cut_action_dispose(GObject *object)
 static void
 bb_cut_action_finalize(GObject *object)
 {
+}
+
+
+GtkClipboard *
+bb_cut_action_get_clipboard(BbCutAction *action)
+{
+    BbCutAction *cut_action = BB_CUT_ACTION(action);
+
+    g_return_val_if_fail(cut_action != NULL, NULL);
+
+    return cut_action->clipboard;
 }
 
 
@@ -295,6 +324,10 @@ bb_cut_action_get_property(GObject *object, guint property_id, GValue *value, GP
             g_value_set_object(value, bb_cut_action_get_receiver(BB_CUT_ACTION(object)));
             break;
 
+        case PROP_CLIPBOARD:
+            g_value_set_object(value, bb_cut_action_get_clipboard(BB_CUT_ACTION(object)));
+            break;
+
         default:
             G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
     }
@@ -345,12 +378,32 @@ bb_cut_action_init(BbCutAction *action)
 
 
 BbCutAction*
-bb_cut_action_new()
+bb_cut_action_new(GtkClipboard *clipboard)
 {
     return BB_CUT_ACTION(g_object_new(
         BB_TYPE_CUT_ACTION,
+        "clipboard", clipboard,
         NULL
         ));
+}
+
+
+void
+bb_cut_action_set_clipboard(BbCutAction *action, GtkClipboard *clipboard)
+{
+    g_return_if_fail(BB_IS_CUT_ACTION(action));
+
+    if (action->clipboard)
+    {
+        g_object_unref(clipboard);
+    }
+
+    action->clipboard = clipboard;
+
+    if (action->clipboard)
+    {
+        g_object_ref(clipboard);
+    }
 }
 
 
@@ -361,6 +414,10 @@ bb_cut_action_set_property(GObject *object, guint property_id, const GValue *val
     {
         case PROP_RECEIVER:
             bb_cut_action_set_receiver(BB_CUT_ACTION(object), g_value_get_object(value));
+            break;
+
+        case PROP_CLIPBOARD:
+            bb_cut_action_set_clipboard(BB_CUT_ACTION(object), GTK_CLIPBOARD(g_value_get_object(value)));
             break;
 
         default:

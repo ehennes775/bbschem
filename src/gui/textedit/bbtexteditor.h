@@ -1,5 +1,5 @@
-#ifndef __BBCOPYRECEIVER__
-#define __BBCOPYRECEIVER__
+#ifndef __BBTEXTEDITOR__
+#define __BBTEXTEDITOR__
 /*
  * bbschem
  * Copyright (C) 2022 Edward C. Hennessy
@@ -18,28 +18,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <glib-object.h>
+#include <gtk/gtk.h>
+#include "bbdocumentwindow.h"
 
-G_BEGIN_DECLS
+#define BB_TYPE_TEXT_EDITOR bb_text_editor_get_type()
+G_DECLARE_FINAL_TYPE(BbTextEditor, bb_text_editor, BB, TEXT_EDITOR, BbDocumentWindow)
 
-#define BB_TYPE_COPY_RECEIVER bb_copy_receiver_get_type()
-G_DECLARE_INTERFACE(BbCopyReceiver, bb_copy_receiver, BB, COPY_RECEIVER, GObject)
-
-struct _BbCopyReceiverInterface
-{
-    GTypeInterface g_iface;
-
-    gboolean (*can_copy)(BbCopyReceiver *receiver);
-    void (*copy)(BbCopyReceiver *receiver, GtkClipboard *clipboard);
-
-};
-
-gboolean
-bb_copy_receiver_can_copy(BbCopyReceiver *receiver);
-
-void
-bb_copy_receiver_copy(BbCopyReceiver *receiver, GtkClipboard *clipboard);
-
-G_END_DECLS
+BbTextEditor*
+bb_text_editor_new();
 
 #endif

@@ -44,7 +44,7 @@ bb_copy_receiver_default_init(BbCopyReceiverInterface *class)
 
 
 void
-bb_copy_receiver_copy(BbCopyReceiver *receiver)
+bb_copy_receiver_copy(BbCopyReceiver *receiver, GtkClipboard *clipboard)
 {
     g_return_if_fail(BB_IS_COPY_RECEIVER(receiver));
 
@@ -52,5 +52,5 @@ bb_copy_receiver_copy(BbCopyReceiver *receiver)
 
     g_return_if_fail(iface != NULL);
 
-    iface->copy(receiver);
+    iface->copy(receiver, clipboard);
 }

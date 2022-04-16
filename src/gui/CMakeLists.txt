@@ -233,4 +233,6 @@ add_library(bbschemgui SHARED
         ../gedaplugin/bbzoomtool.h
         bbgenericreceiver.c
         bbgenericreceiver.h
+        textedit/bbtexteditor.c
+        textedit/bbtexteditor.h
         )

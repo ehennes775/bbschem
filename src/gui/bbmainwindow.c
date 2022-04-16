@@ -77,6 +77,7 @@
 #include "bbint32combobox.h"
 #include "actions/bbopenreceiver.h"
 #include "gedaplugin/bbgedaopener.h"
+#include "textedit/bbtexteditor.h"
 
 
 enum
@@ -532,6 +533,8 @@ bb_main_window_get_tool_changer(BbMainWindow *main_window)
 static void
 bb_main_window_init(BbMainWindow *window)
 {
+    GtkClipboard *clipboard = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
+
     gtk_widget_init_template(GTK_WIDGET(window));
 
     g_action_map_add_action(
@@ -556,7 +559,7 @@ bb_main_window_init(BbMainWindow *window)
 
     bb_main_window_add_document_action(
         window,
-        BB_GENERIC_RECEIVER(bb_cut_action_new())
+        BB_GENERIC_RECEIVER(bb_cut_action_new(clipboard))
         );
 
     bb_main_window_add_document_action(
@@ -588,6 +591,11 @@ bb_main_window_init(BbMainWindow *window)
         window,
         BB_GENERIC_RECEIVER(bb_undo_action_new())
         );
+
+    bb_main_window_add_page(window, g_object_new(
+        BB_TYPE_TEXT_EDITOR,
+        NULL
+        ));
 #if 0
 //    bb_main_window_add_page(window, g_object_new(
 //        BB_TYPE_SCHEMATIC_WINDOW,
@@ -601,6 +609,8 @@ bb_main_window_init(BbMainWindow *window)
 //        "tool-changer", window->tool_stack,
 //        NULL
 //        ));
+
+
 
     g_action_map_add_action(
         G_ACTION_MAP(window),

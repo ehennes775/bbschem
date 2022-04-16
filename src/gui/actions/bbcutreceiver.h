@@ -30,7 +30,7 @@ struct _BbCutReceiverInterface
     GTypeInterface g_iface;
 
     gboolean (*can_cut)(BbCutReceiver *receiver);
-    void (*cut)(BbCutReceiver *receiver);
+    void (*cut)(BbCutReceiver *receiver, GtkClipboard *clipboard);
 
 };
 
@@ -38,7 +38,7 @@ gboolean
 bb_cut_receiver_can_cut(BbCutReceiver *receiver);
 
 void
-bb_cut_receiver_cut(BbCutReceiver *receiver);
+bb_cut_receiver_cut(BbCutReceiver *receiver, GtkClipboard *clipboard);
 
 G_END_DECLS
 

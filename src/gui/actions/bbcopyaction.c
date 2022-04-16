@@ -41,6 +41,7 @@ struct _BbCopyAction
 {
     GObject parent;
 
+    GtkClipboard *clipboard;
     GObject* receiver;
 };
 
@@ -86,7 +87,9 @@ bb_copy_action_activate(GAction *action, GVariant *parameter)
 
     if (BB_IS_COPY_RECEIVER(receiver))
     {
-        bb_copy_receiver_copy(BB_COPY_RECEIVER(receiver));
+        GtkClipboard *clipboard = bb_copy_action_get_clipboard(BB_COPY_ACTION(action));
+
+        bb_copy_receiver_copy(BB_COPY_RECEIVER(receiver), clipboard);
     }
 }
 
@@ -265,6 +268,14 @@ bb_copy_action_finalize(GObject *object)
 {
 }
 
+
+GtkClipboard *
+bb_copy_action_get_clipboard(BbCopyAction *action)
+{
+    g_return_val_if_fail(BB_IS_COPY_ACTION(action), NULL);
+
+    return action->clipboard;
+}
 
 
 static void

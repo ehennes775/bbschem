@@ -26,13 +26,19 @@ G_BEGIN_DECLS
 G_DECLARE_FINAL_TYPE(BbCutAction, bb_cut_action, BB, CUT_ACTION, GObject)
 
 BbCutAction*
-bb_cut_action_new();
+bb_cut_action_new(GtkClipboard *clipboard);
+
+GtkClipboard *
+bb_cut_action_get_clipboard(BbCutAction *action);
 
 GObject*
-bb_cut_action_get_receiver(BbCutAction *receiver);
+bb_cut_action_get_receiver(BbCutAction *action);
 
 void
-bb_cut_action_set_receiver(BbCutAction *receiver, GObject *object);
+bb_cut_action_set_clipboard(BbCutAction *action, GtkClipboard *clipboard);
+
+void
+bb_cut_action_set_receiver(BbCutAction *action, GObject *object);
 
 G_END_DECLS
 
