@@ -29,6 +29,9 @@ enum
 {
     PROP_0,
 
+    /* From BbCopyReceiver */
+    PROP_CAN_COPY,
+
     /* From BbCutReceiver */
     PROP_CAN_CUT,
 
@@ -360,13 +363,26 @@ bb_text_editor_class_init(BbTextEditorClass *klasse)
 
     g_object_class_override_property(
         object_class,
+        PROP_CAN_COPY,
+        "can-copy"
+        );
+
+    properties[PROP_CAN_COPY] = g_object_class_find_property(
+        object_class,
+        "can-copy"
+        );
+
+    /* From BbCutReceiver */
+
+    g_object_class_override_property(
+        object_class,
         PROP_CAN_CUT,
         "can-cut"
         );
 
     properties[PROP_CAN_CUT] = g_object_class_find_property(
         object_class,
-        "can_cut"
+        "can-cut"
         );
 
     /* From BbDocumentWindow */
@@ -439,6 +455,7 @@ bb_text_editor_new()
 static void
 bb_text_editor_notify_has_selection(GObject *unused, GParamSpec *pspec, GObject *editor)
 {
+    g_object_notify_by_pspec(editor, properties[PROP_CAN_COPY]);
     g_object_notify_by_pspec(editor, properties[PROP_CAN_CUT]);
 }
 

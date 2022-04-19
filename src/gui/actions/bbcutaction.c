@@ -443,11 +443,7 @@ bb_cut_action_set_receiver(BbCutAction *action, GObject* receiver)
     {
         if (action->receiver != NULL)
         {
-            g_signal_handlers_disconnect_by_func(
-                receiver,
-                G_CALLBACK(bb_cut_action_notify_can_cut),
-                action
-                );
+            g_signal_handlers_disconnect_by_data(receiver, action);
 
             g_object_unref(action->receiver);
         }

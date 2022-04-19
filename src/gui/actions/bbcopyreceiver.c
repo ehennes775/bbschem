@@ -37,9 +37,20 @@ bb_copy_receiver_can_copy(BbCopyReceiver *receiver)
 
 
 static void
-bb_copy_receiver_default_init(BbCopyReceiverInterface *class)
+bb_copy_receiver_default_init(BbCopyReceiverInterface *iface)
 {
-    g_return_if_fail(class != NULL);
+    g_return_if_fail(iface != NULL);
+
+    g_object_interface_install_property(
+        iface,
+        g_param_spec_boolean(
+            "can-copy",
+            "",
+            "",
+            FALSE,
+            G_PARAM_READABLE
+            )
+        );
 }
 
 
