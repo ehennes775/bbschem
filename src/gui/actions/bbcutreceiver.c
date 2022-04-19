@@ -37,9 +37,20 @@ bb_cut_receiver_can_cut(BbCutReceiver *receiver)
 
 
 static void
-bb_cut_receiver_default_init(BbCutReceiverInterface *class)
+bb_cut_receiver_default_init(BbCutReceiverInterface *iface)
 {
-    g_return_if_fail(class != NULL);
+    g_return_if_fail(iface != NULL);
+
+    g_object_interface_install_property(
+        iface,
+        g_param_spec_boolean(
+            "can-cut",
+            "",
+            "",
+            FALSE,
+            G_PARAM_READABLE
+            )
+        );
 }
 
 

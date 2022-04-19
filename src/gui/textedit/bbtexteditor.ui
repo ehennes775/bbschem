@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
+    <object class="GtkSourceBuffer" id="buffer">
+    </object>
     <template class="BbTextEditor">
         <child>
             <object class="GtkSourceView" id="view">
+                <property name="buffer">buffer</property>
                 <property name="hexpand">TRUE</property>
                 <property name="vexpand">TRUE</property>
             </object>

@@ -388,6 +388,14 @@ bb_cut_action_new(GtkClipboard *clipboard)
 }
 
 
+static void
+bb_cut_action_notify_can_cut(GObject *unused, GParamSpec *pspec, GObject *action)
+{
+    g_object_notify_by_pspec(action, properties[PROP_ENABLED]);
+}
+
+
+
 void
 bb_cut_action_set_clipboard(BbCutAction *action, GtkClipboard *clipboard)
 {
@@ -435,6 +443,12 @@ bb_cut_action_set_receiver(BbCutAction *action, GObject* receiver)
     {
         if (action->receiver != NULL)
         {
+            g_signal_handlers_disconnect_by_func(
+                receiver,
+                G_CALLBACK(bb_cut_action_notify_can_cut),
+                action
+                );
+
             g_object_unref(action->receiver);
         }
 
@@ -443,6 +457,13 @@ bb_cut_action_set_receiver(BbCutAction *action, GObject* receiver)
         if (action->receiver != NULL)
         {
             g_object_ref(action->receiver);
+
+            g_signal_connect(
+                receiver,
+                "notify::can-cut",
+                G_CALLBACK(bb_cut_action_notify_can_cut),
+                action
+                );
         }
 
         g_object_notify_by_pspec(G_OBJECT(action), properties[PROP_ENABLED]);

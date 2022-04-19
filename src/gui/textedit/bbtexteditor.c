@@ -29,6 +29,10 @@ enum
 {
     PROP_0,
 
+    /* From BbCutReceiver */
+    PROP_CAN_CUT,
+
+    /* From BbDocumentWindow */
     PROP_TAB,
 
     N_PROPERTIES
@@ -65,6 +69,9 @@ bb_text_editor_finalize(GObject *object);
 
 static void
 bb_text_editor_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
+
+static void
+bb_text_editor_notify_has_selection(GObject *unused, GParamSpec *pspec, GObject *editor);
 
 static void
 bb_text_editor_paste_receiver_init(BbPasteReceiverInterface *iface);
@@ -349,6 +356,19 @@ bb_text_editor_class_init(BbTextEditorClass *klasse)
         view
         );
 
+    /* From BbCutReceiver */
+
+    g_object_class_override_property(
+        object_class,
+        PROP_CAN_CUT,
+        "can-cut"
+        );
+
+    properties[PROP_CAN_CUT] = g_object_class_find_property(
+        object_class,
+        "can_cut"
+        );
+
     /* From BbDocumentWindow */
 
     properties[PROP_TAB] = g_object_class_find_property(
@@ -391,9 +411,18 @@ bb_text_editor_get_property(GObject *object, guint property_id, GValue *value, G
 
 
 static void
-bb_text_editor_init(BbTextEditor *window)
+bb_text_editor_init(BbTextEditor *editor)
 {
-    gtk_widget_init_template(GTK_WIDGET(window));
+    gtk_widget_init_template(GTK_WIDGET(editor));
+
+    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(editor->view));
+
+    g_signal_connect(
+        buffer,
+        "notify::has-selection",
+        G_CALLBACK(bb_text_editor_notify_has_selection),
+        editor
+        );
 }
 
 
@@ -404,6 +433,13 @@ bb_text_editor_new()
         BB_TYPE_TEXT_EDITOR,
         NULL
         ));
+}
+
+
+static void
+bb_text_editor_notify_has_selection(GObject *unused, GParamSpec *pspec, GObject *editor)
+{
+    g_object_notify_by_pspec(editor, properties[PROP_CAN_CUT]);
 }
 
 
