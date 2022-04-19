@@ -24,6 +24,7 @@
 #include "actions/bbredoreceiver.h"
 #include "actions/bbcopyreceiver.h"
 #include "actions/bbcutreceiver.h"
+#include "actions/bbdeletereceiver.h"
 
 enum
 {
@@ -34,6 +35,9 @@ enum
 
     /* From BbCutReceiver */
     PROP_CAN_CUT,
+
+    /* From BbDeleteReceiver */
+    PROP_CAN_DELETE,
 
     /* From BbDocumentWindow */
     PROP_TAB,
@@ -63,6 +67,9 @@ bb_text_editor_copy_receiver_init(BbCopyReceiverInterface *iface);
 
 static void
 bb_text_editor_cut_receiver_init(BbCutReceiverInterface *iface);
+
+static void
+bb_text_editor_delete_receiver_init(BbDeleteReceiverInterface *iface);
 
 static void
 bb_text_editor_dispose(GObject *object);
@@ -101,12 +108,12 @@ G_DEFINE_TYPE_EXTENDED(
     0,
     G_IMPLEMENT_INTERFACE(BB_TYPE_COPY_RECEIVER, bb_text_editor_copy_receiver_init)
     G_IMPLEMENT_INTERFACE(BB_TYPE_CUT_RECEIVER, bb_text_editor_cut_receiver_init)
+    G_IMPLEMENT_INTERFACE(BB_TYPE_DELETE_RECEIVER, bb_text_editor_delete_receiver_init)
     G_IMPLEMENT_INTERFACE(BB_TYPE_PASTE_RECEIVER, bb_text_editor_paste_receiver_init)
     G_IMPLEMENT_INTERFACE(BB_TYPE_REDO_RECEIVER, bb_text_editor_redo_receiver_init)
     G_IMPLEMENT_INTERFACE(BB_TYPE_UNDO_RECEIVER, bb_text_editor_undo_receiver_init)
 
 
-    //G_IMPLEMENT_INTERFACE(BB_TYPE_DELETE_RECEIVER, bb_text_editor_delete_receiver_init)
     //G_IMPLEMENT_INTERFACE(BB_TYPE_REVEAL_RECEIVER, bb_text_editor_reveal_receiver_init)
     //G_IMPLEMENT_INTERFACE(BB_TYPE_SAVE_RECEIVER, bb_text_editor_save_receiver_init)
     //G_IMPLEMENT_INTERFACE(BB_TYPE_SELECT_RECEIVER, bb_text_editor_select_receiver_init)
@@ -200,6 +207,49 @@ bb_text_editor_cut_receiver_init(BbCutReceiverInterface *iface)
 
     iface->can_cut = bb_text_editor_cut_receiver_can_cut;
     iface->cut = bb_text_editor_cut_receiver_cut;
+}
+
+// endregion
+
+// region from BbDeleteReceiver
+
+static gboolean
+bb_text_editor_delete_receiver_can_delete(BbDeleteReceiver *receiver)
+{
+    BbTextEditor *editor = BB_TEXT_EDITOR(receiver);
+
+    g_return_val_if_fail(editor != NULL, FALSE);
+    g_return_val_if_fail(editor->view != NULL, FALSE);
+
+    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(editor->view));
+
+    g_return_val_if_fail(buffer != NULL, FALSE);
+
+    return gtk_text_buffer_get_has_selection(buffer);
+}
+
+static void
+bb_text_editor_delete_receiver_delete(BbDeleteReceiver *receiver, GtkClipboard *clipboard)
+{
+    BbTextEditor *editor = BB_TEXT_EDITOR(receiver);
+
+    g_return_if_fail(editor != NULL);
+    g_return_if_fail(editor->view != NULL);
+
+    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(editor->view));
+
+    g_return_if_fail(buffer != NULL);
+
+    gtk_text_buffer_delete_selection(buffer, FALSE, TRUE);
+}
+
+static void
+bb_text_editor_delete_receiver_init(BbDeleteReceiverInterface *iface)
+{
+    g_return_if_fail(iface != NULL);
+
+    iface->can_delete = bb_text_editor_delete_receiver_can_delete;
+    iface->delete = bb_text_editor_delete_receiver_delete;
 }
 
 // endregion
@@ -385,6 +435,19 @@ bb_text_editor_class_init(BbTextEditorClass *klasse)
         "can-cut"
         );
 
+    /* From BbDeleteReceiver */
+
+    g_object_class_override_property(
+        object_class,
+        PROP_CAN_DELETE,
+        "can-delete"
+        );
+
+    properties[PROP_CAN_DELETE] = g_object_class_find_property(
+        object_class,
+        "can-delete"
+        );
+
     /* From BbDocumentWindow */
 
     properties[PROP_TAB] = g_object_class_find_property(
@@ -457,6 +520,7 @@ bb_text_editor_notify_has_selection(GObject *unused, GParamSpec *pspec, GObject 
 {
     g_object_notify_by_pspec(editor, properties[PROP_CAN_COPY]);
     g_object_notify_by_pspec(editor, properties[PROP_CAN_CUT]);
+    g_object_notify_by_pspec(editor, properties[PROP_CAN_DELETE]);
 }
 
 

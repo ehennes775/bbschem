@@ -37,9 +37,20 @@ bb_delete_receiver_can_delete(BbDeleteReceiver *receiver)
 
 
 static void
-bb_delete_receiver_default_init(BbDeleteReceiverInterface *class)
+bb_delete_receiver_default_init(BbDeleteReceiverInterface *iface)
 {
-    g_return_if_fail(class != NULL);
+    g_return_if_fail(iface != NULL);
+
+    g_object_interface_install_property(
+        iface,
+        g_param_spec_boolean(
+            "can-copy",
+            "",
+            "",
+            FALSE,
+            G_PARAM_READABLE
+            )
+        );
 }
 
 

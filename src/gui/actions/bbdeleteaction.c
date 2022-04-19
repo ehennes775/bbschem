@@ -355,6 +355,13 @@ bb_delete_action_new()
 
 
 static void
+bb_delete_action_notify_can_delete(GObject *unused, GParamSpec *pspec, GObject *action)
+{
+    g_object_notify_by_pspec(action, properties[PROP_ENABLED]);
+}
+
+
+static void
 bb_delete_action_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec)
 {
     switch (property_id)
@@ -378,6 +385,8 @@ bb_delete_action_set_receiver(BbDeleteAction *action, GObject* receiver)
     {
         if (action->receiver != NULL)
         {
+            g_signal_handlers_disconnect_by_data(receiver, action);
+
             g_object_unref(action->receiver);
         }
 
@@ -386,6 +395,13 @@ bb_delete_action_set_receiver(BbDeleteAction *action, GObject* receiver)
         if (action->receiver != NULL)
         {
             g_object_ref(action->receiver);
+
+            g_signal_connect(
+                receiver,
+                "notify::can-copy",
+                G_CALLBACK(bb_delete_action_notify_can_delete),
+                action
+                );
         }
 
         g_object_notify_by_pspec(G_OBJECT(action), properties[PROP_ENABLED]);

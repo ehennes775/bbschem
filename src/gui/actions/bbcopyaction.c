@@ -390,7 +390,6 @@ bb_copy_action_set_receiver(BbCopyAction *action, GObject* receiver)
                 G_CALLBACK(bb_copy_action_notify_can_copy),
                 action
                 );
-
         }
 
         g_object_notify_by_pspec(G_OBJECT(action), properties[PROP_ENABLED]);
