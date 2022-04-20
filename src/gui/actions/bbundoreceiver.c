@@ -37,9 +37,20 @@ bb_undo_receiver_can_undo(BbUndoReceiver *receiver)
 
 
 static void
-bb_undo_receiver_default_init(BbUndoReceiverInterface *class)
+bb_undo_receiver_default_init(BbUndoReceiverInterface *iface)
 {
-    g_return_if_fail(class != NULL);
+    g_return_if_fail(iface != NULL);
+
+    g_object_interface_install_property(
+        iface,
+        g_param_spec_boolean(
+            "can-undo",
+            "",
+            "",
+            FALSE,
+            G_PARAM_READABLE
+            )
+        );
 }
 
 

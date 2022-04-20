@@ -37,9 +37,20 @@ bb_redo_receiver_can_redo(BbRedoReceiver *receiver)
 
 
 static void
-bb_redo_receiver_default_init(BbRedoReceiverInterface *class)
+bb_redo_receiver_default_init(BbRedoReceiverInterface *iface)
 {
-    g_return_if_fail(class != NULL);
+    g_return_if_fail(iface != NULL);
+
+    g_object_interface_install_property(
+        iface,
+        g_param_spec_boolean(
+            "can-redo",
+            "",
+            "",
+            FALSE,
+            G_PARAM_READABLE
+            )
+        );
 }
 
 

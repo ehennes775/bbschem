@@ -44,7 +44,7 @@ bb_delete_receiver_default_init(BbDeleteReceiverInterface *iface)
     g_object_interface_install_property(
         iface,
         g_param_spec_boolean(
-            "can-copy",
+            "can-delete",
             "",
             "",
             FALSE,

@@ -39,6 +39,12 @@ enum
     /* From BbDeleteReceiver */
     PROP_CAN_DELETE,
 
+    /* From BbRedoReceiver */
+    PROP_CAN_REDO,
+
+    /* From BbUndoReceiver */
+    PROP_CAN_UNDO,
+
     /* From BbDocumentWindow */
     PROP_TAB,
 
@@ -79,6 +85,12 @@ bb_text_editor_finalize(GObject *object);
 
 static void
 bb_text_editor_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
+
+static void
+bb_text_editor_notify_can_redo(GObject *unused, GParamSpec *pspec, GObject *editor);
+
+static void
+bb_text_editor_notify_can_undo(GObject *unused, GParamSpec *pspec, GObject *editor);
 
 static void
 bb_text_editor_notify_has_selection(GObject *unused, GParamSpec *pspec, GObject *editor);
@@ -229,7 +241,7 @@ bb_text_editor_delete_receiver_can_delete(BbDeleteReceiver *receiver)
 }
 
 static void
-bb_text_editor_delete_receiver_delete(BbDeleteReceiver *receiver, GtkClipboard *clipboard)
+bb_text_editor_delete_receiver_delete(BbDeleteReceiver *receiver)
 {
     BbTextEditor *editor = BB_TEXT_EDITOR(receiver);
 
@@ -448,6 +460,32 @@ bb_text_editor_class_init(BbTextEditorClass *klasse)
         "can-delete"
         );
 
+    /* From BbRedoReceiver */
+
+    g_object_class_override_property(
+        object_class,
+        PROP_CAN_REDO,
+        "can-redo"
+        );
+
+    properties[PROP_CAN_REDO] = g_object_class_find_property(
+        object_class,
+        "can-redo"
+        );
+
+    /* From BbUndoReceiver */
+
+    g_object_class_override_property(
+        object_class,
+        PROP_CAN_UNDO,
+        "can-undo"
+        );
+
+    properties[PROP_CAN_UNDO] = g_object_class_find_property(
+        object_class,
+        "can-undo"
+        );
+
     /* From BbDocumentWindow */
 
     properties[PROP_TAB] = g_object_class_find_property(
@@ -498,6 +536,20 @@ bb_text_editor_init(BbTextEditor *editor)
 
     g_signal_connect(
         buffer,
+        "notify::can-redo",
+        G_CALLBACK(bb_text_editor_notify_can_redo),
+        editor
+        );
+
+    g_signal_connect(
+        buffer,
+        "notify::can-undo",
+        G_CALLBACK(bb_text_editor_notify_can_undo),
+        editor
+        );
+
+    g_signal_connect(
+        buffer,
         "notify::has-selection",
         G_CALLBACK(bb_text_editor_notify_has_selection),
         editor
@@ -512,6 +564,20 @@ bb_text_editor_new()
         BB_TYPE_TEXT_EDITOR,
         NULL
         ));
+}
+
+
+static void
+bb_text_editor_notify_can_redo(GObject *unused, GParamSpec *pspec, GObject *editor)
+{
+    g_object_notify_by_pspec(editor, properties[PROP_CAN_REDO]);
+}
+
+
+static void
+bb_text_editor_notify_can_undo(GObject *unused, GParamSpec *pspec, GObject *editor)
+{
+    g_object_notify_by_pspec(editor, properties[PROP_CAN_UNDO]);
 }
 
 
