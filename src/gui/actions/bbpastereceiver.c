@@ -24,7 +24,7 @@ G_DEFINE_INTERFACE(BbPasteReceiver, bb_paste_receiver, G_TYPE_OBJECT)
 
 
 gboolean
-bb_paste_receiver_can_paste(BbPasteReceiver *receiver)
+bb_paste_receiver_can_paste(BbPasteReceiver *receiver, GtkSelectionData *selection_data)
 {
     g_return_val_if_fail(BB_IS_PASTE_RECEIVER(receiver), FALSE);
 
@@ -32,7 +32,7 @@ bb_paste_receiver_can_paste(BbPasteReceiver *receiver)
 
     g_return_val_if_fail(iface != NULL, FALSE);
 
-    return iface->can_paste(receiver);
+    return iface->can_paste(receiver, selection_data);
 }
 
 
@@ -44,7 +44,7 @@ bb_paste_receiver_default_init(BbPasteReceiverInterface *class)
 
 
 void
-bb_paste_receiver_paste(BbPasteReceiver *receiver)
+bb_paste_receiver_paste(BbPasteReceiver *receiver, GtkClipboard *clipboard)
 {
     g_return_if_fail(BB_IS_PASTE_RECEIVER(receiver));
 
@@ -52,5 +52,5 @@ bb_paste_receiver_paste(BbPasteReceiver *receiver)
 
     g_return_if_fail(iface != NULL);
 
-    iface->paste(receiver);
+    iface->paste(receiver, clipboard);
 }

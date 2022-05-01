@@ -27,7 +27,6 @@ enum
     PROP_0,
 
     /* From GAction */
-
     PROP_ENABLED,
     PROP_NAME,
     PROP_PARAMETER_TYPE,
@@ -35,9 +34,11 @@ enum
     PROP_STATE_HINT,
     PROP_STATE_TYPE,
 
-    /* From BbPGenericReceiver */
-
+    /* From BbGenericReceiver */
     PROP_RECEIVER,
+
+    /* From BbPasteAction */
+    PROP_CLIPBOARD,
 
     N_PROPERTIES
 };
@@ -47,7 +48,10 @@ struct _BbPasteAction
 {
     GObject parent;
 
+    GtkClipboard *clipboard;
     GObject* receiver;
+
+    gboolean enabled;
 };
 
 
@@ -91,7 +95,13 @@ static const GVariantType *
 bb_paste_action_get_state_type(GAction *action);
 
 static void
+bb_paste_action_set_enable(BbPasteAction *action, gboolean enabled);
+
+static void
 bb_paste_action_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
+
+static void
+bb_paste_action_update_enabled(BbPasteAction *action);
 
 
 static GParamSpec *properties[N_PROPERTIES];
@@ -151,11 +161,12 @@ bb_paste_action_activate(GAction *action, GVariant *parameter)
 {
     g_return_if_fail(action != NULL);
 
+    GtkClipboard *clipboard = bb_paste_action_get_clipboard(BB_PASTE_ACTION((action)));
     GObject *receiver = bb_paste_action_get_receiver(BB_PASTE_ACTION(action));
 
     if (BB_IS_PASTE_RECEIVER(receiver))
     {
-        bb_paste_receiver_paste(BB_PASTE_RECEIVER(receiver));
+        bb_paste_receiver_paste(BB_PASTE_RECEIVER(receiver), clipboard);
     }
 }
 
@@ -207,8 +218,20 @@ bb_paste_action_class_init(BbPasteActionClass *klasse)
 
     bb_object_class_install_property(
             G_OBJECT_CLASS(klasse),
-            PROP_RECEIVER,
-            properties[PROP_RECEIVER] = g_param_spec_object(
+            PROP_CLIPBOARD,
+            properties[PROP_CLIPBOARD] = g_param_spec_object(
+            "clipboard",
+            "",
+            "",
+            GTK_TYPE_CLIPBOARD,
+            G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS
+            )
+        );
+
+    bb_object_class_install_property(
+        G_OBJECT_CLASS(klasse),
+        PROP_RECEIVER,
+        properties[PROP_RECEIVER] = g_param_spec_object(
             "receiver",
             "",
             "",
@@ -216,6 +239,31 @@ bb_paste_action_class_init(BbPasteActionClass *klasse)
             G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS
             )
         );
+}
+
+
+static void
+bb_paste_action_clipboard_owner_change(GtkClipboard *clipboard, GdkEventOwnerChange event, BbPasteAction *action)
+{
+    g_return_if_fail(BB_IS_PASTE_ACTION(action));
+
+    g_object_notify_by_pspec(G_OBJECT(action), properties[PROP_ENABLED]);
+}
+
+
+static void
+bb_paste_action_content_received(GtkClipboard *clipboard, GtkSelectionData *selection_data, BbPasteAction *action)
+{
+    g_return_if_fail(GTK_IS_CLIPBOARD(clipboard));
+    g_return_if_fail(BB_IS_PASTE_ACTION(action));
+
+    gboolean enabled =
+            BB_IS_PASTE_RECEIVER(action->receiver) &&
+            bb_paste_receiver_can_paste(BB_PASTE_RECEIVER(action->receiver), selection_data);
+
+    bb_paste_action_set_enable(action, enabled);
+
+    g_object_unref(action);
 }
 
 
@@ -237,17 +285,23 @@ bb_paste_action_finalize(GObject *object)
 {
 }
 
+GtkClipboard *
+bb_paste_action_get_clipboard(BbPasteAction *action)
+{
+    g_return_val_if_fail(BB_IS_PASTE_ACTION(action), NULL);
+
+    return action->clipboard;
+}
+
 
 static gboolean
 bb_paste_action_get_enabled(GAction *action)
 {
-    g_return_val_if_fail(action != NULL, FALSE);
+    BbPasteAction *paste_action = BB_PASTE_ACTION(action);
 
-    GObject *receiver = bb_paste_action_get_receiver(BB_PASTE_ACTION(action));
+    g_return_val_if_fail(paste_action != NULL, FALSE);
 
-    return
-        BB_IS_PASTE_RECEIVER(receiver) &&
-        bb_paste_receiver_can_paste(BB_PASTE_RECEIVER(receiver));
+    return paste_action->enabled;
 }
 
 
@@ -296,6 +350,10 @@ bb_paste_action_get_property(GObject *object, guint property_id, GValue *value, 
 
         case PROP_STATE_TYPE:
             g_value_set_boxed(value, bb_paste_action_get_state_type(G_ACTION(object)));
+            break;
+
+        case PROP_CLIPBOARD:
+            g_value_set_object(value, bb_paste_action_get_clipboard(BB_PASTE_ACTION(object)));
             break;
 
         case PROP_RECEIVER:
@@ -347,15 +405,17 @@ bb_paste_action_get_receiver(BbPasteAction *action)
 static void
 bb_paste_action_init(BbPasteAction *action)
 {
+    action->clipboard = NULL;
     action->receiver = NULL;
 }
 
 
 BbPasteAction *
-bb_paste_action_new()
+bb_paste_action_new(GtkClipboard *clipboard)
 {
     return BB_PASTE_ACTION(g_object_new(
         BB_TYPE_PASTE_ACTION,
+        "clipboard", clipboard,
         NULL
         ));
 }
@@ -366,6 +426,10 @@ bb_paste_action_set_property(GObject *object, guint property_id, const GValue *v
 {
     switch (property_id)
     {
+        case PROP_CLIPBOARD:
+            bb_paste_action_set_clipboard(BB_PASTE_ACTION(object), g_value_get_object(value));
+            break;
+
         case PROP_RECEIVER:
             bb_paste_action_set_receiver(BB_PASTE_ACTION(object), g_value_get_object(value));
             break;
@@ -373,6 +437,48 @@ bb_paste_action_set_property(GObject *object, guint property_id, const GValue *v
         default:
             G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
     }
+}
+
+
+void
+bb_paste_action_set_clipboard(BbPasteAction *action, GtkClipboard *clipboard)
+{
+    g_return_if_fail(BB_IS_PASTE_ACTION(action));
+
+    if (action->clipboard != clipboard)
+    {
+        if (action->clipboard != NULL)
+        {
+            g_object_unref(action->clipboard);
+        }
+
+        action->clipboard = clipboard;
+
+        if (action->clipboard != NULL)
+        {
+            g_object_ref(action->clipboard);
+
+            g_signal_connect(
+                    action->clipboard,
+                    "owner-change",
+                    G_CALLBACK(bb_paste_action_clipboard_owner_change),
+                    action
+                    );
+        }
+
+        bb_paste_action_update_enabled(action);
+    }
+}
+
+
+static void
+bb_paste_action_set_enable(BbPasteAction *action, gboolean enabled)
+{
+    g_return_if_fail(BB_IS_PASTE_ACTION(action));
+
+    action->enabled = enabled;
+
+    g_object_notify_by_pspec(G_OBJECT(action), properties[PROP_ENABLED]);
 }
 
 
@@ -395,7 +501,39 @@ bb_paste_action_set_receiver(BbPasteAction *action, GObject* receiver)
             g_object_ref(action->receiver);
         }
 
-        g_object_notify_by_pspec(G_OBJECT(action), properties[PROP_ENABLED]);
+        bb_paste_action_update_enabled(action);
         g_object_notify_by_pspec(G_OBJECT(action), properties[PROP_RECEIVER]);
+    }
+}
+
+
+static void
+bb_paste_action_update_enabled(BbPasteAction *action)
+{
+    g_return_if_fail(BB_IS_PASTE_ACTION(action));
+
+    if (action->clipboard == NULL || action->receiver == NULL)
+    {
+        bb_paste_action_set_enable(action, FALSE);
+    }
+    else
+    {
+        GdkDisplay *display = gtk_clipboard_get_display(action->clipboard);
+
+        gboolean supported = gdk_display_supports_selection_notification(display);
+
+        if (supported)
+        {
+            gtk_clipboard_request_contents(
+                action->clipboard,
+                gdk_atom_intern_static_string("TARGETS"),
+                (GtkClipboardReceivedFunc) bb_paste_action_content_received,
+                g_object_ref(action)
+                );
+        }
+        else
+        {
+            bb_paste_action_set_enable(action, TRUE);
+        }
     }
 }

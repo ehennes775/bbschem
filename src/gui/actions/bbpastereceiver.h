@@ -27,15 +27,15 @@ struct _BbPasteReceiverInterface
 {
     GTypeInterface g_iface;
 
-    gboolean (*can_paste)(BbPasteReceiver *receiver);
-    void (*paste)(BbPasteReceiver *receiver);
+    gboolean (*can_paste)(BbPasteReceiver *receiver, GtkSelectionData *selection_data);
+    void (*paste)(BbPasteReceiver *receiver, GtkClipboard *clipboard);
 
 };
 
 gboolean
-bb_paste_receiver_can_paste(BbPasteReceiver *receiver);
+bb_paste_receiver_can_paste(BbPasteReceiver *receiver, GtkSelectionData *selection_data);
 
 void
-bb_paste_receiver_paste(BbPasteReceiver *receiver);
+bb_paste_receiver_paste(BbPasteReceiver *receiver, GtkClipboard *clipboard);
 
 #endif

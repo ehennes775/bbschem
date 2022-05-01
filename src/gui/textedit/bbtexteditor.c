@@ -25,6 +25,8 @@
 #include "actions/bbcopyreceiver.h"
 #include "actions/bbcutreceiver.h"
 #include "actions/bbdeletereceiver.h"
+#include "actions/bbsavereceiver.h"
+#include "actions/bbselectreceiver.h"
 
 enum
 {
@@ -41,6 +43,13 @@ enum
 
     /* From BbRedoReceiver */
     PROP_CAN_REDO,
+
+    /* From BbSaveReceiver */
+    PROP_CAN_SAVE,
+
+    /* From BbSelectReceiver */
+    PROP_CAN_SELECT_ALL,
+    PROP_CAN_SELECT_NONE,
 
     /* From BbUndoReceiver */
     PROP_CAN_UNDO,
@@ -62,6 +71,7 @@ struct _BbTextEditor
 {
     BbDocumentWindow parent;
 
+    GFile *file;
     GtkSourceView *view;
 };
 
@@ -87,6 +97,9 @@ static void
 bb_text_editor_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec);
 
 static void
+bb_text_editor_modified_changed(GObject *unused, GObject *editor);
+
+static void
 bb_text_editor_notify_can_redo(GObject *unused, GParamSpec *pspec, GObject *editor);
 
 static void
@@ -102,7 +115,19 @@ static void
 bb_text_editor_redo_receiver_init(BbRedoReceiverInterface *iface);
 
 static void
+bb_text_editor_save(BbTextEditor *editor, GError **error);
+
+static void
+bb_text_editor_save_receiver_init(BbSaveReceiverInterface *iface);
+
+static void
+bb_text_editor_select_receiver_init(BbSelectReceiverInterface *iface);
+
+static void
 bb_text_editor_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec);
+
+static void
+bb_text_editor_source_mark_updated(GtkSourceBuffer *buffer, GtkTextMark *mark, GObject *editor);
 
 static void
 bb_text_editor_undo_receiver_init(BbUndoReceiverInterface *iface);
@@ -123,12 +148,12 @@ G_DEFINE_TYPE_EXTENDED(
     G_IMPLEMENT_INTERFACE(BB_TYPE_DELETE_RECEIVER, bb_text_editor_delete_receiver_init)
     G_IMPLEMENT_INTERFACE(BB_TYPE_PASTE_RECEIVER, bb_text_editor_paste_receiver_init)
     G_IMPLEMENT_INTERFACE(BB_TYPE_REDO_RECEIVER, bb_text_editor_redo_receiver_init)
+    G_IMPLEMENT_INTERFACE(BB_TYPE_SAVE_RECEIVER, bb_text_editor_save_receiver_init)
+    G_IMPLEMENT_INTERFACE(BB_TYPE_SELECT_RECEIVER, bb_text_editor_select_receiver_init)
     G_IMPLEMENT_INTERFACE(BB_TYPE_UNDO_RECEIVER, bb_text_editor_undo_receiver_init)
 
 
     //G_IMPLEMENT_INTERFACE(BB_TYPE_REVEAL_RECEIVER, bb_text_editor_reveal_receiver_init)
-    //G_IMPLEMENT_INTERFACE(BB_TYPE_SAVE_RECEIVER, bb_text_editor_save_receiver_init)
-    //G_IMPLEMENT_INTERFACE(BB_TYPE_SELECT_RECEIVER, bb_text_editor_select_receiver_init)
 
     //G_IMPLEMENT_INTERFACE(BB_TYPE_DRAWING_TOOL_SUPPORT, bb_text_editor_drawing_tool_support_init)
     //G_IMPLEMENT_INTERFACE(BB_TYPE_GRID_SUBJECT, bb_text_editor_grid_subject_init)
@@ -269,22 +294,13 @@ bb_text_editor_delete_receiver_init(BbDeleteReceiverInterface *iface)
 // region from BbPasteReceiver
 
 static gboolean
-bb_text_editor_paste_receiver_can_paste(BbPasteReceiver *receiver)
+bb_text_editor_paste_receiver_can_paste(BbPasteReceiver *receiver, GtkSelectionData *selection_data)
 {
-    BbTextEditor *editor = BB_TEXT_EDITOR(receiver);
-
-    g_return_val_if_fail(editor != NULL, FALSE);
-    g_return_val_if_fail(editor->view != NULL, FALSE);
-
-    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(editor->view));
-
-    g_return_val_if_fail(buffer != NULL, FALSE);
-
-    return gtk_text_buffer_get_has_selection(buffer);
+    return gtk_selection_data_targets_include_text(selection_data);
 }
 
 static void
-bb_text_editor_paste_receiver_paste(BbPasteReceiver *receiver)
+bb_text_editor_paste_receiver_paste(BbPasteReceiver *receiver, GtkClipboard *clipboard)
 {
     BbTextEditor *editor = BB_TEXT_EDITOR(receiver);
 
@@ -295,7 +311,7 @@ bb_text_editor_paste_receiver_paste(BbPasteReceiver *receiver)
 
     g_return_if_fail(buffer != NULL);
 
-    // gtk_text_buffer_paste_clipboard(buffer, NULL, TRUE);
+    gtk_text_buffer_paste_clipboard(buffer, clipboard, NULL, TRUE);
 }
 
 static void
@@ -348,6 +364,134 @@ bb_text_editor_redo_receiver_init(BbRedoReceiverInterface *iface)
 
     iface->can_redo = bb_text_editor_redo_receiver_can_redo;
     iface->redo = bb_text_editor_redo_receiver_redo;
+}
+
+// endregion
+
+// region from BbSaveReceiver
+
+static gboolean
+bb_text_editor_save_receiver_can_save(BbSaveReceiver *receiver)
+{
+    BbTextEditor *editor = BB_TEXT_EDITOR(receiver);
+
+    g_return_val_if_fail(editor != NULL, FALSE);
+    g_return_val_if_fail(editor->view != NULL, FALSE);
+
+    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(editor->view));
+
+    g_return_val_if_fail(buffer != NULL, FALSE);
+
+    return gtk_text_buffer_get_modified(buffer);
+}
+
+static void
+bb_text_editor_save_receiver_save(BbSaveReceiver *receiver, GError **error)
+{
+    BbTextEditor *editor = BB_TEXT_EDITOR(receiver);
+
+    bb_text_editor_save(editor, error);
+}
+
+static void
+bb_text_editor_save_receiver_init(BbSaveReceiverInterface *iface)
+{
+    g_return_if_fail(iface != NULL);
+
+    iface->get_can_save = bb_text_editor_save_receiver_can_save;
+    iface->save = bb_text_editor_save_receiver_save;
+}
+
+// endregion
+
+// region from BbSelectReceiver
+
+static gboolean
+bb_text_editor_select_receiver_can_select_all(BbSelectReceiver *receiver)
+{
+    BbTextEditor *editor = BB_TEXT_EDITOR(receiver);
+
+    g_return_val_if_fail(editor != NULL, FALSE);
+    g_return_val_if_fail(editor->view != NULL, FALSE);
+
+    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(editor->view));
+
+    g_return_val_if_fail(buffer != NULL, FALSE);
+
+    GtkTextIter iter0;
+    GtkTextIter iter1;
+
+    GtkTextIter iter2;
+    GtkTextIter iter3;
+
+    gtk_text_buffer_get_bounds(buffer, &iter0, &iter1);
+
+    gtk_text_buffer_get_selection_bounds(buffer, &iter2, &iter3);
+
+    return !gtk_text_iter_compare(&iter0, &iter2) || !gtk_text_iter_compare(&iter1, &iter3);
+}
+
+static gboolean
+bb_text_editor_select_receiver_can_select_none(BbSelectReceiver *receiver)
+{
+    BbTextEditor *editor = BB_TEXT_EDITOR(receiver);
+
+    g_return_val_if_fail(editor != NULL, FALSE);
+    g_return_val_if_fail(editor->view != NULL, FALSE);
+
+    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(editor->view));
+
+    g_return_val_if_fail(buffer != NULL, FALSE);
+
+    return gtk_text_buffer_get_has_selection(buffer);
+}
+
+static void
+bb_text_editor_select_receiver_select_all(BbSelectReceiver *receiver)
+{
+    BbTextEditor *editor = BB_TEXT_EDITOR(receiver);
+
+    g_return_if_fail(editor != NULL);
+    g_return_if_fail(editor->view != NULL);
+
+    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(editor->view));
+
+    g_return_if_fail(buffer != NULL);
+
+    GtkTextIter iter0;
+    GtkTextIter iter1;
+
+    gtk_text_buffer_get_bounds(buffer, &iter0, &iter1);
+    gtk_text_buffer_select_range(buffer, &iter0, &iter1);
+}
+
+static void
+bb_text_editor_select_receiver_select_none(BbSelectReceiver *receiver)
+{
+    BbTextEditor *editor = BB_TEXT_EDITOR(receiver);
+
+    g_return_if_fail(editor != NULL);
+    g_return_if_fail(editor->view != NULL);
+
+    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(editor->view));
+
+    g_return_if_fail(buffer != NULL);
+
+    GtkTextIter iter;
+
+    gtk_text_buffer_get_iter_at_mark(buffer, &iter, gtk_text_buffer_get_insert(buffer));
+    gtk_text_buffer_move_mark_by_name(buffer, "selection_bound", &iter);
+}
+
+static void
+bb_text_editor_select_receiver_init(BbSelectReceiverInterface *iface)
+{
+    g_return_if_fail(iface != NULL);
+
+    iface->can_select_all = bb_text_editor_select_receiver_can_select_all;
+    iface->can_select_none = bb_text_editor_select_receiver_can_select_none;
+    iface->select_all = bb_text_editor_select_receiver_select_all;
+    iface->select_none = bb_text_editor_select_receiver_select_none;
 }
 
 // endregion
@@ -473,6 +617,43 @@ bb_text_editor_class_init(BbTextEditorClass *klasse)
         "can-redo"
         );
 
+    /* From BbSaveReceiver */
+
+    g_object_class_override_property(
+        object_class,
+        PROP_CAN_SAVE,
+        "can-save"
+        );
+
+    properties[PROP_CAN_SAVE] = g_object_class_find_property(
+        object_class,
+        "can-save"
+        );
+
+    /* From BbSaveReceiver */
+
+    g_object_class_override_property(
+        object_class,
+        PROP_CAN_SELECT_ALL,
+        "can-select-all"
+        );
+
+    properties[PROP_CAN_SELECT_ALL] = g_object_class_find_property(
+        object_class,
+        "can-select-all"
+        );
+
+    g_object_class_override_property(
+        object_class,
+        PROP_CAN_SELECT_NONE,
+        "can-select-none"
+        );
+
+    properties[PROP_CAN_SELECT_NONE] = g_object_class_find_property(
+        object_class,
+        "can-select-none"
+        );
+
     /* From BbUndoReceiver */
 
     g_object_class_override_property(
@@ -536,6 +717,13 @@ bb_text_editor_init(BbTextEditor *editor)
 
     g_signal_connect(
         buffer,
+        "modified-changed",
+        G_CALLBACK(bb_text_editor_modified_changed),
+        editor
+        );
+
+    g_signal_connect(
+        buffer,
         "notify::can-redo",
         G_CALLBACK(bb_text_editor_notify_can_redo),
         editor
@@ -554,6 +742,20 @@ bb_text_editor_init(BbTextEditor *editor)
         G_CALLBACK(bb_text_editor_notify_has_selection),
         editor
         );
+
+    g_signal_connect(
+        buffer,
+        "source-mark-updated",
+        G_CALLBACK(bb_text_editor_source_mark_updated),
+        editor
+        );
+}
+
+
+static void
+bb_text_editor_modified_changed(GObject *unused, GObject *editor)
+{
+    g_object_notify_by_pspec(editor, properties[PROP_CAN_SAVE]);
 }
 
 
@@ -587,6 +789,30 @@ bb_text_editor_notify_has_selection(GObject *unused, GParamSpec *pspec, GObject 
     g_object_notify_by_pspec(editor, properties[PROP_CAN_COPY]);
     g_object_notify_by_pspec(editor, properties[PROP_CAN_CUT]);
     g_object_notify_by_pspec(editor, properties[PROP_CAN_DELETE]);
+    g_object_notify_by_pspec(editor, properties[PROP_CAN_SELECT_NONE]);
+}
+
+
+static void
+bb_text_editor_save(BbTextEditor *editor, GError **error)
+{
+    g_return_if_fail(BB_IS_TEXT_EDITOR(editor));
+    g_return_if_fail(editor->file != NULL);
+    g_return_if_fail(editor->view != NULL);
+
+    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(editor->view));
+
+    GtkTextIter iter0;
+    GtkTextIter iter1;
+
+    gtk_text_buffer_get_start_iter(buffer, &iter0);
+    gtk_text_buffer_get_end_iter(buffer, &iter1);
+
+    gchar *text = gtk_text_buffer_get_text(buffer, &iter0, &iter1, FALSE);
+
+    //g_file_set
+
+    g_free(text);
 }
 
 
@@ -600,4 +826,12 @@ bb_text_editor_set_property(GObject *object, guint property_id, const GValue *va
         default:
             G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
     }
+}
+
+static void
+bb_text_editor_source_mark_updated(GtkSourceBuffer *buffer, GtkTextMark *mark, GObject *editor)
+{
+    g_message("Hello from bb_text_editor_source_mark_updated()");
+
+    g_object_notify_by_pspec(editor, properties[PROP_CAN_SELECT_ALL]);
 }

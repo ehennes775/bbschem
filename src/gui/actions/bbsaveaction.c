@@ -21,6 +21,7 @@
 #include "bbsaveaction.h"
 #include "gedaplugin/bbgedaeditor.h"
 #include "bbsavereceiver.h"
+#include "bbgenericreceiver.h"
 
 
 enum
@@ -60,6 +61,9 @@ bb_save_action_dispose(GObject *object);
 static void
 bb_save_action_finalize(GObject *object);
 
+static void
+bb_save_action_generic_receiver_init(BbGenericReceiverInterface *iface);
+
 static gboolean
 bb_save_action_get_enabled(GAction *action);
 
@@ -93,7 +97,33 @@ G_DEFINE_TYPE_WITH_CODE(
     bb_save_action,
     G_TYPE_OBJECT,
     G_IMPLEMENT_INTERFACE(G_TYPE_ACTION, bb_save_action_action_init)
+    G_IMPLEMENT_INTERFACE(BB_TYPE_GENERIC_RECEIVER, bb_save_action_generic_receiver_init)
     )
+
+// region From BbGenericReceiver interface
+
+static GObject *
+bb_save_action_generic_receiver_get_receiver(BbGenericReceiver *object)
+{
+    return bb_save_action_get_receiver(BB_SAVE_ACTION(object));
+}
+
+static void
+bb_save_action_generic_receiver_set_receiver(BbGenericReceiver *object, GObject *receiver)
+{
+    bb_save_action_set_receiver(BB_SAVE_ACTION(object), receiver);
+}
+
+static void
+bb_save_action_generic_receiver_init(BbGenericReceiverInterface *iface)
+{
+    g_return_if_fail(iface != NULL);
+
+    iface->get_receiver = bb_save_action_generic_receiver_get_receiver;
+    iface->set_receiver = bb_save_action_generic_receiver_set_receiver;
+}
+
+// endregion
 
 
 static void
@@ -335,6 +365,13 @@ bb_save_action_new()
 
 
 static void
+bb_copy_action_notify_can_save(GObject *unused, GParamSpec *pspec, GObject *action)
+{
+    g_object_notify_by_pspec(action, properties[PROP_ENABLED]);
+}
+
+
+static void
 bb_save_action_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec)
 {
     switch (property_id)
@@ -358,6 +395,8 @@ bb_save_action_set_receiver(BbSaveAction *action, GObject* receiver)
     {
         if (action->receiver != NULL)
         {
+            g_signal_handlers_disconnect_by_data(receiver, action);
+
             g_object_unref(action->receiver);
         }
 
@@ -366,6 +405,13 @@ bb_save_action_set_receiver(BbSaveAction *action, GObject* receiver)
         if (action->receiver != NULL)
         {
             g_object_ref(action->receiver);
+
+            g_signal_connect(
+                receiver,
+                "notify::can-save",
+                G_CALLBACK(bb_copy_action_notify_can_save),
+                action
+                );
         }
 
         g_object_notify_by_pspec(G_OBJECT(action), properties[PROP_RECEIVER]);

@@ -27,10 +27,16 @@ G_BEGIN_DECLS
 G_DECLARE_FINAL_TYPE(BbPasteAction, bb_paste_action, BB, PASTE_ACTION, GObject)
 
 BbPasteAction*
-bb_paste_action_new();
+bb_paste_action_new(GtkClipboard *clipboard);
+
+GtkClipboard *
+bb_paste_action_get_clipboard(BbPasteAction *action);
 
 GObject*
 bb_paste_action_get_receiver(BbPasteAction *receiver);
+
+void
+bb_paste_action_set_clipboard(BbPasteAction *action, GtkClipboard *clipboard);
 
 void
 bb_paste_action_set_receiver(BbPasteAction *receiver, GObject *object);

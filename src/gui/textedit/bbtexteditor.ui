@@ -8,6 +8,11 @@
                 <property name="buffer">buffer</property>
                 <property name="hexpand">TRUE</property>
                 <property name="vexpand">TRUE</property>
+
+                <!-- Move to settings later -->
+                <property name="highlight-current-line">TRUE</property>
+                <property name="monospace">TRUE</property>
+                <property name="show-line-numbers">TRUE</property>
             </object>
         </child>
     </template>

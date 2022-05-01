@@ -564,17 +564,22 @@ bb_main_window_init(BbMainWindow *window)
 
     bb_main_window_add_document_action(
         window,
+        BB_GENERIC_RECEIVER(bb_paste_action_new(clipboard))
+        );
+
+    bb_main_window_add_document_action(
+        window,
         BB_GENERIC_RECEIVER(bb_delete_action_new())
         );
 
     bb_main_window_add_document_action(
         window,
-        BB_GENERIC_RECEIVER(bb_paste_action_new())
+        BB_GENERIC_RECEIVER(bb_redo_action_new())
         );
 
     bb_main_window_add_document_action(
-        window,
-        BB_GENERIC_RECEIVER(bb_redo_action_new())
+        (window),
+        BB_GENERIC_RECEIVER(bb_save_action_new())
         );
 
     bb_main_window_add_document_action(
@@ -630,11 +635,6 @@ bb_main_window_init(BbMainWindow *window)
     g_action_map_add_action(
         G_ACTION_MAP(window),
         G_ACTION(bb_reload_action_new(window))
-        );
-
-    g_action_map_add_action(
-        G_ACTION_MAP(window),
-        G_ACTION(bb_save_action_new(window))
         );
 
     g_action_map_add_action(

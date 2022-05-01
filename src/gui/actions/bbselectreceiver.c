@@ -50,9 +50,31 @@ bb_select_receiver_can_select_none(BbSelectReceiver *receiver)
 
 
 static void
-bb_select_receiver_default_init(BbSelectReceiverInterface *class)
+bb_select_receiver_default_init(BbSelectReceiverInterface *iface)
 {
-    g_return_if_fail(class != NULL);
+    g_return_if_fail(iface != NULL);
+
+    g_object_interface_install_property(
+        iface,
+        g_param_spec_boolean(
+            "can-select-all",
+            "",
+            "",
+            FALSE,
+            G_PARAM_READABLE
+            )
+        );
+
+    g_object_interface_install_property(
+        iface,
+        g_param_spec_boolean(
+            "can-select-none",
+            "",
+            "",
+            FALSE,
+            G_PARAM_READABLE
+            )
+        );
 }
 
 
